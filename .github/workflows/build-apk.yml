@@ -1,0 +1,85 @@
+name: Build SocialWorkBD APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Create package.json
+        run: |
+          cat > package.json <<'EOF'
+          {
+            "name": "socialworkbd-app",
+            "version": "1.0.0",
+            "private": true,
+            "scripts": {
+              "build": "echo Build complete"
+            },
+            "dependencies": {
+              "@capacitor/core": "^7.4.3",
+              "@capacitor/android": "^7.4.3"
+            },
+            "devDependencies": {
+              "@capacitor/cli": "^7.4.3"
+            }
+          }
+          EOF
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Prepare web assets
+        run: |
+          mkdir -p www
+          cp index.html styles.css app.js signup.html login.html dashboard.html profile.html job-details.html post-job.html www/
+
+      - name: Create Capacitor config
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.socialworkbd.app",
+            "appName": "SocialWorkBD",
+            "webDir": "www",
+            "bundledWebRuntime": false
+          }
+          EOF
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync Android project
+        run: npx cap sync android
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SocialWorkBD-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
