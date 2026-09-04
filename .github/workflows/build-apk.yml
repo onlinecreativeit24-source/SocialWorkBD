@@ -18,7 +18,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Create package.json
         run: |
@@ -27,9 +26,6 @@ jobs:
             "name": "socialworkbd-app",
             "version": "1.0.0",
             "private": true,
-            "scripts": {
-              "build": "echo Build complete"
-            },
             "dependencies": {
               "@capacitor/core": "^7.4.3",
               "@capacitor/android": "^7.4.3"
@@ -54,8 +50,7 @@ jobs:
           {
             "appId": "com.socialworkbd.app",
             "appName": "SocialWorkBD",
-            "webDir": "www",
-            "bundledWebRuntime": false
+            "webDir": "www"
           }
           EOF
 
