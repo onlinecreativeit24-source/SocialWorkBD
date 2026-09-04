@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>জব বিবরণ</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>জব বিবরণ</h1>
+    <nav>
+      <a href="index.html">হোম</a>
+      <a href="dashboard.html">ড্যাশবোর্ড</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="job-detail">
+      <h2 id="job-title"></h2>
+      <p id="job-desc"></p>
+      <p><strong>বাজেট:</strong> <span id="job-budget"></span> BDT</p>
+      <p><strong>স্কিল:</strong> <span id="job-skills"></span></p>
+    </section>
+
+    <section id="bid-section">
+      <h2>বিড করুন</h2>
+      <form id="bid-form">
+        <label>কভার লেটার:</label>
+        <textarea id="cover" required></textarea>
+
+        <label>অফার (BDT):</label>
+        <input type="number" id="bid-amount" required />
+
+        <label>ডেলিভারি (দিন):</label>
+        <input type="number" id="delivery-days" required />
+
+        <button type="submit">বিড জমা দিন</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 SocialWorkBD (ডেমো)</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
