@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>সাইনআপ</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>সাইনআপ</h1>
+    <nav>
+      <a href="index.html">হোম</a>
+      <a href="login.html">লগইন</a>
+    </nav>
+  </header>
+
+  <main>
+    <form id="signup-form">
+      <label>নাম:</label>
+      <input type="text" id="name" required />
+
+      <label>ইমেইল:</label>
+      <input type="email" id="email" required />
+
+      <label>পাসওয়ার্ড:</label>
+      <input type="password" id="password" required />
+
+      <label>রোল:</label>
+      <select id="role" required>
+        <option value="client">ক্লায়েন্ট</option>
+        <option value="worker">ওয়ার্কর</option>
+      </select>
+
+      <label>স্কিল (ওয়ার্কর হলে):</label>
+      <input type="text" id="skills" placeholder="যেমন: Web Design, Data Entry" />
+
+      <button type="submit">সাইনআপ করুন</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>© 2026 SocialWorkBD (ডেমো)</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
