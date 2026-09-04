@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>জব পোস্ট করুন</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>জব পোস্ট করুন</h1>
+    <nav>
+      <a href="index.html">হোম</a>
+      <a href="dashboard.html">ড্যাশবোর্ড</a>
+    </nav>
+  </header>
+
+  <main>
+    <form id="job-form">
+      <label>জব টাইটেল:</label>
+      <input type="text" id="title" required />
+
+      <label>বিবরণ:</label>
+      <textarea id="desc" required></textarea>
+
+      <label>বাজেট (BDT):</label>
+      <input type="number" id="budget" required />
+
+      <label>স্কিল:</label>
+      <input type="text" id="skills" placeholder="যেমন: Web Design, Data Entry" />
+
+      <button type="submit">জব পোস্ট করুন</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>© 2026 SocialWorkBD (ডেমো)</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
