@@ -1,36 +1,110 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>লগইন</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>লগইন - SocialWorkBD</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
 </head>
+
 <body>
-  <header>
-    <h1>লগইন</h1>
+
+<header class="site-header">
+  <div class="container">
+
+    <h1>SocialWorkBD</h1>
+
+    <p>কাজ করুন, দক্ষতা দিয়ে আয় করুন</p>
+
     <nav>
       <a href="index.html">হোম</a>
       <a href="signup.html">সাইনআপ</a>
     </nav>
-  </header>
 
-  <main>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="jobs-section">
+
+    <h2>অ্যাকাউন্টে লগইন করুন</h2>
+
+    <p>
+      আপনার SocialWorkBD অ্যাকাউন্টে প্রবেশ করুন।
+    </p>
+
     <form id="login-form">
-      <label>ইমেইল:</label>
-      <input type="email" id="email" required />
 
-      <label>পাসওয়ার্ড:</label>
-      <input type="password" id="password" required />
+      <label for="email">
+        ইমেইল
+      </label>
 
-      <button type="submit">লগইন</button>
+      <input
+        type="email"
+        id="email"
+        placeholder="example@email.com"
+        autocomplete="email"
+        required
+      >
+
+      <label for="password">
+        পাসওয়ার্ড
+      </label>
+
+      <input
+        type="password"
+        id="password"
+        placeholder="আপনার পাসওয়ার্ড"
+        autocomplete="current-password"
+        required
+      >
+
+      <button type="submit">
+        লগইন
+      </button>
+
     </form>
-  </main>
 
-  <footer>
-    <p>© 2026 SocialWorkBD (ডেমো)</p>
-  </footer>
+    <p style="margin-top:15px;">
+      <a href="#" id="forgot-password">
+        পাসওয়ার্ড ভুলে গেছেন?
+      </a>
+    </p>
 
-  <script src="app.js"></script>
+    <p style="margin-top:15px;">
+      অ্যাকাউন্ট নেই?
+      <a href="signup.html">
+        নতুন অ্যাকাউন্ট তৈরি করুন
+      </a>
+    </p>
+
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+
+    <p>© 2026 SocialWorkBD</p>
+
+    <p>
+      বাংলাদেশি Freelance & Job Marketplace
+    </p>
+
+  </div>
+</footer>
+
+<script src="firebase-config.js"></script>
+<script src="app.js"></script>
+
 </body>
 </html>
