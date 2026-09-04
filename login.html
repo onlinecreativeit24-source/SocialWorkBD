@@ -2,127 +2,84 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>লগইন - SocialWorkBD</title>
+  <title>Login - SocialWorkBD</title>
 
-  <link rel="stylesheet" href="styles.css">
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
 
-<header class="site-header">
-  <div class="container">
-
+  <header>
     <h1>SocialWorkBD</h1>
+    <p>Client ও Worker Login</p>
+  </header>
 
-    <p>কাজ করুন, দক্ষতা দিয়ে আয় করুন</p>
+  <main>
 
-    <nav>
-      <a href="index.html">হোম</a>
-      <a href="signup.html">সাইনআপ</a>
-    </nav>
+    <section class="auth-card">
 
-  </div>
-</header>
+      <h2>Login</h2>
 
+      <form id="login-form">
 
-<main class="container">
+        <!-- Email -->
+        <label for="email">ইমেইল</label>
 
-  <section class="jobs-section">
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="আপনার ইমেইল লিখুন"
+          autocomplete="email"
+          required
+        />
 
-    <h2>লগইন করুন</h2>
+        <!-- Password -->
+        <label for="password">পাসওয়ার্ড</label>
 
-    <p>
-      আপনার SocialWorkBD অ্যাকাউন্টে লগইন করুন।
-    </p>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="আপনার পাসওয়ার্ড লিখুন"
+          autocomplete="current-password"
+          required
+        />
 
+        <!-- Login -->
+        <button type="submit">
+          Login
+        </button>
 
-    <form id="login-form">
+      </form>
 
-      <!-- Email -->
-      <label for="email">
-        ইমেইল
-      </label>
+      <!-- Forgot Password -->
+      <div class="auth-links">
 
-      <input
-        type="email"
-        id="email"
-        placeholder="example@email.com"
-        autocomplete="email"
-        required
-      >
-
-
-      <!-- Password -->
-      <label for="password">
-        পাসওয়ার্ড
-      </label>
-
-      <input
-        type="password"
-        id="password"
-        placeholder="আপনার পাসওয়ার্ড"
-        autocomplete="current-password"
-        required
-      >
-
-
-      <!-- Login Button -->
-      <button type="submit">
-        লগইন
-      </button>
-
-
-      <!-- Forgot Password: Login button এর ঠিক নিচে -->
-      <p style="margin-top: 15px; text-align: center;">
         <a href="#" id="forgot-password">
-          🔑 পাসওয়ার্ড ভুলে গেছেন?
+          পাসওয়ার্ড ভুলে গেছেন?
         </a>
-      </p>
 
-
-      <!-- Signup: Forgot Password এর নিচে -->
-      <p style="margin-top: 12px; text-align: center;">
-        অ্যাকাউন্ট নেই?
         <a href="signup.html">
           নতুন অ্যাকাউন্ট তৈরি করুন
         </a>
-      </p>
 
-    </form>
+      </div>
 
-  </section>
+      <p id="login-message"></p>
 
-</main>
+    </section>
 
+  </main>
 
-<footer>
-  <div class="container">
+  <footer>
+    <p>© 2026 SocialWorkBD</p>
+  </footer>
 
-    <p>
-      © 2026 SocialWorkBD
-    </p>
-
-    <p>
-      বাংলাদেশি Freelance & Job Marketplace
-    </p>
-
-  </div>
-</footer>
-
-
-<!-- Firebase Config -->
-<script src="firebase-config.js"></script>
-
-<!-- Main App -->
-<script src="app.js"></script>
+  <script src="app.js"></script>
 
 </body>
 </html>
