@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>ছোট Task - SocialWorkBD</title>
+
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  >
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+
+  <style>
+
+    .tasks-page {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 15px;
+    }
+
+    .tasks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .create-task-small-btn {
+      padding: 9px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .task-card {
+      background: white;
+      padding: 18px;
+      margin-bottom: 15px;
+      border-radius: 14px;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+    }
+
+    .task-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .task-type {
+      padding: 6px 10px;
+      border-radius: 20px;
+      background: #f1f3f5;
+      font-size: 13px;
+    }
+
+    .task-reward {
+      font-weight: bold;
+    }
+
+    .task-card h3 {
+      margin: 15px 0 8px;
+    }
+
+    .task-card p {
+      line-height: 1.6;
+    }
+
+    .task-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 15px 0;
+    }
+
+    .task-link-button {
+      display: inline-block;
+      padding: 9px 12px;
+      text-decoration: none;
+      border-radius: 8px;
+      background: #f1f3f5;
+      font-size: 14px;
+    }
+
+    .task-card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .complete-task-btn {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .task-empty {
+      text-align: center;
+      padding: 40px 15px;
+      background: white;
+      border-radius: 14px;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <header>
+
+    <h1>SocialWorkBD</h1>
+
+    <p>ছোট কাজ করুন এবং আয় করুন</p>
+
+    <nav>
+
+      <a href="index.html">
+        হোম
+      </a>
+
+      <a href="videos.html">
+        ভিডিও
+      </a>
+
+      <a href="profile.html">
+        প্রোফাইল
+      </a>
+
+    </nav>
+
+  </header>
+
+
+  <main class="tasks-page">
+
+
+    <div class="tasks-header">
+
+      <div>
+
+        <h2>
+          📋 Available Tasks
+        </h2>
+
+        <p>
+          Task সম্পন্ন করে Submit করুন।
+        </p>
+
+      </div>
+
+
+      <a
+        href="create-task.html"
+        class="create-task-small-btn"
+      >
+        ＋ Task দিন
+      </a>
+
+    </div>
+
+
+    <div id="task-list">
+
+      <div class="task-empty">
+
+        <p>
+          Task লোড হচ্ছে...
+        </p>
+
+      </div>
+
+    </div>
+
+
+  </main>
+
+
+  <footer>
+
+    <p>
+      © 2026 SocialWorkBD
+    </p>
+
+  </footer>
+
+
+  <script src="firebase-config.js"></script>
+
+  <script src="app.js"></script>
+
+</body>
+
+</html>
