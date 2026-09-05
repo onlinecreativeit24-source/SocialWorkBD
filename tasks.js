@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   // ==========================================
-  // SocialWorkBD - Tasks System
+  // SocialWorkBD - TASK SYSTEM
   // ==========================================
 
   if (!window.auth || !window.db) {
@@ -12,10 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const taskForm =
     document.getElementById("task-form");
 
-  const linksContainer =
+  const taskLinksContainer =
     document.getElementById("task-links-container");
 
-  const addLinkButton =
+  const addLinkBtn =
     document.getElementById("add-link-btn");
 
   const taskList =
@@ -23,12 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ==========================================
-  // নতুন Link Input যোগ করা
+  // CREATE LINK INPUT
   // ==========================================
 
   function addLinkInput(value = "") {
-
-    if (!linksContainer) return;
 
     const row =
       document.createElement("div");
@@ -36,77 +34,65 @@ document.addEventListener("DOMContentLoaded", () => {
     row.className =
       "task-link-row";
 
-    row.style.display =
-      "flex";
+    row.innerHTML = `
+      <input
+        type="url"
+        class="task-link-input"
+        placeholder="https://example.com/..."
+        value="${value}"
+        required
+      >
 
-    row.style.gap =
-      "8px";
+      <button
+        type="button"
+        class="remove-link-btn"
+        title="Remove"
+      >×</button>
+    `;
 
-    row.style.marginBottom =
-      "10px";
+    const removeBtn =
+      row.querySelector(".remove-link-btn");
 
-
-    const input =
-      document.createElement("input");
-
-    input.type =
-      "url";
-
-    input.className =
-      "task-link-input";
-
-    input.placeholder =
-      "https://example.com";
-
-    input.value =
-      value;
-
-    input.style.flex =
-      "1";
-
-
-    const removeButton =
-      document.createElement("button");
-
-    removeButton.type =
-      "button";
-
-    removeButton.textContent =
-      "×";
-
-    removeButton.className =
-      "remove-link-btn";
-
-    removeButton.style.width =
-      "42px";
-
-
-    removeButton.addEventListener(
+    removeBtn.addEventListener(
       "click",
       () => {
 
-        row.remove();
+        const rows =
+          taskLinksContainer.querySelectorAll(
+            ".task-link-row"
+          );
 
+        // অন্তত ১টি Link রাখবে
+        if (rows.length <= 1) {
+
+          alert(
+            "কমপক্ষে ১টি Task Link রাখতে হবে।"
+          );
+
+          return;
+        }
+
+        row.remove();
       }
     );
 
+    taskLinksContainer.appendChild(row);
+  }
 
-    row.appendChild(input);
 
-    row.appendChild(removeButton);
-
-    linksContainer.appendChild(row);
-
+  // প্রথম Link
+  if (taskLinksContainer) {
+    addLinkInput();
   }
 
 
   // ==========================================
-  // Add More Button
+  // ADD MORE LINK
   // ==========================================
 
-  if (addLinkButton) {
+  if (addLinkBtn) {
 
-    addLinkButton.addEventListener(
+    addLinkBtn.addEventListener(
       "click",
       () => {
 
@@ -119,30 +105,184 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ==========================================
-  // প্রথম Link Box
+  // LOAD TASKS
   // ==========================================
 
-  if (
-    linksContainer &&
-    linksContainer.children.length === 0
-  ) {
+  async function loadTasks() {
 
-    addLinkInput();
+    if (!taskList) return;
+
+    taskList.innerHTML =
+      "<p>Task লোড হচ্ছে...</p>";
+
+    try {
+
+      const snapshot =
+        await db.collection("tasks")
+          .where("status", "==", "open")
+          .get();
+
+      if (snapshot.empty) {
+
+        taskList.innerHTML =
+          "<p>এখনো কোনো Task পাওয়া যায়নি।</p>";
+
+        return;
+      }
+
+
+      taskList.innerHTML = "";
+
+
+      snapshot.forEach((doc) => {
+
+        const task =
+          doc.data();
+
+        const card =
+          document.createElement("div");
+
+        card.style.background =
+          "#ffffff";
+
+        card.style.padding =
+          "16px";
+
+        card.style.marginBottom =
+          "12px";
+
+        card.style.borderRadius =
+          "12px";
+
+        card.style.boxShadow =
+          "0 2px 10px rgba(0,0,0,0.07)";
+
+
+        const links =
+          Array.isArray(task.links)
+            ? task.links
+            : [];
+
+
+        let linksHTML = "";
+
+        links.forEach((link, index) => {
+
+          linksHTML += `
+            <a
+              href="${link}"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="
+                display:block;
+                margin-top:6px;
+                color:#2563eb;
+                word-break:break-all;
+              "
+            >
+              🔗 Link ${index + 1}
+            </a>
+          `;
+
+        });
+
+
+        card.innerHTML = `
+
+          <h3 style="margin-top:0;">
+            ${escapeHTML(task.title || "Task")}
+          </h3>
+
+          <p>
+            ${escapeHTML(
+              task.description || ""
+            )}
+          </p>
+
+          <p>
+            <strong>Type:</strong>
+            ${task.type === "link_share"
+              ? "Link Share"
+              : "Link Visit"}
+          </p>
+
+          <p>
+            <strong>Reward:</strong>
+            ${Number(task.reward || 0)}
+            MHR GOLD
+          </p>
+
+          <div>
+            ${linksHTML}
+          </div>
+
+          <button
+            class="small-task-btn"
+            data-task-id="${doc.id}"
+            style="
+              margin-top:12px;
+              padding:8px 14px;
+              border:0;
+              border-radius:8px;
+              background:#2563eb;
+              color:white;
+              font-weight:600;
+              cursor:pointer;
+            "
+          >
+            Task করুন
+          </button>
+
+        `;
+
+
+        const taskButton =
+          card.querySelector(
+            ".small-task-btn"
+          );
+
+
+        taskButton.addEventListener(
+          "click",
+          () => {
+
+            alert(
+              "Task গ্রহণ করার পরের ধাপ আমরা পরের অংশে যুক্ত করব।"
+            );
+
+          }
+        );
+
+
+        taskList.appendChild(card);
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "TASK LOAD ERROR:",
+        error
+      );
+
+      taskList.innerHTML =
+        "<p>Task লোড করা যায়নি। Firestore Rules পরীক্ষা করুন।</p>";
+    }
 
   }
 
 
   // ==========================================
-  // Task Submit
+  // CREATE TASK
   // ==========================================
 
   if (taskForm) {
 
     taskForm.addEventListener(
       "submit",
-      async (event) => {
+      async (e) => {
 
-        event.preventDefault();
+        e.preventDefault();
 
 
         const user =
@@ -159,67 +299,34 @@ document.addEventListener("DOMContentLoaded", () => {
             "login.html";
 
           return;
-
         }
 
 
         const title =
-          document
-            .getElementById("task-title")
-            ?.value
-            .trim() || "";
+          document.getElementById(
+            "task-title"
+          )?.value.trim() || "";
 
 
         const description =
-          document
-            .getElementById("task-description")
-            ?.value
-            .trim() || "";
+          document.getElementById(
+            "task-description"
+          )?.value.trim() || "";
+
+
+        const type =
+          document.getElementById(
+            "task-type"
+          )?.value || "link_visit";
 
 
         const reward =
           Number(
-            document
-              .getElementById("task-reward")
-              ?.value || 0
+            document.getElementById(
+              "task-reward"
+            )?.value || 0
           );
 
-
-        const taskType =
-          document
-            .getElementById("task-type")
-            ?.value || "link_visit";
-
-
-        // ======================================
-        // Validation
-        // ======================================
-
-        if (!title) {
-
-          alert(
-            "Task-এর নাম লিখুন।"
-          );
-
-          return;
-
-        }
-
-
-        if (reward <= 0) {
-
-          alert(
-            "Reward লিখুন।"
-          );
-
-          return;
-
-        }
-
-
-        // ======================================
-        // সব Link সংগ্রহ
-        // ======================================
 
         const linkInputs =
           document.querySelectorAll(
@@ -237,31 +344,46 @@ document.addEventListener("DOMContentLoaded", () => {
               input.value.trim();
 
             if (value) {
-
               links.push(value);
-
             }
 
           }
         );
 
 
-        if (links.length === 0) {
+        // Validation
+
+        if (!title) {
 
           alert(
-            "কমপক্ষে একটি Link দিন।"
+            "Task-এর নাম লিখুন।"
           );
 
           return;
-
         }
 
 
-        // ======================================
-        // Submit Button
-        // ======================================
+        if (reward <= 0) {
 
-        const submitButton =
+          alert(
+            "সঠিক Reward দিন।"
+          );
+
+          return;
+        }
+
+
+        if (links.length === 0) {
+
+          alert(
+            "কমপক্ষে ১টি Link দিন।"
+          );
+
+          return;
+        }
+
+
+        const button =
           document.getElementById(
             "create-task-btn"
           );
@@ -269,67 +391,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-          if (submitButton) {
+          if (button) {
 
-            submitButton.disabled =
-              true;
+            button.disabled = true;
 
-            submitButton.textContent =
+            button.textContent =
               "Task তৈরি হচ্ছে...";
 
           }
 
 
-          // ====================================
-          // Task Save to Firestore
-          // ====================================
+          const taskData = {
+
+            title:
+              title,
+
+            description:
+              description,
+
+            type:
+              type,
+
+            reward:
+              reward,
+
+            links:
+              links,
+
+            ownerId:
+              user.uid,
+
+            ownerName:
+              user.displayName ||
+              user.email?.split("@")[0] ||
+              "Client",
+
+            status:
+              "open",
+
+            createdAt:
+              firebase.firestore.FieldValue
+                .serverTimestamp(),
+
+            updatedAt:
+              firebase.firestore.FieldValue
+                .serverTimestamp()
+
+          };
+
 
           await db.collection("tasks")
-            .add({
-
-              title:
-                title,
-
-              description:
-                description,
-
-              taskType:
-                taskType,
-
-              links:
-                links,
-
-              reward:
-                reward,
-
-              rewardCurrency:
-                "MHR GOLD",
-
-              ownerId:
-                user.uid,
-
-              ownerName:
-                user.displayName ||
-                user.email?.split("@")[0] ||
-                "Client",
-
-              status:
-                "open",
-
-              totalCompleted:
-                0,
-
-              createdAt:
-                firebase.firestore
-                  .FieldValue
-                  .serverTimestamp(),
-
-              updatedAt:
-                firebase.firestore
-                  .FieldValue
-                  .serverTimestamp()
-
-            });
+            .add(taskData);
 
 
           alert(
@@ -340,20 +452,13 @@ document.addEventListener("DOMContentLoaded", () => {
           taskForm.reset();
 
 
-          // পুরোনো Link Box মুছুন
-          if (linksContainer) {
+          taskLinksContainer.innerHTML =
+            "";
 
-            linksContainer.innerHTML =
-              "";
-
-            // আবার একটি খালি Link Box
-            addLinkInput();
-
-          }
+          addLinkInput();
 
 
-          window.location.href =
-            "tasks.html";
+          await loadTasks();
 
 
         } catch (error) {
@@ -363,23 +468,19 @@ document.addEventListener("DOMContentLoaded", () => {
             error
           );
 
-
           alert(
-            "Task তৈরি করা যায়নি।\n\n" +
-            (
-              error.message ||
-              "Unknown error"
-            )
+            "Task তৈরি করা যায়নি।\n\nFirebase Error: " +
+            (error.code || "unknown")
           );
+
 
         } finally {
 
-          if (submitButton) {
+          if (button) {
 
-            submitButton.disabled =
-              false;
+            button.disabled = false;
 
-            submitButton.textContent =
+            button.textContent =
               "Task তৈরি করুন";
 
           }
@@ -393,238 +494,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ==========================================
-  // Task List Load
+  // HTML ESCAPE
   // ==========================================
 
-  async function loadTasks() {
+  function escapeHTML(value) {
 
-    if (!taskList) return;
+    const div =
+      document.createElement("div");
 
+    div.textContent =
+      String(value);
 
-    taskList.innerHTML =
-      "<p>Task লোড হচ্ছে...</p>";
-
-
-    try {
-
-      const snapshot =
-        await db.collection("tasks")
-          .orderBy(
-            "createdAt",
-            "desc"
-          )
-          .limit(50)
-          .get();
-
-
-      taskList.innerHTML =
-        "";
-
-
-      if (snapshot.empty) {
-
-        taskList.innerHTML =
-          "<p>এখনো কোনো Task নেই।</p>";
-
-        return;
-
-      }
-
-
-      snapshot.forEach(
-        (doc) => {
-
-          const task =
-            doc.data() || {};
-
-
-          if (
-            task.status !== "open"
-          ) {
-
-            return;
-
-          }
-
-
-          const card =
-            document.createElement(
-              "div"
-            );
-
-          card.className =
-            "task-card";
-
-
-          card.style.background =
-            "#ffffff";
-
-          card.style.padding =
-            "16px";
-
-          card.style.borderRadius =
-            "12px";
-
-          card.style.marginBottom =
-            "12px";
-
-          card.style.boxShadow =
-            "0 2px 10px rgba(0,0,0,0.08)";
-
-
-          const title =
-            document.createElement(
-              "h3"
-            );
-
-          title.textContent =
-            task.title ||
-            "Untitled Task";
-
-
-          const description =
-            document.createElement(
-              "p"
-            );
-
-          description.textContent =
-            task.description ||
-            "";
-
-
-          const reward =
-            document.createElement(
-              "p"
-            );
-
-          reward.innerHTML =
-            "<strong>🪙 Reward: " +
-            Number(task.reward || 0) +
-            " MHR GOLD</strong>";
-
-
-          const type =
-            document.createElement(
-              "p"
-            );
-
-          type.textContent =
-            "Task: " +
-            (
-              task.taskType ===
-              "link_share"
-
-                ? "Link Share"
-
-                : "Link Visit"
-            );
-
-
-          card.appendChild(title);
-
-          card.appendChild(description);
-
-          card.appendChild(type);
-
-          card.appendChild(reward);
-
-
-          // ====================================
-          // Links
-          // ====================================
-
-          const links =
-            Array.isArray(task.links)
-              ? task.links
-              : [];
-
-
-          links.forEach(
-            (link, index) => {
-
-              const linkButton =
-                document.createElement(
-                  "a"
-                );
-
-              linkButton.href =
-                link;
-
-              linkButton.target =
-                "_blank";
-
-              linkButton.rel =
-                "noopener noreferrer";
-
-              linkButton.textContent =
-                "🔗 Link " +
-                (index + 1);
-
-              linkButton.className =
-                "task-link-button";
-
-              linkButton.style.display =
-                "inline-block";
-
-              linkButton.style.margin =
-                "5px";
-
-              linkButton.style.padding =
-                "8px 12px";
-
-              linkButton.style.borderRadius =
-                "8px";
-
-              linkButton.style.textDecoration =
-                "none";
-
-
-              card.appendChild(
-                linkButton
-              );
-
-            }
-          );
-
-
-          taskList.appendChild(
-            card
-          );
-
-        }
-      );
-
-
-      if (
-        taskList.innerHTML.trim() === ""
-      ) {
-
-        taskList.innerHTML =
-          "<p>এখন কোনো Open Task নেই।</p>";
-
-      }
-
-
-    } catch (error) {
-
-      console.error(
-        "TASK LOAD ERROR:",
-        error
-      );
-
-
-      taskList.innerHTML =
-        "<p>Task লোড করতে সমস্যা হয়েছে।</p>";
-
-    }
+    return div.innerHTML;
 
   }
 
 
   // ==========================================
-  // Load Tasks
+  // AUTH + LOAD
   // ==========================================
 
-  loadTasks();
+  auth.onAuthStateChanged(
+    (user) => {
+
+      if (user) {
+
+        loadTasks();
+
+      } else {
+
+        // Task দেখা যাবে,
+        // কিন্তু তৈরি করতে Login লাগবে।
+
+        loadTasks();
+
+      }
+
+    }
+  );
 
 });
