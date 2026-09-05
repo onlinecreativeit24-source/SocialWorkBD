@@ -1,139 +1,103 @@
-
-<!DOCTYPE html><html lang="bn">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>কাজ পোস্ট করুন - SocialWorkBD</title>  <link rel="stylesheet" href="styles.css">
-</head><body><header class="site-header">
-  <div class="container"><h1>SocialWorkBD</h1>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<p>
-  Social Media ও Digital কাজের Marketplace
-</p>
+  <title>Job Post - SocialWorkBD</title>
 
-<nav>
-  <a href="index.html">হোম</a>
-  <a href="dashboard.html">ড্যাশবোর্ড</a>
-  <a href="profile.html">প্রোফাইল</a>
-  <a href="#" id="logout-btn">লগআউট</a>
-</nav>
+  <link rel="stylesheet" href="styles.css">
 
-  </div>
-</header><main class="container">  <section class="jobs-section"><h2>নতুন কাজ পোস্ট করুন</h2>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
 
-<p>
-  আপনার প্রয়োজনীয় Social Media বা Digital কাজের বিস্তারিত দিন।
-  Worker-রা আপনার কাজ দেখে বিড করতে পারবে।
-</p>
+<body>
 
-<form id="job-form">
+  <header>
+    <h1>SocialWorkBD</h1>
+    <p>নতুন কাজ পোস্ট করুন</p>
 
-  <label for="title">
-    কাজের শিরোনাম
-  </label>
+    <nav>
+      <a href="index.html">হোম</a>
+      <a href="dashboard.html">ড্যাশবোর্ড</a>
+      <a href="profile.html">প্রোফাইল</a>
+    </nav>
+  </header>
 
-  <input
-    type="text"
-    id="title"
-    placeholder="যেমন: Facebook Page-এর জন্য Video Editor প্রয়োজন"
-    required
-  >
+  <main>
 
+    <section class="auth-box">
 
-  <label for="category">
-    কাজের Category
-  </label>
+      <h2>💼 নতুন Job Post করুন</h2>
 
-  <select id="category" required>
+      <form id="job-form">
 
-    <option value="">
-      — Category নির্বাচন করুন —
-    </option>
+        <label for="title">কাজের শিরোনাম</label>
 
-    <option value="Social Media">
-      📱 Social Media
-    </option>
+        <input
+          type="text"
+          id="title"
+          placeholder="যেমন: একটি Logo Design প্রয়োজন"
+          required
+        >
 
-    <option value="Content Creation">
-      ✍️ Content Creation
-    </option>
+        <label for="desc">কাজের বিস্তারিত</label>
 
-    <option value="Video Editing">
-      🎬 Video Editing
-    </option>
+        <textarea
+          id="desc"
+          rows="6"
+          placeholder="কাজ সম্পর্কে বিস্তারিত লিখুন"
+          required
+        ></textarea>
 
-    <option value="Graphic Design">
-      🎨 Graphic Design
-    </option>
+        <label for="budget">বাজেট (BDT)</label>
 
-    <option value="Blog & SEO">
-      📝 Blog & SEO
-    </option>
+        <input
+          type="number"
+          id="budget"
+          min="1"
+          placeholder="যেমন: 1000"
+          required
+        >
 
-    <option value="Website/App Testing">
-      🧪 Website/App Testing
-    </option>
+        <label for="skills">প্রয়োজনীয় Skills</label>
 
-    <option value="Data Entry">
-      💻 Data Entry
-    </option>
+        <input
+          type="text"
+          id="skills"
+          placeholder="যেমন: Graphic Design, Photoshop"
+          required
+        >
 
-    <option value="Other Digital Service">
-      🔧 অন্যান্য Digital Service
-    </option>
+        <label for="delivery-days">কাজের সময়সীমা (দিন)</label>
 
-  </select>
+        <input
+          type="number"
+          id="delivery-days"
+          min="1"
+          placeholder="যেমন: 7"
+          required
+        >
 
+        <button type="submit" id="post-job-btn">
+          Job Post করুন
+        </button>
 
-  <label for="desc">
-    কাজের বিস্তারিত
-  </label>
+      </form>
 
-  <textarea
-    id="desc"
-    rows="6"
-    placeholder="কাজটি কী, কীভাবে করতে হবে এবং আপনার প্রয়োজনীয় বিষয়গুলো বিস্তারিত লিখুন।"
-    required
-  ></textarea>
+    </section>
 
+  </main>
 
-  <label for="budget">
-    আপনার বাজেট (BDT)
-  </label>
+  <footer>
+    <p>© 2026 SocialWorkBD</p>
+  </footer>
 
-  <input
-    type="number"
-    id="budget"
-    min="1"
-    placeholder="যেমন: 1000"
-    required
-  >
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
 
-
-  <label for="skills">
-    প্রয়োজনীয় Skill
-  </label>
-
-  <input
-    type="text"
-    id="skills"
-    placeholder="যেমন: Video Editing, Canva, Facebook Marketing"
-    required
-  >
-
-
-  <button type="submit">
-    কাজ পোস্ট করুন
-  </button>
-
-</form>
-
-  </section></main><footer>  <div class="container"><p>
-  © 2026 SocialWorkBD
-</p>
-
-<p>
-  Social Media ও Digital কাজের Marketplace
-</p>
-
-  </div></footer><script src="app.js"></script></body>
+</body>
 </html>
