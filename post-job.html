@@ -1,42 +1,139 @@
-<!DOCTYPE html>
-<html lang="bn">
+
+<!DOCTYPE html><html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>জব পোস্ট করুন</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header>
-    <h1>জব পোস্ট করুন</h1>
-    <nav>
-      <a href="index.html">হোম</a>
-      <a href="dashboard.html">ড্যাশবোর্ড</a>
-    </nav>
-  </header>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>কাজ পোস্ট করুন - SocialWorkBD</title>  <link rel="stylesheet" href="styles.css">
+</head><body><header class="site-header">
+  <div class="container"><h1>SocialWorkBD</h1>
 
-  <main>
-    <form id="job-form">
-      <label>জব টাইটেল:</label>
-      <input type="text" id="title" required />
+<p>
+  Social Media ও Digital কাজের Marketplace
+</p>
 
-      <label>বিবরণ:</label>
-      <textarea id="desc" required></textarea>
+<nav>
+  <a href="index.html">হোম</a>
+  <a href="dashboard.html">ড্যাশবোর্ড</a>
+  <a href="profile.html">প্রোফাইল</a>
+  <a href="#" id="logout-btn">লগআউট</a>
+</nav>
 
-      <label>বাজেট (BDT):</label>
-      <input type="number" id="budget" required />
+  </div>
+</header><main class="container">  <section class="jobs-section"><h2>নতুন কাজ পোস্ট করুন</h2>
 
-      <label>স্কিল:</label>
-      <input type="text" id="skills" placeholder="যেমন: Web Design, Data Entry" />
+<p>
+  আপনার প্রয়োজনীয় Social Media বা Digital কাজের বিস্তারিত দিন।
+  Worker-রা আপনার কাজ দেখে বিড করতে পারবে।
+</p>
 
-      <button type="submit">জব পোস্ট করুন</button>
-    </form>
-  </main>
+<form id="job-form">
 
-  <footer>
-    <p>© 2026 SocialWorkBD (ডেমো)</p>
-  </footer>
+  <label for="title">
+    কাজের শিরোনাম
+  </label>
 
-  <script src="app.js"></script>
-</body>
+  <input
+    type="text"
+    id="title"
+    placeholder="যেমন: Facebook Page-এর জন্য Video Editor প্রয়োজন"
+    required
+  >
+
+
+  <label for="category">
+    কাজের Category
+  </label>
+
+  <select id="category" required>
+
+    <option value="">
+      — Category নির্বাচন করুন —
+    </option>
+
+    <option value="Social Media">
+      📱 Social Media
+    </option>
+
+    <option value="Content Creation">
+      ✍️ Content Creation
+    </option>
+
+    <option value="Video Editing">
+      🎬 Video Editing
+    </option>
+
+    <option value="Graphic Design">
+      🎨 Graphic Design
+    </option>
+
+    <option value="Blog & SEO">
+      📝 Blog & SEO
+    </option>
+
+    <option value="Website/App Testing">
+      🧪 Website/App Testing
+    </option>
+
+    <option value="Data Entry">
+      💻 Data Entry
+    </option>
+
+    <option value="Other Digital Service">
+      🔧 অন্যান্য Digital Service
+    </option>
+
+  </select>
+
+
+  <label for="desc">
+    কাজের বিস্তারিত
+  </label>
+
+  <textarea
+    id="desc"
+    rows="6"
+    placeholder="কাজটি কী, কীভাবে করতে হবে এবং আপনার প্রয়োজনীয় বিষয়গুলো বিস্তারিত লিখুন।"
+    required
+  ></textarea>
+
+
+  <label for="budget">
+    আপনার বাজেট (BDT)
+  </label>
+
+  <input
+    type="number"
+    id="budget"
+    min="1"
+    placeholder="যেমন: 1000"
+    required
+  >
+
+
+  <label for="skills">
+    প্রয়োজনীয় Skill
+  </label>
+
+  <input
+    type="text"
+    id="skills"
+    placeholder="যেমন: Video Editing, Canva, Facebook Marketing"
+    required
+  >
+
+
+  <button type="submit">
+    কাজ পোস্ট করুন
+  </button>
+
+</form>
+
+  </section></main><footer>  <div class="container"><p>
+  © 2026 SocialWorkBD
+</p>
+
+<p>
+  Social Media ও Digital কাজের Marketplace
+</p>
+
+  </div></footer><script src="app.js"></script></body>
 </html>
