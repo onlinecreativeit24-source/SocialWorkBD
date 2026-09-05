@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>নতুন Task - SocialWorkBD</title>
+
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  >
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <style>
+
+    .task-create-box {
+      max-width: 650px;
+      margin: 30px auto;
+      padding: 24px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .task-create-box h2 {
+      margin-top: 0;
+    }
+
+    .task-info {
+      padding: 14px;
+      margin: 15px 0;
+      border-radius: 10px;
+      background: #f5f7fa;
+      line-height: 1.7;
+    }
+
+    .task-link-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .task-link-row input {
+      flex: 1;
+    }
+
+    .remove-link-btn {
+      width: 42px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 22px;
+      background: #ff4757;
+      color: white;
+    }
+
+    .add-link-btn {
+      display: inline-block;
+      margin-top: 5px;
+      padding: 9px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #f1f3f5;
+      font-weight: bold;
+    }
+
+    .create-task-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <header>
+
+    <h1>SocialWorkBD</h1>
+
+    <p>ছোট কাজ তৈরি করুন</p>
+
+    <nav>
+
+      <a href="index.html">
+        হোম
+      </a>
+
+      <a href="tasks.html">
+        Task
+      </a>
+
+      <a href="profile.html">
+        প্রোফাইল
+      </a>
+
+    </nav>
+
+  </header>
+
+
+  <main>
+
+    <section class="task-create-box">
+
+      <h2>➕ নতুন Task তৈরি করুন</h2>
+
+      <p>
+        আপনার Website, Facebook, TikTok অথবা অন্য Social Media-এর জন্য ছোট কাজ তৈরি করুন।
+      </p>
+
+
+      <div class="task-info">
+
+        <strong>উদাহরণ:</strong>
+
+        <br>
+
+        🌐 একটি Website Visit করুন
+
+        <br>
+
+        📤 একটি পোস্ট Share করুন
+
+        <br>
+
+        ➕ একটি Page Follow করুন
+
+        <br>
+
+        ▶ একটি ভিডিও দেখুন
+
+      </div>
+
+
+      <form id="task-form">
+
+
+        <label for="task-title">
+          Task-এর Title
+        </label>
+
+        <input
+          type="text"
+          id="task-title"
+          placeholder="যেমন: আমার Website Visit করুন"
+          maxlength="100"
+          required
+        >
+
+
+        <label for="task-description">
+          Task-এর বিস্তারিত
+        </label>
+
+        <textarea
+          id="task-description"
+          rows="5"
+          maxlength="500"
+          placeholder="Worker-কে কী করতে হবে লিখুন"
+          required
+        ></textarea>
+
+
+        <label for="task-type">
+          Task Type
+        </label>
+
+        <select
+          id="task-type"
+          required
+        >
+
+          <option value="visit">
+            🌐 Link Visit
+          </option>
+
+          <option value="share">
+            📤 Social Share
+          </option>
+
+          <option value="follow">
+            ➕ Follow
+          </option>
+
+          <option value="watch">
+            ▶ Video Watch
+          </option>
+
+          <option value="social">
+            📱 Social Media
+          </option>
+
+          <option value="data">
+            ⌨ Data Entry
+          </option>
+
+          <option value="other">
+            📋 Other Task
+          </option>
+
+        </select>
+
+
+        <label>
+          Task Link
+        </label>
+
+
+        <div id="task-links">
+
+          <div class="task-link-row">
+
+            <input
+              type="url"
+              class="task-link-input"
+              placeholder="https://example.com"
+              required
+            >
+
+          </div>
+
+        </div>
+
+
+        <button
+          type="button"
+          id="add-more-link"
+          class="add-link-btn"
+        >
+          ＋ Add More Link
+        </button>
+
+
+        <label for="task-reward">
+          Worker Reward (MHR GOLD)
+        </label>
+
+        <input
+          type="number"
+          id="task-reward"
+          placeholder="যেমন: 10"
+          min="1"
+          required
+        >
+
+
+        <label for="task-workers">
+          কতজন Worker কাজ করবে?
+        </label>
+
+        <input
+          type="number"
+          id="task-workers"
+          value="10"
+          min="1"
+          required
+        >
+
+
+        <button
+          type="submit"
+          id="create-task-btn"
+          class="create-task-btn"
+        >
+          ✓ Task Publish করুন
+        </button>
+
+      </form>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+
+    <p>
+      © 2026 SocialWorkBD
+    </p>
+
+    <p>
+      বাংলাদেশি Digital Work Platform
+    </p>
+
+  </footer>
+
+
+  <script src="firebase-config.js"></script>
+
+  <script src="app.js"></script>
+
+</body>
+
+</html>
