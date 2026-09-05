@@ -9,140 +9,163 @@
   <link rel="stylesheet" href="styles.css">
 
   <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 
 <body>
 
-<header class="site-header">
-  <div class="container">
-    <h1>SocialWorkBD</h1>
-    <p>কাজ করুন, দক্ষতা দিয়ে আয় করুন</p>
+  <header class="site-header">
+    <div class="container">
 
-    <nav>
-      <a href="index.html">হোম</a>
-      <a href="login.html">লগইন</a>
-    </nav>
-  </div>
-</header>
+      <h1>SocialWorkBD</h1>
 
-<main class="container">
+      <p>কাজ করুন, দক্ষতা দিয়ে আয় করুন</p>
 
-  <section class="jobs-section">
+      <nav>
+        <a href="index.html">হোম</a>
+        <a href="login.html">লগইন</a>
+      </nav>
 
-    <h2>নতুন অ্যাকাউন্ট তৈরি করুন</h2>
-    <p>Client অথবা Worker হিসেবে অ্যাকাউন্ট তৈরি করুন।</p>
+    </div>
+  </header>
 
-    <form id="signup-form">
+  <main class="container">
 
-      <label for="name">আপনার নাম</label>
+    <section class="jobs-section">
 
-      <input
-        type="text"
-        id="name"
-        placeholder="আপনার পুরো নাম"
-        autocomplete="name"
-        required
-      >
+      <h2>নতুন অ্যাকাউন্ট তৈরি করুন</h2>
 
-      <label for="email">ইমেইল</label>
+      <p>
+        SocialWorkBD-তে কাজ করতে বা কাজ দিতে নতুন অ্যাকাউন্ট তৈরি করুন।
+      </p>
 
-      <input
-        type="email"
-        id="email"
-        placeholder="example@email.com"
-        autocomplete="email"
-        required
-      >
+      <form id="signup-form">
 
-      <label for="password">পাসওয়ার্ড</label>
+        <!-- Name -->
+        <label for="name">
+          নাম
+        </label>
 
-      <input
-        type="password"
-        id="password"
-        placeholder="কমপক্ষে ৬ অক্ষর"
-        minlength="6"
-        autocomplete="new-password"
-        required
-      >
+        <input
+          type="text"
+          id="name"
+          placeholder="আপনার নাম"
+          autocomplete="name"
+          required
+        >
 
-      <label for="confirm-password">
-        পাসওয়ার্ড আবার লিখুন
-      </label>
+        <!-- Email -->
+        <label for="email">
+          ইমেইল
+        </label>
 
-      <input
-        type="password"
-        id="confirm-password"
-        placeholder="পাসওয়ার্ড নিশ্চিত করুন"
-        minlength="6"
-        autocomplete="new-password"
-        required
-      >
+        <input
+          type="email"
+          id="email"
+          placeholder="example@email.com"
+          autocomplete="email"
+          required
+        >
 
-      <label for="role">
-        আপনি কী করতে চান?
-      </label>
+        <!-- Password -->
+        <label for="password">
+          পাসওয়ার্ড
+        </label>
 
-      <select id="role" required>
+        <input
+          type="password"
+          id="password"
+          placeholder="কমপক্ষে ৬ অক্ষর"
+          autocomplete="new-password"
+          minlength="6"
+          required
+        >
 
-        <option value="">
-          — নির্বাচন করুন —
-        </option>
+        <!-- Confirm Password -->
+        <label for="confirm-password">
+          পাসওয়ার্ড আবার লিখুন
+        </label>
 
-        <option value="client">
-          Client — আমি কাজ পোস্ট করব
-        </option>
+        <input
+          type="password"
+          id="confirm-password"
+          placeholder="পাসওয়ার্ড আবার লিখুন"
+          autocomplete="new-password"
+          minlength="6"
+          required
+        >
 
-        <option value="worker">
-          Worker — আমি কাজ করব
-        </option>
+        <!-- Role -->
+        <label for="role">
+          আপনি কী করতে চান?
+        </label>
 
-      </select>
+        <select id="role" required>
 
-      <div id="skills-box" style="display:none;">
+          <option value="worker">
+            Worker - কাজ করে আয় করতে চাই
+          </option>
 
+          <option value="client">
+            Client - কাজ দিতে চাই
+          </option>
+
+        </select>
+
+        <!-- Skills -->
         <label for="skills">
-          আপনার স্কিল
+          আপনার Skills
         </label>
 
         <input
           type="text"
           id="skills"
-          placeholder="যেমন: Data Entry, Web Design"
+          placeholder="যেমন: Data Entry, Graphic Design, Writing"
         >
 
-        <small>
-          একাধিক স্কিল কমা (,) দিয়ে লিখতে পারেন।
-        </small>
+        <button type="submit">
+          সাইনআপ করুন
+        </button>
 
-      </div>
+      </form>
 
-      <button type="submit">
-        সাইনআপ করুন
-      </button>
+      <p style="margin-top: 20px; text-align: center;">
 
-    </form>
+        ইতিমধ্যে অ্যাকাউন্ট আছে?
 
-    <p style="margin-top:15px;">
-      আগে থেকেই অ্যাকাউন্ট আছে?
-      <a href="login.html">লগইন করুন</a>
-    </p>
+        <a href="login.html">
+          লগইন করুন
+        </a>
 
-  </section>
+      </p>
 
-</main>
+    </section>
 
-<footer>
-  <div class="container">
-    <p>© 2026 SocialWorkBD</p>
-    <p>বাংলাদেশি Freelance & Job Marketplace</p>
-  </div>
-</footer>
+  </main>
 
-<script src="firebase-config.js"></script>
-<script src="app.js"></script>
+  <footer>
+
+    <div class="container">
+
+      <p>
+        © 2026 SocialWorkBD
+      </p>
+
+      <p>
+        বাংলাদেশি Freelance & Job Marketplace
+      </p>
+
+    </div>
+
+  </footer>
+
+  <!-- Firebase Configuration -->
+  <script src="firebase-config.js"></script>
+
+  <!-- Main App -->
+  <script src="app.js"></script>
 
 </body>
 </html>
