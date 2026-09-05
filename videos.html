@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ভিডিও - SocialWorkBD</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+  <style>
+    .videos-container {
+      max-width: 900px;
+      margin: 25px auto;
+      padding: 0 15px;
+    }
+
+    .video-page-header {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+
+    .video-page-header h2 {
+      margin: 0 0 8px;
+    }
+
+    .video-page-header p {
+      margin: 0;
+    }
+
+    .upload-link {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 11px 16px;
+      background: #2563eb;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 9px;
+      font-weight: 700;
+    }
+
+    .video-card {
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
+
+    .video-player {
+      width: 100%;
+      display: block;
+      background: #000000;
+      max-height: 520px;
+    }
+
+    .video-info {
+      padding: 18px;
+    }
+
+    .video-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .video-description {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      white-space: pre-wrap;
+    }
+
+    .video-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .meta-item {
+      background: #f3f4f6;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .reward-info {
+      margin-top: 14px;
+      padding: 12px;
+      background: #fff8e1;
+      border-radius: 10px;
+      line-height: 1.6;
+    }
+
+    .loading-box,
+    .empty-box,
+    .error-box {
+      background: #ffffff;
+      padding: 25px;
+      text-align: center;
+      border-radius: 14px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+    }
+
+    .error-box {
+      color: #b91c1c;
+    }
+
+    .pending-label {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      padding: 5px 9px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .approved-label {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      padding: 5px 9px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container">
+
+      <h1>SocialWorkBD</h1>
+
+      <p>ভিডিও দেখুন ও আপনার Watch Time দেখুন</p>
+
+      <nav>
+        <a href="index.html">হোম</a>
+        <a href="video-upload.html">ভিডিও Upload</a>
+        <a href="profile.html">প্রোফাইল</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="videos-container">
+
+    <section class="video-page-header">
+
+      <h2>🎬 Video Feed</h2>
+
+      <p>
+        এখানে প্রকাশিত ভিডিওগুলো দেখা যাবে।
+      </p>
+
+      <a
+        href="video-upload.html"
+        class="upload-link"
+      >
+        ➕ ভিডিও Upload করুন
+      </a>
+
+    </section>
+
+    <div
+      id="loading-box"
+      class="loading-box"
+    >
+      ভিডিও লোড হচ্ছে...
+    </div>
+
+    <div
+      id="videos-list"
+    ></div>
+
+    <div
+      id="empty-box"
+      class="empty-box"
+      style="display:none;"
+    >
+      এখনো কোনো প্রকাশিত ভিডিও নেই।
+    </div>
+
+    <div
+      id="error-box"
+      class="error-box"
+      style="display:none;"
+    >
+      ভিডিও লোড করতে সমস্যা হয়েছে।
+    </div>
+
+  </main>
+
+  <footer>
+
+    <div class="container">
+
+      <p>© 2026 SocialWorkBD</p>
+
+      <p>
+        বাংলাদেশি Freelance & Job Marketplace
+      </p>
+
+    </div>
+
+  </footer>
+
+  <!-- Firebase Configuration -->
+  <script src="firebase-config.js"></script>
+
+  <script>
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        if (
+          !window.auth ||
+          !window.db ||
+          !window.storage
+        ) {
+
+          document.getElementById(
+            "loading-box"
+          ).style.display = "none";
+
+          document.getElementById(
+            "error-box"
+          ).style.display = "block";
+
+          document.getElementById(
+            "error-box"
+          ).textContent =
+            "Firebase ঠিকভাবে load হয়নি।";
+
+          return;
+        }
+
+
+        const loadingBox =
+          document.getElementById(
+            "loading-box"
+          );
+
+        const videosList =
+          document.getElementById(
+            "videos-list"
+          );
+
+        const emptyBox =
+          document.getElementById(
+            "empty-box"
+          );
+
+        const errorBox =
+          document.getElementById(
+            "error-box"
+          );
+
+
+        /*
+         * Login check
+         */
+
+        auth.onAuthStateChanged(
+          (user) => {
+
+            if (!user) {
+
+              loadingBox.style.display =
+                "none";
+
+              errorBox.style.display =
+                "block";
+
+              errorBox.innerHTML =
+                'ভিডিও দেখতে আগে <a href="login.html">Login</a> করুন।';
+
+              return;
+            }
+
+            loadVideos();
+
+          }
+        );
+
+
+        /*
+         * Load videos
+         */
+
+        async function loadVideos() {
+
+          loadingBox.style.display =
+            "block";
+
+          emptyBox.style.display =
+            "none";
+
+          errorBox.style.display =
+            "none";
+
+          videosList.innerHTML =
+            "";
+
+
+          try {
+
+            const snapshot =
+              await db
+                .collection("videos")
+                .where(
+                  "status",
+                  "==",
+                  "approved"
+                )
+                .orderBy(
+                  "createdAt",
+                  "desc"
+                )
+                .get();
+
+
+            loadingBox.style.display =
+              "none";
+
+
+            if (snapshot.empty) {
+
+              emptyBox.style.display =
+                "block";
+
+              return;
+            }
+
+
+            snapshot.forEach(
+              (doc) => {
+
+                const video =
+                  doc.data();
+
+                createVideoCard(
+                  doc.id,
+                  video
+                );
+
+              }
+            );
+
+
+          } catch (error) {
+
+            console.error(
+              "LOAD VIDEOS ERROR:",
+              error
+            );
+
+            loadingBox.style.display =
+              "none";
+
+            errorBox.style.display =
+              "block";
+
+            errorBox.textContent =
+              "ভিডিও লোড করতে সমস্যা হয়েছে। Firestore index বা permission প্রয়োজন হতে পারে.";
+
+          }
+
+        }
+
+
+        /*
+         * Create video card
+         */
+
+        function createVideoCard(
+          videoId,
+          video
+        ) {
+
+          const card =
+            document.createElement(
+              "article"
+            );
+
+          card.className =
+            "video-card";
+
+
+          const player =
+            document.createElement(
+              "video"
+            );
+
+          player.className =
+            "video-player";
+
+          player.controls =
+            true;
+
+          player.preload =
+            "metadata";
+
+          player.playsInline =
+            true;
+
+          player.src =
+            video.downloadURL || "";
+
+
+          /*
+           * Video information
+           */
+
+          const info =
+            document.createElement(
+              "div"
+            );
+
+          info.className =
+            "video-info";
+
+
+          const title =
+            document.createElement(
+              "div"
+            );
+
+          title.className =
+            "video-title";
+
+          title.textContent =
+            video.title ||
+            "Untitled Video";
+
+
+          const description =
+            document.createElement(
+              "div"
+            );
+
+          description.className =
+            "video-description";
+
+          description.textContent =
+            video.description ||
+            "";
+
+
+          const meta =
+            document.createElement(
+              "div"
+            );
+
+          meta.className =
+            "video-meta";
+
+
+          const views =
+            document.createElement(
+              "span"
+            );
+
+          views.className =
+            "meta-item";
+
+          views.innerHTML =
+            "👁️ Views: " +
+            Number(
+              video.views || 0
+            );
+
+
+          const duration =
+            document.createElement(
+              "span"
+            );
+
+          duration.className =
+            "meta-item";
+
+          duration.innerHTML =
+            "⏱️ Duration: " +
+            formatDuration(
+              Number(
+                video.duration || 0
+              )
+            );
+
+
+          const owner =
+            document.createElement(
+              "span"
+            );
+
+          owner.className =
+            "meta-item";
+
+          owner.innerHTML =
+            "👤 " +
+            escapeText(
+              video.ownerName ||
+              "User"
+            );
+
+
+          meta.appendChild(
+            views
+          );
+
+          meta.appendChild(
+            duration
+          );
+
+          meta.appendChild(
+            owner
+          );
+
+
+          /*
+           * Reward information
+           */
+
+          const reward =
+            document.createElement(
+              "div"
+            );
+
+          reward.className =
+            "reward-info";
+
+          reward.innerHTML =
+            "🪙 <strong>MHR GOLD হিসাব:</strong><br>" +
+            "50 মিনিট valid watch-time = 100 MHR GOLD<br>" +
+            "1 মিনিট valid watch-time = 2 MHR GOLD";
+
+
+          /*
+           * Status
+           */
+
+          const status =
+            document.createElement(
+              "div"
+            );
+
+          status.style.marginTop =
+            "12px";
+
+          const statusLabel =
+            document.createElement(
+              "span"
+            );
+
+          statusLabel.className =
+            "approved-label";
+
+          statusLabel.textContent =
+            "✓ Approved";
+
+          status.appendChild(
+            statusLabel
+          );
+
+
+          info.appendChild(
+            title
+          );
+
+          if (
+            video.description
+          ) {
+
+            info.appendChild(
+              description
+            );
+
+          }
+
+          info.appendChild(
+            meta
+          );
+
+          info.appendChild(
+            reward
+          );
+
+          info.appendChild(
+            status
+          );
+
+
+          card.appendChild(
+            player
+          );
+
+          card.appendChild(
+            info
+          );
+
+
+          videosList.appendChild(
+            card
+          );
+
+
+          /*
+           * Basic view event
+           *
+           * Actual watch-time/reward
+           * system will be added next.
+           */
+
+          let counted =
+            false;
+
+          player.addEventListener(
+            "play",
+            async () => {
+
+              if (counted) {
+                return;
+              }
+
+              counted = true;
+
+              try {
+
+                await db
+                  .collection("videos")
+                  .doc(videoId)
+                  .update({
+
+                    views:
+                      firebase.firestore
+                        .FieldValue
+                        .increment(1)
+
+                  });
+
+                const currentViews =
+                  Number(
+                    video.views || 0
+                  ) + 1;
+
+                views.innerHTML =
+                  "👁️ Views: " +
+                  currentViews;
+
+              } catch (error) {
+
+                console.error(
+                  "VIEW COUNT ERROR:",
+                  error
+                );
+
+              }
+
+            }
+          );
+
+        }
+
+
+        /*
+         * Duration formatter
+         */
+
+        function formatDuration(
+          seconds
+        ) {
+
+          seconds =
+            Math.max(
+              0,
+              Math.floor(seconds)
+            );
+
+          const minutes =
+            Math.floor(
+              seconds / 60
+            );
+
+          const remaining =
+            seconds % 60;
+
+          return (
+            minutes +
+            ":" +
+            String(
+              remaining
+            ).padStart(2, "0")
+          );
+
+        }
+
+
+        /*
+         * Basic text escaping
+         */
+
+        function escapeText(
+          text
+        ) {
+
+          return String(text)
+            .replace(
+              /&/g,
+              "&amp;"
+            )
+            .replace(
+              /</g,
+              "&lt;"
+            )
+            .replace(
+              />/g,
+              "&gt;"
+            )
+            .replace(
+              /"/g,
+              "&quot;"
+            )
+            .replace(
+              /'/g,
+              "&#039;"
+            );
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
