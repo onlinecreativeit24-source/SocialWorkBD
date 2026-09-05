@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -9,7 +8,7 @@
 
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Firebase -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -19,13 +18,16 @@
 
   <header class="site-header">
     <div class="container">
+
       <h1>SocialWorkBD</h1>
+
       <p>কাজ করুন, দক্ষতা দিয়ে আয় করুন</p>
 
       <nav>
         <a href="index.html">হোম</a>
         <a href="signup.html">সাইনআপ</a>
       </nav>
+
     </div>
   </header>
 
@@ -41,9 +43,7 @@
 
       <form id="login-form">
 
-        <label for="email">
-          ইমেইল
-        </label>
+        <label for="email">ইমেইল</label>
 
         <input
           type="email"
@@ -53,9 +53,7 @@
           required
         >
 
-        <label for="password">
-          পাসওয়ার্ড
-        </label>
+        <label for="password">পাসওয়ার্ড</label>
 
         <input
           type="password"
@@ -71,18 +69,13 @@
 
       </form>
 
-      <!-- Forgot Password -->
-      <p style="margin-top: 15px; text-align: center;">
-        <a
-          href="#"
-          id="forgot-password"
-          style="font-weight: bold;"
-        >
+      <p style="margin-top:15px;text-align:center;">
+        <a href="#" id="forgot-password">
           পাসওয়ার্ড ভুলে গেছেন?
         </a>
       </p>
 
-      <p style="margin-top: 15px; text-align: center;">
+      <p style="margin-top:15px;text-align:center;">
         অ্যাকাউন্ট নেই?
         <a href="signup.html">
           নতুন অ্যাকাউন্ট তৈরি করুন
@@ -94,10 +87,15 @@
   </main>
 
   <footer>
+
     <div class="container">
+
       <p>© 2026 SocialWorkBD</p>
+
       <p>বাংলাদেশি Freelance & Job Marketplace</p>
+
     </div>
+
   </footer>
 
   <!-- Firebase Configuration -->
