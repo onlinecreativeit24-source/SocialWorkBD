@@ -8,11 +8,9 @@ const firebaseConfig = {
   measurementId: "G-XVBRYV71BZ"
 };
 
-// Initialize Firebase
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-// Firebase Services
-const auth = firebase.auth();
-const db = firebase.firestore();
+window.auth = firebase.auth();
+window.db = firebase.firestore();
