@@ -1,9 +1,5 @@
-// ==========================================
-// SocialWorkBD - Firebase Configuration
-// ==========================================
-
 const firebaseConfig = {
-  apiKey: "AIzaSyDsqRgRZTKZFvfu0rUJc8Q5xlS7lBL41c",
+  apiKey: "AIzaSyDsqRgRZTKZFvfu0r4UJc8Q5xlS7lBL41c",
   authDomain: "socialworkbd-b1c00.firebaseapp.com",
   projectId: "socialworkbd-b1c00",
   storageBucket: "socialworkbd-b1c00.firebasestorage.app",
