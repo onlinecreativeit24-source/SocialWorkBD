@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>লগইন - SocialWorkBD</title>
+  <title>Login - SocialWorkBD</title>
 
   <link rel="stylesheet" href="styles.css">
 
@@ -16,69 +16,80 @@
 
 <body>
 
-  <header class="site-header">
-    <div class="container">
-
-      <h1>SocialWorkBD</h1>
-
-      <p>কাজ করুন, দক্ষতা দিয়ে আয় করুন</p>
-
-      <nav>
-        <a href="index.html">হোম</a>
-        <a href="signup.html">সাইনআপ</a>
-      </nav>
-
-    </div>
+  <header>
+    <h1>SocialWorkBD</h1>
+    <p>Login করুন</p>
   </header>
 
-  <main class="container">
+  <main>
 
-    <section class="jobs-section">
+    <section class="auth-box">
 
-      <h2>অ্যাকাউন্টে লগইন করুন</h2>
+      <h2>Login</h2>
 
-      <p>
-        আপনার SocialWorkBD অ্যাকাউন্টে প্রবেশ করুন।
-      </p>
-
+      <!-- Email Login -->
       <form id="login-form">
 
-        <label for="email">ইমেইল</label>
+        <label for="email">
+          Email
+        </label>
 
         <input
           type="email"
           id="email"
-          placeholder="example@email.com"
+          placeholder="আপনার Email লিখুন"
           autocomplete="email"
           required
         >
 
-        <label for="password">পাসওয়ার্ড</label>
+        <label for="password">
+          Password
+        </label>
 
         <input
           type="password"
           id="password"
-          placeholder="আপনার পাসওয়ার্ড"
+          placeholder="আপনার Password লিখুন"
           autocomplete="current-password"
           required
         >
 
-        <button type="submit">
-          লগইন
+        <button
+          type="submit"
+        >
+          Login
         </button>
 
       </form>
 
-      <p style="margin-top:15px;text-align:center;">
-        <a href="#" id="forgot-password">
-          পাসওয়ার্ড ভুলে গেছেন?
+      <!-- Forgot Password -->
+      <div style="margin-top:12px;">
+        <a
+          href="#"
+          id="forgot-password"
+        >
+          Forgot Password?
         </a>
-      </p>
+      </div>
 
-      <p style="margin-top:15px;text-align:center;">
-        অ্যাকাউন্ট নেই?
+      <div class="auth-divider">
+        <span>অথবা</span>
+      </div>
+
+      <!-- Google Login -->
+      <button
+        type="button"
+        id="google-login"
+        class="social-login google-login"
+      >
+        🔵 Continue with Google
+      </button>
+
+      <!-- Signup -->
+      <p style="margin-top:20px;">
+        নতুন User?
         <a href="signup.html">
-          নতুন অ্যাকাউন্ট তৈরি করুন
+          Signup করুন
         </a>
       </p>
 
@@ -86,23 +97,225 @@
 
   </main>
 
-  <footer>
-
-    <div class="container">
-
-      <p>© 2026 SocialWorkBD</p>
-
-      <p>বাংলাদেশি Freelance & Job Marketplace</p>
-
-    </div>
-
-  </footer>
-
   <!-- Firebase Configuration -->
   <script src="firebase-config.js"></script>
 
   <!-- Main App -->
   <script src="app.js"></script>
+
+  <!-- Google Login -->
+  <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+      const googleButton =
+        document.getElementById("google-login");
+
+      if (!googleButton) return;
+
+      googleButton.addEventListener(
+        "click",
+        async () => {
+
+          const auth = window.auth;
+          const db = window.db;
+
+          if (!auth || !db) {
+
+            alert(
+              "Firebase load হয়নি।\n\n" +
+              "firebase-config.js ঠিকভাবে যুক্ত আছে কি না দেখুন।"
+            );
+
+            return;
+          }
+
+          try {
+
+            googleButton.disabled = true;
+            googleButton.textContent =
+              "Google Login হচ্ছে...";
+
+            const provider =
+              new firebase.auth.GoogleAuthProvider();
+
+            provider.addScope("profile");
+            provider.addScope("email");
+
+            const result =
+              await auth.signInWithPopup(provider);
+
+            const user =
+              result.user;
+
+            // --------------------------------
+            // Check Firestore Profile
+            // --------------------------------
+
+            const userRef =
+              db.collection("users")
+                .doc(user.uid);
+
+            const userDoc =
+              await userRef.get();
+
+            let profile;
+
+            if (userDoc.exists) {
+
+              profile =
+                userDoc.data();
+
+            } else {
+
+              // Google user নতুন হলে profile তৈরি
+              profile = {
+
+                uid:
+                  user.uid,
+
+                name:
+                  user.displayName ||
+                  user.email?.split("@")[0] ||
+                  "User",
+
+                email:
+                  user.email || "",
+
+                role:
+                  "worker",
+
+                skills:
+                  "",
+
+                balance:
+                  0,
+
+                pendingBalance:
+                  0,
+
+                createdAt:
+                  firebase.firestore
+                    .FieldValue
+                    .serverTimestamp()
+
+              };
+
+              await userRef.set(profile);
+            }
+
+            // --------------------------------
+            // Local Session
+            // --------------------------------
+
+            localStorage.setItem(
+              "currentUser",
+              JSON.stringify({
+
+                id:
+                  user.uid,
+
+                name:
+                  profile.name ||
+                  user.displayName ||
+                  "User",
+
+                email:
+                  user.email || "",
+
+                role:
+                  profile.role ||
+                  "worker",
+
+                skills:
+                  profile.skills || "",
+
+                balance:
+                  Number(
+                    profile.balance || 0
+                  ),
+
+                pendingBalance:
+                  Number(
+                    profile.pendingBalance || 0
+                  )
+
+              })
+            );
+
+            alert(
+              "Google Login সফল হয়েছে!"
+            );
+
+            window.location.href =
+              "index.html";
+
+          } catch (error) {
+
+            console.error(
+              "GOOGLE LOGIN ERROR:",
+              error
+            );
+
+            let message =
+              "Google Login Error\n\n" +
+              "Code: " +
+              (error.code || "unknown") +
+              "\n\n" +
+              "Message: " +
+              (error.message || "Unknown error");
+
+            if (
+              error.code ===
+              "auth/popup-closed-by-user"
+            ) {
+
+              message =
+                "Google Login window বন্ধ হয়ে গেছে। আবার চেষ্টা করুন।";
+
+            } else if (
+              error.code ===
+              "auth/popup-blocked"
+            ) {
+
+              message =
+                "Browser Google Login popup block করেছে। Popup allow করে আবার চেষ্টা করুন।";
+
+            } else if (
+              error.code ===
+              "auth/account-exists-with-different-credential"
+            ) {
+
+              message =
+                "এই Email দিয়ে আগে অন্য Login method ব্যবহার করে Account তৈরি হয়েছে।";
+
+            } else if (
+              error.code ===
+              "auth/unauthorized-domain"
+            ) {
+
+              message =
+                "এই website domain Firebase Authentication-এ অনুমোদিত নয়।";
+
+            }
+
+            alert(message);
+
+          } finally {
+
+            googleButton.disabled = false;
+
+            googleButton.textContent =
+              "🔵 Continue with Google";
+
+          }
+
+        }
+      );
+
+    });
+
+  </script>
 
 </body>
 </html>
