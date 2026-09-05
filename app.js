@@ -1409,5 +1409,884 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
   }
+  // ==========================================
+  // SMALL TASK SYSTEM
+  // ==========================================
 
+  if (path.includes("create-task.html")) {
+
+    const taskForm =
+      document.getElementById("task-form");
+
+    const linksContainer =
+      document.getElementById("task-links");
+
+    const addMoreButton =
+      document.getElementById("add-more-link");
+
+
+    // Login Check
+
+    auth.onAuthStateChanged((user) => {
+
+      if (!user) {
+
+        alert(
+          "Task তৈরি করতে আগে Login করুন।"
+        );
+
+        window.location.href =
+          "login.html";
+
+      }
+
+    });
+
+
+    // ------------------------------------------
+    // ADD MORE LINK
+    // ------------------------------------------
+
+    if (addMoreButton && linksContainer) {
+
+      addMoreButton.addEventListener(
+        "click",
+        () => {
+
+          const linkRow =
+            document.createElement("div");
+
+          linkRow.className =
+            "task-link-row";
+
+          linkRow.innerHTML = `
+            <input
+              type="url"
+              class="task-link-input"
+              placeholder="https://example.com"
+            >
+
+            <button
+              type="button"
+              class="remove-link-btn"
+            >
+              ×
+            </button>
+          `;
+
+
+          linksContainer.appendChild(
+            linkRow
+          );
+
+
+          const removeButton =
+            linkRow.querySelector(
+              ".remove-link-btn"
+            );
+
+
+          removeButton.addEventListener(
+            "click",
+            () => {
+
+              linkRow.remove();
+
+            }
+          );
+
+        }
+      );
+
+    }
+
+
+    // ------------------------------------------
+    // CREATE TASK
+    // ------------------------------------------
+
+    if (taskForm) {
+
+      taskForm.addEventListener(
+        "submit",
+        async (e) => {
+
+          e.preventDefault();
+
+
+          const user =
+            auth.currentUser;
+
+
+          if (!user) {
+
+            window.location.href =
+              "login.html";
+
+            return;
+
+          }
+
+
+          const title =
+            document.getElementById(
+              "task-title"
+            )?.value.trim() || "";
+
+
+          const description =
+            document.getElementById(
+              "task-description"
+            )?.value.trim() || "";
+
+
+          const taskType =
+            document.getElementById(
+              "task-type"
+            )?.value || "visit";
+
+
+          const reward =
+            Number(
+              document.getElementById(
+                "task-reward"
+              )?.value || 0
+            );
+
+
+          const maxWorkers =
+            Number(
+              document.getElementById(
+                "task-workers"
+              )?.value || 1
+            );
+
+
+          // --------------------------------
+          // COLLECT LINKS
+          // --------------------------------
+
+          const linkInputs =
+            document.querySelectorAll(
+              ".task-link-input"
+            );
+
+
+          const links = [];
+
+
+          linkInputs.forEach(
+            (input) => {
+
+              const link =
+                input.value.trim();
+
+              if (link) {
+
+                links.push(link);
+
+              }
+
+            }
+          );
+
+
+          if (!title) {
+
+            alert(
+              "Task-এর Title লিখুন।"
+            );
+
+            return;
+
+          }
+
+
+          if (!description) {
+
+            alert(
+              "Task-এর Description লিখুন।"
+            );
+
+            return;
+
+          }
+
+
+          if (links.length === 0) {
+
+            alert(
+              "কমপক্ষে একটি Link দিন।"
+            );
+
+            return;
+
+          }
+
+
+          if (reward <= 0) {
+
+            alert(
+              "সঠিক Reward দিন।"
+            );
+
+            return;
+
+          }
+
+
+          if (maxWorkers <= 0) {
+
+            alert(
+              "কতজন Worker কাজ করবে সেটি দিন।"
+            );
+
+            return;
+
+          }
+
+
+          const submitButton =
+            document.getElementById(
+              "create-task-btn"
+            );
+
+
+          try {
+
+            if (submitButton) {
+
+              submitButton.disabled =
+                true;
+
+              submitButton.textContent =
+                "Task তৈরি হচ্ছে...";
+
+            }
+
+
+            await db.collection("tasks")
+              .add({
+
+                title:
+                  title,
+
+                description:
+                  description,
+
+                taskType:
+                  taskType,
+
+                links:
+                  links,
+
+                reward:
+                  reward,
+
+                maxWorkers:
+                  maxWorkers,
+
+                completedWorkers:
+                  0,
+
+                clientId:
+                  user.uid,
+
+                clientName:
+                  user.displayName ||
+                  user.email?.split("@")[0] ||
+                  "Client",
+
+                status:
+                  "open",
+
+                createdAt:
+                  firebase.firestore
+                    .FieldValue
+                    .serverTimestamp(),
+
+                updatedAt:
+                  firebase.firestore
+                    .FieldValue
+                    .serverTimestamp()
+
+              });
+
+
+            alert(
+              "Task সফলভাবে তৈরি হয়েছে!"
+            );
+
+
+            taskForm.reset();
+
+
+            window.location.href =
+              "tasks.html";
+
+
+          } catch (error) {
+
+            showError(error);
+
+          } finally {
+
+            if (submitButton) {
+
+              submitButton.disabled =
+                false;
+
+              submitButton.textContent =
+                "Task Publish করুন";
+
+            }
+
+          }
+
+        }
+      );
+
+    }
+
+  }
+
+
+  // ==========================================
+  // TASK LIST
+  // ==========================================
+
+  if (path.includes("tasks.html")) {
+
+    const taskList =
+      document.getElementById(
+        "task-list"
+      );
+
+
+    auth.onAuthStateChanged(
+      async (user) => {
+
+        if (!user) {
+
+          if (taskList) {
+
+            taskList.innerHTML =
+              `
+              <div class="task-empty">
+                <p>
+                  Task দেখতে Login করুন।
+                </p>
+
+                <a href="login.html">
+                  Login করুন
+                </a>
+              </div>
+              `;
+
+          }
+
+          return;
+
+        }
+
+
+        try {
+
+          const snapshot =
+            await db.collection("tasks")
+              .where(
+                "status",
+                "==",
+                "open"
+              )
+              .get();
+
+
+          if (!taskList) {
+
+            return;
+
+          }
+
+
+          taskList.innerHTML =
+            "";
+
+
+          if (snapshot.empty) {
+
+            taskList.innerHTML =
+              `
+              <div class="task-empty">
+                <p>
+                  বর্তমানে কোনো Task নেই।
+                </p>
+              </div>
+              `;
+
+            return;
+
+          }
+
+
+          snapshot.forEach(
+            (doc) => {
+
+              const task =
+                doc.data();
+
+
+              const taskId =
+                doc.id;
+
+
+              // নিজের Task নিজে করা যাবে না
+
+              if (
+                task.clientId ===
+                user.uid
+              ) {
+
+                return;
+
+              }
+
+
+              const card =
+                document.createElement(
+                  "div"
+                );
+
+
+              card.className =
+                "task-card";
+
+
+              // --------------------------------
+              // LINKS
+              // --------------------------------
+
+              let linksHTML =
+                "";
+
+
+              if (
+                Array.isArray(
+                  task.links
+                )
+              ) {
+
+                task.links.forEach(
+                  (
+                    link,
+                    index
+                  ) => {
+
+                    linksHTML +=
+                      `
+                      <a
+                        href="${link}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="task-link-button"
+                      >
+                        🔗 Link ${index + 1}
+                      </a>
+                      `;
+
+                  }
+                );
+
+              }
+
+
+              card.innerHTML =
+                `
+                <div class="task-card-top">
+
+                  <span class="task-type">
+                    ${getTaskTypeName(
+                      task.taskType
+                    )}
+                  </span>
+
+                  <span class="task-reward">
+                    🪙 ${Number(
+                      task.reward || 0
+                    )} MHR GOLD
+                  </span>
+
+                </div>
+
+                <h3>
+                  ${escapeHTML(
+                    task.title || ""
+                  )}
+                </h3>
+
+                <p>
+                  ${escapeHTML(
+                    task.description || ""
+                  )}
+                </p>
+
+                <div class="task-links">
+                  ${linksHTML}
+                </div>
+
+                <div class="task-card-bottom">
+
+                  <small>
+                    👥 ${
+                      Number(
+                        task.completedWorkers || 0
+                      )
+                    } / ${
+                      Number(
+                        task.maxWorkers || 0
+                      )
+                    } Worker
+                  </small>
+
+                  <button
+                    class="complete-task-btn"
+                    data-task-id="${taskId}"
+                  >
+                    ✓ Complete Task
+                  </button>
+
+                </div>
+                `;
+
+
+              taskList.appendChild(
+                card
+              );
+
+            }
+          );
+
+
+          // --------------------------------
+          // COMPLETE BUTTON
+          // --------------------------------
+
+          document
+            .querySelectorAll(
+              ".complete-task-btn"
+            )
+            .forEach(
+              (button) => {
+
+                button.addEventListener(
+                  "click",
+                  async () => {
+
+                    const taskId =
+                      button.dataset.taskId;
+
+
+                    await submitTask(
+                      taskId,
+                      user,
+                      button
+                    );
+
+                  }
+                );
+
+              }
+            );
+
+
+        } catch (error) {
+
+          console.error(
+            "TASK LOAD ERROR:",
+            error
+          );
+
+
+          if (taskList) {
+
+            taskList.innerHTML =
+              `
+              <p>
+                Task লোড করতে সমস্যা হয়েছে।
+              </p>
+              `;
+
+          }
+
+        }
+
+      }
+    );
+
+
+    // ========================================
+    // SUBMIT TASK
+    // ========================================
+
+    async function submitTask(
+      taskId,
+      user,
+      button
+    ) {
+
+      if (!taskId || !user) {
+
+        return;
+
+      }
+
+
+      try {
+
+        button.disabled =
+          true;
+
+        button.textContent =
+          "Submit হচ্ছে...";
+
+
+        const taskRef =
+          db.collection("tasks")
+            .doc(taskId);
+
+
+        const submissionId =
+          taskId +
+          "_" +
+          user.uid;
+
+
+        const submissionRef =
+          db.collection(
+            "taskSubmissions"
+          )
+          .doc(
+            submissionId
+          );
+
+
+        const oldSubmission =
+          await submissionRef.get();
+
+
+        if (
+          oldSubmission.exists
+        ) {
+
+          alert(
+            "আপনি এই Task আগে Submit করেছেন।"
+          );
+
+          button.textContent =
+            "Already Submitted";
+
+          return;
+
+        }
+
+
+        const taskDoc =
+          await taskRef.get();
+
+
+        if (
+          !taskDoc.exists
+        ) {
+
+          alert(
+            "Task পাওয়া যায়নি।"
+          );
+
+          button.disabled =
+            false;
+
+          button.textContent =
+            "✓ Complete Task";
+
+          return;
+
+        }
+
+
+        const task =
+          taskDoc.data();
+
+
+        if (
+          task.clientId ===
+          user.uid
+        ) {
+
+          alert(
+            "নিজের Task নিজে Complete করা যাবে না।"
+          );
+
+          button.disabled =
+            false;
+
+          button.textContent =
+            "✓ Complete Task";
+
+          return;
+
+        }
+
+
+        if (
+          Number(
+            task.completedWorkers || 0
+          ) >=
+          Number(
+            task.maxWorkers || 1
+          )
+        ) {
+
+          alert(
+            "এই Task-এর Worker limit পূর্ণ হয়ে গেছে।"
+          );
+
+          button.textContent =
+            "Task Full";
+
+          return;
+
+        }
+
+
+        // ------------------------------------
+        // CREATE SUBMISSION
+        // ------------------------------------
+
+        await submissionRef.set({
+
+          taskId:
+            taskId,
+
+          workerId:
+            user.uid,
+
+          workerName:
+            user.displayName ||
+            user.email?.split("@")[0] ||
+            "Worker",
+
+          clientId:
+            task.clientId,
+
+          reward:
+            Number(
+              task.reward || 0
+            ),
+
+          status:
+            "pending",
+
+          submittedAt:
+            firebase.firestore
+              .FieldValue
+              .serverTimestamp()
+
+        });
+
+
+        alert(
+          "Task সফলভাবে Submit হয়েছে!\n\n" +
+          "Client যাচাই করার পরে Reward দেওয়া হবে।"
+        );
+
+
+        button.textContent =
+          "Submitted";
+
+
+      } catch (error) {
+
+        console.error(
+          "TASK SUBMIT ERROR:",
+          error
+        );
+
+
+        showError(error);
+
+
+        button.disabled =
+          false;
+
+        button.textContent =
+          "✓ Complete Task";
+
+      }
+
+    }
+
+  }
+
+
+  // ==========================================
+  // TASK TYPE NAME
+  // ==========================================
+
+  function getTaskTypeName(
+    type
+  ) {
+
+    const types = {
+
+      visit:
+        "🌐 Link Visit",
+
+      share:
+        "📤 Share",
+
+      follow:
+        "➕ Follow",
+
+      watch:
+        "▶ Watch",
+
+      social:
+        "📱 Social Media",
+
+      data:
+        "⌨ Data Entry",
+
+      other:
+        "📋 Other Task"
+
+    };
+
+
+    return (
+      types[type] ||
+      "📋 Task"
+    );
+
+  }
+
+
+  // ==========================================
+  // SAFE TEXT
+  // ==========================================
+
+  function escapeHTML(
+    text
+  ) {
+
+    const div =
+      document.createElement(
+        "div"
+      );
+
+    div.textContent =
+      text || "";
+
+    return div.innerHTML;
+
+  }
 });
