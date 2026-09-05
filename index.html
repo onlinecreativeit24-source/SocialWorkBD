@@ -6,6 +6,10 @@
 
   <title>SocialWorkBD</title>
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="shortcut icon" href="favicon.svg">
+
   <link rel="stylesheet" href="styles.css">
 
   <style>
@@ -29,10 +33,12 @@
       background: #f1f5f9;
       color: #1e293b;
       border: 1px solid #e2e8f0;
+      transition: 0.2s ease;
     }
 
     .quick-btn:hover {
       transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
     }
 
     .task-btn {
@@ -41,24 +47,16 @@
       border-color: #2563eb;
     }
 
-    .gold-box {
-      margin: 18px 0;
-      padding: 14px;
-      border-radius: 12px;
-      background: #fff8e1;
-      border: 1px solid #fde68a;
-    }
-
-    .gold-box strong {
-      display: block;
-      margin-bottom: 5px;
-    }
-
     .task-info {
       margin-top: 18px;
       padding: 16px;
       border-radius: 14px;
       background: #f8fafc;
+      border: 1px solid #e5e7eb;
+    }
+
+    .task-info h2 {
+      margin-top: 0;
     }
 
     .task-info ul {
@@ -97,6 +95,8 @@
 
 
   <main>
+
+    <!-- Hero -->
 
     <section id="hero">
 
@@ -150,21 +150,6 @@
         </a>
 
       </div>
-
-    </section>
-
-
-    <!-- MHR GOLD -->
-
-    <section class="gold-box">
-
-      <strong>🪙 MHR GOLD</strong>
-
-      100 MHR GOLD = ৳1
-
-      <br>
-
-      1 মিনিট valid কাজ/ভিডিও সময় = 2 MHR GOLD
 
     </section>
 
