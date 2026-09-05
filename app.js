@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ==========================================
   // SocialWorkBD
-  // Firebase Authentication + Firestore
+  // Firebase Auth + Firestore
   // ==========================================
 
   if (!window.auth || !window.db) {
@@ -12,15 +12,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+
   // ==========================================
-  // HELPERS
+  // ERROR HANDLER
   // ==========================================
 
   function showError(error) {
 
-    console.error("SocialWorkBD Error:", error);
+    console.error("SocialWorkBD ERROR:", error);
 
-    let message = "কাজটি করা যায়নি। আবার চেষ্টা করুন।";
+    let message =
+      "কাজটি করা যায়নি। আবার চেষ্টা করুন।";
 
     switch (error.code) {
 
@@ -29,93 +31,144 @@ document.addEventListener("DOMContentLoaded", () => {
         break;
 
       case "auth/user-not-found":
-        message = "এই ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি।";
+        message =
+          "এই ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি।";
         break;
 
       case "auth/wrong-password":
-        message = "পাসওয়ার্ড সঠিক নয়।";
+        message =
+          "পাসওয়ার্ড সঠিক নয়।";
         break;
 
       case "auth/invalid-credential":
-        message = "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।";
+        message =
+          "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।";
         break;
 
       case "auth/email-already-in-use":
-        message = "এই ইমেইল দিয়ে আগে থেকেই অ্যাকাউন্ট আছে।";
+        message =
+          "এই ইমেইল দিয়ে আগে থেকেই অ্যাকাউন্ট আছে।";
         break;
 
       case "auth/weak-password":
-        message = "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।";
+        message =
+          "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।";
         break;
 
       case "auth/too-many-requests":
-        message = "অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।";
-        break;
-
-      case "auth/popup-blocked":
-        message = "Google Login popup block হয়েছে। Browser popup allow করে আবার চেষ্টা করুন।";
-        break;
-
-      case "auth/popup-closed-by-user":
-        message = "Google Login window বন্ধ হয়ে গেছে। আবার চেষ্টা করুন।";
-        break;
-
-      case "auth/unauthorized-domain":
-        message = "এই website domain Firebase Authentication-এ অনুমোদিত নয়।";
+        message =
+          "অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।";
         break;
 
       case "auth/operation-not-allowed":
-        message = "এই Login method Firebase Authentication-এ চালু করা হয়নি।";
+        message =
+          "এই Login method Firebase-এ চালু করা হয়নি।";
+        break;
+
+      case "auth/unauthorized-domain":
+        message =
+          "এই website domain Firebase Authentication-এ অনুমোদিত নয়।";
+        break;
+
+      case "auth/popup-blocked":
+        message =
+          "Google Login popup block হয়েছে।";
+        break;
+
+      case "auth/popup-closed-by-user":
+        message =
+          "Google Login window বন্ধ হয়ে গেছে। আবার চেষ্টা করুন।";
+        break;
+
+      case "auth/account-exists-with-different-credential":
+        message =
+          "এই Email দিয়ে আগে অন্য Login method ব্যবহার করে Account তৈরি হয়েছে।";
         break;
 
       case "permission-denied":
-        message = "Firestore permission পাওয়া যায়নি।";
+        message =
+          "Firestore permission পাওয়া যায়নি।";
+        break;
+
+      case "failed-precondition":
+        message =
+          "Firestore database ঠিকভাবে প্রস্তুত হয়নি।";
         break;
     }
 
-    alert(message);
+    alert(
+      message +
+      "\n\nFirebase Error: " +
+      (error.code || "unknown")
+    );
   }
 
 
   // ==========================================
-  // CREATE / UPDATE USER PROFILE
+  // USER PROFILE
   // ==========================================
 
-  async function createOrLoadUserProfile(user, extraData = {}) {
+  async function createOrLoadUserProfile(
+    user,
+    extraData = {}
+  ) {
 
     const userRef =
       db.collection("users").doc(user.uid);
 
-    const userDoc =
-      await userRef.get();
+    try {
 
-    let profile;
+      const userDoc =
+        await userRef.get();
 
-    if (userDoc.exists) {
+      if (userDoc.exists) {
 
-      profile = userDoc.data();
+        const existing =
+          userDoc.data() || {};
 
-      await userRef.set({
+        return {
+          uid: user.uid,
 
-        uid: user.uid,
+          name:
+            existing.name ||
+            user.displayName ||
+            user.email?.split("@")[0] ||
+            "User",
 
-        email:
-          user.email ||
-          profile.email ||
-          "",
+          email:
+            user.email ||
+            existing.email ||
+            "",
 
-        updatedAt:
-          firebase.firestore.FieldValue.serverTimestamp()
+          role:
+            existing.role ||
+            extraData.role ||
+            "worker",
 
-      }, {
-        merge: true
-      });
+          skills:
+            existing.skills ||
+            extraData.skills ||
+            "",
 
-    } else {
+          bio:
+            existing.bio ||
+            "",
 
-      profile = {
+          balance:
+            Number(existing.balance || 0),
 
-        uid: user.uid,
+          pendingBalance:
+            Number(existing.pendingBalance || 0)
+        };
+      }
+
+
+      // New profile
+
+      const profile = {
+
+        uid:
+          user.uid,
 
         name:
           extraData.name ||
@@ -124,7 +177,8 @@ document.addEventListener("DOMContentLoaded", () => {
           "User",
 
         email:
-          user.email || "",
+          user.email ||
+          "",
 
         role:
           extraData.role ||
@@ -144,28 +198,78 @@ document.addEventListener("DOMContentLoaded", () => {
           0,
 
         createdAt:
-          firebase.firestore.FieldValue.serverTimestamp(),
+          firebase.firestore.FieldValue
+            .serverTimestamp(),
 
         updatedAt:
-          firebase.firestore.FieldValue.serverTimestamp()
+          firebase.firestore.FieldValue
+            .serverTimestamp()
 
       };
 
+
       await userRef.set(profile);
+
+      return profile;
+
+    } catch (error) {
+
+      console.error(
+        "PROFILE FIRESTORE ERROR:",
+        error
+      );
+
+      /*
+       * IMPORTANT:
+       * Auth successful হলেও Firestore সমস্যা হলে
+       * Login/Signup পুরোপুরি ব্যর্থ দেখানো হবে না।
+       */
+
+      return {
+
+        uid:
+          user.uid,
+
+        name:
+          extraData.name ||
+          user.displayName ||
+          user.email?.split("@")[0] ||
+          "User",
+
+        email:
+          user.email ||
+          "",
+
+        role:
+          extraData.role ||
+          "worker",
+
+        skills:
+          extraData.skills ||
+          "",
+
+        bio:
+          "",
+
+        balance:
+          0,
+
+        pendingBalance:
+          0
+
+      };
     }
-
-    const finalDoc =
-      await userRef.get();
-
-    return finalDoc.data() || profile;
   }
 
 
   // ==========================================
-  // SAVE LOCAL SESSION
+  // LOCAL SESSION
   // ==========================================
 
-  function saveLocalSession(user, profile) {
+  function saveLocalSession(
+    user,
+    profile
+  ) {
 
     localStorage.setItem(
       "currentUser",
@@ -214,154 +318,189 @@ document.addEventListener("DOMContentLoaded", () => {
     const form =
       document.getElementById("signup-form");
 
+
     if (form) {
 
-      form.addEventListener("submit", async (e) => {
+      form.addEventListener(
+        "submit",
+        async (e) => {
 
-        e.preventDefault();
-
-        const name =
-          document.getElementById("name")?.value.trim() || "";
-
-        const email =
-          document.getElementById("email")?.value.trim() || "";
-
-        const password =
-          document.getElementById("password")?.value || "";
-
-        const confirmPassword =
-          document.getElementById("confirm-password")?.value || "";
-
-        const role =
-          document.getElementById("role")?.value || "worker";
-
-        const skills =
-          document.getElementById("skills")?.value.trim() || "";
+          e.preventDefault();
 
 
-        if (!name) {
-          alert("আপনার নাম লিখুন।");
-          return;
-        }
-
-        if (!email) {
-          alert("আপনার ইমেইল লিখুন।");
-          return;
-        }
-
-        if (password.length < 6) {
-          alert("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।");
-          return;
-        }
-
-        if (password !== confirmPassword) {
-          alert("দুইটি পাসওয়ার্ড একই নয়।");
-          return;
-        }
+          const name =
+            document.getElementById("name")
+              ?.value.trim() || "";
 
 
-        const button =
-          form.querySelector("button[type='submit']");
+          const email =
+            document.getElementById("email")
+              ?.value.trim() || "";
 
 
-        try {
+          const password =
+            document.getElementById("password")
+              ?.value || "";
 
-          if (button) {
 
-            button.disabled = true;
+          const confirmPassword =
+            document.getElementById(
+              "confirm-password"
+            )?.value || "";
 
-            button.textContent =
-              "অ্যাকাউন্ট তৈরি হচ্ছে...";
 
+          const role =
+            document.getElementById("role")
+              ?.value || "worker";
+
+
+          const skills =
+            document.getElementById("skills")
+              ?.value.trim() || "";
+
+
+          if (!name) {
+
+            alert("আপনার নাম লিখুন।");
+
+            return;
           }
 
 
-          const result =
-            await auth.createUserWithEmailAndPassword(
-              email,
-              password
+          if (!email) {
+
+            alert("আপনার Email লিখুন।");
+
+            return;
+          }
+
+
+          if (password.length < 6) {
+
+            alert(
+              "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।"
+            );
+
+            return;
+          }
+
+
+          if (password !== confirmPassword) {
+
+            alert(
+              "দুইটি পাসওয়ার্ড একই নয়।"
+            );
+
+            return;
+          }
+
+
+          const button =
+            form.querySelector(
+              "button[type='submit']"
             );
 
 
-          const user =
-            result.user;
+          try {
+
+            if (button) {
+
+              button.disabled = true;
+
+              button.textContent =
+                "অ্যাকাউন্ট তৈরি হচ্ছে...";
+
+            }
 
 
-          await user.updateProfile({
+            // Firebase Authentication
 
-            displayName:
-              name
+            const result =
+              await auth.createUserWithEmailAndPassword(
+                email,
+                password
+              );
 
-          });
+
+            const user =
+              result.user;
 
 
-          const profile =
-            await createOrLoadUserProfile(
+            // Display Name
+
+            await user.updateProfile({
+
+              displayName:
+                name
+
+            });
+
+
+            // Firestore profile
+
+            const profile =
+              await createOrLoadUserProfile(
+                user,
+                {
+                  name:
+                    name,
+
+                  role:
+                    role,
+
+                  skills:
+                    skills
+                }
+              );
+
+
+            // Save local session
+
+            saveLocalSession(
               user,
               {
-                name: name,
-                role: role,
-                skills: skills
+                ...profile,
+
+                name:
+                  name,
+
+                role:
+                  role,
+
+                skills:
+                  skills
               }
             );
 
 
-          await db.collection("users")
-            .doc(user.uid)
-            .set({
-
-              name: name,
-
-              role: role,
-
-              skills: skills,
-
-              updatedAt:
-                firebase.firestore.FieldValue.serverTimestamp()
-
-            }, {
-              merge: true
-            });
+            alert(
+              "অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!"
+            );
 
 
-          saveLocalSession(
-            user,
-            {
-              ...profile,
-              name: name,
-              role: role,
-              skills: skills
+            window.location.href =
+              "profile.html";
+
+
+          } catch (error) {
+
+            showError(error);
+
+          } finally {
+
+            if (button) {
+
+              button.disabled = false;
+
+              button.textContent =
+                "সাইনআপ করুন";
+
             }
-          );
-
-
-          alert(
-            "অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!"
-          );
-
-
-          window.location.href =
-            "profile.html";
-
-
-        } catch (error) {
-
-          showError(error);
-
-        } finally {
-
-          if (button) {
-
-            button.disabled = false;
-
-            button.textContent =
-              "সাইনআপ করুন";
 
           }
 
         }
-
-      });
+      );
 
     }
 
@@ -380,92 +519,102 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (form) {
 
-      form.addEventListener("submit", async (e) => {
+      form.addEventListener(
+        "submit",
+        async (e) => {
 
-        e.preventDefault();
-
-
-        const email =
-          document.getElementById("email")?.value.trim() || "";
-
-        const password =
-          document.getElementById("password")?.value || "";
+          e.preventDefault();
 
 
-        if (!email || !password) {
-
-          alert(
-            "ইমেইল ও পাসওয়ার্ড দিন।"
-          );
-
-          return;
-        }
+          const email =
+            document.getElementById("email")
+              ?.value.trim() || "";
 
 
-        const button =
-          form.querySelector("button[type='submit']");
+          const password =
+            document.getElementById("password")
+              ?.value || "";
 
 
-        try {
+          if (!email || !password) {
 
-          if (button) {
+            alert(
+              "ইমেইল ও পাসওয়ার্ড দিন।"
+            );
 
-            button.disabled = true;
-
-            button.textContent =
-              "Login হচ্ছে...";
-
+            return;
           }
 
 
-          const result =
-            await auth.signInWithEmailAndPassword(
-              email,
-              password
+          const button =
+            form.querySelector(
+              "button[type='submit']"
             );
 
 
-          const user =
-            result.user;
+          try {
+
+            if (button) {
+
+              button.disabled = true;
+
+              button.textContent =
+                "Login হচ্ছে...";
+
+            }
 
 
-          const profile =
-            await createOrLoadUserProfile(user);
+            const result =
+              await auth.signInWithEmailAndPassword(
+                email,
+                password
+              );
 
 
-          saveLocalSession(
-            user,
-            profile
-          );
+            const user =
+              result.user;
 
 
-          alert(
-            "Login সফল হয়েছে!"
-          );
+            const profile =
+              await createOrLoadUserProfile(
+                user
+              );
 
 
-          window.location.href =
-            "profile.html";
+            saveLocalSession(
+              user,
+              profile
+            );
 
 
-        } catch (error) {
+            alert(
+              "Login সফল হয়েছে!"
+            );
 
-          showError(error);
 
-        } finally {
+            window.location.href =
+              "profile.html";
 
-          if (button) {
 
-            button.disabled = false;
+          } catch (error) {
 
-            button.textContent =
-              "লগইন";
+            showError(error);
+
+          } finally {
+
+            if (button) {
+
+              button.disabled = false;
+
+              button.textContent =
+                "লগইন";
+
+            }
 
           }
 
         }
-
-      });
+      );
 
     }
 
@@ -530,6 +679,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ==========================================
     // GOOGLE LOGIN
+    // MOBILE REDIRECT
     // ==========================================
 
     const googleButton =
@@ -540,13 +690,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (googleButton) {
 
+      // Pink / Red Google button
+
+      googleButton.style.background =
+        "linear-gradient(135deg, #ff2d55, #e91e63)";
+
+      googleButton.style.color =
+        "#ffffff";
+
+      googleButton.style.border =
+        "none";
+
+      googleButton.style.borderRadius =
+        "10px";
+
+      googleButton.style.padding =
+        "12px 16px";
+
+      googleButton.style.fontWeight =
+        "700";
+
+      googleButton.style.cursor =
+        "pointer";
+
+      googleButton.style.width =
+        "100%";
+
+
       googleButton.addEventListener(
         "click",
         async () => {
 
           try {
 
-            googleButton.disabled = true;
+            googleButton.disabled =
+              true;
+
 
             googleButton.textContent =
               "Google Login হচ্ছে...";
@@ -556,57 +735,31 @@ document.addEventListener("DOMContentLoaded", () => {
               new firebase.auth.GoogleAuthProvider();
 
 
-            provider.addScope("profile");
+            provider.addScope(
+              "profile"
+            );
 
-            provider.addScope("email");
+            provider.addScope(
+              "email"
+            );
 
 
             /*
-             * Mobile browser-এ popup কাজ না করলে
-             * redirect ব্যবহার করা যেতে পারে।
-             *
-             * এখানে popup রাখা হয়েছে।
+             * Mobile-এর জন্য redirect flow.
              */
 
-
-            const result =
-              await auth.signInWithPopup(
-                provider
-              );
-
-
-            const user =
-              result.user;
-
-
-            const profile =
-              await createOrLoadUserProfile(
-                user
-              );
-
-
-            saveLocalSession(
-              user,
-              profile
+            await auth.signInWithRedirect(
+              provider
             );
-
-
-            alert(
-              "Google Login সফল হয়েছে!"
-            );
-
-
-            window.location.href =
-              "profile.html";
 
 
           } catch (error) {
 
             showError(error);
 
-          } finally {
 
-            googleButton.disabled = false;
+            googleButton.disabled =
+              false;
 
             googleButton.textContent =
               "🔵 Continue with Google";
@@ -615,6 +768,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
       );
+
+
+      // ========================================
+      // GOOGLE REDIRECT RESULT
+      // ========================================
+
+      auth.getRedirectResult()
+        .then(async (result) => {
+
+          if (
+            !result ||
+            !result.user
+          ) {
+
+            return;
+          }
+
+
+          const user =
+            result.user;
+
+
+          const profile =
+            await createOrLoadUserProfile(
+              user
+            );
+
+
+          saveLocalSession(
+            user,
+            profile
+          );
+
+
+          alert(
+            "Google Login সফল হয়েছে!"
+          );
+
+
+          window.location.href =
+            "profile.html";
+
+        })
+        .catch((error) => {
+
+          console.error(
+            "GOOGLE REDIRECT ERROR:",
+            error
+          );
+
+
+          showError(error);
+
+        });
 
     }
 
@@ -632,10 +839,12 @@ document.addEventListener("DOMContentLoaded", () => {
         "profile-loading"
       );
 
+
     const content =
       document.getElementById(
         "profile-content"
       );
+
 
     const form =
       document.getElementById(
@@ -668,20 +877,24 @@ document.addEventListener("DOMContentLoaded", () => {
               "user-name"
             );
 
+
           const userEmail =
             document.getElementById(
               "user-email"
             );
+
 
           const userRole =
             document.getElementById(
               "user-role"
             );
 
+
           const userSkills =
             document.getElementById(
               "user-skills"
             );
+
 
           const userBio =
             document.getElementById(
@@ -719,15 +932,18 @@ document.addEventListener("DOMContentLoaded", () => {
               "profile-name"
             );
 
+
           const profileRole =
             document.getElementById(
               "profile-role"
             );
 
+
           const profileSkills =
             document.getElementById(
               "profile-skills"
             );
+
 
           const profileBio =
             document.getElementById(
@@ -811,7 +1027,6 @@ document.addEventListener("DOMContentLoaded", () => {
               "login.html";
 
             return;
-
           }
 
 
@@ -872,42 +1087,33 @@ document.addEventListener("DOMContentLoaded", () => {
                   bio,
 
                 updatedAt:
-                  firebase.firestore.FieldValue.serverTimestamp()
+                  firebase.firestore.FieldValue
+                    .serverTimestamp()
 
               }, {
                 merge: true
               });
 
 
-            const updatedProfile = {
-
-              name:
-                name,
-
-              email:
-                user.email || "",
-
-              role:
-                role,
-
-              skills:
-                skills,
-
-              bio:
-                bio,
-
-              balance:
-                0,
-
-              pendingBalance:
-                0
-
-            };
+            const profile =
+              await db.collection("users")
+                .doc(user.uid)
+                .get();
 
 
             saveLocalSession(
               user,
-              updatedProfile
+              profile.exists
+                ? profile.data()
+                : {
+                    name,
+                    email: user.email || "",
+                    role,
+                    skills,
+                    bio,
+                    balance: 0,
+                    pendingBalance: 0
+                  }
             );
 
 
@@ -916,15 +1122,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 "user-name"
               );
 
+
             const userRole =
               document.getElementById(
                 "user-role"
               );
 
+
             const userSkills =
               document.getElementById(
                 "user-skills"
               );
+
 
             const userBio =
               document.getElementById(
@@ -1060,7 +1269,6 @@ document.addEventListener("DOMContentLoaded", () => {
               "login.html";
 
             return;
-
           }
 
 
@@ -1109,7 +1317,6 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             return;
-
           }
 
 
@@ -1161,7 +1368,8 @@ document.addEventListener("DOMContentLoaded", () => {
                   "open",
 
                 createdAt:
-                  firebase.firestore.FieldValue.serverTimestamp()
+                  firebase.firestore.FieldValue
+                    .serverTimestamp()
 
               });
 
