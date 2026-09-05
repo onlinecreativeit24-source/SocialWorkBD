@@ -1,49 +1,97 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>সাইনআপ - SocialWorkBD</title>
 
-  <link rel="stylesheet" href="styles.css">
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  >
+
 
   <!-- Firebase SDK -->
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
 </head>
+
 
 <body>
 
+
   <header class="site-header">
+
     <div class="container">
 
-      <h1>SocialWorkBD</h1>
+      <h1>
+        SocialWorkBD
+      </h1>
 
-      <p>কাজ করুন, দক্ষতা দিয়ে আয় করুন</p>
+      <p>
+        কাজ করুন, দক্ষতা দিয়ে আয় করুন
+      </p>
+
 
       <nav>
-        <a href="index.html">হোম</a>
-        <a href="login.html">লগইন</a>
+
+        <a href="index.html">
+          হোম
+        </a>
+
+        <a href="login.html">
+          লগইন
+        </a>
+
       </nav>
 
     </div>
+
   </header>
+
 
   <main class="container">
 
+
     <section class="jobs-section">
 
-      <h2>নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+
+      <h2>
+        নতুন অ্যাকাউন্ট তৈরি করুন
+      </h2>
+
 
       <p>
-        SocialWorkBD-তে কাজ করতে বা কাজ দিতে নতুন অ্যাকাউন্ট তৈরি করুন।
+        SocialWorkBD-তে কাজ করতে বা কাজ দিতে
+        নতুন অ্যাকাউন্ট তৈরি করুন।
       </p>
+
+
+      <!-- ==============================
+           SIGNUP FORM
+      =============================== -->
 
       <form id="signup-form">
 
-        <label for="name">নাম</label>
+
+        <!-- NAME -->
+
+        <label for="name">
+          নাম
+        </label>
+
 
         <input
           type="text"
@@ -53,7 +101,13 @@
           required
         >
 
-        <label for="email">ইমেইল</label>
+
+        <!-- EMAIL -->
+
+        <label for="email">
+          ইমেইল
+        </label>
+
 
         <input
           type="email"
@@ -63,7 +117,13 @@
           required
         >
 
-        <label for="password">পাসওয়ার্ড</label>
+
+        <!-- PASSWORD -->
+
+        <label for="password">
+          পাসওয়ার্ড
+        </label>
+
 
         <input
           type="password"
@@ -74,9 +134,13 @@
           required
         >
 
+
+        <!-- CONFIRM PASSWORD -->
+
         <label for="confirm-password">
           পাসওয়ার্ড আবার লিখুন
         </label>
+
 
         <input
           type="password"
@@ -87,11 +151,18 @@
           required
         >
 
+
+        <!-- ROLE -->
+
         <label for="role">
           আপনি কী করতে চান?
         </label>
 
-        <select id="role" required>
+
+        <select
+          id="role"
+          required
+        >
 
           <option value="worker">
             Worker - কাজ করে আয় করতে চাই
@@ -103,9 +174,13 @@
 
         </select>
 
+
+        <!-- SKILLS -->
+
         <label for="skills">
           আপনার Skills
         </label>
+
 
         <input
           type="text"
@@ -113,13 +188,27 @@
           placeholder="যেমন: Data Entry, Graphic Design, Writing"
         >
 
-        <button type="submit">
+
+        <!-- SUBMIT -->
+
+        <button
+          type="submit"
+        >
           সাইনআপ করুন
         </button>
 
+
       </form>
 
-      <p style="margin-top:20px;text-align:center;">
+
+      <!-- LOGIN LINK -->
+
+      <p
+        style="
+          margin-top:20px;
+          text-align:center;
+        "
+      >
 
         ইতিমধ্যে অ্যাকাউন্ট আছে?
 
@@ -129,27 +218,39 @@
 
       </p>
 
+
     </section>
 
   </main>
+
 
   <footer>
 
     <div class="container">
 
-      <p>© 2026 SocialWorkBD</p>
+      <p>
+        © 2026 SocialWorkBD
+      </p>
 
-      <p>বাংলাদেশি Freelance & Job Marketplace</p>
+      <p>
+        বাংলাদেশি Freelance & Job Marketplace
+      </p>
 
     </div>
 
   </footer>
 
+
   <!-- Firebase Configuration -->
+
   <script src="firebase-config.js"></script>
 
+
   <!-- Main App -->
+
   <script src="app.js"></script>
 
+
 </body>
+
 </html>
