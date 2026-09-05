@@ -3,13 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>SocialWorkBD</title>
+
   <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    .video-menu {
+      margin: 20px 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .video-menu a {
+      display: block;
+      padding: 15px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 700;
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .video-menu a.upload {
+      background: #e91e63;
+    }
+
+    .coin-box {
+      margin: 15px 0;
+      padding: 15px;
+      background: #fff8e1;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+      .video-menu {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
+
   <header>
     <h1>SocialWorkBD</h1>
-    <p>ক্লায়েন্ট ও ওয়ার্করদের জন্য বাংলাদেশি মার্কেটপ্লেস</p>
+
+    <p>
+      ক্লায়েন্ট ও ওয়ার্করদের জন্য বাংলাদেশি মার্কেটপ্লেস
+    </p>
+
     <nav>
       <a href="index.html">হোম</a>
       <a href="signup.html">সাইনআপ</a>
@@ -18,22 +64,105 @@
     </nav>
   </header>
 
+
   <main>
+
     <section id="hero">
-      <h2>কাজ খুঁজুন অথবা কাজ দিন</h2>
-      <input type="text" id="job-search" placeholder="জব সার্চ করুন..." />
+
+      <h2>
+        কাজ খুঁজুন অথবা কাজ দিন
+      </h2>
+
+      <input
+        type="text"
+        id="job-search"
+        placeholder="জব সার্চ করুন..."
+      />
+
     </section>
+
+
+    <!-- =====================================
+         VIDEO SECTION
+    ====================================== -->
+
+    <section>
+
+      <h2>🎬 Video Zone</h2>
+
+      <p>
+        ভিডিও দেখুন এবং MHR GOLD হিসাব দেখুন।
+      </p>
+
+
+      <div class="video-menu">
+
+        <a href="videos.html">
+          ▶️ ভিডিও দেখুন
+        </a>
+
+        <a
+          href="video-upload.html"
+          class="upload"
+        >
+          🎬 ভিডিও Upload
+        </a>
+
+      </div>
+
+
+      <div class="coin-box">
+
+        🪙 MHR GOLD System
+
+        <br><br>
+
+        1 MHR GOLD = 0.01 টাকা
+
+        <br>
+
+        100 MHR GOLD = ৳1
+
+        <br>
+
+        50 মিনিট valid watch-time = 100 MHR GOLD = ৳1
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================
+         JOB SECTION
+    ====================================== -->
 
     <section id="jobs-section">
-      <h2>সাম্প্রতিক জব</h2>
+
+      <h2>
+        সাম্প্রতিক জব
+      </h2>
+
       <ul id="job-list"></ul>
+
     </section>
+
   </main>
 
+
   <footer>
-    <p>© 2026 SocialWorkBD (ডেমো)</p>
+
+    <p>
+      © 2026 SocialWorkBD
+    </p>
+
+    <p>
+      বাংলাদেশি Freelance & Job Marketplace
+    </p>
+
   </footer>
 
+
   <script src="app.js"></script>
+
 </body>
 </html>
