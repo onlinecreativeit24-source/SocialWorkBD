@@ -1,47 +1,79 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>SocialWorkBD</title>
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 
   <style>
-    .video-menu {
-      margin: 20px 0;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0;
     }
 
-    .video-menu a {
-      display: block;
-      padding: 15px;
-      text-align: center;
+    .quick-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 13px;
+      border-radius: 10px;
       text-decoration: none;
-      border-radius: 12px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 600;
+      background: #f1f5f9;
+      color: #1e293b;
+      border: 1px solid #e2e8f0;
+    }
+
+    .quick-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .task-btn {
       background: #2563eb;
-      color: #fff;
+      color: #ffffff;
+      border-color: #2563eb;
     }
 
-    .video-menu a.upload {
-      background: #e91e63;
-    }
-
-    .coin-box {
-      margin: 15px 0;
-      padding: 15px;
-      background: #fff8e1;
+    .gold-box {
+      margin: 18px 0;
+      padding: 14px;
       border-radius: 12px;
-      font-weight: 700;
+      background: #fff8e1;
+      border: 1px solid #fde68a;
     }
 
-    @media (max-width: 600px) {
-      .video-menu {
-        grid-template-columns: 1fr;
+    .gold-box strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .task-info {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+
+    .task-info ul {
+      padding-left: 20px;
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 480px) {
+      .quick-actions {
+        gap: 8px;
+      }
+
+      .quick-btn {
+        font-size: 13px;
+        padding: 8px 11px;
       }
     }
   </style>
@@ -53,14 +85,13 @@
     <h1>SocialWorkBD</h1>
 
     <p>
-      ক্লায়েন্ট ও ওয়ার্করদের জন্য বাংলাদেশি মার্কেটপ্লেস
+      ক্লায়েন্ট ও ওয়ার্কারদের জন্য বাংলাদেশি অনলাইন মার্কেটপ্লেস
     </p>
 
     <nav>
       <a href="index.html">হোম</a>
-      <a href="signup.html">সাইনআপ</a>
-      <a href="login.html">লগইন</a>
       <a href="dashboard.html">ড্যাশবোর্ড</a>
+      <a href="login.html">লগইন</a>
     </nav>
   </header>
 
@@ -69,78 +100,101 @@
 
     <section id="hero">
 
-      <h2>
-        কাজ খুঁজুন অথবা কাজ দিন
-      </h2>
+      <h2>কাজ করুন অথবা কাজ দিন</h2>
+
+      <p>
+        ছোট কাজ সম্পন্ন করুন এবং আপনার দক্ষতা ব্যবহার করে আয় করুন।
+      </p>
 
       <input
         type="text"
         id="job-search"
-        placeholder="জব সার্চ করুন..."
-      />
+        placeholder="জব বা কাজ সার্চ করুন..."
+      >
 
     </section>
 
 
-    <!-- =====================================
-         VIDEO SECTION
-    ====================================== -->
+    <!-- Quick Actions -->
 
     <section>
 
-      <h2>🎬 Video Zone</h2>
+      <div class="quick-actions">
 
-      <p>
-        ভিডিও দেখুন এবং MHR GOLD হিসাব দেখুন।
-      </p>
-
-
-      <div class="video-menu">
-
-        <a href="videos.html">
-          ▶️ ভিডিও দেখুন
+        <a
+          href="videos.html"
+          class="quick-btn"
+        >
+          ▶ ভিডিও
         </a>
 
         <a
           href="video-upload.html"
-          class="upload"
+          class="quick-btn"
         >
-          🎬 ভিডিও Upload
+          ⬆ Upload
         </a>
 
-      </div>
+        <a
+          href="tasks.html"
+          class="quick-btn task-btn"
+        >
+          📋 Tasks
+        </a>
 
-
-      <div class="coin-box">
-
-        🪙 MHR GOLD System
-
-        <br><br>
-
-        1 MHR GOLD = 0.01 টাকা
-
-        <br>
-
-        100 MHR GOLD = ৳1
-
-        <br>
-
-        50 মিনিট valid watch-time = 100 MHR GOLD = ৳1
+        <a
+          href="profile.html"
+          class="quick-btn"
+        >
+          👤 Profile
+        </a>
 
       </div>
 
     </section>
 
 
-    <!-- =====================================
-         JOB SECTION
-    ====================================== -->
+    <!-- MHR GOLD -->
+
+    <section class="gold-box">
+
+      <strong>🪙 MHR GOLD</strong>
+
+      100 MHR GOLD = ৳1
+
+      <br>
+
+      1 মিনিট valid কাজ/ভিডিও সময় = 2 MHR GOLD
+
+    </section>
+
+
+    <!-- Task Information -->
+
+    <section class="task-info">
+
+      <h2>📋 ছোট কাজ</h2>
+
+      <p>
+        এখানে Client বিভিন্ন ছোট কাজ দিতে পারবেন এবং Worker কাজ সম্পন্ন করতে পারবেন।
+      </p>
+
+      <ul>
+        <li>🔗 Link Visit</li>
+        <li>📤 Link Share</li>
+        <li>📝 Text বা Comment Task</li>
+        <li>💬 Feedback Task</li>
+        <li>🔎 Search & Find Task</li>
+      </ul>
+
+    </section>
+
+
+    <!-- Recent Jobs -->
 
     <section id="jobs-section">
 
-      <h2>
-        সাম্প্রতিক জব
-      </h2>
+      <h2>সাম্প্রতিক জব</h2>
 
       <ul id="job-list"></ul>
 
@@ -151,17 +205,16 @@
 
   <footer>
 
-    <p>
-      © 2026 SocialWorkBD
-    </p>
+    <p>© 2026 SocialWorkBD</p>
 
     <p>
-      বাংলাদেশি Freelance & Job Marketplace
+      বাংলাদেশি Freelance & Microtask Marketplace
     </p>
 
   </footer>
 
 
+  <script src="firebase-config.js"></script>
   <script src="app.js"></script>
 
 </body>
