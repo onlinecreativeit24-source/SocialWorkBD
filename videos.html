@@ -21,20 +21,23 @@
       padding: 0 15px;
     }
 
-    .video-page-header {
-      background: #ffffff;
-      padding: 20px;
+    .video-page-header,
+    .video-card,
+    .loading-box,
+    .empty-box,
+    .error-box {
+      background: #fff;
       border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.08);
+    }
+
+    .video-page-header {
+      padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
     }
 
     .video-page-header h2 {
       margin: 0 0 8px;
-    }
-
-    .video-page-header p {
-      margin: 0;
     }
 
     .upload-link {
@@ -42,24 +45,29 @@
       margin-top: 15px;
       padding: 11px 16px;
       background: #2563eb;
-      color: #ffffff;
+      color: #fff;
       text-decoration: none;
       border-radius: 9px;
       font-weight: 700;
     }
 
+    .wallet-box {
+      margin-top: 15px;
+      padding: 14px;
+      background: #fff8e1;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
     .video-card {
-      background: #ffffff;
-      border-radius: 16px;
       overflow: hidden;
       margin-bottom: 25px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
     }
 
     .video-player {
       width: 100%;
       display: block;
-      background: #000000;
+      background: #000;
       max-height: 520px;
     }
 
@@ -94,46 +102,32 @@
       font-size: 14px;
     }
 
-    .reward-info {
+    .watch-box {
       margin-top: 14px;
+      padding: 12px;
+      background: #eef6ff;
+      border-radius: 10px;
+      line-height: 1.7;
+    }
+
+    .reward-box {
+      margin-top: 10px;
       padding: 12px;
       background: #fff8e1;
       border-radius: 10px;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     .loading-box,
     .empty-box,
     .error-box {
-      background: #ffffff;
       padding: 25px;
       text-align: center;
-      border-radius: 14px;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
     }
 
     .error-box {
       color: #b91c1c;
-    }
-
-    .pending-label {
-      display: inline-block;
-      background: #fef3c7;
-      color: #92400e;
-      padding: 5px 9px;
-      border-radius: 7px;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .approved-label {
-      display: inline-block;
-      background: #dcfce7;
-      color: #166534;
-      padding: 5px 9px;
-      border-radius: 7px;
-      font-size: 13px;
-      font-weight: 700;
     }
   </style>
 </head>
@@ -145,7 +139,7 @@
 
       <h1>SocialWorkBD</h1>
 
-      <p>ভিডিও দেখুন ও আপনার Watch Time দেখুন</p>
+      <p>ভিডিও দেখুন ও MHR GOLD Earn করুন</p>
 
       <nav>
         <a href="index.html">হোম</a>
@@ -163,8 +157,14 @@
       <h2>🎬 Video Feed</h2>
 
       <p>
-        এখানে প্রকাশিত ভিডিওগুলো দেখা যাবে।
+        Approved ভিডিও দেখুন এবং আপনার valid watch-time
+        অনুযায়ী MHR GOLD হিসাব দেখুন।
       </p>
+
+      <div class="wallet-box">
+        🪙 আপনার MHR GOLD:
+        <span id="mhr-balance">0</span>
+      </div>
 
       <a
         href="video-upload.html"
@@ -182,16 +182,14 @@
       ভিডিও লোড হচ্ছে...
     </div>
 
-    <div
-      id="videos-list"
-    ></div>
+    <div id="videos-list"></div>
 
     <div
       id="empty-box"
       class="empty-box"
       style="display:none;"
     >
-      এখনো কোনো প্রকাশিত ভিডিও নেই।
+      এখনো কোনো Approved ভিডিও নেই।
     </div>
 
     <div
@@ -221,34 +219,14 @@
   <!-- Firebase Configuration -->
   <script src="firebase-config.js"></script>
 
+  <!-- Video Reward System -->
+  <script src="video-app.js"></script>
+
   <script>
 
     document.addEventListener(
       "DOMContentLoaded",
       () => {
-
-        if (
-          !window.auth ||
-          !window.db ||
-          !window.storage
-        ) {
-
-          document.getElementById(
-            "loading-box"
-          ).style.display = "none";
-
-          document.getElementById(
-            "error-box"
-          ).style.display = "block";
-
-          document.getElementById(
-            "error-box"
-          ).textContent =
-            "Firebase ঠিকভাবে load হয়নি।";
-
-          return;
-        }
-
 
         const loadingBox =
           document.getElementById(
@@ -270,6 +248,54 @@
             "error-box"
           );
 
+        const balanceElement =
+          document.getElementById(
+            "mhr-balance"
+          );
+
+
+        if (
+          !window.auth ||
+          !window.db
+        ) {
+
+          loadingBox.style.display =
+            "none";
+
+          errorBox.style.display =
+            "block";
+
+          errorBox.textContent =
+            "Firebase ঠিকভাবে load হয়নি।";
+
+          return;
+
+        }
+
+
+        /*
+         * Show current local balance
+         */
+
+        function updateBalance() {
+
+          const currentUser =
+            JSON.parse(
+              localStorage.getItem(
+                "currentUser"
+              ) || "{}"
+            );
+
+          balanceElement.textContent =
+            Number(
+              currentUser.balance || 0
+            );
+
+        }
+
+
+        updateBalance();
+
 
         /*
          * Login check
@@ -290,6 +316,7 @@
                 'ভিডিও দেখতে আগে <a href="login.html">Login</a> করুন।';
 
               return;
+
             }
 
             loadVideos();
@@ -299,7 +326,7 @@
 
 
         /*
-         * Load videos
+         * Load approved videos
          */
 
         async function loadVideos() {
@@ -338,24 +365,24 @@
               "none";
 
 
-            if (snapshot.empty) {
+            if (
+              snapshot.empty
+            ) {
 
               emptyBox.style.display =
                 "block";
 
               return;
+
             }
 
 
             snapshot.forEach(
               (doc) => {
 
-                const video =
-                  doc.data();
-
                 createVideoCard(
                   doc.id,
-                  video
+                  doc.data()
                 );
 
               }
@@ -376,7 +403,7 @@
               "block";
 
             errorBox.textContent =
-              "ভিডিও লোড করতে সমস্যা হয়েছে। Firestore index বা permission প্রয়োজন হতে পারে.";
+              "ভিডিও লোড করতে সমস্যা হয়েছে। Firestore permission/index প্রয়োজন হতে পারে.";
 
           }
 
@@ -391,6 +418,10 @@
           videoId,
           video
         ) {
+
+          const user =
+            auth.currentUser;
+
 
           const card =
             document.createElement(
@@ -423,7 +454,7 @@
 
 
           /*
-           * Video information
+           * Info container
            */
 
           const info =
@@ -461,6 +492,10 @@
             "";
 
 
+          /*
+           * Meta
+           */
+
           const meta =
             document.createElement(
               "div"
@@ -478,7 +513,12 @@
           views.className =
             "meta-item";
 
-          views.innerHTML =
+          views.dataset.views =
+            Number(
+              video.views || 0
+            );
+
+          views.textContent =
             "👁️ Views: " +
             Number(
               video.views || 0
@@ -493,7 +533,7 @@
           duration.className =
             "meta-item";
 
-          duration.innerHTML =
+          duration.textContent =
             "⏱️ Duration: " +
             formatDuration(
               Number(
@@ -510,9 +550,9 @@
           owner.className =
             "meta-item";
 
-          owner.innerHTML =
+          owner.textContent =
             "👤 " +
-            escapeText(
+            (
               video.ownerName ||
               "User"
             );
@@ -532,50 +572,66 @@
 
 
           /*
-           * Reward information
+           * Watch box
            */
 
-          const reward =
+          const watchBox =
             document.createElement(
               "div"
             );
 
-          reward.className =
-            "reward-info";
+          watchBox.className =
+            "watch-box";
 
-          reward.innerHTML =
-            "🪙 <strong>MHR GOLD হিসাব:</strong><br>" +
-            "50 মিনিট valid watch-time = 100 MHR GOLD<br>" +
-            "1 মিনিট valid watch-time = 2 MHR GOLD";
+
+          const watchElement =
+            document.createElement(
+              "div"
+            );
+
+          watchElement.textContent =
+            "⏱️ Watch Time: 0:00";
+
+
+          const goldElement =
+            document.createElement(
+              "div"
+            );
+
+          goldElement.textContent =
+            "🪙 Session Earned: 0 MHR GOLD";
+
+
+          watchBox.appendChild(
+            watchElement
+          );
+
+          watchBox.appendChild(
+            goldElement
+          );
 
 
           /*
-           * Status
+           * Reward information
            */
 
-          const status =
+          const rewardBox =
             document.createElement(
               "div"
             );
 
-          status.style.marginTop =
-            "12px";
+          rewardBox.className =
+            "reward-box";
 
-          const statusLabel =
-            document.createElement(
-              "span"
-            );
+          rewardBox.innerHTML =
+            "💰 <strong>MHR GOLD হিসাব</strong><br>" +
+            "1 মিনিট valid watch-time = 2 MHR GOLD<br>" +
+            "50 মিনিট valid watch-time = 100 MHR GOLD = ৳1";
 
-          statusLabel.className =
-            "approved-label";
 
-          statusLabel.textContent =
-            "✓ Approved";
-
-          status.appendChild(
-            statusLabel
-          );
-
+          /*
+           * Add everything
+           */
 
           info.appendChild(
             title
@@ -596,11 +652,11 @@
           );
 
           info.appendChild(
-            reward
+            watchBox
           );
 
           info.appendChild(
-            status
+            rewardBox
           );
 
 
@@ -612,66 +668,92 @@
             info
           );
 
-
           videosList.appendChild(
             card
           );
 
 
           /*
-           * Basic view event
+           * Count view
            *
-           * Actual watch-time/reward
-           * system will be added next.
+           * One view per logged-in user
+           * per video.
            */
 
-          let counted =
+          let viewStarted =
             false;
+
 
           player.addEventListener(
             "play",
             async () => {
 
-              if (counted) {
+              if (
+                viewStarted
+              ) {
+
                 return;
+
               }
 
-              counted = true;
+              viewStarted =
+                true;
 
-              try {
 
-                await db
-                  .collection("videos")
-                  .doc(videoId)
-                  .update({
+              const currentUser =
+                auth.currentUser;
 
-                    views:
-                      firebase.firestore
-                        .FieldValue
-                        .increment(1)
 
-                  });
+              if (!currentUser) {
 
-                const currentViews =
-                  Number(
-                    video.views || 0
-                  ) + 1;
+                player.pause();
 
-                views.innerHTML =
-                  "👁️ Views: " +
-                  currentViews;
-
-              } catch (error) {
-
-                console.error(
-                  "VIEW COUNT ERROR:",
-                  error
+                alert(
+                  "ভিডিও দেখতে আগে Login করুন।"
                 );
+
+                return;
+
+              }
+
+
+              if (
+                window.SocialWorkVideo
+              ) {
+
+                await window
+                  .SocialWorkVideo
+                  .countVideoView(
+                    videoId,
+                    currentUser.uid,
+                    views
+                  );
 
               }
 
             }
           );
+
+
+          /*
+           * Watch-time + reward
+           */
+
+          if (
+            window.SocialWorkVideo
+          ) {
+
+            window
+              .SocialWorkVideo
+              .setupVideoReward(
+                player,
+                videoId,
+                video.ownerId || "",
+                goldElement,
+                watchElement
+              );
+
+          }
 
         }
 
@@ -687,7 +769,11 @@
           seconds =
             Math.max(
               0,
-              Math.floor(seconds)
+              Math.floor(
+                Number(
+                  seconds || 0
+                )
+              )
             );
 
           const minutes =
@@ -703,41 +789,11 @@
             ":" +
             String(
               remaining
-            ).padStart(2, "0")
+            ).padStart(
+              2,
+              "0"
+            )
           );
-
-        }
-
-
-        /*
-         * Basic text escaping
-         */
-
-        function escapeText(
-          text
-        ) {
-
-          return String(text)
-            .replace(
-              /&/g,
-              "&amp;"
-            )
-            .replace(
-              /</g,
-              "&lt;"
-            )
-            .replace(
-              />/g,
-              "&gt;"
-            )
-            .replace(
-              /"/g,
-              "&quot;"
-            )
-            .replace(
-              /'/g,
-              "&#039;"
-            );
 
         }
 
