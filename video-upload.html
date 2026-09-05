@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ভিডিও আপলোড - SocialWorkBD</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+  <style>
+    .video-upload-box {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 24px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .video-upload-box h2 {
+      margin-bottom: 10px;
+    }
+
+    .upload-info {
+      background: #f5f7fa;
+      padding: 14px;
+      border-radius: 10px;
+      margin: 15px 0;
+      line-height: 1.7;
+    }
+
+    .video-preview {
+      width: 100%;
+      max-height: 320px;
+      margin-top: 15px;
+      border-radius: 12px;
+      display: none;
+      background: #000;
+    }
+
+    .progress-wrap {
+      display: none;
+      margin-top: 18px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: #2563eb;
+      transition: width 0.2s;
+    }
+
+    .progress-text {
+      text-align: center;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container">
+
+      <h1>SocialWorkBD</h1>
+
+      <p>ভিডিও আপলোড করুন</p>
+
+      <nav>
+        <a href="index.html">হোম</a>
+        <a href="videos.html">ভিডিও</a>
+        <a href="profile.html">প্রোফাইল</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="video-upload-box">
+
+      <h2>🎬 ভিডিও আপলোড</h2>
+
+      <p>
+        আপনার ভিডিও আপলোড করুন। Upload হওয়ার পরে ভিডিওটি
+        Review/Pending অবস্থায় থাকবে।
+      </p>
+
+      <div class="upload-info">
+        <strong>ভিডিও নিয়ম:</strong><br>
+        ✅ Format: MP4<br>
+        ✅ Recommended Codec: H.264<br>
+        ✅ Maximum Size: 100 MB<br>
+        ✅ Maximum Duration: 10 মিনিট<br>
+        ❌ অন্য Format গ্রহণ করা হবে না
+      </div>
+
+      <form id="video-upload-form">
+
+        <label for="video-title">
+          ভিডিওর Title
+        </label>
+
+        <input
+          type="text"
+          id="video-title"
+          placeholder="ভিডিওর নাম লিখুন"
+          maxlength="100"
+          required
+        >
+
+        <label for="video-description">
+          Description
+        </label>
+
+        <textarea
+          id="video-description"
+          placeholder="ভিডিও সম্পর্কে সংক্ষেপে লিখুন"
+          maxlength="500"
+          rows="5"
+        ></textarea>
+
+        <label for="video-file">
+          ভিডিও নির্বাচন করুন
+        </label>
+
+        <input
+          type="file"
+          id="video-file"
+          accept="video/mp4"
+          required
+        >
+
+        <video
+          id="video-preview"
+          class="video-preview"
+          controls
+          preload="metadata"
+        ></video>
+
+        <div
+          id="file-info"
+          style="margin-top:10px;font-size:14px;"
+        ></div>
+
+        <div
+          id="progress-wrap"
+          class="progress-wrap"
+        >
+
+          <div class="progress-bar-bg">
+            <div
+              id="progress-bar"
+              class="progress-bar"
+            ></div>
+          </div>
+
+          <div
+            id="progress-text"
+            class="progress-text"
+          >
+            0%
+          </div>
+
+        </div>
+
+        <button
+          type="submit"
+          id="upload-video-btn"
+          style="margin-top:18px;"
+        >
+          🎬 ভিডিও Upload করুন
+        </button>
+
+      </form>
+
+      <a
+        href="videos.html"
+        class="back-link"
+      >
+        ← ভিডিও Feed-এ যান
+      </a>
+
+    </section>
+
+  </main>
+
+  <footer>
+
+    <div class="container">
+
+      <p>© 2026 SocialWorkBD</p>
+
+      <p>
+        বাংলাদেশি Freelance & Job Marketplace
+      </p>
+
+    </div>
+
+  </footer>
+
+  <!-- Firebase Configuration -->
+  <script src="firebase-config.js"></script>
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+      const form =
+        document.getElementById("video-upload-form");
+
+      const fileInput =
+        document.getElementById("video-file");
+
+      const preview =
+        document.getElementById("video-preview");
+
+      const fileInfo =
+        document.getElementById("file-info");
+
+      const uploadButton =
+        document.getElementById("upload-video-btn");
+
+      const progressWrap =
+        document.getElementById("progress-wrap");
+
+      const progressBar =
+        document.getElementById("progress-bar");
+
+      const progressText =
+        document.getElementById("progress-text");
+
+      const MAX_SIZE =
+        100 * 1024 * 1024;
+
+      const MAX_DURATION =
+        10 * 60;
+
+      let selectedFile = null;
+      let videoDuration = 0;
+
+      if (!window.auth || !window.db || !window.storage) {
+        alert(
+          "Firebase ঠিকভাবে load হয়নি।"
+        );
+        return;
+      }
+
+      /*
+       * Login check
+       */
+
+      auth.onAuthStateChanged((user) => {
+
+        if (!user) {
+
+          alert(
+            "ভিডিও Upload করতে আগে Login করুন।"
+          );
+
+          window.location.href =
+            "login.html";
+        }
+
+      });
+
+
+      /*
+       * File selection
+       */
+
+      fileInput.addEventListener(
+        "change",
+        () => {
+
+          selectedFile =
+            fileInput.files[0];
+
+          preview.style.display =
+            "none";
+
+          fileInfo.textContent =
+            "";
+
+          videoDuration = 0;
+
+          if (!selectedFile) {
+            return;
+          }
+
+
+          /*
+           * File type check
+           */
+
+          if (
+            selectedFile.type !==
+            "video/mp4"
+          ) {
+
+            alert(
+              "শুধু MP4 ভিডিও Upload করা যাবে।"
+            );
+
+            fileInput.value =
+              "";
+
+            selectedFile =
+              null;
+
+            return;
+          }
+
+
+          /*
+           * File size check
+           */
+
+          if (
+            selectedFile.size >
+            MAX_SIZE
+          ) {
+
+            alert(
+              "ভিডিওর সর্বোচ্চ Size 100 MB।"
+            );
+
+            fileInput.value =
+              "";
+
+            selectedFile =
+              null;
+
+            return;
+          }
+
+
+          /*
+           * Preview
+           */
+
+          const videoURL =
+            URL.createObjectURL(
+              selectedFile
+            );
+
+          preview.src =
+            videoURL;
+
+          preview.style.display =
+            "block";
+
+
+          /*
+           * Duration check
+           */
+
+          preview.onloadedmetadata =
+            () => {
+
+              videoDuration =
+                preview.duration;
+
+              if (
+                !isFinite(videoDuration) ||
+                videoDuration <= 0
+              ) {
+
+                alert(
+                  "ভিডিওর duration পড়া যাচ্ছে না।"
+                );
+
+                fileInput.value =
+                  "";
+
+                selectedFile =
+                  null;
+
+                preview.removeAttribute(
+                  "src"
+                );
+
+                preview.style.display =
+                  "none";
+
+                return;
+              }
+
+
+              if (
+                videoDuration >
+                MAX_DURATION
+              ) {
+
+                alert(
+                  "ভিডিওর সর্বোচ্চ duration 10 মিনিট।"
+                );
+
+                fileInput.value =
+                  "";
+
+                selectedFile =
+                  null;
+
+                preview.removeAttribute(
+                  "src"
+                );
+
+                preview.style.display =
+                  "none";
+
+                return;
+              }
+
+
+              const sizeMB =
+                (
+                  selectedFile.size /
+                  (1024 * 1024)
+                ).toFixed(2);
+
+              const durationMinutes =
+                Math.floor(
+                  videoDuration / 60
+                );
+
+              const durationSeconds =
+                Math.floor(
+                  videoDuration % 60
+                );
+
+              fileInfo.innerHTML =
+                "📁 Size: " +
+                sizeMB +
+                " MB<br>" +
+                "⏱️ Duration: " +
+                durationMinutes +
+                " মিনিট " +
+                durationSeconds +
+                " সেকেন্ড<br>" +
+                "🎬 Type: MP4";
+
+            };
+
+        }
+      );
+
+
+      /*
+       * Upload
+       */
+
+      form.addEventListener(
+        "submit",
+        async (e) => {
+
+          e.preventDefault();
+
+          const user =
+            auth.currentUser;
+
+          if (!user) {
+
+            alert(
+              "আগে Login করুন।"
+            );
+
+            window.location.href =
+              "login.html";
+
+            return;
+          }
+
+          if (!selectedFile) {
+
+            alert(
+              "একটি MP4 ভিডিও নির্বাচন করুন।"
+            );
+
+            return;
+          }
+
+
+          const title =
+            document
+              .getElementById(
+                "video-title"
+              )
+              .value
+              .trim();
+
+          const description =
+            document
+              .getElementById(
+                "video-description"
+              )
+              .value
+              .trim();
+
+
+          if (!title) {
+
+            alert(
+              "ভিডিওর Title লিখুন।"
+            );
+
+            return;
+          }
+
+
+          if (
+            selectedFile.type !==
+            "video/mp4"
+          ) {
+
+            alert(
+              "শুধু MP4 ভিডিও গ্রহণ করা হবে।"
+            );
+
+            return;
+          }
+
+
+          if (
+            selectedFile.size >
+            MAX_SIZE
+          ) {
+
+            alert(
+              "ভিডিও 100 MB-এর বেশি হতে পারবে না।"
+            );
+
+            return;
+          }
+
+
+          if (
+            !videoDuration ||
+            videoDuration >
+            MAX_DURATION
+          ) {
+
+            alert(
+              "ভিডিওর duration 10 মিনিটের বেশি হতে পারবে না।"
+            );
+
+            return;
+          }
+
+
+          try {
+
+            uploadButton.disabled =
+              true;
+
+            uploadButton.textContent =
+              "Upload হচ্ছে...";
+
+            progressWrap.style.display =
+              "block";
+
+
+            /*
+             * Create video document ID first
+             */
+
+            const videoRef =
+              db.collection("videos")
+                .doc();
+
+            const videoId =
+              videoRef.id;
+
+
+            /*
+             * Storage path
+             */
+
+            const storagePath =
+              "videos/" +
+              user.uid +
+              "/" +
+              videoId +
+              ".mp4";
+
+
+            const storageRef =
+              storage.ref(
+                storagePath
+              );
+
+
+            /*
+             * Upload metadata
+             */
+
+            const metadata = {
+
+              contentType:
+                "video/mp4",
+
+              customMetadata: {
+
+                ownerId:
+                  user.uid,
+
+                videoId:
+                  videoId
+
+              }
+
+            };
+
+
+            /*
+             * Resumable upload
+             */
+
+            const uploadTask =
+              storageRef.put(
+                selectedFile,
+                metadata
+              );
+
+
+            uploadTask.on(
+              firebase.storage.TaskEvent.STATE_CHANGED,
+
+              (snapshot) => {
+
+                const progress =
+                  (
+                    snapshot.bytesTransferred /
+                    snapshot.totalBytes
+                  ) * 100;
+
+                const rounded =
+                  Math.round(
+                    progress
+                  );
+
+                progressBar.style.width =
+                  rounded + "%";
+
+                progressText.textContent =
+                  "Upload: " +
+                  rounded +
+                  "%";
+
+              },
+
+              (error) => {
+
+                console.error(
+                  "VIDEO UPLOAD ERROR:",
+                  error
+                );
+
+                alert(
+                  "ভিডিও Upload করা যায়নি।\n\n" +
+                  (
+                    error.message ||
+                    "Unknown error"
+                  )
+                );
+
+                uploadButton.disabled =
+                  false;
+
+                uploadButton.textContent =
+                  "🎬 ভিডিও Upload করুন";
+
+              },
+
+              async () => {
+
+                try {
+
+                  const downloadURL =
+                    await uploadTask
+                      .snapshot
+                      .ref
+                      .getDownloadURL();
+
+
+                  /*
+                   * Save video information
+                   */
+
+                  await videoRef.set({
+
+                    videoId:
+                      videoId,
+
+                    ownerId:
+                      user.uid,
+
+                    ownerName:
+                      user.displayName ||
+                      user.email?.split("@")[0] ||
+                      "User",
+
+                    title:
+                      title,
+
+                    description:
+                      description,
+
+                    downloadURL:
+                      downloadURL,
+
+                    storagePath:
+                      storagePath,
+
+                    fileName:
+                      selectedFile.name,
+
+                    fileSize:
+                      selectedFile.size,
+
+                    contentType:
+                      "video/mp4",
+
+                    duration:
+                      Math.round(
+                        videoDuration
+                      ),
+
+                    views:
+                      0,
+
+                    totalWatchSeconds:
+                      0,
+
+                    status:
+                      "pending",
+
+                    earnedMHR:
+                      0,
+
+                    createdAt:
+                      firebase.firestore
+                        .FieldValue
+                        .serverTimestamp(),
+
+                    updatedAt:
+                      firebase.firestore
+                        .FieldValue
+                        .serverTimestamp()
+
+                  });
+
+
+                  progressBar.style.width =
+                    "100%";
+
+                  progressText.textContent =
+                    "Upload সম্পন্ন হয়েছে!";
+
+
+                  alert(
+                    "ভিডিও সফলভাবে Upload হয়েছে।\n\n" +
+                    "এখন ভিডিওটি Review/Pending অবস্থায় আছে।"
+                  );
+
+
+                  form.reset();
+
+                  selectedFile =
+                    null;
+
+                  videoDuration =
+                    0;
+
+                  preview.removeAttribute(
+                    "src"
+                  );
+
+                  preview.style.display =
+                    "none";
+
+                  fileInfo.textContent =
+                    "";
+
+                  progressWrap.style.display =
+                    "none";
+
+                  uploadButton.disabled =
+                    false;
+
+                  uploadButton.textContent =
+                    "🎬 ভিডিও Upload করুন";
+
+
+                  window.location.href =
+                    "videos.html";
+
+                } catch (error) {
+
+                  console.error(
+                    "VIDEO DATABASE ERROR:",
+                    error
+                  );
+
+                  alert(
+                    "ভিডিও Upload হয়েছে, কিন্তু তথ্য Save করতে সমস্যা হয়েছে।\n\n" +
+                    (
+                      error.message ||
+                      "Unknown error"
+                    )
+                  );
+
+                  uploadButton.disabled =
+                    false;
+
+                  uploadButton.textContent =
+                    "🎬 ভিডিও Upload করুন";
+                }
+
+              }
+            );
+
+          } catch (error) {
+
+            console.error(
+              "VIDEO ERROR:",
+              error
+            );
+
+            alert(
+              "কাজটি করা যায়নি।\n\n" +
+              (
+                error.message ||
+                "Unknown error"
+              )
+            );
+
+            uploadButton.disabled =
+              false;
+
+            uploadButton.textContent =
+              "🎬 ভিডিও Upload করুন";
+
+          }
+
+        }
+      );
+
+    });
+
+  </script>
+
+</body>
+</html>
