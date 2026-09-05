@@ -1,15 +1,31 @@
+// ==========================================
+// SocialWorkBD
+// Firebase Authentication + Firestore
+// ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
-  const path = window.location.pathname;
 
   // ==========================================
-  // SocialWorkBD
-  // Firebase Authentication + Firestore
+  // Firebase Safety Check
   // ==========================================
 
-  // ------------------------------------------
-  // Local Storage Helpers
-  // ------------------------------------------
+  const auth = window.auth || null;
+  const db = window.db || null;
+
+  function firebaseReady() {
+    if (!auth || !db) {
+      alert(
+        "Firebase load হয়নি।\n\n" +
+        "firebase-config.js এবং Firebase SDK ঠিকভাবে যুক্ত আছে কি না দেখুন।"
+      );
+      return false;
+    }
+    return true;
+  }
+
+  // ==========================================
+  // Storage Helpers
+  // ==========================================
 
   function getJobs() {
     return JSON.parse(localStorage.getItem("jobs") || "[]");
@@ -28,11 +44,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getCurrentUser() {
-    return JSON.parse(localStorage.getItem("currentUser") || "null");
+    return JSON.parse(
+      localStorage.getItem("currentUser") || "null"
+    );
   }
 
   function setCurrentUser(user) {
-    localStorage.setItem("currentUser", JSON.stringify(user));
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify(user)
+    );
   }
 
   function clearCurrentUser() {
@@ -45,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function requireLogin() {
     if (!isLoggedIn()) {
-      alert("এই কাজটি করতে আগে লগইন করুন।");
+      alert("এই কাজটি করতে আগে Login করুন।");
       window.location.href = "login.html";
       return false;
     }
@@ -62,79 +83,96 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/'/g, "&#039;");
   }
 
-  // ------------------------------------------
-  // Firebase Check
-  // ------------------------------------------
-
-  if (typeof firebase === "undefined") {
-    console.error("Firebase SDK পাওয়া যায়নি।");
-  }
-
-  // ------------------------------------------
+  // ==========================================
   // SIGNUP
-  // ------------------------------------------
+  // ==========================================
 
-  if (path.includes("signup.html")) {
-    const form = document.getElementById("signup-form");
+  const signupForm =
+    document.getElementById("signup-form");
 
-    if (form) {
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+  if (signupForm) {
 
-        const nameInput = document.getElementById("name");
-        const emailInput = document.getElementById("email");
-        const passwordInput = document.getElementById("password");
-        const confirmPasswordInput =
-          document.getElementById("confirm-password");
+    signupForm.addEventListener("submit", async (e) => {
 
-        const roleInput = document.getElementById("role");
-        const skillsInput = document.getElementById("skills");
+      e.preventDefault();
 
-        const name = nameInput ? nameInput.value.trim() : "";
-        const email = emailInput ? emailInput.value.trim() : "";
-        const password = passwordInput ? passwordInput.value : "";
-        const confirmPassword = confirmPasswordInput
-          ? confirmPasswordInput.value
-          : password;
+      if (!firebaseReady()) return;
 
-        const role = roleInput ? roleInput.value : "worker";
-        const skills = skillsInput ? skillsInput.value.trim() : "";
+      const name =
+        document.getElementById("name")?.value.trim();
 
-        if (!name || !email || !password) {
-          alert("সব প্রয়োজনীয় তথ্য পূরণ করুন।");
-          return;
-        }
+      const email =
+        document.getElementById("email")?.value.trim();
 
-        if (password !== confirmPassword) {
-          alert("পাসওয়ার্ড দুটি একই নয়।");
-          return;
-        }
+      const password =
+        document.getElementById("password")?.value;
 
-        if (password.length < 6) {
-          alert("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।");
-          return;
-        }
+      const confirmPassword =
+        document.getElementById("confirm-password")?.value;
 
-        if (role === "worker" && !skills) {
-          alert("Worker হলে আপনার Skills লিখুন।");
-          return;
-        }
+      const role =
+        document.getElementById("role")?.value;
 
+      const skills =
+        document.getElementById("skills")?.value.trim() || "";
+
+      // ------------------------------
+      // Validation
+      // ------------------------------
+
+      if (!name || !email || !password || !confirmPassword) {
+        alert("সব প্রয়োজনীয় তথ্য পূরণ করুন।");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert("Password এবং Confirm Password মিলছে না।");
+        return;
+      }
+
+      if (password.length < 6) {
+        alert("Password কমপক্ষে 6 অক্ষরের হতে হবে।");
+        return;
+      }
+
+      if (role === "worker" && !skills) {
+        alert("Worker হলে আপনার Skills লিখুন।");
+        return;
+      }
+
+      // ------------------------------
+      // Create Firebase User
+      // ------------------------------
+
+      try {
+
+        const userCredential =
+          await auth.createUserWithEmailAndPassword(
+            email,
+            password
+          );
+
+        const firebaseUser =
+          userCredential.user;
+
+        // Display Name
         try {
-          const userCredential =
-            await auth.createUserWithEmailAndPassword(
-              email,
-              password
-            );
-
-          const firebaseUser = userCredential.user;
-
-          // Firebase profile name
           await firebaseUser.updateProfile({
             displayName: name
           });
+        } catch (profileError) {
+          console.warn(
+            "Profile name update failed:",
+            profileError
+          );
+        }
 
-          // Firestore user profile
+        // ------------------------------
+        // Firestore User Profile
+        // ------------------------------
+
+        try {
+
           await db
             .collection("users")
             .doc(firebaseUser.uid)
@@ -142,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
               uid: firebaseUser.uid,
               name: name,
               email: email,
-              role: role,
+              role: role || "worker",
               skills: skills,
               balance: 0,
               pendingBalance: 0,
@@ -150,673 +188,853 @@ document.addEventListener("DOMContentLoaded", () => {
                 firebase.firestore.FieldValue.serverTimestamp()
             });
 
-          const userData = {
+        } catch (firestoreError) {
+
+          console.error(
+            "Firestore profile error:",
+            firestoreError
+          );
+
+          // Account exists even if profile save fails.
+          alert(
+            "Account তৈরি হয়েছে, কিন্তু Profile save করতে সমস্যা হয়েছে।\n\n" +
+            "Error: " +
+            (firestoreError.code || firestoreError.message)
+          );
+
+          setCurrentUser({
             id: firebaseUser.uid,
             name: name,
             email: email,
-            role: role,
+            role: role || "worker",
             skills: skills,
             balance: 0,
             pendingBalance: 0
-          };
-
-          setCurrentUser(userData);
-
-          alert("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
+          });
 
           window.location.href = "index.html";
-
-        } catch (error) {
-          console.error("Signup Error:", error);
-
-          switch (error.code) {
-            case "auth/email-already-in-use":
-              alert("এই ইমেইল দিয়ে ইতিমধ্যে একটি অ্যাকাউন্ট আছে।");
-              break;
-
-            case "auth/invalid-email":
-              alert("ইমেইল ঠিক নয়।");
-              break;
-
-            case "auth/weak-password":
-              alert("পাসওয়ার্ড আরও শক্তিশালী দিন।");
-              break;
-
-            case "auth/operation-not-allowed":
-              alert("Firebase Email/Password Authentication চালু নেই।");
-              break;
-
-            default:
-              alert(
-                "Signup করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।\n\n" +
-                error.message
-              );
-          }
-        }
-      });
-    }
-  }
-
-  // ------------------------------------------
-  // LOGIN
-  // ------------------------------------------
-
-  if (path.includes("login.html")) {
-    const form = document.getElementById("login-form");
-
-    if (form) {
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const emailInput = document.getElementById("email");
-        const passwordInput = document.getElementById("password");
-
-        const email = emailInput
-          ? emailInput.value.trim()
-          : "";
-
-        const password = passwordInput
-          ? passwordInput.value
-          : "";
-
-        if (!email || !password) {
-          alert("ইমেইল ও পাসওয়ার্ড দিন।");
           return;
         }
 
+        // ------------------------------
+        // Save Local Session
+        // ------------------------------
+
+        setCurrentUser({
+          id: firebaseUser.uid,
+          name: name,
+          email: email,
+          role: role || "worker",
+          skills: skills,
+          balance: 0,
+          pendingBalance: 0
+        });
+
+        alert("Signup সফল হয়েছে!");
+
+        window.location.href = "index.html";
+
+      } catch (error) {
+
+        console.error("SIGNUP ERROR:", error);
+
+        let message =
+          error.code ||
+          error.message ||
+          "Unknown Firebase error";
+
+        switch (error.code) {
+
+          case "auth/email-already-in-use":
+            message =
+              "এই Email দিয়ে ইতিমধ্যে Account আছে।";
+            break;
+
+          case "auth/invalid-email":
+            message =
+              "Email address সঠিক নয়।";
+            break;
+
+          case "auth/weak-password":
+            message =
+              "Password দুর্বল। কমপক্ষে 6 অক্ষর ব্যবহার করুন।";
+            break;
+
+          case "auth/operation-not-allowed":
+            message =
+              "Firebase Email/Password Authentication চালু নেই।";
+            break;
+
+          case "auth/invalid-api-key":
+            message =
+              "Firebase API key invalid। firebase-config.js-এর API key পরীক্ষা করুন।";
+            break;
+
+          case "auth/api-key-not-valid":
+            message =
+              "Firebase API key valid নয়। Firebase Project-এর Web App config থেকে সঠিক API key দিন।";
+            break;
+
+          case "auth/network-request-failed":
+            message =
+              "Internet connection সমস্যা হয়েছে।";
+            break;
+
+          default:
+            message =
+              "Signup Error:\n\n" +
+              (error.code || "") +
+              "\n" +
+              (error.message || "");
+        }
+
+        alert(message);
+      }
+    });
+  }
+
+  // ==========================================
+  // LOGIN
+  // ==========================================
+
+  const loginForm =
+    document.getElementById("login-form");
+
+  if (loginForm) {
+
+    loginForm.addEventListener("submit", async (e) => {
+
+      e.preventDefault();
+
+      if (!firebaseReady()) return;
+
+      const email =
+        document.getElementById("email")?.value.trim();
+
+      const password =
+        document.getElementById("password")?.value;
+
+      if (!email || !password) {
+        alert("Email এবং Password দিন।");
+        return;
+      }
+
+      try {
+
+        // Firebase Login
+        const userCredential =
+          await auth.signInWithEmailAndPassword(
+            email,
+            password
+          );
+
+        const firebaseUser =
+          userCredential.user;
+
+        let profile = null;
+
+        // ------------------------------
+        // Load Firestore Profile
+        // ------------------------------
+
         try {
-          const userCredential =
-            await auth.signInWithEmailAndPassword(
-              email,
-              password
-            );
 
-          const firebaseUser = userCredential.user;
-
-          let userData = null;
-
-          // Firestore profile
-          try {
-            const doc = await db
+          const profileDoc =
+            await db
               .collection("users")
               .doc(firebaseUser.uid)
               .get();
 
-            if (doc.exists) {
-              const data = doc.data();
-
-              userData = {
-                id: firebaseUser.uid,
-                name:
-                  data.name ||
-                  firebaseUser.displayName ||
-                  "User",
-                email:
-                  data.email ||
-                  firebaseUser.email ||
-                  "",
-                role: data.role || "worker",
-                skills: data.skills || "",
-                balance: Number(data.balance || 0),
-                pendingBalance: Number(
-                  data.pendingBalance || 0
-                )
-              };
-            }
-          } catch (firestoreError) {
-            console.warn(
-              "Firestore profile পাওয়া যায়নি:",
-              firestoreError
-            );
+          if (profileDoc.exists) {
+            profile = profileDoc.data();
           }
 
-          // Fallback profile
-          if (!userData) {
-            userData = {
-              id: firebaseUser.uid,
-              name:
-                firebaseUser.displayName ||
-                "User",
-              email:
-                firebaseUser.email ||
-                email,
-              role: "worker",
-              skills: "",
-              balance: 0,
-              pendingBalance: 0
-            };
-          }
+        } catch (firestoreError) {
 
-          setCurrentUser(userData);
-
-          alert("লগইন সফল হয়েছে!");
-
-          window.location.href = "index.html";
-
-        } catch (error) {
-          console.error("Login Error:", error);
-
-          switch (error.code) {
-            case "auth/user-not-found":
-              alert("এই ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি।");
-              break;
-
-            case "auth/wrong-password":
-              alert("পাসওয়ার্ড ভুল।");
-              break;
-
-            case "auth/invalid-credential":
-              alert("ইমেইল অথবা পাসওয়ার্ড ভুল।");
-              break;
-
-            case "auth/invalid-email":
-              alert("ইমেইল ঠিক নয়।");
-              break;
-
-            case "auth/too-many-requests":
-              alert(
-                "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।"
-              );
-              break;
-
-            default:
-              alert(
-                "লগইন করতে সমস্যা হয়েছে।\n\n" +
-                error.message
-              );
-          }
-        }
-      });
-    }
-
-    // ----------------------------------------
-    // FORGOT PASSWORD
-    // ----------------------------------------
-
-    const forgotPassword =
-      document.getElementById("forgot-password");
-
-    if (forgotPassword) {
-      forgotPassword.addEventListener("click", async (e) => {
-        e.preventDefault();
-
-        const emailInput =
-          document.getElementById("email");
-
-        const email = emailInput
-          ? emailInput.value.trim()
-          : "";
-
-        if (!email) {
-          alert(
-            "প্রথমে আপনার ইমেইল লিখুন। তারপর 'পাসওয়ার্ড ভুলে গেছেন?' চাপুন।"
+          console.warn(
+            "Profile load failed:",
+            firestoreError
           );
-
-          if (emailInput) {
-            emailInput.focus();
-          }
-
-          return;
         }
 
-        try {
-          await auth.sendPasswordResetEmail(email);
+        // ------------------------------
+        // Fallback Profile
+        // ------------------------------
 
-          alert(
-            "Password reset link আপনার ইমেইলে পাঠানো হয়েছে।\n\n" +
-            "Inbox না পেলে Spam/Junk folder-ও দেখুন।"
-          );
+        if (!profile) {
 
-        } catch (error) {
-          console.error(
-            "Password Reset Error:",
-            error
-          );
-
-          switch (error.code) {
-            case "auth/user-not-found":
-              alert(
-                "এই ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি।"
-              );
-              break;
-
-            case "auth/invalid-email":
-              alert("ইমেইল ঠিক নয়।");
-              break;
-
-            case "auth/too-many-requests":
-              alert(
-                "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।"
-              );
-              break;
-
-            default:
-              alert(
-                "Password reset করতে সমস্যা হয়েছে।\n\n" +
-                error.message
-              );
-          }
+          profile = {
+            uid: firebaseUser.uid,
+            name:
+              firebaseUser.displayName ||
+              email.split("@")[0],
+            email: firebaseUser.email,
+            role: "worker",
+            skills: "",
+            balance: 0,
+            pendingBalance: 0
+          };
         }
-      });
-    }
+
+        // ------------------------------
+        // Save Current User
+        // ------------------------------
+
+        setCurrentUser({
+          id: firebaseUser.uid,
+          name:
+            profile.name ||
+            firebaseUser.displayName ||
+            email.split("@")[0],
+          email:
+            firebaseUser.email || email,
+          role:
+            profile.role || "worker",
+          skills:
+            profile.skills || "",
+          balance:
+            Number(profile.balance || 0),
+          pendingBalance:
+            Number(profile.pendingBalance || 0)
+        });
+
+        alert("Login সফল হয়েছে!");
+
+        window.location.href = "index.html";
+
+      } catch (error) {
+
+        console.error("LOGIN ERROR:", error);
+
+        let message = "";
+
+        switch (error.code) {
+
+          case "auth/user-not-found":
+            message =
+              "এই Email দিয়ে কোনো Account পাওয়া যায়নি।";
+            break;
+
+          case "auth/wrong-password":
+            message =
+              "Password ভুল হয়েছে।";
+            break;
+
+          case "auth/invalid-credential":
+            message =
+              "Email অথবা Password সঠিক নয়।";
+            break;
+
+          case "auth/invalid-email":
+            message =
+              "Email address সঠিক নয়।";
+            break;
+
+          case "auth/user-disabled":
+            message =
+              "এই Account বন্ধ করে দেওয়া হয়েছে।";
+            break;
+
+          case "auth/too-many-requests":
+            message =
+              "অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।";
+            break;
+
+          case "auth/network-request-failed":
+            message =
+              "Internet connection সমস্যা হয়েছে।";
+            break;
+
+          case "auth/invalid-api-key":
+          case "auth/api-key-not-valid":
+            message =
+              "Firebase API key invalid।\n\n" +
+              "Error code: " +
+              error.code;
+            break;
+
+          case "auth/operation-not-allowed":
+            message =
+              "Firebase Email/Password Login চালু নেই।";
+            break;
+
+          default:
+            message =
+              "Login Error\n\n" +
+              "Code: " +
+              (error.code || "unknown") +
+              "\n\n" +
+              "Message: " +
+              (error.message || "Unknown error");
+        }
+
+        alert(message);
+      }
+    });
   }
 
-  // ------------------------------------------
+  // ==========================================
+  // FORGOT PASSWORD
+  // ==========================================
+
+  const forgotPassword =
+    document.getElementById("forgot-password");
+
+  if (forgotPassword) {
+
+    forgotPassword.addEventListener("click", async (e) => {
+
+      e.preventDefault();
+
+      if (!firebaseReady()) return;
+
+      const emailInput =
+        document.getElementById("email");
+
+      const email =
+        emailInput?.value.trim();
+
+      if (!email) {
+
+        alert(
+          "আগে Email লিখুন।\n\n" +
+          "তারপর Forgot Password চাপুন।"
+        );
+
+        emailInput?.focus();
+
+        return;
+      }
+
+      try {
+
+        await auth.sendPasswordResetEmail(email);
+
+        alert(
+          "Password reset link আপনার Email-এ পাঠানো হয়েছে।\n\n" +
+          "Inbox এবং Spam/Junk folder দুটোই দেখুন।"
+        );
+
+      } catch (error) {
+
+        console.error(
+          "FORGOT PASSWORD ERROR:",
+          error
+        );
+
+        let message = "";
+
+        switch (error.code) {
+
+          case "auth/user-not-found":
+            message =
+              "এই Email দিয়ে কোনো Account পাওয়া যায়নি।";
+            break;
+
+          case "auth/invalid-email":
+            message =
+              "Email address সঠিক নয়।";
+            break;
+
+          case "auth/too-many-requests":
+            message =
+              "অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।";
+            break;
+
+          case "auth/invalid-api-key":
+          case "auth/api-key-not-valid":
+            message =
+              "Firebase API key invalid।\n\n" +
+              "Code: " +
+              error.code;
+            break;
+
+          case "auth/network-request-failed":
+            message =
+              "Internet connection সমস্যা হয়েছে।";
+            break;
+
+          default:
+            message =
+              "Forgot Password Error\n\n" +
+              "Code: " +
+              (error.code || "unknown") +
+              "\n\n" +
+              "Message: " +
+              (error.message || "Unknown error");
+        }
+
+        alert(message);
+      }
+    });
+  }
+
+  // ==========================================
   // LOGOUT
-  // ------------------------------------------
+  // ==========================================
 
   const logoutBtn =
     document.getElementById("logout-btn");
 
   if (logoutBtn) {
-    logoutBtn.addEventListener("click", async (e) => {
-      e.preventDefault();
+
+    logoutBtn.addEventListener("click", async () => {
 
       try {
-        await auth.signOut();
+
+        if (auth) {
+          await auth.signOut();
+        }
 
         clearCurrentUser();
+
+        alert("Logout হয়েছে।");
 
         window.location.href = "index.html";
 
       } catch (error) {
-        console.error("Logout Error:", error);
-        alert("Logout করতে সমস্যা হয়েছে।");
+
+        console.error(
+          "LOGOUT ERROR:",
+          error
+        );
+
+        alert(
+          "Logout Error:\n\n" +
+          (error.code || error.message)
+        );
       }
     });
   }
 
-  // ------------------------------------------
-  // FIREBASE AUTH STATE
-  // ------------------------------------------
+  // ==========================================
+  // Firebase Auth State
+  // ==========================================
 
-  if (
-    typeof auth !== "undefined" &&
-    auth &&
-    typeof auth.onAuthStateChanged === "function"
-  ) {
-    auth.onAuthStateChanged(async (firebaseUser) => {
+  if (auth) {
 
-      if (!firebaseUser) {
-        return;
-      }
+    auth.onAuthStateChanged((firebaseUser) => {
 
-      // Login/signup already stores current user.
-      // This keeps Firebase session connected.
       console.log(
-        "Firebase user:",
-        firebaseUser.email
+        "Firebase Auth State:",
+        firebaseUser
+          ? firebaseUser.email
+          : "Logged out"
       );
+
     });
   }
 
-  // ------------------------------------------
-  // HOME PAGE
-  // ------------------------------------------
+  // ==========================================
+  // HOME / JOB SEARCH
+  // ==========================================
 
-  if (
-    path.endsWith("/") ||
-    path.includes("index.html") ||
-    path === ""
-  ) {
+  const jobsContainer =
+    document.getElementById("jobs-container");
+
+  if (jobsContainer) {
+
     const jobs = getJobs();
 
-    const jobsContainer =
-      document.getElementById("jobs-list");
+    if (jobs.length === 0) {
 
-    if (jobsContainer) {
+      jobsContainer.innerHTML =
+        "<p>এখনও কোনো Job পোস্ট করা হয়নি।</p>";
 
-      if (jobs.length === 0) {
-        jobsContainer.innerHTML =
-          "<p>এখনও কোনো Job পোস্ট করা হয়নি।</p>";
-      } else {
+    } else {
 
-        jobsContainer.innerHTML = jobs
-          .map((job) => {
+      jobsContainer.innerHTML =
+        jobs.map((job) => {
 
-            return `
-              <div class="job-card">
+          return `
+            <div class="job-card">
 
-                <h3>${escapeHTML(job.title)}</h3>
+              <h3>${escapeHTML(job.title)}</h3>
 
-                <p>
-                  ${escapeHTML(job.description)}
-                </p>
+              <p>
+                ${escapeHTML(job.description || "")}
+              </p>
 
-                <p>
-                  <strong>Budget:</strong>
-                  ৳${escapeHTML(job.budget)}
-                </p>
+              <p>
+                <strong>Budget:</strong>
+                ${escapeHTML(job.budget || "N/A")}
+              </p>
 
-                <p>
-                  <strong>Category:</strong>
-                  ${escapeHTML(job.category || "General")}
-                </p>
+              <a href="job-details.html?id=${encodeURIComponent(job.id)}">
+                View Job
+              </a>
 
-                <a href="job.html?id=${encodeURIComponent(job.id)}">
-                  Job Details
-                </a>
+            </div>
+          `;
 
-              </div>
-            `;
-          })
-          .join("");
-      }
+        }).join("");
     }
   }
 
-  // ------------------------------------------
+  // ==========================================
   // POST JOB
-  // ------------------------------------------
+  // ==========================================
 
-  if (path.includes("post-job.html")) {
+  const postJobForm =
+    document.getElementById("post-job-form");
 
-    if (!requireLogin()) {
-      return;
-    }
+  if (postJobForm) {
 
-    const user = getCurrentUser();
+    if (!requireLogin()) return;
 
-    if (!user || user.role !== "client") {
+    const currentUser =
+      getCurrentUser();
+
+    if (
+      currentUser &&
+      currentUser.role !== "client"
+    ) {
+
       alert(
-        "শুধুমাত্র Client Job পোস্ট করতে পারবেন।"
+        "শুধু Client Job পোস্ট করতে পারবেন।"
       );
 
-      window.location.href = "index.html";
+      window.location.href =
+        "index.html";
+
       return;
     }
 
-    const form =
-      document.getElementById("job-form");
+    postJobForm.addEventListener(
+      "submit",
+      (e) => {
 
-    if (form) {
-
-      form.addEventListener("submit", (e) => {
         e.preventDefault();
 
         const title =
           document.getElementById("title")?.value.trim();
 
         const description =
-          document
-            .getElementById("description")
-            ?.value.trim();
+          document.getElementById("description")?.value.trim();
 
         const budget =
-          document
-            .getElementById("budget")
-            ?.value.trim();
-
-        const category =
-          document
-            .getElementById("category")
-            ?.value.trim();
+          document.getElementById("budget")?.value.trim();
 
         if (!title || !description || !budget) {
-          alert("সব প্রয়োজনীয় তথ্য পূরণ করুন।");
+
+          alert(
+            "সব তথ্য পূরণ করুন।"
+          );
+
           return;
         }
 
-        const jobs = getJobs();
+        const jobs =
+          getJobs();
 
-        const newJob = {
+        const job = {
+
           id:
             Date.now().toString(),
-          title: title,
-          description: description,
-          budget: budget,
-          category: category || "General",
-          clientId: user.id,
-          clientName: user.name,
+
+          title:
+            title,
+
+          description:
+            description,
+
+          budget:
+            budget,
+
+          clientId:
+            currentUser.id,
+
+          clientName:
+            currentUser.name,
+
           createdAt:
             new Date().toISOString()
         };
 
-        jobs.unshift(newJob);
+        jobs.push(job);
 
         saveJobs(jobs);
 
-        alert("Job সফলভাবে পোস্ট হয়েছে!");
+        alert(
+          "Job সফলভাবে পোস্ট হয়েছে!"
+        );
 
-        window.location.href = "index.html";
-      });
-    }
+        window.location.href =
+          "index.html";
+      }
+    );
   }
 
-  // ------------------------------------------
-  // JOB DETAILS + BID
-  // ------------------------------------------
+  // ==========================================
+  // JOB DETAILS / BID
+  // ==========================================
 
-  if (path.includes("job.html")) {
+  const bidForm =
+    document.getElementById("bid-form");
+
+  if (bidForm) {
+
+    if (!requireLogin()) return;
+
+    const currentUser =
+      getCurrentUser();
+
+    if (
+      currentUser &&
+      currentUser.role !== "worker"
+    ) {
+
+      alert(
+        "শুধু Worker Job-এ Bid করতে পারবেন।"
+      );
+
+      window.location.href =
+        "index.html";
+
+      return;
+    }
 
     const params =
-      new URLSearchParams(window.location.search);
+      new URLSearchParams(
+        window.location.search
+      );
 
-    const jobId = params.get("id");
+    const jobId =
+      params.get("id");
 
-    const jobs = getJobs();
+    const jobs =
+      getJobs();
 
     const job =
-      jobs.find((item) => item.id === jobId);
-
-    const jobContainer =
-      document.getElementById("job-details");
+      jobs.find(
+        (item) =>
+          String(item.id) === String(jobId)
+      );
 
     if (!job) {
 
-      if (jobContainer) {
-        jobContainer.innerHTML =
-          "<p>Job পাওয়া যায়নি।</p>";
-      }
+      alert("Job পাওয়া যায়নি।");
 
-    } else {
+      window.location.href =
+        "index.html";
 
-      if (jobContainer) {
+      return;
+    }
 
-        jobContainer.innerHTML = `
-          <div class="job-card">
+    if (
+      String(job.clientId) ===
+      String(currentUser.id)
+    ) {
 
-            <h2>
-              ${escapeHTML(job.title)}
-            </h2>
+      alert(
+        "নিজের Job-এ Bid করা যাবে না।"
+      );
 
-            <p>
-              ${escapeHTML(job.description)}
-            </p>
+      window.location.href =
+        "index.html";
 
-            <p>
-              <strong>Budget:</strong>
-              ৳${escapeHTML(job.budget)}
-            </p>
+      return;
+    }
 
-            <p>
-              <strong>Category:</strong>
-              ${escapeHTML(job.category)}
-            </p>
+    const jobTitle =
+      document.getElementById("job-title");
 
-            <p>
-              <strong>Client:</strong>
-              ${escapeHTML(job.clientName)}
-            </p>
+    const jobDescription =
+      document.getElementById("job-description");
 
-          </div>
-        `;
-      }
+    const jobBudget =
+      document.getElementById("job-budget");
 
-      const bidForm =
-        document.getElementById("bid-form");
+    if (jobTitle) {
+      jobTitle.textContent =
+        job.title;
+    }
 
-      if (bidForm) {
+    if (jobDescription) {
+      jobDescription.textContent =
+        job.description;
+    }
 
-        bidForm.addEventListener("submit", (e) => {
-          e.preventDefault();
+    if (jobBudget) {
+      jobBudget.textContent =
+        job.budget;
+    }
 
-          if (!requireLogin()) {
-            return;
-          }
+    bidForm.addEventListener(
+      "submit",
+      (e) => {
 
-          const user = getCurrentUser();
+        e.preventDefault();
 
-          if (user.role !== "worker") {
-            alert(
-              "শুধুমাত্র Worker Job-এ Bid করতে পারবেন।"
-            );
-            return;
-          }
+        const amount =
+          document.getElementById("bid-amount")
+            ?.value.trim();
 
-          if (job.clientId === user.id) {
-            alert(
-              "নিজের Job-এ Bid করা যাবে না।"
-            );
-            return;
-          }
+        const message =
+          document.getElementById("bid-message")
+            ?.value.trim();
 
-          const amount =
-            document
-              .getElementById("bid-amount")
-              ?.value.trim();
+        if (!amount) {
 
-          const message =
-            document
-              .getElementById("bid-message")
-              ?.value.trim();
+          alert(
+            "Bid amount দিন।"
+          );
 
-          if (!amount) {
-            alert("Bid amount দিন।");
-            return;
-          }
+          return;
+        }
 
-          const bids = getBids();
+        const bids =
+          getBids();
 
-          const existingBid =
-            bids.find(
-              (bid) =>
-                bid.jobId === job.id &&
-                bid.workerId === user.id
-            );
+        const alreadyBid =
+          bids.some(
+            (bid) =>
+              String(bid.jobId) ===
+                String(jobId) &&
+              String(bid.workerId) ===
+                String(currentUser.id)
+          );
 
-          if (existingBid) {
-            alert(
-              "আপনি এই Job-এ ইতিমধ্যে Bid করেছেন।"
-            );
-            return;
-          }
+        if (alreadyBid) {
 
-          const newBid = {
-            id:
-              Date.now().toString(),
-            jobId: job.id,
-            jobTitle: job.title,
-            workerId: user.id,
-            workerName: user.name,
-            amount: amount,
-            message: message || "",
-            createdAt:
-              new Date().toISOString()
-          };
+          alert(
+            "আপনি এই Job-এ ইতিমধ্যে Bid করেছেন।"
+          );
 
-          bids.push(newBid);
+          return;
+        }
 
-          saveBids(bids);
+        bids.push({
 
-          alert("আপনার Bid সফলভাবে জমা হয়েছে!");
+          id:
+            Date.now().toString(),
 
-          bidForm.reset();
+          jobId:
+            job.id,
+
+          workerId:
+            currentUser.id,
+
+          workerName:
+            currentUser.name,
+
+          amount:
+            amount,
+
+          message:
+            message,
+
+          createdAt:
+            new Date().toISOString()
         });
+
+        saveBids(bids);
+
+        alert(
+          "আপনার Bid সফলভাবে জমা হয়েছে!"
+        );
+
+        window.location.href =
+          "index.html";
       }
+    );
+  }
+
+  // ==========================================
+  // PROFILE
+  // ==========================================
+
+  const profileName =
+    document.getElementById("profile-name");
+
+  const profileEmail =
+    document.getElementById("profile-email");
+
+  const profileRole =
+    document.getElementById("profile-role");
+
+  const profileSkills =
+    document.getElementById("profile-skills");
+
+  if (
+    profileName ||
+    profileEmail ||
+    profileRole ||
+    profileSkills
+  ) {
+
+    if (!requireLogin()) return;
+
+    const currentUser =
+      getCurrentUser();
+
+    if (profileName) {
+      profileName.textContent =
+        currentUser.name || "";
+    }
+
+    if (profileEmail) {
+      profileEmail.textContent =
+        currentUser.email || "";
+    }
+
+    if (profileRole) {
+      profileRole.textContent =
+        currentUser.role || "";
+    }
+
+    if (profileSkills) {
+      profileSkills.textContent =
+        currentUser.skills || "N/A";
     }
   }
 
-  // ------------------------------------------
-  // PROFILE PAGE
-  // ------------------------------------------
-
-  if (path.includes("profile.html")) {
-
-    if (!requireLogin()) {
-      return;
-    }
-
-    const user = getCurrentUser();
-
-    const profileContainer =
-      document.getElementById("profile");
-
-    if (profileContainer && user) {
-
-      profileContainer.innerHTML = `
-        <div class="profile-card">
-
-          <h2>
-            ${escapeHTML(user.name)}
-          </h2>
-
-          <p>
-            <strong>Email:</strong>
-            ${escapeHTML(user.email)}
-          </p>
-
-          <p>
-            <strong>Role:</strong>
-            ${escapeHTML(user.role)}
-          </p>
-
-          <p>
-            <strong>Skills:</strong>
-            ${escapeHTML(user.skills || "Not added")}
-          </p>
-
-          <p>
-            <strong>Balance:</strong>
-            ৳${Number(user.balance || 0).toFixed(2)}
-          </p>
-
-          <p>
-            <strong>Pending Balance:</strong>
-            ৳${Number(
-              user.pendingBalance || 0
-            ).toFixed(2)}
-          </p>
-
-        </div>
-      `;
-    }
-  }
-
-  // ------------------------------------------
+  // ==========================================
   // DASHBOARD
-  // ------------------------------------------
+  // ==========================================
 
-  if (path.includes("dashboard.html")) {
+  const dashboard =
+    document.getElementById("dashboard");
 
-    if (!requireLogin()) {
-      return;
-    }
+  if (dashboard) {
 
-    const user = getCurrentUser();
+    if (!requireLogin()) return;
 
-    const jobs = getJobs();
-    const bids = getBids();
+    const currentUser =
+      getCurrentUser();
 
+    const jobs =
+      getJobs();
+
+    const bids =
+      getBids();
+
+    // Client jobs
     const myJobs =
       jobs.filter(
         (job) =>
-          job.clientId === user.id
+          String(job.clientId) ===
+          String(currentUser.id)
       );
 
+    // Worker bids
     const myBids =
       bids.filter(
         (bid) =>
-          bid.workerId === user.id
+          String(bid.workerId) ===
+          String(currentUser.id)
       );
 
     const myJobsContainer =
-      document.getElementById("my-jobs");
+      document.getElementById(
+        "my-jobs"
+      );
 
     const myBidsContainer =
-      document.getElementById("my-bids");
+      document.getElementById(
+        "my-bids"
+      );
 
-    // My Jobs
     if (myJobsContainer) {
 
       if (myJobs.length === 0) {
@@ -827,31 +1045,27 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
 
         myJobsContainer.innerHTML =
-          myJobs
-            .map(
-              (job) => `
-                <div class="job-card">
+          myJobs.map(
+            (job) => `
+              <div class="job-card">
+                <h3>
+                  ${escapeHTML(job.title)}
+                </h3>
 
-                  <h3>
-                    ${escapeHTML(job.title)}
-                  </h3>
+                <p>
+                  ${escapeHTML(job.description)}
+                </p>
 
-                  <p>
-                    Budget: ৳${escapeHTML(job.budget)}
-                  </p>
-
-                  <a href="job.html?id=${encodeURIComponent(job.id)}">
-                    View Job
-                  </a>
-
-                </div>
-              `
-            )
-            .join("");
+                <p>
+                  Budget:
+                  ${escapeHTML(job.budget)}
+                </p>
+              </div>
+            `
+          ).join("");
       }
     }
 
-    // My Bids
     if (myBidsContainer) {
 
       if (myBids.length === 0) {
@@ -862,54 +1076,68 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
 
         myBidsContainer.innerHTML =
-          myBids
-            .map(
-              (bid) => `
+          myBids.map(
+            (bid) => {
+
+              const job =
+                jobs.find(
+                  (item) =>
+                    String(item.id) ===
+                    String(bid.jobId)
+                );
+
+              return `
                 <div class="job-card">
 
                   <h3>
-                    ${escapeHTML(bid.jobTitle)}
+                    ${escapeHTML(
+                      job?.title ||
+                      "Job"
+                    )}
                   </h3>
 
                   <p>
-                    Bid Amount:
-                    ৳${escapeHTML(bid.amount)}
+                    Bid:
+                    ${escapeHTML(
+                      bid.amount
+                    )}
                   </p>
 
                   <p>
-                    ${escapeHTML(bid.message)}
+                    ${escapeHTML(
+                      bid.message || ""
+                    )}
                   </p>
 
                 </div>
-              `
-            )
-            .join("");
+              `;
+            }
+          ).join("");
       }
     }
   }
 
-  // ------------------------------------------
-  // HIDE POST JOB FOR NON-CLIENT
-  // ------------------------------------------
+  // ==========================================
+  // HIDE CLIENT-ONLY LINKS FOR WORKERS
+  // ==========================================
 
-  const currentUser = getCurrentUser();
+  const currentUser =
+    getCurrentUser();
 
-  const postJobLinks =
-    document.querySelectorAll(
-      'a[href="post-job.html"]'
-    );
+  if (
+    currentUser &&
+    currentUser.role !== "client"
+  ) {
 
-  if (postJobLinks.length > 0) {
+    document
+      .querySelectorAll(
+        'a[href="post-job.html"]'
+      )
+      .forEach((link) => {
 
-    if (
-      !currentUser ||
-      currentUser.role !== "client"
-    ) {
-
-      postJobLinks.forEach((link) => {
-        link.style.display = "none";
+        link.style.display =
+          "none";
       });
-    }
   }
 
 });
