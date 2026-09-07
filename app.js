@@ -2289,4 +2289,409 @@ document.addEventListener("DOMContentLoaded", () => {
     return div.innerHTML;
 
   }
+// ==========================================
+  // HOME DASHBOARD
+  // ==========================================
+
+  if (
+    path === "/" ||
+    path.endsWith("/index.html") ||
+    path.includes("index.html")
+  ) {
+
+    // ----------------------------------------
+    // Dashboard User Data
+    // ----------------------------------------
+
+    auth.onAuthStateChanged(
+      async (user) => {
+
+        // Login না থাকলে default information থাকবে
+        if (!user) {
+
+          updateDashboard({
+            name: "ব্যবহারকারী",
+            balance: 0,
+            todayIncome: 0,
+            referrals: 0
+          });
+
+          return;
+        }
+
+
+        try {
+
+          // ------------------------------------
+          // Load User Profile
+          // ------------------------------------
+
+          const userRef =
+            db.collection("users")
+              .doc(user.uid);
+
+          const userDoc =
+            await userRef.get();
+
+
+          let profile =
+            userDoc.exists
+              ? userDoc.data()
+              : {};
+
+
+          const name =
+            profile.name ||
+            user.displayName ||
+            user.email?.split("@")[0] ||
+            "ব্যবহারকারী";
+
+
+          const balance =
+            Number(
+              profile.balance || 0
+            );
+
+
+          // ------------------------------------
+          // Referral Count
+          // ------------------------------------
+
+          let referrals =
+            Number(
+              profile.referrals ||
+              profile.referralCount ||
+              0
+            );
+
+
+          // ------------------------------------
+          // Today's Income
+          // ------------------------------------
+
+          let todayIncome = 0;
+
+
+          /*
+           * Approved task submission থেকে
+           * আজকের আয় হিসাব করার চেষ্টা।
+           */
+
+          try {
+
+            const submissionSnapshot =
+              await db.collection(
+                "taskSubmissions"
+              )
+              .where(
+                "workerId",
+                "==",
+                user.uid
+              )
+              .where(
+                "status",
+                "==",
+                "approved"
+              )
+              .get();
+
+
+            const today =
+              new Date();
+
+            today.setHours(
+              0,
+              0,
+              0,
+              0
+            );
+
+
+            submissionSnapshot.forEach(
+              (doc) => {
+
+                const data =
+                  doc.data();
+
+
+                let submittedDate =
+                  null;
+
+
+                if (
+                  data.approvedAt &&
+                  typeof data.approvedAt.toDate ===
+                    "function"
+                ) {
+
+                  submittedDate =
+                    data.approvedAt.toDate();
+
+                }
+
+
+                if (
+                  submittedDate &&
+                  submittedDate >= today
+                ) {
+
+                  todayIncome +=
+                    Number(
+                      data.reward || 0
+                    );
+
+                }
+
+              }
+            );
+
+
+          } catch (incomeError) {
+
+            /*
+             * Query index / permission সমস্যা হলে
+             * Dashboard বন্ধ হবে না।
+             */
+
+            console.log(
+              "Today's income unavailable:",
+              incomeError
+            );
+
+
+            todayIncome =
+              Number(
+                profile.todayIncome || 0
+              );
+
+          }
+
+
+          // ------------------------------------
+          // Update Dashboard
+          // ------------------------------------
+
+          updateDashboard({
+
+            name:
+              name,
+
+            balance:
+              balance,
+
+            todayIncome:
+              todayIncome,
+
+            referrals:
+              referrals
+
+          });
+
+
+          // Local session update
+
+          saveLocalSession(
+            user,
+            {
+              ...profile,
+
+              name:
+                name,
+
+              balance:
+                balance,
+
+              pendingBalance:
+                Number(
+                  profile.pendingBalance || 0
+                )
+
+            }
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "DASHBOARD ERROR:",
+            error
+          );
+
+        }
+
+      }
+    );
+
+
+    // ----------------------------------------
+    // Dashboard Update Function
+    // ----------------------------------------
+
+    function updateDashboard(
+      data
+    ) {
+
+      // User name
+
+      const welcomeName =
+        document.querySelector(
+          ".welcome-text h2"
+        );
+
+
+      if (welcomeName) {
+
+        welcomeName.textContent =
+          "👋 হ্যালো, " +
+          (data.name || "ব্যবহারকারী") +
+          "!";
+
+      }
+
+
+      // Wallet balance
+
+      const walletCard =
+        document.querySelector(
+          ".wallet-card .balance-content h2"
+        );
+
+
+      if (walletCard) {
+
+        walletCard.textContent =
+          "৳ " +
+          Number(
+            data.balance || 0
+          ).toFixed(2);
+
+      }
+
+
+      // Today's income
+
+      const incomeCard =
+        document.querySelector(
+          ".income-card .balance-content h2"
+        );
+
+
+      if (incomeCard) {
+
+        incomeCard.textContent =
+          "৳ " +
+          Number(
+            data.todayIncome || 0
+          ).toFixed(2);
+
+      }
+
+
+      // Referral count
+
+      const referralCard =
+        document.querySelector(
+          ".referral-card .balance-content h2"
+        );
+
+
+      if (referralCard) {
+
+        referralCard.textContent =
+          Number(
+            data.referrals || 0
+          ) +
+          " জন";
+
+      }
+
+
+      // --------------------------------------
+      // Daily Target
+      // --------------------------------------
+
+      const targetAmount =
+        Number(
+          data.todayIncome || 0
+        );
+
+
+      const target =
+        100;
+
+
+      let percentage =
+        (targetAmount / target) *
+        100;
+
+
+      percentage =
+        Math.max(
+          0,
+          Math.min(
+            percentage,
+            100
+          )
+        );
+
+
+      const progress =
+        document.querySelector(
+          ".progress-fill"
+        );
+
+
+      if (progress) {
+
+        progress.style.width =
+          percentage + "%";
+
+      }
+
+
+      const targetText =
+        document.querySelector(
+          ".target-top span"
+        );
+
+
+      if (targetText) {
+
+        targetText.textContent =
+          "৳ " +
+          targetAmount.toFixed(2) +
+          " / ৳ " +
+          target.toFixed(2);
+
+      }
+
+    }
+
+
+    // ----------------------------------------
+    // Notification Button
+    // ----------------------------------------
+
+    const notificationButton =
+      document.getElementById(
+        "notification-btn"
+      );
+
+
+    if (notificationButton) {
+
+      notificationButton.addEventListener(
+        "click",
+        () => {
+
+          alert(
+            "🔔 বর্তমানে নতুন কোনো notification নেই।"
+          );
+
+        }
+      );
+
+    }
+
+  }
 });
