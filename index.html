@@ -6,147 +6,317 @@
 
   <title>SocialWorkBD</title>
 
-  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="shortcut icon" href="favicon.svg">
 
   <link rel="stylesheet" href="styles.css">
-
-  <style>
-    .quick-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 18px 0;
-    }
-
-    .quick-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 9px 13px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      background: #f1f5f9;
-      color: #1e293b;
-      border: 1px solid #e2e8f0;
-      transition: 0.2s ease;
-    }
-
-    .quick-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-    }
-
-    .task-btn {
-      background: #2563eb;
-      color: #ffffff;
-      border-color: #2563eb;
-    }
-
-    .task-info {
-      margin-top: 18px;
-      padding: 16px;
-      border-radius: 14px;
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
-    }
-
-    .task-info h2 {
-      margin-top: 0;
-    }
-
-    .task-info ul {
-      padding-left: 20px;
-      margin-bottom: 0;
-    }
-
-    @media (max-width: 480px) {
-      .quick-actions {
-        gap: 8px;
-      }
-
-      .quick-btn {
-        font-size: 13px;
-        padding: 8px 11px;
-      }
-    }
-  </style>
 </head>
 
 <body>
 
-  <header>
-    <h1>SocialWorkBD</h1>
+  <!-- ================= HEADER ================= -->
+  <header class="app-header">
 
-    <p>
-      ক্লায়েন্ট ও ওয়ার্কারদের জন্য বাংলাদেশি অনলাইন মার্কেটপ্লেস
-    </p>
+    <div class="brand-area">
 
-    <nav>
-      <a href="index.html">হোম</a>
-      <a href="dashboard.html">ড্যাশবোর্ড</a>
-      <a href="login.html">লগইন</a>
-    </nav>
+      <div class="brand-logo">
+        <span>👥</span>
+      </div>
+
+      <div>
+        <h1>SocialWork<span>BD</span></h1>
+        <p>একসাথে কাজ করি, সবাই এগিয়ে যাই</p>
+      </div>
+
+    </div>
+
+    <div class="header-actions">
+      <button class="icon-btn" id="notification-btn">
+        🔔
+        <span class="notification-badge">3</span>
+      </button>
+
+      <a href="profile.html" class="profile-icon">
+        👤
+      </a>
+    </div>
+
   </header>
 
 
-  <main>
+  <main class="dashboard-container">
 
-    <!-- Hero -->
+    <!-- ================= WELCOME BANNER ================= -->
+    <section class="welcome-banner">
 
-    <section id="hero">
+      <div class="welcome-text">
 
-      <h2>কাজ করুন অথবা কাজ দিন</h2>
+        <h2>👋 হ্যালো, ব্যবহারকারী!</h2>
 
-      <p>
-        ছোট কাজ সম্পন্ন করুন এবং আপনার দক্ষতা ব্যবহার করে আয় করুন।
-      </p>
+        <h3>SocialWorkBD-এ স্বাগতম!</h3>
 
-      <input
-        type="text"
-        id="job-search"
-        placeholder="জব বা কাজ সার্চ করুন..."
-      >
+        <p>
+          ছোট ছোট কাজ করুন, আর উপার্জন করুন সহজে!
+        </p>
+
+      </div>
+
+      <div class="welcome-art">
+
+        <div class="plant">🌱</div>
+
+        <div class="person">
+          👨‍💻
+        </div>
+
+        <div class="laptop">
+          💻
+        </div>
+
+      </div>
+
+      <div class="banner-slogan">
+        কাজ করুন<br>
+        আয় করুন
+      </div>
 
     </section>
 
 
-    <!-- Quick Actions -->
+    <!-- ================= BALANCE CARDS ================= -->
+    <section class="balance-grid">
 
-    <section>
+      <div class="balance-card wallet-card">
 
-      <div class="quick-actions">
+        <div class="balance-icon">
+          👛
+        </div>
 
-        <a
-          href="videos.html"
-          class="quick-btn"
-        >
-          ▶ ভিডিও
+        <div class="balance-content">
+          <p>ওয়ালেট ব্যালেন্স</p>
+          <h2>৳ 0.00</h2>
+
+          <a href="wallet.html">
+            তথ্য দেখুন →
+          </a>
+        </div>
+
+      </div>
+
+
+      <div class="balance-card income-card">
+
+        <div class="balance-icon">
+          🪙
+        </div>
+
+        <div class="balance-content">
+          <p>আজকের আয়</p>
+          <h2>৳ 0.00</h2>
+        </div>
+
+        <div class="income-arrow">
+          ↗
+        </div>
+
+      </div>
+
+
+      <div class="balance-card referral-card">
+
+        <div class="balance-icon">
+          🎁
+        </div>
+
+        <div class="balance-content">
+          <p>মোট রেফারেল</p>
+          <h2>0 জন</h2>
+
+          <a href="referral.html">
+            বন্ধু আমন্ত্রণ →
+          </a>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= QUICK MENU ================= -->
+    <section class="quick-menu">
+
+      <a href="tasks.html" class="quick-item">
+        <div class="quick-icon pink">✓</div>
+        <strong>দৈনিক বোনাস</strong>
+        <small>পান ৳ 10</small>
+      </a>
+
+      <a href="tasks.html" class="quick-item">
+        <div class="quick-icon blue">☷</div>
+        <strong>কাজ সমূহ</strong>
+        <small>সম্পূর্ণ করুন</small>
+      </a>
+
+      <a href="referral.html" class="quick-item">
+        <div class="quick-icon purple">👥</div>
+        <strong>বন্ধু আমন্ত্রণ</strong>
+        <small>উপার্জন করুন</small>
+      </a>
+
+      <a href="wallet.html" class="quick-item">
+        <div class="quick-icon green">▣</div>
+        <strong>আমার ওয়ালেট</strong>
+        <small>বিস্তারিত দেখুন</small>
+      </a>
+
+      <a href="support.html" class="quick-item">
+        <div class="quick-icon cyan">◉</div>
+        <strong>সাপোর্ট</strong>
+        <small>24/7</small>
+      </a>
+
+    </section>
+
+
+    <!-- ================= SPECIAL BONUS ================= -->
+    <section class="bonus-banner">
+
+      <div class="gift-box">
+        🎁
+      </div>
+
+      <div class="bonus-content">
+
+        <span>বিশেষ অফার</span>
+
+        <h2>আজকের স্পেশাল বোনাস!</h2>
+
+        <p>
+          প্রতিদিন লগইন করুন এবং ১০ টাকা বোনাস পান!
+        </p>
+
+      </div>
+
+      <a href="tasks.html" class="bonus-btn">
+        এখনই নিন →
+      </a>
+
+    </section>
+
+
+    <!-- ================= POPULAR TASKS ================= -->
+    <section class="popular-section">
+
+      <div class="section-title">
+
+        <h2>🔥 জনপ্রিয় কাজ সমূহ</h2>
+
+        <a href="tasks.html">
+          সব দেখুন →
         </a>
 
-        <a
-          href="video-upload.html"
-          class="quick-btn"
-        >
-          ⬆ Upload
+      </div>
+
+
+      <!-- Task 1 -->
+      <div class="task-card">
+
+        <div class="task-logo youtube">
+          ▶
+        </div>
+
+        <div class="task-details">
+
+          <h3>ইউটিউব ভিডিও দেখুন ও আয় করুন</h3>
+
+          <p>
+            ২ মিনিটের ভিডিও দেখুন এবং টাকা উপার্জন করুন
+          </p>
+
+          <strong>৳ 8 - 15</strong>
+
+        </div>
+
+        <a href="tasks.html" class="task-action">
+          কাজ করুন →
         </a>
 
-        <a
-          href="tasks.html"
-          class="quick-btn task-btn"
-        >
-          📋 Tasks
+      </div>
+
+
+      <!-- Task 2 -->
+      <div class="task-card">
+
+        <div class="task-logo facebook">
+          ↗
+        </div>
+
+        <div class="task-details">
+
+          <h3>ফেসবুক শেয়ার করুন</h3>
+
+          <p>
+            আপনার পছন্দের লিংক শেয়ার করে আয় করুন
+          </p>
+
+          <strong>৳ 10 - 20</strong>
+
+        </div>
+
+        <a href="tasks.html" class="task-action">
+          কাজ করুন →
         </a>
 
-        <a
-          href="profile.html"
-          class="quick-btn"
-        >
-          👤 Profile
+      </div>
+
+
+      <!-- Task 3 -->
+      <div class="task-card">
+
+        <div class="task-logo survey">
+          ▤
+        </div>
+
+        <div class="task-details">
+
+          <h3>সার্ভে সম্পন্ন করুন</h3>
+
+          <p>
+            কিছু প্রশ্নের উত্তর দিন
+          </p>
+
+          <strong>৳ 15 - 30</strong>
+
+        </div>
+
+        <a href="tasks.html" class="task-action">
+          কাজ করুন →
+        </a>
+
+      </div>
+
+
+      <!-- Task 4 -->
+      <div class="task-card">
+
+        <div class="task-logo referral-task">
+          👥
+        </div>
+
+        <div class="task-details">
+
+          <h3>বন্ধুকে আমন্ত্রণ জানান</h3>
+
+          <p>
+            বন্ধুদের সাথে শেয়ার করুন এবং ১০% কমিশন পান
+          </p>
+
+          <strong>৳ 25 / 100</strong>
+
+        </div>
+
+        <a href="referral.html" class="task-action">
+          কাজ করুন →
         </a>
 
       </div>
@@ -154,32 +324,43 @@
     </section>
 
 
-    <!-- Task Information -->
+    <!-- ================= DAILY TARGET ================= -->
+    <section class="daily-target">
 
-    <section class="task-info">
+      <div class="target-top">
 
-      <h2>📋 ছোট কাজ</h2>
+        <div>
+          🎯 <strong>আজকের আয়ের লক্ষ্য</strong>
+        </div>
 
-      <p>
-        এখানে Client বিভিন্ন ছোট কাজ দিতে পারবেন এবং Worker কাজ সম্পন্ন করতে পারবেন।
-      </p>
+        <span>৳ 25 / ৳ 100</span>
 
-      <ul>
-        <li>🔗 Link Visit</li>
-        <li>📤 Link Share</li>
-        <li>📝 Text বা Comment Task</li>
-        <li>💬 Feedback Task</li>
-        <li>🔎 Search & Find Task</li>
-      </ul>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill"></div>
+      </div>
+
+      <a href="tasks.html">
+        বিস্তারিত →
+      </a>
 
     </section>
 
 
-    <!-- Recent Jobs -->
+    <!-- ================= RECENT JOBS ================= -->
+    <section id="jobs-section" class="recent-jobs">
 
-    <section id="jobs-section">
+      <div class="section-title">
+        <h2>সাম্প্রতিক জব</h2>
+        <a href="tasks.html">সব দেখুন →</a>
+      </div>
 
-      <h2>সাম্প্রতিক জব</h2>
+      <input
+        type="text"
+        id="job-search"
+        placeholder="🔎 জব বা কাজ সার্চ করুন..."
+      >
 
       <ul id="job-list"></ul>
 
@@ -188,19 +369,42 @@
   </main>
 
 
-  <footer>
+  <!-- ================= BOTTOM NAVIGATION ================= -->
+  <nav class="bottom-nav">
 
-    <p>© 2026 SocialWorkBD</p>
+    <a href="index.html" class="bottom-item active">
+      <span>⌂</span>
+      <small>হোম</small>
+    </a>
 
-    <p>
-      বাংলাদেশি Freelance & Microtask Marketplace
-    </p>
+    <a href="tasks.html" class="bottom-item">
+      <span>☑</span>
+      <small>কাজ সমূহ</small>
+    </a>
 
-  </footer>
+    <a href="referral.html" class="bottom-item">
+      <span>🎁</span>
+      <small>রেফারেল</small>
+    </a>
+
+    <a href="wallet.html" class="bottom-item">
+      <span>▣</span>
+      <small>ওয়ালেট</small>
+    </a>
+
+    <a href="profile.html" class="bottom-item">
+      <span>♙</span>
+      <small>প্রোফাইল</small>
+    </a>
+
+  </nav>
 
 
+  <!-- Firebase -->
   <script src="firebase-config.js"></script>
+
+  <!-- Existing App JS -->
   <script src="app.js"></script>
 
 </body>
-</html>
+      </html>
