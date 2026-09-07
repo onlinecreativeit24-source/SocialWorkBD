@@ -1,14 +1,1334 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; }
-header, footer { background: #0066cc; color: #fff; text-align: center; padding: 1rem; }
-nav a { color: #fff; margin: 0 0.5rem; text-decoration: none; font-weight: bold; }
-main { max-width: 900px; margin: 2rem auto; padding: 1rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-section { margin-bottom: 2rem; }
-#hero { text-align: center; }
-#job-search { width: 100%; padding: 0.7rem; font-size: 1rem; margin-top: 0.5rem; border-radius: 4px; border: 1px solid #ccc; }
-ul { list-style: none; }
-li { background: #f9f9f9; padding: 0.8rem; margin-bottom: 0.6rem; border-radius: 4px; border-left: 4px solid #0066cc; }
-form { display: flex; flex-direction: column; gap: 0.75rem; }
-input, textarea, select, button { padding: 0.6rem; font-size: 1rem; border-radius: 4px; border: 1px solid #ccc; }
-button { background: #0066cc; color: #fff; border: none; cursor: pointer; }
-button:hover { background: #0052a3; }
+/* =====================================================
+   SocialWorkBD - Dashboard UI
+   ===================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family:
+    "Noto Sans Bengali",
+    "Hind Siliguri",
+    Arial,
+    sans-serif;
+
+  background: #f5f9fc;
+  color: #102b55;
+  padding-bottom: 88px;
+}
+
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.app-header {
+  min-height: 150px;
+  padding: 28px 22px 42px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #061c49 0%,
+      #063d88 48%,
+      #0069c9 100%
+    );
+
+  color: #fff;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  border-radius: 0 0 42px 42px;
+}
+
+.brand-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  width: 64px;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 39px;
+
+  background: rgba(255,255,255,0.10);
+  border-radius: 20px;
+}
+
+.brand-area h1 {
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.brand-area h1 span {
+  color: #18d8b0;
+}
+
+.brand-area p {
+  margin-top: 7px;
+  font-size: 13px;
+  color: #eaf5ff;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.icon-btn,
+.profile-icon {
+  position: relative;
+
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(255,255,255,0.45);
+
+  background: rgba(255,255,255,0.12);
+
+  color: #fff;
+
+  text-decoration: none;
+
+  font-size: 25px;
+
+  cursor: pointer;
+}
+
+.notification-badge {
+  position: absolute;
+
+  right: -3px;
+  top: -4px;
+
+  min-width: 22px;
+  height: 22px;
+
+  padding: 0 5px;
+
+  border-radius: 50%;
+
+  background: #ff3167;
+
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+
+/* =====================================================
+   MAIN
+   ===================================================== */
+
+.dashboard-container {
+  width: min(960px, calc(100% - 30px));
+  margin: -20px auto 30px;
+  position: relative;
+  z-index: 2;
+}
+
+
+/* =====================================================
+   WELCOME BANNER
+   ===================================================== */
+
+.welcome-banner {
+  min-height: 195px;
+
+  position: relative;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+
+  padding: 25px 30px;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      105deg,
+      #f7fcff 0%,
+      #edfaff 58%,
+      #d9f7ff 100%
+    );
+
+  border: 1px solid #d4e9f5;
+
+  box-shadow: 0 8px 25px rgba(20,80,130,0.08);
+}
+
+.welcome-text {
+  position: relative;
+  z-index: 3;
+  width: 54%;
+}
+
+.welcome-text h2 {
+  font-size: 29px;
+  margin-bottom: 10px;
+}
+
+.welcome-text h3 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.welcome-text p {
+  color: #31547c;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.welcome-art {
+  position: absolute;
+  right: 18px;
+  bottom: 0;
+
+  width: 42%;
+  height: 100%;
+}
+
+.person {
+  position: absolute;
+
+  right: 70px;
+  bottom: 47px;
+
+  font-size: 76px;
+  z-index: 3;
+}
+
+.laptop {
+  position: absolute;
+
+  right: 55px;
+  bottom: 15px;
+
+  font-size: 70px;
+  z-index: 4;
+}
+
+.plant {
+  position: absolute;
+
+  right: 225px;
+  bottom: 18px;
+
+  font-size: 48px;
+}
+
+.banner-slogan {
+  position: absolute;
+
+  right: 24px;
+  top: 32px;
+
+  color: #153a78;
+
+  font-size: 22px;
+  line-height: 1.1;
+
+  font-weight: 800;
+
+  transform: rotate(-4deg);
+}
+
+
+/* =====================================================
+   BALANCE CARDS
+   ===================================================== */
+
+.balance-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.85fr 0.85fr;
+
+  gap: 15px;
+
+  margin-top: 16px;
+}
+
+.balance-card {
+  min-height: 145px;
+
+  border-radius: 22px;
+
+  padding: 22px 18px;
+
+  color: #fff;
+
+  position: relative;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.balance-card::after {
+  content: "";
+
+  position: absolute;
+
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+
+  right: -60px;
+  bottom: -70px;
+
+  background: rgba(255,255,255,0.10);
+}
+
+.wallet-card {
+  background:
+    linear-gradient(
+      135deg,
+      #5424ef,
+      #3944ef
+    );
+}
+
+.income-card {
+  background:
+    linear-gradient(
+      135deg,
+      #04a978,
+      #0bbd91
+    );
+}
+
+.referral-card {
+  background:
+    linear-gradient(
+      135deg,
+      #ff314e,
+      #ff9a28
+    );
+}
+
+.balance-icon {
+  width: 62px;
+  height: 62px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(255,255,255,0.17);
+
+  font-size: 30px;
+
+  margin-right: 13px;
+}
+
+.balance-content {
+  position: relative;
+  z-index: 2;
+}
+
+.balance-content p {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.balance-content h2 {
+  margin-top: 4px;
+
+  font-size: 28px;
+
+  white-space: nowrap;
+}
+
+.balance-content a {
+  display: inline-block;
+
+  margin-top: 10px;
+
+  padding: 7px 14px;
+
+  border-radius: 20px;
+
+  background: rgba(255,255,255,0.88);
+
+  color: #15396d;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  text-decoration: none;
+}
+
+.income-arrow {
+  position: absolute;
+
+  right: 18px;
+  bottom: 17px;
+
+  font-size: 35px;
+
+  opacity: .9;
+}
+
+
+/* =====================================================
+   QUICK MENU
+   ===================================================== */
+
+.quick-menu {
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, 1fr);
+
+  background: #fff;
+
+  border-radius: 23px;
+
+  margin-top: 17px;
+
+  padding: 12px 8px;
+
+  box-shadow:
+    0 7px 25px rgba(30,90,140,0.07);
+}
+
+.quick-item {
+  min-height: 125px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  text-decoration: none;
+
+  color: #102b55;
+
+  border-right: 1px solid #e4edf5;
+}
+
+.quick-item:last-child {
+  border-right: none;
+}
+
+.quick-icon {
+  width: 57px;
+  height: 57px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 25px;
+
+  margin-bottom: 8px;
+}
+
+.quick-icon.pink {
+  background: #ffe0ef;
+  color: #ed2872;
+}
+
+.quick-icon.blue {
+  background: #dceeff;
+  color: #1375dc;
+}
+
+.quick-icon.purple {
+  background: #efe0ff;
+  color: #7023dd;
+}
+
+.quick-icon.green {
+  background: #d9faed;
+  color: #04966c;
+}
+
+.quick-icon.cyan {
+  background: #dff3ff;
+  color: #0871ce;
+}
+
+.quick-item strong {
+  font-size: 14px;
+}
+
+.quick-item small {
+  margin-top: 3px;
+
+  color: #59718f;
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   BONUS BANNER
+   ===================================================== */
+
+.bonus-banner {
+  min-height: 125px;
+
+  margin-top: 18px;
+
+  padding: 17px 24px;
+
+  border-radius: 23px;
+
+  background:
+    linear-gradient(
+      105deg,
+      #4b16dc,
+      #9e18e8 55%,
+      #ef1593
+    );
+
+  color: #fff;
+
+  display: flex;
+
+  align-items: center;
+
+  position: relative;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 8px 25px rgba(117,32,210,0.20);
+}
+
+.gift-box {
+  font-size: 70px;
+
+  margin-right: 24px;
+
+  transform: rotate(-4deg);
+}
+
+.bonus-content {
+  flex: 1;
+}
+
+.bonus-content span {
+  display: inline-block;
+
+  padding: 5px 15px;
+
+  background: #ffd426;
+
+  color: #172d55;
+
+  border-radius: 20px;
+
+  font-weight: 800;
+
+  font-size: 12px;
+}
+
+.bonus-content h2 {
+  font-size: 24px;
+
+  margin-top: 6px;
+}
+
+.bonus-content p {
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+.bonus-btn {
+  text-decoration: none;
+
+  padding: 12px 20px;
+
+  border-radius: 30px;
+
+  background: #ffe232;
+
+  color: #172d55;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   SECTION TITLE
+   ===================================================== */
+
+.popular-section,
+.recent-jobs {
+  margin-top: 22px;
+}
+
+.section-title {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 12px;
+}
+
+.section-title h2 {
+  font-size: 24px;
+}
+
+.section-title a {
+  color: #1768db;
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  font-size: 14px;
+}
+
+
+/* =====================================================
+   TASK CARDS
+   ===================================================== */
+
+.task-card {
+  min-height: 98px;
+
+  background: #fff;
+
+  border: 1px solid #e2edf5;
+
+  border-radius: 19px;
+
+  margin-bottom: 11px;
+
+  padding: 12px 14px 12px 18px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  box-shadow:
+    0 4px 16px rgba(20,70,120,0.05);
+}
+
+.task-logo {
+  width: 62px;
+  height: 62px;
+
+  flex-shrink: 0;
+
+  border-radius: 17px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: #fff;
+
+  font-size: 30px;
+
+  font-weight: 900;
+}
+
+.task-logo.youtube {
+  background: #ff1833;
+}
+
+.task-logo.facebook {
+  background: #1769e8;
+}
+
+.task-logo.survey {
+  background: #661ce8;
+}
+
+.task-logo.referral-task {
+  background: #06b871;
+}
+
+.task-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-details h3 {
+  font-size: 16px;
+
+  color: #102b55;
+
+  margin-bottom: 2px;
+}
+
+.task-details p {
+  color: #557394;
+
+  font-size: 13px;
+
+  margin-bottom: 3px;
+}
+
+.task-details strong {
+  color: #08a86d;
+
+  font-size: 17px;
+}
+
+.task-action {
+  flex-shrink: 0;
+
+  padding: 11px 20px;
+
+  border-radius: 30px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #08ae78,
+      #10c18d
+    );
+
+  color: #fff;
+
+  text-decoration: none;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 5px 12px rgba(0,170,115,0.18);
+}
+
+
+/* =====================================================
+   DAILY TARGET
+   ===================================================== */
+
+.daily-target {
+  background: #effff9;
+
+  border: 1px solid #9deed6;
+
+  border-radius: 19px;
+
+  padding: 12px 18px;
+
+  margin-top: 8px;
+}
+
+.target-top {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color: #087a59;
+
+  font-size: 14px;
+}
+
+.target-top span {
+  white-space: nowrap;
+}
+
+.progress-track {
+  height: 10px;
+
+  background: #cceee3;
+
+  border-radius: 20px;
+
+  margin-top: 9px;
+
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 25%;
+
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #08b98a,
+      #19cf9b
+    );
+
+  border-radius: inherit;
+}
+
+.daily-target > a {
+  display: block;
+
+  text-align: right;
+
+  color: #069b72;
+
+  text-decoration: none;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  margin-top: -20px;
+}
+
+
+/* =====================================================
+   RECENT JOBS
+   ===================================================== */
+
+#job-search {
+  width: 100%;
+
+  border: 1px solid #dbe7f0;
+
+  background: #fff;
+
+  border-radius: 14px;
+
+  padding: 13px 16px;
+
+  font-size: 14px;
+
+  outline: none;
+
+  margin-bottom: 12px;
+}
+
+#job-search:focus {
+  border-color: #2793ec;
+
+  box-shadow:
+    0 0 0 3px rgba(39,147,236,0.10);
+}
+
+#job-list {
+  list-style: none;
+}
+
+
+/* =====================================================
+   BOTTOM NAVIGATION
+   ===================================================== */
+
+.bottom-nav {
+  position: fixed;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 76px;
+
+  background: rgba(255,255,255,0.97);
+
+  backdrop-filter: blur(12px);
+
+  border-top: 1px solid #e3edf5;
+
+  box-shadow:
+    0 -5px 25px rgba(20,70,120,0.08);
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, 1fr);
+
+  z-index: 1000;
+}
+
+.bottom-item {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  text-decoration: none;
+
+  color: #526b8c;
+
+  font-weight: 600;
+}
+
+.bottom-item span {
+  font-size: 25px;
+
+  line-height: 1;
+}
+
+.bottom-item small {
+  font-size: 11px;
+}
+
+.bottom-item.active {
+  color: #08a879;
+}
+
+.bottom-item.active span {
+  font-size: 28px;
+}
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 760px) {
+
+  .app-header {
+    min-height: 130px;
+
+    padding: 20px 15px 35px;
+
+    border-radius: 0 0 30px 30px;
+  }
+
+  .brand-logo {
+    width: 50px;
+    height: 50px;
+
+    font-size: 30px;
+
+    border-radius: 16px;
+  }
+
+  .brand-area h1 {
+    font-size: 24px;
+  }
+
+  .brand-area p {
+    font-size: 11px;
+  }
+
+  .header-actions {
+    gap: 7px;
+  }
+
+  .icon-btn,
+  .profile-icon {
+    width: 42px;
+    height: 42px;
+
+    font-size: 21px;
+  }
+
+  .dashboard-container {
+    width: calc(100% - 20px);
+    margin-top: -15px;
+  }
+
+  .balance-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .wallet-card {
+    grid-column: 1 / -1;
+  }
+
+  .quick-menu {
+    grid-template-columns:
+      repeat(5, 1fr);
+  }
+
+  .quick-item {
+    min-height: 105px;
+  }
+
+  .quick-icon {
+    width: 47px;
+    height: 47px;
+    font-size: 21px;
+  }
+
+  .quick-item strong {
+    font-size: 11px;
+  }
+
+  .quick-item small {
+    font-size: 10px;
+  }
+
+  .bonus-content h2 {
+    font-size: 19px;
+  }
+
+  .bonus-content p {
+    font-size: 12px;
+  }
+
+  .bonus-btn {
+    padding: 9px 13px;
+    font-size: 12px;
+  }
+
+  .gift-box {
+    font-size: 50px;
+    margin-right: 12px;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 520px) {
+
+  body {
+    padding-bottom: 80px;
+  }
+
+  .app-header {
+    min-height: 122px;
+  }
+
+  .brand-logo {
+    display: none;
+  }
+
+  .brand-area h1 {
+    font-size: 22px;
+  }
+
+  .brand-area p {
+    font-size: 10px;
+  }
+
+  .dashboard-container {
+    width: calc(100% - 14px);
+  }
+
+  .welcome-banner {
+    min-height: 190px;
+
+    padding: 20px;
+
+    border-radius: 20px;
+  }
+
+  .welcome-text {
+    width: 100%;
+  }
+
+  .welcome-text h2 {
+    font-size: 23px;
+  }
+
+  .welcome-text h3 {
+    font-size: 16px;
+  }
+
+  .welcome-text p {
+    width: 57%;
+
+    font-size: 12px;
+  }
+
+  .welcome-art {
+    width: 52%;
+    right: -20px;
+  }
+
+  .person {
+    right: 35px;
+    bottom: 38px;
+    font-size: 58px;
+  }
+
+  .laptop {
+    right: 12px;
+    bottom: 9px;
+    font-size: 55px;
+  }
+
+  .plant {
+    right: 120px;
+    font-size: 35px;
+  }
+
+  .banner-slogan {
+    display: none;
+  }
+
+
+  /* Balance */
+
+  .balance-grid {
+    grid-template-columns: 1fr 1fr;
+
+    gap: 9px;
+  }
+
+  .balance-card {
+    min-height: 128px;
+
+    padding: 14px 10px;
+
+    border-radius: 18px;
+  }
+
+  .wallet-card {
+    grid-column: 1 / -1;
+  }
+
+  .balance-icon {
+    width: 45px;
+    height: 45px;
+
+    font-size: 22px;
+
+    margin-right: 8px;
+  }
+
+  .balance-content p {
+    font-size: 11px;
+  }
+
+  .balance-content h2 {
+    font-size: 22px;
+  }
+
+  .balance-content a {
+    padding: 5px 9px;
+    font-size: 10px;
+  }
+
+  .income-arrow {
+    font-size: 25px;
+    right: 10px;
+    bottom: 10px;
+  }
+
+
+  /* Quick menu */
+
+  .quick-menu {
+    overflow-x: auto;
+
+    grid-template-columns:
+      repeat(5, 92px);
+
+    padding: 8px 2px;
+
+    border-radius: 18px;
+
+    scrollbar-width: none;
+  }
+
+  .quick-menu::-webkit-scrollbar {
+    display: none;
+  }
+
+  .quick-item {
+    min-height: 100px;
+  }
+
+
+  /* Bonus */
+
+  .bonus-banner {
+    min-height: 115px;
+
+    padding: 12px;
+
+    border-radius: 18px;
+  }
+
+  .gift-box {
+    font-size: 42px;
+    margin-right: 7px;
+  }
+
+  .bonus-content span {
+    font-size: 9px;
+    padding: 4px 9px;
+  }
+
+  .bonus-content h2 {
+    font-size: 15px;
+  }
+
+  .bonus-content p {
+    font-size: 9px;
+  }
+
+  .bonus-btn {
+    padding: 8px 9px;
+
+    font-size: 10px;
+  }
+
+
+  /* Section */
+
+  .section-title h2 {
+    font-size: 19px;
+  }
+
+  .section-title a {
+    font-size: 12px;
+  }
+
+
+  /* Tasks */
+
+  .task-card {
+    min-height: 86px;
+
+    padding: 9px;
+
+    gap: 9px;
+
+    border-radius: 16px;
+  }
+
+  .task-logo {
+    width: 49px;
+    height: 49px;
+
+    border-radius: 14px;
+
+    font-size: 22px;
+  }
+
+  .task-details h3 {
+    font-size: 12px;
+  }
+
+  .task-details p {
+    font-size: 9px;
+  }
+
+  .task-details strong {
+    font-size: 13px;
+  }
+
+  .task-action {
+    padding: 8px 10px;
+
+    font-size: 10px;
+  }
+
+
+  /* Target */
+
+  .daily-target {
+    padding: 11px;
+
+    border-radius: 16px;
+  }
+
+  .target-top {
+    font-size: 11px;
+  }
+
+  .progress-track {
+    height: 8px;
+  }
+
+
+  /* Bottom */
+
+  .bottom-nav {
+    height: 70px;
+
+    border-radius: 22px 22px 0 0;
+  }
+
+  .bottom-item span {
+    font-size: 21px;
+  }
+
+  .bottom-item small {
+    font-size: 9px;
+  }
+
+}
+
+
+/* =====================================================
+   VERY SMALL PHONES
+   ===================================================== */
+
+@media (max-width: 360px) {
+
+  .header-actions {
+    gap: 4px;
+  }
+
+  .icon-btn,
+  .profile-icon {
+    width: 37px;
+    height: 37px;
+  }
+
+  .brand-area h1 {
+    font-size: 20px;
+  }
+
+  .balance-content h2 {
+    font-size: 19px;
+  }
+
+  .task-action {
+    padding: 7px 8px;
+  }
+
+}
