@@ -136,7 +136,13 @@ if (loginForm) {
 
       alert("Login সফল হয়েছে!");
 
-      window.location.href = "dashboard.html";
+if (userData.role === "worker") {
+  window.location.href = "worker-dashboard.html";
+} else if (userData.role === "client") {
+  window.location.href = "client-dashboard.html";
+} else {
+  window.location.href = "dashboard.html";
+}
 
     } catch (error) {
 
