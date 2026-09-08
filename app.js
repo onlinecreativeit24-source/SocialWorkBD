@@ -229,72 +229,100 @@ if (userData.role === "worker") {
 
 
   // =========================
-  // JOB POST
-  // =========================
-  if (path.includes("post-job.html")) {
+// JOB POST
+// =========================
+if (path.includes("post-job.html")) {
 
-    const form =
-      document.getElementById("job-form");
+  const form = document.getElementById("job-form");
 
-    if (form) {
+  if (form) {
 
-      form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
 
-        e.preventDefault();
+      e.preventDefault();
 
-        const currentUser =
-          JSON.parse(
-            localStorage.getItem("currentUser") || "{}"
-          );
+      const user = firebase.auth().currentUser;
 
-        if (!currentUser.email) {
-          alert("আগে লগইন করুন।");
-          window.location.href = "login.html";
+      if (!user) {
+        alert("আগে Login করুন।");
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+
+        const userDoc = await firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .get();
+
+        if (!userDoc.exists) {
+          alert("আপনার user profile পাওয়া যায়নি।");
           return;
         }
 
-        const job = {
+        const userData = userDoc.data();
 
-          id: Date.now(),
+        if (userData.role !== "client") {
+          alert("শুধু Client Job Post করতে পারবেন।");
+          return;
+        }
 
-          title:
-            document.getElementById("title")
-              .value.trim(),
+        const title =
+          document.getElementById("title").value.trim();
 
-          desc:
-            document.getElementById("desc")
-              .value.trim(),
+        const desc =
+          document.getElementById("desc").value.trim();
 
-          budget:
-            document.getElementById("budget")
-              .value,
+        const budget =
+          Number(document.getElementById("budget").value);
 
-          skills:
-            document.getElementById("skills")
-              .value.trim(),
+        const skills =
+          document.getElementById("skills").value.trim();
 
-          postedBy:
-            currentUser.email
-        };
-
-        const jobs =
-          JSON.parse(
-            localStorage.getItem("jobs") || "[]"
+        const deliveryDays =
+          Number(
+            document.getElementById("delivery-days").value
           );
 
-        jobs.unshift(job);
+        await firebase.firestore()
+          .collection("jobs")
+          .add({
+            title: title,
+            description: desc,
+            budget: budget,
+            skills: skills,
+            deliveryDays: deliveryDays,
 
-        localStorage.setItem(
-          "jobs",
-          JSON.stringify(jobs)
+            clientId: user.uid,
+            clientName: userData.name || "",
+            clientEmail: userData.email || "",
+
+            status: "open",
+
+            createdAt:
+              firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+        alert("Job সফলভাবে Post হয়েছে!");
+
+        form.reset();
+
+        window.location.href =
+          "client-dashboard.html";
+
+      } catch (error) {
+
+        console.error("Job Post Error:", error);
+
+        alert(
+          "Job Post করতে সমস্যা হয়েছে:\n" +
+          error.message
         );
-
-        alert("জব পোস্ট হয়েছে!");
-
-        window.location.href = "dashboard.html";
-      });
-    }
+      }
+    });
   }
+}
 
 
   // =========================
