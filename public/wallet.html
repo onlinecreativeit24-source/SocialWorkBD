@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>আমার ওয়ালেট - SocialWorkBD</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script src="firebase-config.js"></script>
+</head>
+
+<body>
+
+<header>
+  <h1>SocialWorkBD</h1>
+
+  <nav>
+    <a href="index.html">হোম</a>
+    <a href="tasks.html">কাজ</a>
+    <a href="referral.html">আমন্ত্রণ</a>
+    <a href="profile.html">প্রোফাইল</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="auth-box">
+
+    <h2>💰 আমার ওয়ালেট</h2>
+
+    <p>আপনার বর্তমান ব্যালেন্স</p>
+
+    <h1 id="balance">0 BDT</h1>
+
+    <hr>
+
+    <p>
+      Account ID:
+      <strong id="account-id">...</strong>
+    </p>
+
+    <p>
+      নাম:
+      <strong id="user-name">...</strong>
+    </p>
+
+  </section>
+
+  <section class="auth-box">
+
+    <h3>💳 Wallet Status</h3>
+
+    <p id="wallet-status">
+      আপনার Wallet তথ্য লোড হচ্ছে...
+    </p>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 SocialWorkBD</p>
+</footer>
+
+<script>
+
+firebase.auth().onAuthStateChanged(async function(user) {
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+
+    const userDoc = await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .get();
+
+    if (!userDoc.exists) {
+
+      alert("User profile পাওয়া যায়নি।");
+
+      await firebase.auth().signOut();
+
+      window.location.href = "login.html";
+
+      return;
+    }
+
+    const data = userDoc.data();
+
+    const balance = Number(data.balance || 0);
+
+    document.getElementById("balance").textContent =
+      balance.toLocaleString("en-US") + " BDT";
+
+    document.getElementById("account-id").textContent =
+      data.accountId || "-";
+
+    document.getElementById("user-name").textContent =
+      data.name || "User";
+
+    document.getElementById("wallet-status").textContent =
+      "আপনার Wallet সফলভাবে লোড হয়েছে।";
+
+  } catch (error) {
+
+    console.error("Wallet Error:", error);
+
+    document.getElementById("wallet-status").textContent =
+      "Wallet তথ্য লোড করতে সমস্যা হয়েছে।";
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
