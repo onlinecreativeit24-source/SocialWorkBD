@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>বন্ধু আমন্ত্রণ - SocialWorkBD</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script src="firebase-config.js"></script>
+</head>
+
+<body>
+
+<header>
+  <h1>SocialWorkBD</h1>
+
+  <nav>
+    <a href="index.html">হোম</a>
+    <a href="tasks.html">কাজ</a>
+    <a href="wallet.html">ওয়ালেট</a>
+    <a href="profile.html">প্রোফাইল</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="auth-box">
+
+    <h2>👥 বন্ধু আমন্ত্রণ</h2>
+
+    <p>
+      আপনার বন্ধুদের SocialWorkBD-তে আমন্ত্রণ করুন।
+    </p>
+
+    <hr>
+
+    <p>
+      আপনার নাম:
+      <strong id="user-name">লোড হচ্ছে...</strong>
+    </p>
+
+    <p>
+      Account ID:
+      <strong id="account-id">লোড হচ্ছে...</strong>
+    </p>
+
+    <label for="referral-link">আপনার Referral Link</label>
+
+    <input
+      type="text"
+      id="referral-link"
+      readonly
+    >
+
+    <br><br>
+
+    <button id="copy-btn" type="button">
+      📋 Referral Link Copy করুন
+    </button>
+
+    <p id="copy-status"></p>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 SocialWorkBD</p>
+</footer>
+
+<script>
+
+firebase.auth().onAuthStateChanged(async function(user) {
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+
+    const userDoc = await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .get();
+
+    if (!userDoc.exists) {
+
+      alert("User profile পাওয়া যায়নি।");
+
+      await firebase.auth().signOut();
+
+      window.location.href = "login.html";
+
+      return;
+    }
+
+    const data = userDoc.data();
+
+    document.getElementById("user-name").textContent =
+      data.name || "User";
+
+    document.getElementById("account-id").textContent =
+      data.accountId || "-";
+
+    const referralCode =
+      data.accountId || user.uid.substring(0, 8);
+
+    const referralLink =
+      window.location.origin +
+      "/signup.html?ref=" +
+      encodeURIComponent(referralCode);
+
+    document.getElementById("referral-link").value =
+      referralLink;
+
+  } catch (error) {
+
+    console.error("Referral Error:", error);
+
+    alert("Referral তথ্য লোড করতে সমস্যা হয়েছে।");
+
+  }
+
+});
+
+
+document.getElementById("copy-btn")
+  .addEventListener("click", async function() {
+
+    const input =
+      document.getElementById("referral-link");
+
+    const status =
+      document.getElementById("copy-status");
+
+    try {
+
+      await navigator.clipboard.writeText(input.value);
+
+      status.textContent =
+        "✅ Referral Link Copy হয়েছে!";
+
+    } catch (error) {
+
+      input.select();
+      document.execCommand("copy");
+
+      status.textContent =
+        "✅ Referral Link Copy হয়েছে!";
+
+    }
+
+  });
+
+</script>
+
+</body>
+</html>
