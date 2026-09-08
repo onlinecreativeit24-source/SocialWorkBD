@@ -91,75 +91,69 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // =========================
-  // LOGIN
-  // =========================
-  if (path.includes("login.html")) {
+// FIREBASE LOGIN
+// =========================
 
-    const form = document.getElementById("login-form");
+const loginForm = document.getElementById("login-form");
 
-    if (form) {
+if (loginForm) {
+  loginForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-      form.addEventListener("submit", async (e) => {
+    const email = document
+      .getElementById("email")
+      .value
+      .trim();
 
-        e.preventDefault();
+    const password =
+      document.getElementById("password").value;
 
-        const email =
-          document.getElementById("email").value.trim();
+    try {
+      const result =
+        await firebase.auth()
+          .signInWithEmailAndPassword(email, password);
 
-        const password =
-          document.getElementById("password").value;
+      const user = result.user;
 
-        try {
+      const userDoc =
+        await firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .get();
 
-          const userCredential =
-            await firebase.auth()
-              .signInWithEmailAndPassword(
-                email,
-                password
-              );
+      if (!userDoc.exists) {
+        alert("আপনার user profile পাওয়া যায়নি।");
+        await firebase.auth().signOut();
+        return;
+      }
 
-          const user = userCredential.user;
+      const userData = userDoc.data();
 
-          const userDoc =
-            await firebase.firestore()
-              .collection("users")
-              .doc(user.uid)
-              .get();
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify(userData)
+      );
 
-          if (!userDoc.exists) {
-            alert("User profile পাওয়া যায়নি।");
-            return;
-          }
+      alert("Login সফল হয়েছে!");
 
-          const userData = userDoc.data();
+      window.location.href = "dashboard.html";
 
-          localStorage.setItem(
-            "currentUser",
-            JSON.stringify(userData)
-          );
+    } catch (error) {
 
-          alert("লগইন সফল হয়েছে!");
+      console.error("Login Error:", error);
 
-          window.location.href = "dashboard.html";
-
-        } catch (error) {
-
-          console.error(error);
-
-          let message = error.message;
-
-          if (
-            error.code === "auth/user-not-found" ||
-            error.code === "auth/wrong-password"
-          ) {
-            message = "ইমেইল অথবা পাসওয়ার্ড ভুল।";
-          }
-
-          alert("Login Error: " + message);
-        }
-      });
+      if (error.code === "auth/invalid-credential") {
+        alert("Email অথবা Password ভুল।");
+      } else if (error.code === "auth/user-not-found") {
+        alert("এই Email দিয়ে কোনো account পাওয়া যায়নি।");
+      } else if (error.code === "auth/wrong-password") {
+        alert("Password ভুল।");
+      } else {
+        alert("Login Error: " + error.message);
+      }
     }
-  }
+  });
+}
 
 
   // =========================
