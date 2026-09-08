@@ -1,1 +1,361 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Dashboard - SocialWorkBD</title>
 
+  <link rel="stylesheet" href="styles.css">
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="firebase-config.js"></script>
+</head>
+
+<body>
+
+<header>
+  <h1>SocialWorkBD</h1>
+
+  <nav>
+    <a href="index.html">হোম</a>
+    <a href="client-dashboard.html">Dashboard</a>
+    <a href="post-job.html">Post Job</a>
+    <a href="profile.html">Profile</a>
+    <button id="logout-btn">Logout</button>
+  </nav>
+</header>
+
+<main>
+
+  <section>
+    <h2>Client Dashboard</h2>
+
+    <p>
+      স্বাগতম,
+      <strong id="user-name">...</strong>
+    </p>
+
+    <p>
+      Account ID:
+      <strong id="account-id">...</strong>
+    </p>
+
+    <p>
+      Balance:
+      <strong id="balance">0 BDT</strong>
+    </p>
+  </section>
+
+
+  <section>
+
+    <h2>Post a New Job</h2>
+
+    <form id="job-form">
+
+      <input
+        type="text"
+        id="job-title"
+        placeholder="Job title"
+        required
+      >
+
+      <textarea
+        id="job-description"
+        placeholder="Job description"
+        required
+      ></textarea>
+
+      <input
+        type="number"
+        id="job-budget"
+        placeholder="Budget (BDT)"
+        min="1"
+        required
+      >
+
+      <input
+        type="text"
+        id="job-skills"
+        placeholder="Required skills"
+      >
+
+      <button type="submit">
+        Post Job
+      </button>
+
+    </form>
+
+  </section>
+
+
+  <section>
+
+    <h2>My Jobs</h2>
+
+    <div id="my-jobs">
+      <p>Jobs loading...</p>
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+let currentUser = null;
+
+
+firebase.auth().onAuthStateChanged(async function(user) {
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+
+    const doc =
+      await firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .get();
+
+    if (!doc.exists) {
+
+      await firebase.auth().signOut();
+
+      window.location.href = "login.html";
+
+      return;
+    }
+
+    const data = doc.data();
+
+    if (data.role !== "client") {
+
+      window.location.href =
+        "worker-dashboard.html";
+
+      return;
+    }
+
+    currentUser = data;
+
+    document.getElementById("user-name").textContent =
+      data.name || "Client";
+
+    document.getElementById("account-id").textContent =
+      data.accountId || "-";
+
+    document.getElementById("balance").textContent =
+      (data.balance || 0) + " BDT";
+
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify(data)
+    );
+
+    loadMyJobs();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Dashboard load করতে সমস্যা হয়েছে.");
+
+  }
+
+});
+
+
+document
+  .getElementById("job-form")
+  .addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    if (!currentUser) {
+      alert("আগে login করুন।");
+      return;
+    }
+
+    const title =
+      document.getElementById("job-title")
+        .value.trim();
+
+    const description =
+      document.getElementById("job-description")
+        .value.trim();
+
+    const budget =
+      Number(
+        document.getElementById("job-budget")
+          .value
+      );
+
+    const skills =
+      document.getElementById("job-skills")
+        .value.trim();
+
+    if (!title || !description || budget <= 0) {
+
+      alert("সব প্রয়োজনীয় তথ্য দিন।");
+
+      return;
+    }
+
+    try {
+
+      await firebase.firestore()
+        .collection("jobs")
+        .add({
+
+          title: title,
+
+          description: description,
+
+          budget: budget,
+
+          skills: skills,
+
+          clientId: currentUser.uid,
+
+          clientName: currentUser.name || "",
+
+          status: "open",
+
+          createdAt:
+            firebase.firestore.FieldValue.serverTimestamp()
+
+        });
+
+      alert("Job সফলভাবে পোস্ট হয়েছে!");
+
+      document
+        .getElementById("job-form")
+        .reset();
+
+      loadMyJobs();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Job post করা যায়নি: " +
+        error.message
+      );
+
+    }
+
+  });
+
+
+async function loadMyJobs() {
+
+  const container =
+    document.getElementById("my-jobs");
+
+  try {
+
+    const snapshot =
+      await firebase.firestore()
+        .collection("jobs")
+        .where(
+          "clientId",
+          "==",
+          currentUser.uid
+        )
+        .get();
+
+    container.innerHTML = "";
+
+    if (snapshot.empty) {
+
+      container.innerHTML =
+        "<p>আপনি এখনো কোনো job post করেননি।</p>";
+
+      return;
+    }
+
+    snapshot.forEach(function(doc) {
+
+      const job = doc.data();
+
+      const card =
+        document.createElement("div");
+
+      card.style.padding = "15px";
+      card.style.marginBottom = "12px";
+      card.style.border = "1px solid #ddd";
+      card.style.borderRadius = "10px";
+
+      card.innerHTML = `
+        <h3>
+          ${escapeHTML(job.title || "Untitled Job")}
+        </h3>
+
+        <p>
+          ${escapeHTML(
+            job.description || ""
+          )}
+        </p>
+
+        <p>
+          <strong>Budget:</strong>
+          ${escapeHTML(
+            String(job.budget || 0)
+          )} BDT
+        </p>
+
+        <p>
+          <strong>Status:</strong>
+          ${escapeHTML(job.status || "open")}
+        </p>
+      `;
+
+      container.appendChild(card);
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    container.innerHTML =
+      "<p>আপনার jobs load করা যায়নি।</p>";
+  }
+}
+
+
+function escapeHTML(value) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent = value;
+
+  return div.innerHTML;
+}
+
+
+document
+  .getElementById("logout-btn")
+  .addEventListener("click", async function() {
+
+    await firebase.auth().signOut();
+
+    localStorage.removeItem("currentUser");
+
+    window.location.href = "login.html";
+
+  });
+
+</script>
+
+</body>
+</html>
