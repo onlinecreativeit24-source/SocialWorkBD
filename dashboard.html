@@ -1,37 +1,160 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ড্যাশবোর্ড</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SocialWorkBD - Dashboard</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script src="firebase-config.js"></script>
 </head>
+
 <body>
-  <header>
-    <h1>ড্যাশবোর্ড</h1>
-    <nav>
-      <a href="index.html">হোম</a>
-      <a href="post-job.html">জব পোস্ট</a>
-      <a href="profile.html">প্রোফাইল</a>
-    </nav>
-  </header>
 
-  <main>
-    <section id="my-jobs">
-      <h2>আমার জব</h2>
-      <ul id="jobs-list"></ul>
-    </section>
+<header>
+  <h1>SocialWorkBD</h1>
 
-    <section id="my-bids">
-      <h2>আমার বিড</h2>
-      <ul id="bids-list"></ul>
-    </section>
-  </main>
+  <nav>
+    <a href="index.html">হোম</a>
+    <a href="post-job.html">জব পোস্ট</a>
+    <a href="profile.html">প্রোফাইল</a>
 
-  <footer>
-    <p>© 2026 SocialWorkBD (ডেমো)</p>
-  </footer>
+    <button id="logout-btn" type="button">
+      Logout
+    </button>
+  </nav>
+</header>
 
-  <script src="app.js"></script>
+<main>
+
+  <section>
+    <h2>স্বাগতম, <span id="user-name">...</span>!</h2>
+
+    <p>
+      Account ID:
+      <strong id="account-id">...</strong>
+    </p>
+
+    <p>
+      Role:
+      <strong id="user-role">...</strong>
+    </p>
+
+    <p>
+      Balance:
+      <strong id="user-balance">0 BDT</strong>
+    </p>
+  </section>
+
+
+  <section id="my-jobs">
+    <h2>আমার জব</h2>
+    <ul id="jobs-list"></ul>
+  </section>
+
+
+  <section id="my-bids">
+    <h2>আমার বিড</h2>
+    <ul id="bids-list"></ul>
+  </section>
+
+</main>
+
+
+<footer>
+  <p>© 2026 SocialWorkBD</p>
+</footer>
+
+
+<script>
+
+firebase.auth().onAuthStateChanged(async function(user) {
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+
+    const userDoc =
+      await firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .get();
+
+    if (!userDoc.exists) {
+
+      alert("User profile পাওয়া যায়নি।");
+
+      await firebase.auth().signOut();
+
+      window.location.href = "login.html";
+
+      return;
+    }
+
+    const data = userDoc.data();
+
+    document.getElementById("user-name").textContent =
+      data.name || "User";
+
+    document.getElementById("account-id").textContent =
+      data.accountId || "-";
+
+    document.getElementById("user-role").textContent =
+      data.role === "worker"
+        ? "Worker"
+        : "Client";
+
+    document.getElementById("user-balance").textContent =
+      (data.balance || 0) + " BDT";
+
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify(data)
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Dashboard load করতে সমস্যা হয়েছে।");
+  }
+
+});
+
+
+document
+  .getElementById("logout-btn")
+  .addEventListener("click", async function() {
+
+    try {
+
+      await firebase.auth().signOut();
+
+      localStorage.removeItem("currentUser");
+
+      window.location.href = "login.html";
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Logout করা যায়নি।");
+    }
+
+  });
+
+</script>
+
+<script src="app.js"></script>
+
 </body>
 </html>
