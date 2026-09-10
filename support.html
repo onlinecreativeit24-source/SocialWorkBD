@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Help & Support — SocialWorkBD</title>
+  <meta
+    name="description"
+    content="Get help, report account issues, and request an account review on SocialWorkBD."
+  >
+
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    .support-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    .support-hero {
+      margin-bottom: 32px;
+    }
+
+    .support-hero h1 {
+      margin: 0 0 10px;
+      font-size: 36px;
+      line-height: 1.15;
+      color: #111827;
+    }
+
+    .support-hero p {
+      margin: 0;
+      max-width: 720px;
+      color: #667085;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .support-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .support-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 26px;
+      box-shadow: 0 8px 30px rgba(16, 24, 40, 0.05);
+    }
+
+    .support-card h2 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      color: #111827;
+    }
+
+    .support-card > p {
+      margin: 0 0 22px;
+      color: #667085;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .account-status-box {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 18px;
+      background: #f9fafb;
+      margin-bottom: 20px;
+    }
+
+    .account-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 9px 0;
+      border-bottom: 1px solid #eaecf0;
+    }
+
+    .account-row:last-child {
+      border-bottom: 0;
+    }
+
+    .account-label {
+      color: #667085;
+      font-size: 13px;
+    }
+
+    .account-value {
+      color: #111827;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #ecfdf3;
+      color: #027a48;
+    }
+
+    .status-warning {
+      background: #fffaeb;
+      color: #b54708;
+    }
+
+    .status-restricted,
+    .status-under-review {
+      background: #fff4ed;
+      color: #c4320a;
+    }
+
+    .status-suspended {
+      background: #fef3f2;
+      color: #b42318;
+    }
+
+    .support-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field-group label {
+      color: #344054;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #d0d5dd;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #101828;
+      padding: 12px 13px;
+      font: inherit;
+      outline: none;
+    }
+
+    .field-group textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus {
+      border-color: #12b76a;
+      box-shadow: 0 0 0 3px rgba(18, 183, 106, 0.12);
+    }
+
+    .support-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 13px 18px;
+      background: #12b76a;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .support-btn:hover {
+      background: #0e9f5a;
+    }
+
+    .support-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .notice {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .notice.success {
+      display: block;
+      background: #ecfdf3;
+      color: #027a48;
+      border: 1px solid #abefc6;
+    }
+
+    .notice.error {
+      display: block;
+      background: #fef3f2;
+      color: #b42318;
+      border: 1px solid #fecdca;
+    }
+
+    .review-info {
+      margin-top: 18px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #f9fafb;
+      border: 1px solid #eaecf0;
+      color: #667085;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .faq-item {
+      border: 1px solid #eaecf0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .faq-item summary {
+      padding: 15px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #344054;
+      font-size: 14px;
+    }
+
+    .faq-answer {
+      padding: 0 15px 15px;
+      color: #667085;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .login-required {
+      display: none;
+      padding: 18px;
+      border-radius: 12px;
+      background: #f9fafb;
+      border: 1px solid #eaecf0;
+      color: #667085;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .login-required a {
+      color: #12b76a;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .footer-simple {
+      border-top: 1px solid #eaecf0;
+      padding: 24px 20px;
+      text-align: center;
+      color: #667085;
+      font-size: 13px;
+    }
+
+    .footer-simple a {
+      color: #667085;
+      text-decoration: none;
+      margin: 0 8px;
+    }
+
+    @media (max-width: 800px) {
+      .support-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full-width {
+        grid-column: auto;
+      }
+
+      .support-hero h1 {
+        font-size: 30px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .support-page {
+        padding: 32px 14px 60px;
+      }
+
+      .support-card {
+        padding: 20px;
+        border-radius: 15px;
+      }
+
+      .account-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .account-value {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">SW</span>
+        <span>SocialWorkBD</span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="tasks.html">Find Work</a>
+        <a href="post-job.html">Post a Job</a>
+        <a href="messages.html">Messages</a>
+        <a href="support.html" class="active">Help</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="login.html" class="login-link">Log In</a>
+        <a href="signup.html" class="signup-link">Sign Up</a>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="support-page">
+
+    <section class="support-hero">
+      <h1>Help & Support</h1>
+      <p>
+        Need help with your account, a project, a message, or an account restriction?
+        Find answers below or contact SocialWorkBD support.
+      </p>
+    </section>
+
+
+    <div class="support-grid">
+
+      <!-- ACCOUNT STATUS -->
+      <section class="support-card">
+        <h2>Account Status</h2>
+
+        <p>
+          Review your current account information and status.
+        </p>
+
+        <div id="login-required" class="login-required">
+          Please
+          <a href="login.html">Log in</a>
+          to view your account status and submit an account review request.
+        </div>
+
+        <div id="account-section" style="display:none;">
+
+          <div class="account-status-box">
+
+            <div class="account-row">
+              <span class="account-label">Account ID</span>
+              <span class="account-value" id="account-id">—</span>
+            </div>
+
+            <div class="account-row">
+              <span class="account-label">Name</span>
+              <span class="account-value" id="account-name">—</span>
+            </div>
+
+            <div class="account-row">
+              <span class="account-label">Email</span>
+              <span class="account-value" id="account-email">—</span>
+            </div>
+
+            <div class="account-row">
+              <span class="account-label">Status</span>
+              <span class="account-value">
+                <span id="account-status" class="status-badge">Active</span>
+              </span>
+            </div>
+
+          </div>
+
+          <div id="status-message" class="review-info">
+            Your account is currently in good standing.
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ACCOUNT REVIEW -->
+      <section class="support-card">
+        <h2>Request a Review</h2>
+
+        <p>
+          If you believe your account was restricted or suspended incorrectly,
+          you can submit a review request.
+        </p>
+
+        <div id="review-login-required" class="login-required">
+          Please
+          <a href="login.html">Log in</a>
+          to submit an account review request.
+        </div>
+
+        <form id="appeal-form" class="support-form" style="display:none;">
+
+          <div class="field-group">
+            <label for="appeal-reason">Reason</label>
+
+            <select id="appeal-reason" required>
+              <option value="">Select a reason</option>
+              <option value="account_restriction">Account restriction</option>
+              <option value="account_suspension">Account suspension</option>
+              <option value="moderation_action">Moderation action</option>
+              <option value="other">Other account issue</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="appeal-message">Explain your situation</label>
+
+            <textarea
+              id="appeal-message"
+              maxlength="3000"
+              placeholder="Explain why you believe your account should be reviewed."
+              required
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            id="submit-appeal-btn"
+            class="support-btn"
+          >
+            Submit Review Request
+          </button>
+
+          <div id="appeal-notice" class="notice"></div>
+
+        </form>
+
+        <div class="review-info">
+          Review requests are checked by the SocialWorkBD team.
+          Submitting a request does not automatically remove an account restriction.
+        </div>
+      </section>
+
+
+      <!-- FAQ -->
+      <section class="support-card full-width">
+        <h2>Common Questions</h2>
+
+        <p>
+          Quick answers to common SocialWorkBD account and marketplace questions.
+        </p>
+
+        <div class="faq-list">
+
+          <details class="faq-item">
+            <summary>Why can my account be restricted?</summary>
+
+            <div class="faq-answer">
+              Accounts may be restricted when activity violates marketplace
+              rules, communication policies, payment rules, or other platform
+              requirements.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Can I request a review after suspension?</summary>
+
+            <div class="faq-answer">
+              Yes. If you believe a moderation decision was incorrect,
+              submit a review request with a clear explanation of your situation.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Can I share external contact information in messages?</summary>
+
+            <div class="faq-answer">
+              SocialWorkBD messaging is intended for marketplace communication.
+              Keep project discussions and transactions on the platform and
+              avoid moving business communication to external platforms.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Will my Account ID change after a restriction?</summary>
+
+            <div class="faq-answer">
+              Your Account ID is intended to remain associated with your account.
+              A moderation action does not automatically create a new identity.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>How should I report another user?</summary>
+
+            <div class="faq-answer">
+              Use the report option available in the relevant conversation or
+              marketplace flow. Provide accurate information so the support team
+              can review the situation.
+            </div>
+          </details>
+
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <footer class="footer-simple">
+    <div>
+      <a href="index.html">Home</a>
+      <a href="tasks.html">Find Work</a>
+      <a href="support.html">Help</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+
+    <div style="margin-top:10px;">
+      © 2026 SocialWorkBD. All rights reserved.
+    </div>
+  </footer>
+
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const loginRequired =
+        document.getElementById("login-required");
+
+      const reviewLoginRequired =
+        document.getElementById("review-login-required");
+
+      const accountSection =
+        document.getElementById("account-section");
+
+      const appealForm =
+        document.getElementById("appeal-form");
+
+      const accountId =
+        document.getElementById("account-id");
+
+      const accountName =
+        document.getElementById("account-name");
+
+      const accountEmail =
+        document.getElementById("account-email");
+
+      const accountStatus =
+        document.getElementById("account-status");
+
+      const statusMessage =
+        document.getElementById("status-message");
+
+      const appealNotice =
+        document.getElementById("appeal-notice");
+
+      const submitAppealBtn =
+        document.getElementById("submit-appeal-btn");
+
+
+      function showNotice(message, type) {
+        appealNotice.textContent = message;
+        appealNotice.className = "notice " + type;
+      }
+
+
+      function statusText(status) {
+
+        const map = {
+          active: "Active",
+          warning: "Warning",
+          restricted: "Restricted",
+          suspended: "Suspended",
+          under_review: "Under Review"
+        };
+
+        return map[status] || "Active";
+      }
+
+
+      function statusClass(status) {
+
+        const map = {
+          warning: "status-warning",
+          restricted: "status-restricted",
+          suspended: "status-suspended",
+          under_review: "status-under-review"
+        };
+
+        return map[status] || "";
+      }
+
+
+      function statusDescription(status) {
+
+        const map = {
+          active:
+            "Your account is currently active and available for normal marketplace activity.",
+
+          warning:
+            "Your account has received a policy warning. Please follow SocialWorkBD rules carefully.",
+
+          restricted:
+            "Some account features may be temporarily unavailable because your account is restricted.",
+
+          suspended:
+            "Your account is currently suspended. You can submit a review request if you believe this action was incorrect.",
+
+          under_review:
+            "Your account is currently under review. Some marketplace features may be temporarily unavailable."
+        };
+
+        return map[status] || map.active;
+      }
+
+
+      if (typeof firebase === "undefined") {
+        loginRequired.style.display = "block";
+        return;
+      }
+
+
+      firebase.auth().onAuthStateChanged(async function (user) {
+
+        if (!user) {
+
+          loginRequired.style.display = "block";
+          reviewLoginRequired.style.display = "block";
+
+          accountSection.style.display = "none";
+          appealForm.style.display = "none";
+
+          return;
+        }
+
+
+        loginRequired.style.display = "none";
+        reviewLoginRequired.style.display = "none";
+
+        accountSection.style.display = "block";
+        appealForm.style.display = "flex";
+
+
+        try {
+
+          const snap =
+            await firebase.firestore()
+              .collection("users")
+              .doc(user.uid)
+              .get();
+
+
+          if (!snap.exists) {
+
+            accountId.textContent = "—";
+            accountName.textContent = user.displayName || "—";
+            accountEmail.textContent = user.email || "—";
+
+            accountStatus.textContent = "Active";
+
+            return;
+          }
+
+
+          const data = snap.data() || {};
+
+          const status =
+            data.accountStatus || "active";
+
+
+          accountId.textContent =
+            data.accountId || user.uid;
+
+          accountName.textContent =
+            data.name || user.displayName || "—";
+
+          accountEmail.textContent =
+            data.email || user.email || "—";
+
+
+          accountStatus.textContent =
+            statusText(status);
+
+          accountStatus.className =
+            "status-badge " + statusClass(status);
+
+
+          statusMessage.textContent =
+            statusDescription(status);
+
+
+        } catch (error) {
+
+          console.error(
+            "Support profile error:",
+            error
+          );
+
+          statusMessage.textContent =
+            "Unable to load your account status right now.";
+        }
+
+      });
+
+
+      appealForm.addEventListener(
+        "submit",
+        async function (event) {
+
+          event.preventDefault();
+
+          const user =
+            firebase.auth().currentUser;
+
+          if (!user) {
+
+            window.location.href = "login.html";
+            return;
+          }
+
+
+          const reason =
+            document.getElementById("appeal-reason").value;
+
+          const message =
+            document.getElementById("appeal-message").value.trim();
+
+
+          if (!reason || !message) {
+
+            showNotice(
+              "Please complete all required fields.",
+              "error"
+            );
+
+            return;
+          }
+
+
+          if (message.length < 20) {
+
+            showNotice(
+              "Please provide a little more detail about your situation.",
+              "error"
+            );
+
+            return;
+          }
+
+
+          submitAppealBtn.disabled = true;
+          submitAppealBtn.textContent = "Submitting...";
+
+
+          try {
+
+            const db =
+              firebase.firestore();
+
+
+            const profileSnap =
+              await db.collection("users")
+                .doc(user.uid)
+                .get();
+
+
+            const profile =
+              profileSnap.exists
+                ? profileSnap.data()
+                : {};
+
+
+            const currentStatus =
+              profile.accountStatus || "active";
+
+
+            await db.collection("appeals").add({
+
+              userId: user.uid,
+
+              accountId:
+                profile.accountId || user.uid,
+
+              email:
+                profile.email || user.email || "",
+
+              name:
+                profile.name || user.displayName || "",
+
+              reason: reason,
+
+              message: message,
+
+              currentStatus: currentStatus,
+
+              status: "pending",
+
+              createdAt:
+                firebase.firestore.FieldValue.serverTimestamp()
+
+            });
+
+
+            showNotice(
+              "Your review request has been submitted successfully. The SocialWorkBD team will review it.",
+              "success"
+            );
+
+
+            document.getElementById("appeal-form").reset();
+
+
+          } catch (error) {
+
+            console.error(
+              "Appeal submission error:",
+              error
+            );
+
+
+            let messageText =
+              "Unable to submit your review request. Please try again.";
+
+
+            if (
+              error &&
+              error.code === "permission-denied"
+            ) {
+              messageText =
+                "Your review request could not be submitted because of the current account permissions.";
+            }
+
+
+            showNotice(
+              messageText,
+              "error"
+            );
+
+          } finally {
+
+            submitAppealBtn.disabled = false;
+            submitAppealBtn.textContent =
+              "Submit Review Request";
+          }
+
+        }
+      );
+
+    });
+  </script>
+
+</body>
+</html>
