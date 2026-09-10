@@ -1,149 +1,791 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>আমার প্রোফাইল - SocialWorkBD</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  <link rel="stylesheet" href="styles.css">
+  <meta
+    name="description"
+    content="Manage your SocialWorkBD profile, skills and professional information."
+  >
+
+  <title>My Profile - SocialWorkBD</title>
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="favicon.svg"
+  >
+
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  >
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+
+  <style>
+
+    .profile-page {
+      min-height: calc(100vh - 160px);
+      background: #f7f9f8;
+      padding: 45px 20px;
+    }
+
+    .profile-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .profile-header-card {
+      background: #ffffff;
+      border: 1px solid #e3e9e5;
+      border-radius: 18px;
+      padding: 30px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      box-shadow: 0 8px 28px rgba(20, 40, 30, 0.06);
+      margin-bottom: 22px;
+    }
+
+    .profile-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: #e9f7ee;
+      color: #15803d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .profile-heading {
+      flex: 1;
+    }
+
+    .profile-heading h1 {
+      margin: 0 0 7px;
+      color: #17251d;
+      font-size: 28px;
+    }
+
+    .profile-heading p {
+      margin: 0 0 8px;
+      color: #66736b;
+      font-size: 14px;
+    }
+
+    .account-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      background: #f1f5f3;
+      color: #506057;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .profile-card {
+      background: #ffffff;
+      border: 1px solid #e3e9e5;
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 8px 28px rgba(20, 40, 30, 0.05);
+      margin-bottom: 22px;
+    }
+
+    .profile-card h2 {
+      margin: 0 0 6px;
+      color: #17251d;
+      font-size: 21px;
+    }
+
+    .profile-card-subtitle {
+      margin: 0 0 25px;
+      color: #718078;
+      font-size: 14px;
+    }
+
+    .profile-loading {
+      text-align: center;
+      padding: 45px 20px;
+      color: #66736b;
+    }
+
+    .profile-summary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .info-item {
+      padding: 17px;
+      border: 1px solid #e5ebe7;
+      border-radius: 12px;
+      background: #fbfcfb;
+    }
+
+    .info-label {
+      display: block;
+      margin-bottom: 6px;
+      color: #7a857e;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .info-value {
+      display: block;
+      color: #1d2a23;
+      font-size: 15px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .bio-item {
+      grid-column: 1 / -1;
+    }
+
+    .form-group {
+      margin-bottom: 19px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #26352d;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #d5ded9;
+      border-radius: 10px;
+      padding: 13px 14px;
+      background: #ffffff;
+      color: #17251d;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 110px;
+      line-height: 1.6;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.10);
+    }
+
+    .form-help {
+      margin: 7px 0 0;
+      color: #7a857e;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .logout-btn {
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .primary-btn {
+      border: 0;
+      background: #16a34a;
+      color: #ffffff;
+    }
+
+    .primary-btn:hover {
+      background: #12843d;
+    }
+
+    .secondary-btn {
+      border: 1px solid #d5ded9;
+      background: #ffffff;
+      color: #33423a;
+    }
+
+    .secondary-btn:hover {
+      border-color: #16a34a;
+      color: #12843d;
+    }
+
+    .logout-section {
+      text-align: center;
+      padding-top: 8px;
+    }
+
+    .logout-btn {
+      border: 1px solid #d9dfdc;
+      background: #ffffff;
+      color: #59655e;
+    }
+
+    .logout-btn:hover {
+      border-color: #b8c3bd;
+      background: #f8faf9;
+    }
+
+    .profile-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .profile-links a {
+      color: #15803d;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .profile-links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 650px) {
+
+      .profile-page {
+        padding: 28px 14px;
+      }
+
+      .profile-header-card {
+        padding: 22px;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .profile-heading h1 {
+        font-size: 24px;
+      }
+
+      .profile-card {
+        padding: 22px;
+      }
+
+      .profile-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .bio-item {
+        grid-column: auto;
+      }
+
+      .profile-actions {
+        flex-direction: column;
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        width: 100%;
+      }
+
+    }
+
+  </style>
+
 </head>
+
 
 <body>
 
-  <header>
-    <h1>SocialWorkBD</h1>
-    <p>আমার প্রোফাইল</p>
 
-    <nav>
-      <a href="index.html">হোম</a>
-      <a href="dashboard.html">ড্যাশবোর্ড</a>
-    </nav>
+  <!-- HEADER -->
+
+  <header class="site-header">
+
+    <div class="container">
+
+      <h1>
+        SocialWorkBD
+      </h1>
+
+      <p>
+        Find Work. Hire Talent. Build Your Future.
+      </p>
+
+      <nav>
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="tasks.html">
+          Find Work
+        </a>
+
+        <a href="post-job.html">
+          Post a Job
+        </a>
+
+      </nav>
+
+    </div>
+
   </header>
 
-  <main>
 
-    <section class="auth-box">
+  <!-- PROFILE PAGE -->
 
-      <h2>👤 আমার প্রোফাইল</h2>
+  <main class="profile-page">
 
-      <div id="profile-loading">
-        প্রোফাইল লোড হচ্ছে...
+    <div class="profile-wrapper">
+
+
+      <!-- LOADING -->
+
+      <div
+        id="profile-loading"
+        class="profile-card profile-loading"
+      >
+        Loading your profile...
       </div>
 
-      <div id="profile-content" style="display:none;">
 
-        <div class="profile-info">
-          <p>
-            <strong>নাম:</strong>
-            <span id="user-name">-</span>
+      <!-- PROFILE CONTENT -->
+
+      <div
+        id="profile-content"
+        style="display:none;"
+      >
+
+
+        <!-- PROFILE HEADER -->
+
+        <section class="profile-header-card">
+
+          <div
+            class="profile-avatar"
+            id="profile-avatar"
+          >
+            SW
+          </div>
+
+
+          <div class="profile-heading">
+
+            <h1>
+              <span id="user-name">-</span>
+            </h1>
+
+            <p>
+              <span id="user-email">-</span>
+            </p>
+
+            <span
+              class="account-badge"
+              id="user-role"
+            >
+              Freelancer
+            </span>
+
+          </div>
+
+        </section>
+
+
+        <!-- PROFILE OVERVIEW -->
+
+        <section class="profile-card">
+
+          <h2>
+            Profile Overview
+          </h2>
+
+          <p class="profile-card-subtitle">
+            Your professional information on SocialWorkBD.
           </p>
 
-          <p>
-            <strong>ইমেইল:</strong>
-            <span id="user-email">-</span>
+
+          <div class="profile-summary">
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Account Type
+              </span>
+
+              <span
+                class="info-value"
+                id="profile-account-type"
+              >
+                Freelancer
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Account ID
+              </span>
+
+              <span
+                class="info-value"
+                id="account-id"
+              >
+                -
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Email
+              </span>
+
+              <span
+                class="info-value"
+                id="profile-email"
+              >
+                -
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Skills
+              </span>
+
+              <span
+                class="info-value"
+                id="user-skills"
+              >
+                -
+              </span>
+
+            </div>
+
+
+            <div class="info-item bio-item">
+
+              <span class="info-label">
+                About
+              </span>
+
+              <span
+                class="info-value"
+                id="user-bio"
+              >
+                -
+              </span>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="profile-links">
+
+            <a href="tasks.html">
+              Browse Jobs
+            </a>
+
+            <a href="post-job.html">
+              Post a Job
+            </a>
+
+          </div>
+
+        </section>
+
+
+        <!-- EDIT PROFILE -->
+
+        <section class="profile-card">
+
+          <h2>
+            Edit Profile
+          </h2>
+
+          <p class="profile-card-subtitle">
+            Keep your professional information up to date.
           </p>
 
-          <p>
-            <strong>অ্যাকাউন্ট:</strong>
-            <span id="user-role">Worker</span>
-          </p>
 
-          <p>
-            <strong>দক্ষতা:</strong>
-            <span id="user-skills">-</span>
-          </p>
+          <form id="profile-form">
 
-          <p>
-            <strong>পরিচিতি:</strong>
-            <span id="user-bio">-</span>
-          </p>
+
+            <!-- NAME -->
+
+            <div class="form-group">
+
+              <label for="profile-name">
+                Full Name
+              </label>
+
+              <input
+                type="text"
+                id="profile-name"
+                placeholder="Enter your full name"
+                autocomplete="name"
+                required
+              >
+
+            </div>
+
+
+            <!-- ROLE -->
+
+            <div class="form-group">
+
+              <label for="profile-role">
+                Account Type
+              </label>
+
+              <select id="profile-role">
+
+                <option value="worker">
+                  Freelancer
+                </option>
+
+                <option value="client">
+                  Client
+                </option>
+
+              </select>
+
+              <p class="form-help">
+                Choose the account type that best matches how you use SocialWorkBD.
+              </p>
+
+            </div>
+
+
+            <!-- SKILLS -->
+
+            <div class="form-group">
+
+              <label for="profile-skills">
+                Skills
+              </label>
+
+              <input
+                type="text"
+                id="profile-skills"
+                placeholder="Example: Web Development, Design, Writing"
+                autocomplete="off"
+              >
+
+              <p class="form-help">
+                Add skills that describe your professional services.
+              </p>
+
+            </div>
+
+
+            <!-- BIO -->
+
+            <div class="form-group">
+
+              <label for="profile-bio">
+                About You
+              </label>
+
+              <textarea
+                id="profile-bio"
+                rows="5"
+                placeholder="Write a short professional introduction."
+              ></textarea>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="profile-actions">
+
+              <button
+                type="submit"
+                id="save-profile"
+                class="primary-btn"
+              >
+                Save Profile
+              </button>
+
+              <a
+                href="index.html"
+                class="secondary-btn"
+                style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"
+              >
+                Back to Home
+              </a>
+
+            </div>
+
+
+          </form>
+
+        </section>
+
+
+        <!-- LOGOUT -->
+
+        <div class="logout-section">
+
+          <button
+            type="button"
+            id="logout-btn"
+            class="logout-btn"
+          >
+            Log Out
+          </button>
 
         </div>
 
-        <hr style="margin:25px 0;">
-
-        <h3>✏️ প্রোফাইল Edit করুন</h3>
-
-        <form id="profile-form">
-
-          <label for="profile-name">
-            নাম
-          </label>
-
-          <input
-            type="text"
-            id="profile-name"
-            required
-          >
-
-          <label for="profile-role">
-            আপনি কে?
-          </label>
-
-          <select id="profile-role">
-            <option value="worker">Worker</option>
-            <option value="client">Client</option>
-          </select>
-
-          <label for="profile-skills">
-            আপনার Skills
-          </label>
-
-          <input
-            type="text"
-            id="profile-skills"
-            placeholder="যেমন: Graphic Design, Writing"
-          >
-
-          <label for="profile-bio">
-            নিজের সম্পর্কে
-          </label>
-
-          <textarea
-            id="profile-bio"
-            rows="4"
-            placeholder="সংক্ষিপ্ত পরিচিতি লিখুন"
-          ></textarea>
-
-          <button
-            type="submit"
-            id="save-profile"
-          >
-            💾 Save Profile
-          </button>
-
-        </form>
-
-        <button
-          type="button"
-          id="logout-btn"
-          style="margin-top:20px;"
-        >
-          🚪 Logout
-        </button>
 
       </div>
 
-    </section>
+    </div>
 
   </main>
 
+
+  <!-- FOOTER -->
+
   <footer>
-    <p>© 2026 SocialWorkBD</p>
-    <p>বাংলাদেশি Freelance & Job Marketplace</p>
+
+    <div class="container">
+
+      <p>
+        © 2026 SocialWorkBD
+      </p>
+
+      <p>
+        Global Freelance Marketplace
+      </p>
+
+    </div>
+
   </footer>
 
-  <!-- Firebase Configuration -->
+
+  <!-- FIREBASE CONFIG -->
+
   <script src="firebase-config.js"></script>
 
-  <!-- Main App -->
+
+  <!-- MAIN APP -->
+
   <script src="app.js"></script>
 
+
+  <!-- PROFILE UI SYNC -->
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const observer = new MutationObserver(function () {
+
+        const nameElement = document.getElementById("user-name");
+        const emailElement = document.getElementById("user-email");
+        const roleElement = document.getElementById("user-role");
+
+        const profileEmail = document.getElementById("profile-email");
+        const accountType = document.getElementById("profile-account-type");
+        const avatar = document.getElementById("profile-avatar");
+
+        if (nameElement && nameElement.textContent.trim() !== "-") {
+
+          const name = nameElement.textContent.trim();
+
+          const email = emailElement
+            ? emailElement.textContent.trim()
+            : "-";
+
+          const role = roleElement
+            ? roleElement.textContent.trim()
+            : "Freelancer";
+
+
+          if (profileEmail) {
+            profileEmail.textContent = email;
+          }
+
+          if (accountType) {
+            accountType.textContent = role;
+          }
+
+          if (avatar) {
+
+            const initials = name
+              .split(" ")
+              .filter(Boolean)
+              .slice(0, 2)
+              .map(function (word) {
+                return word.charAt(0).toUpperCase();
+              })
+              .join("");
+
+            avatar.textContent = initials || "SW";
+
+          }
+
+        }
+
+      });
+
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+
+
+    });
+
+  </script>
+
+
 </body>
+
 </html>
