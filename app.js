@@ -1,10 +1,11 @@
 /* =========================================================
    SocialWorkBD - Main Application
-   Firebase + Freelance Marketplace
+   Firebase + Professional Global Freelance Marketplace
    ========================================================= */
 
 (function () {
   "use strict";
+
 
   /* ---------------------------------------------------------
      Firebase Helpers
@@ -31,7 +32,9 @@
      --------------------------------------------------------- */
 
   function escapeHtml(value) {
-    if (value === null || value === undefined) return "";
+    if (value === null || value === undefined) {
+      return "";
+    }
 
     return String(value)
       .replace(/&/g, "&amp;")
@@ -68,7 +71,10 @@
       return "Client";
     }
 
-    if (role === "worker" || role === "freelancer") {
+    if (
+      role === "worker" ||
+      role === "freelancer"
+    ) {
       return "Freelancer";
     }
 
@@ -98,6 +104,7 @@
         month: "short",
         day: "numeric"
       });
+
     } catch (error) {
       return "";
     }
@@ -124,10 +131,13 @@
 
 
   function requireLogin() {
-    const localUser = getCurrentUserLocal();
+    const localUser =
+      getCurrentUserLocal();
 
     if (!localUser) {
-      window.location.href = "login.html";
+      window.location.href =
+        "login.html";
+
       return false;
     }
 
@@ -144,34 +154,78 @@
      Create / Load User Profile
      --------------------------------------------------------- */
 
-  async function createOrLoadUserProfile(user, extraData) {
-    const { db } = getFirebase();
+  async function createOrLoadUserProfile(
+    user,
+    extraData
+  ) {
+    const { db } =
+      getFirebase();
 
-    extraData = extraData || {};
+    extraData =
+      extraData || {};
 
-    const ref = db
-      .collection("users")
-      .doc(user.uid);
+    const ref =
+      db
+        .collection("users")
+        .doc(user.uid);
 
-    const snapshot = await ref.get();
+    const snapshot =
+      await ref.get();
+
+
+    /* Existing Profile */
 
     if (snapshot.exists) {
-      const existing = snapshot.data();
+      const existing =
+        snapshot.data();
 
       const profile = {
         id: user.uid,
         uid: user.uid,
-        accountId: existing.accountId || "",
-        name: existing.name || user.displayName || "",
-        email: existing.email || user.email || "",
-        role: existing.role || "worker",
-        skills: existing.skills || "",
-        title: existing.title || "",
-        bio: existing.bio || "",
-        location: existing.location || "",
-        photoURL: existing.photoURL || user.photoURL || "",
-        balance: Number(existing.balance || 0),
-        pendingBalance: Number(existing.pendingBalance || 0)
+
+        accountId:
+          existing.accountId || "",
+
+        name:
+          existing.name ||
+          user.displayName ||
+          "",
+
+        email:
+          existing.email ||
+          user.email ||
+          "",
+
+        role:
+          existing.role ||
+          "worker",
+
+        skills:
+          existing.skills ||
+          "",
+
+        title:
+          existing.title ||
+          "",
+
+        bio:
+          existing.bio ||
+          "",
+
+        location:
+          existing.location ||
+          "",
+
+        photoURL:
+          existing.photoURL ||
+          user.photoURL ||
+          "",
+
+        balance:
+          Number(existing.balance || 0),
+
+        pendingBalance:
+          Number(existing.pendingBalance || 0)
       };
 
       saveCurrentUser(profile);
@@ -179,15 +233,20 @@
       return profile;
     }
 
+
+    /* New Profile */
+
     const role =
       extraData.role === "client"
         ? "client"
         : "worker";
 
+
     const accountPrefix =
       role === "client"
         ? "SWB-C-"
         : "SWB-F-";
+
 
     const accountId =
       accountPrefix +
@@ -196,29 +255,69 @@
         .substring(2, 8)
         .toUpperCase();
 
+
     const profileData = {
-      uid: user.uid,
-      accountId: accountId,
-      name: extraData.name || user.displayName || "",
-      email: user.email || "",
-      role: role,
-      skills: extraData.skills || "",
-      title: "",
-      bio: "",
-      location: "",
-      photoURL: user.photoURL || "",
-      balance: 0,
-      pendingBalance: 0,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      uid:
+        user.uid,
+
+      accountId:
+        accountId,
+
+      name:
+        extraData.name ||
+        user.displayName ||
+        "",
+
+      email:
+        user.email ||
+        "",
+
+      role:
+        role,
+
+      skills:
+        extraData.skills ||
+        "",
+
+      title:
+        "",
+
+      bio:
+        "",
+
+      location:
+        "",
+
+      photoURL:
+        user.photoURL ||
+        "",
+
+      balance:
+        0,
+
+      pendingBalance:
+        0,
+
+      createdAt:
+        firebase.firestore.FieldValue
+          .serverTimestamp(),
+
+      updatedAt:
+        firebase.firestore.FieldValue
+          .serverTimestamp()
     };
 
-    await ref.set(profileData);
+
+    await ref.set(
+      profileData
+    );
+
 
     const profile = {
       id: user.uid,
       ...profileData
     };
+
 
     saveCurrentUser(profile);
 
@@ -231,98 +330,189 @@
      --------------------------------------------------------- */
 
   function setupSignup() {
-    const form = document.getElementById("signup-form");
+    const form =
+      document.getElementById(
+        "signup-form"
+      );
 
     if (!form) return;
 
-    form.addEventListener("submit", async function (event) {
-      event.preventDefault();
 
-      try {
-        const { auth } = getFirebase();
+    form.addEventListener(
+      "submit",
+      async function (event) {
+        event.preventDefault();
 
-        const name =
-          document.getElementById("name")?.value.trim() || "";
+        try {
+          const { auth } =
+            getFirebase();
 
-        const email =
-          document.getElementById("email")?.value.trim() || "";
 
-        const password =
-          document.getElementById("password")?.value || "";
+          const name =
+            document
+              .getElementById("name")
+              ?.value
+              .trim() || "";
 
-        const confirmPassword =
-          document.getElementById("confirm-password")?.value || "";
 
-        const roleElement =
-          document.getElementById("role");
+          const email =
+            document
+              .getElementById("email")
+              ?.value
+              .trim() || "";
 
-        const skillsElement =
-          document.getElementById("skills");
 
-        const role =
-          roleElement?.value || "worker";
+          const password =
+            document
+              .getElementById("password")
+              ?.value || "";
 
-        const skills =
-          skillsElement?.value.trim() || "";
 
-        if (!name || !email || !password) {
-          showError("Please complete all required fields.");
-          return;
-        }
+          const confirmPassword =
+            document
+              .getElementById(
+                "confirm-password"
+              )
+              ?.value || "";
 
-        if (password !== confirmPassword) {
-          showError("Passwords do not match.");
-          return;
-        }
 
-        if (password.length < 6) {
-          showError("Password must be at least 6 characters.");
-          return;
-        }
+          const roleElement =
+            document.getElementById(
+              "role"
+            );
 
-        const result =
-          await auth.createUserWithEmailAndPassword(
-            email,
-            password
+
+          const skillsElement =
+            document.getElementById(
+              "skills"
+            );
+
+
+          const role =
+            roleElement?.value ||
+            "worker";
+
+
+          const skills =
+            skillsElement
+              ?.value
+              .trim() || "";
+
+
+          if (
+            !name ||
+            !email ||
+            !password
+          ) {
+            showError(
+              "Please complete all required fields."
+            );
+
+            return;
+          }
+
+
+          if (
+            password !==
+            confirmPassword
+          ) {
+            showError(
+              "Passwords do not match."
+            );
+
+            return;
+          }
+
+
+          if (
+            password.length < 6
+          ) {
+            showError(
+              "Password must be at least 6 characters."
+            );
+
+            return;
+          }
+
+
+          const result =
+            await auth
+              .createUserWithEmailAndPassword(
+                email,
+                password
+              );
+
+
+          await createOrLoadUserProfile(
+            result.user,
+            {
+              name: name,
+              role: role,
+              skills: skills
+            }
           );
 
-        await createOrLoadUserProfile(
-          result.user,
-          {
-            name: name,
-            role: role,
-            skills: skills
+
+          await auth.signOut();
+
+
+          alert(
+            "Account created successfully. Please log in."
+          );
+
+
+          form.reset();
+
+
+          window.location.href =
+            "login.html";
+
+        } catch (error) {
+          console.error(
+            "Signup error:",
+            error
+          );
+
+
+          let message =
+            "Unable to create your account.";
+
+
+          if (
+            error.code ===
+            "auth/email-already-in-use"
+          ) {
+            message =
+              "This email is already registered.";
+
+          } else if (
+            error.code ===
+            "auth/invalid-email"
+          ) {
+            message =
+              "Please enter a valid email address.";
+
+          } else if (
+            error.code ===
+            "auth/weak-password"
+          ) {
+            message =
+              "Password is too weak.";
+
+          } else if (
+            error.code ===
+            "auth/network-request-failed"
+          ) {
+            message =
+              "Network error. Please check your internet connection.";
+
           }
-        );
 
-        await auth.signOut();
 
-        alert(
-          "Account created successfully. Please log in."
-        );
-
-        window.location.href = "login.html";
-
-      } catch (error) {
-        console.error(error);
-
-        let message =
-          "Unable to create your account.";
-
-        if (error.code === "auth/email-already-in-use") {
-          message =
-            "This email is already registered.";
-        } else if (error.code === "auth/invalid-email") {
-          message =
-            "Please enter a valid email address.";
-        } else if (error.code === "auth/weak-password") {
-          message =
-            "Password is too weak.";
+          showError(message);
         }
-
-        showError(message);
       }
-    });
+    );
   }
 
 
@@ -331,75 +521,520 @@
      --------------------------------------------------------- */
 
   function setupLogin() {
-    const form = document.getElementById("login-form");
+    const form =
+      document.getElementById(
+        "login-form"
+      );
 
     if (!form) return;
 
-    form.addEventListener("submit", async function (event) {
-      event.preventDefault();
 
-      try {
-        const { auth } = getFirebase();
+    form.addEventListener(
+      "submit",
+      async function (event) {
+        event.preventDefault();
 
-        const email =
-          document.getElementById("email")?.value.trim() || "";
 
-        const password =
-          document.getElementById("password")?.value || "";
-
-        if (!email || !password) {
-          showError(
-            "Please enter your email and password."
+        const button =
+          document.getElementById(
+            "login-btn"
           );
-          return;
+
+
+        try {
+          const { auth } =
+            getFirebase();
+
+
+          const email =
+            document
+              .getElementById("email")
+              ?.value
+              .trim() || "";
+
+
+          const password =
+            document
+              .getElementById("password")
+              ?.value || "";
+
+
+          if (
+            !email ||
+            !password
+          ) {
+            showError(
+              "Please enter your email and password."
+            );
+
+            return;
+          }
+
+
+          if (button) {
+            button.disabled = true;
+            button.textContent =
+              "Signing in...";
+          }
+
+
+          const result =
+            await auth
+              .signInWithEmailAndPassword(
+                email,
+                password
+              );
+
+
+          const profile =
+            await createOrLoadUserProfile(
+              result.user
+            );
+
+
+          if (
+            profile.role ===
+            "client"
+          ) {
+            window.location.href =
+              "client-dashboard.html";
+
+          } else if (
+            profile.role === "worker" ||
+            profile.role === "freelancer"
+          ) {
+            window.location.href =
+              "worker-dashboard.html";
+
+          } else {
+            window.location.href =
+              "profile.html";
+          }
+
+        } catch (error) {
+          console.error(
+            "Login error:",
+            error
+          );
+
+
+          if (button) {
+            button.disabled = false;
+            button.textContent =
+              "Log In";
+          }
+
+
+          let message =
+            "Unable to log in.";
+
+
+          if (
+            error.code ===
+              "auth/user-not-found" ||
+            error.code ===
+              "auth/wrong-password" ||
+            error.code ===
+              "auth/invalid-credential"
+          ) {
+            message =
+              "Incorrect email or password.";
+
+          } else if (
+            error.code ===
+            "auth/invalid-email"
+          ) {
+            message =
+              "Please enter a valid email address.";
+
+          } else if (
+            error.code ===
+            "auth/too-many-requests"
+          ) {
+            message =
+              "Too many login attempts. Please try again later.";
+
+          } else if (
+            error.code ===
+            "auth/network-request-failed"
+          ) {
+            message =
+              "Network error. Please check your internet connection.";
+          }
+
+
+          showError(message);
         }
+      }
+    );
+  }
 
-        const result =
-          await auth.signInWithEmailAndPassword(
-            email,
-            password
-          );
 
-        const profile =
-          await createOrLoadUserProfile(
-            result.user
-          );
+  /* ---------------------------------------------------------
+     Forgot Password
+     --------------------------------------------------------- */
 
-        if (profile.role === "client") {
-          window.location.href =
-            "client-dashboard.html";
-        } else if (
-          profile.role === "worker" ||
-          profile.role === "freelancer"
-        ) {
-          window.location.href =
-            "worker-dashboard.html";
-        } else {
-          window.location.href =
-            "profile.html";
-        }
+  function setupForgotPassword() {
+    const forgotLink =
+      document.getElementById(
+        "forgot-password"
+      );
 
-      } catch (error) {
-        console.error(error);
 
-        let message =
-          "Unable to log in.";
+    const panel =
+      document.getElementById(
+        "forgot-password-panel"
+      );
+
+
+    const form =
+      document.getElementById(
+        "forgot-password-form"
+      );
+
+
+    const emailInput =
+      document.getElementById(
+        "reset-email"
+      );
+
+
+    const button =
+      document.getElementById(
+        "reset-password-btn"
+      );
+
+
+    const messageBox =
+      document.getElementById(
+        "reset-message"
+      );
+
+
+    if (
+      !forgotLink ||
+      !panel ||
+      !form
+    ) {
+      return;
+    }
+
+
+    /* Open Reset Panel */
+
+    forgotLink.addEventListener(
+      "click",
+      function (event) {
+        event.preventDefault();
+
+        panel.classList.add(
+          "active"
+        );
+
+
+        const loginEmail =
+          document.getElementById(
+            "email"
+          )?.value.trim() || "";
+
 
         if (
-          error.code === "auth/user-not-found" ||
-          error.code === "auth/wrong-password" ||
-          error.code === "auth/invalid-credential"
+          emailInput &&
+          loginEmail &&
+          !emailInput.value
         ) {
-          message =
-            "Incorrect email or password.";
-        } else if (error.code === "auth/invalid-email") {
-          message =
-            "Please enter a valid email address.";
+          emailInput.value =
+            loginEmail;
         }
 
-        showError(message);
+
+        if (emailInput) {
+          setTimeout(
+            function () {
+              emailInput.focus();
+            },
+            100
+          );
+        }
       }
-    });
+    );
+
+
+    /* Send Reset Email */
+
+    form.addEventListener(
+      "submit",
+      async function (event) {
+        event.preventDefault();
+
+
+        try {
+          const { auth } =
+            getFirebase();
+
+
+          const email =
+            emailInput
+              ?.value
+              .trim() || "";
+
+
+          if (!email) {
+            showError(
+              "Please enter your email address."
+            );
+
+            return;
+          }
+
+
+          if (button) {
+            button.disabled =
+              true;
+
+            button.textContent =
+              "Sending...";
+          }
+
+
+          await auth
+            .sendPasswordResetEmail(
+              email
+            );
+
+
+          if (messageBox) {
+            messageBox.textContent =
+              "If an account exists for this email, a password reset link has been sent. Please check your inbox and spam folder.";
+
+            messageBox.style.background =
+              "#eef8ec";
+
+            messageBox.style.border =
+              "1px solid #cfe6ca";
+
+            messageBox.style.color =
+              "#168b08";
+
+            messageBox.classList.add(
+              "show"
+            );
+          }
+
+
+          form.reset();
+
+
+          if (button) {
+            button.disabled =
+              false;
+
+            button.textContent =
+              "Send Reset Link";
+          }
+
+        } catch (error) {
+          console.error(
+            "Password reset error:",
+            error
+          );
+
+
+          if (button) {
+            button.disabled =
+              false;
+
+            button.textContent =
+              "Send Reset Link";
+          }
+
+
+          let message =
+            "Unable to send the password reset email.";
+
+
+          if (
+            error.code ===
+            "auth/invalid-email"
+          ) {
+            message =
+              "Please enter a valid email address.";
+
+          } else if (
+            error.code ===
+            "auth/user-not-found"
+          ) {
+            message =
+              "No account was found with this email address.";
+
+          } else if (
+            error.code ===
+            "auth/network-request-failed"
+          ) {
+            message =
+              "Network error. Please check your internet connection.";
+
+          } else if (
+            error.code ===
+            "auth/too-many-requests"
+          ) {
+            message =
+              "Too many requests. Please try again later.";
+          }
+
+
+          if (messageBox) {
+            messageBox.textContent =
+              message;
+
+            messageBox.style.background =
+              "#fff4f4";
+
+            messageBox.style.border =
+              "1px solid #f0caca";
+
+            messageBox.style.color =
+              "#b42318";
+
+            messageBox.classList.add(
+              "show"
+            );
+
+          } else {
+            showError(message);
+          }
+        }
+      }
+    );
+  }
+
+
+  /* ---------------------------------------------------------
+     Google Login
+     --------------------------------------------------------- */
+
+  function setupGoogleLogin() {
+    const button =
+      document.getElementById(
+        "google-login"
+      );
+
+    if (!button) return;
+
+
+    button.addEventListener(
+      "click",
+      async function () {
+
+        try {
+          const { auth } =
+            getFirebase();
+
+
+          button.disabled =
+            true;
+
+          button.textContent =
+            "Connecting...";
+
+
+          const provider =
+            new firebase.auth.GoogleAuthProvider();
+
+
+          provider.addScope(
+            "profile"
+          );
+
+          provider.addScope(
+            "email"
+          );
+
+
+          const result =
+            await auth
+              .signInWithPopup(
+                provider
+              );
+
+
+          const profile =
+            await createOrLoadUserProfile(
+              result.user
+            );
+
+
+          if (
+            profile.role ===
+            "client"
+          ) {
+            window.location.href =
+              "client-dashboard.html";
+
+          } else if (
+            profile.role === "worker" ||
+            profile.role === "freelancer"
+          ) {
+            window.location.href =
+              "worker-dashboard.html";
+
+          } else {
+            window.location.href =
+              "profile.html";
+          }
+
+        } catch (error) {
+          console.error(
+            "Google login error:",
+            error
+          );
+
+
+          button.disabled =
+            false;
+
+          button.textContent =
+            "Continue with Google";
+
+
+          let message =
+            "Unable to continue with Google.";
+
+
+          if (
+            error.code ===
+            "auth/popup-closed-by-user"
+          ) {
+            message =
+              "Google sign-in was cancelled.";
+
+          } else if (
+            error.code ===
+            "auth/popup-blocked"
+          ) {
+            message =
+              "The Google sign-in window was blocked. Please allow pop-ups and try again.";
+
+          } else if (
+            error.code ===
+            "auth/account-exists-with-different-credential"
+          ) {
+            message =
+              "An account already exists with this email using another sign-in method.";
+
+          } else if (
+            error.code ===
+            "auth/network-request-failed"
+          ) {
+            message =
+              "Network error. Please check your internet connection.";
+          }
+
+
+          showError(message);
+        }
+      }
+    );
   }
 
 
@@ -409,47 +1044,70 @@
 
   async function loadHomeJobs() {
     const container =
-      document.getElementById("job-list");
+      document.getElementById(
+        "job-list"
+      );
 
     if (!container) return;
 
+
     try {
-      const { db } = getFirebase();
+      const { db } =
+        getFirebase();
+
 
       const snapshot =
         await db
           .collection("jobs")
-          .where("status", "==", "open")
+          .where(
+            "status",
+            "==",
+            "open"
+          )
           .limit(20)
           .get();
 
+
       const jobs = [];
 
-      snapshot.forEach(function (doc) {
-        jobs.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
 
-      jobs.sort(function (a, b) {
-        const aTime =
-          a.createdAt?.toMillis
-            ? a.createdAt.toMillis()
-            : 0;
+      snapshot.forEach(
+        function (doc) {
+          jobs.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        }
+      );
 
-        const bTime =
-          b.createdAt?.toMillis
-            ? b.createdAt.toMillis()
-            : 0;
 
-        return bTime - aTime;
-      });
+      jobs.sort(
+        function (a, b) {
+          const aTime =
+            a.createdAt?.toMillis
+              ? a.createdAt.toMillis()
+              : 0;
+
+
+          const bTime =
+            b.createdAt?.toMillis
+              ? b.createdAt.toMillis()
+              : 0;
+
+
+          return bTime - aTime;
+        }
+      );
+
 
       renderHomeJobs(jobs);
 
     } catch (error) {
-      console.error("Home jobs error:", error);
+      console.error(
+        "Home jobs error:",
+        error
+      );
+
 
       container.innerHTML =
         '<div class="empty-state">' +
@@ -461,9 +1119,12 @@
 
   function renderHomeJobs(jobs) {
     const container =
-      document.getElementById("job-list");
+      document.getElementById(
+        "job-list"
+      );
 
     if (!container) return;
+
 
     if (!jobs.length) {
       container.innerHTML =
@@ -475,46 +1136,68 @@
       return;
     }
 
+
     container.innerHTML =
-      jobs.map(function (job) {
-        return `
-          <article class="job-card">
-            <div class="job-card-main">
+      jobs.map(
+        function (job) {
+          return `
+            <article class="job-card">
 
-              <span class="job-card-status">
-                Open
-              </span>
+              <div class="job-card-main">
 
-              <h3>
-                <a href="job-details.html?id=${encodeURIComponent(job.id)}">
-                  ${escapeHtml(job.title || "Untitled Job")}
-                </a>
-              </h3>
+                <span class="job-card-status">
+                  Open
+                </span>
 
-              <p>
-                ${escapeHtml(
-                  (job.description || "").substring(0, 180)
-                )}
-              </p>
+                <h3>
+                  <a href="job-details.html?id=${encodeURIComponent(job.id)}">
+                    ${escapeHtml(
+                      job.title ||
+                      "Untitled Job"
+                    )}
+                  </a>
+                </h3>
 
-              <div class="job-card-skills">
-                ${escapeHtml(job.skills || "General")}
+                <p>
+                  ${escapeHtml(
+                    (
+                      job.description ||
+                      ""
+                    ).substring(0, 180)
+                  )}
+                </p>
+
+                <div class="job-card-skills">
+                  ${escapeHtml(
+                    job.skills ||
+                    "General"
+                  )}
+                </div>
+
               </div>
 
-            </div>
 
-            <div class="job-card-side">
-              <strong>
-                ${formatBudget(job.budget)}
-              </strong>
+              <div class="job-card-side">
 
-              <span>
-                ${Number(job.deliveryDays || 0)} days
-              </span>
-            </div>
-          </article>
-        `;
-      }).join("");
+                <strong>
+                  ${formatBudget(
+                    job.budget
+                  )}
+                </strong>
+
+                <span>
+                  ${Number(
+                    job.deliveryDays ||
+                    0
+                  )} days
+                </span>
+
+              </div>
+
+            </article>
+          `;
+        }
+      ).join("");
   }
 
 
@@ -524,28 +1207,45 @@
 
   function setupHomeSearch() {
     const form =
-      document.getElementById("home-search-form");
+      document.getElementById(
+        "home-search-form"
+      );
+
 
     const input =
-      document.getElementById("home-search");
+      document.getElementById(
+        "home-search"
+      );
 
-    if (!form || !input) return;
 
-    form.addEventListener("submit", function (event) {
-      event.preventDefault();
+    if (!form || !input) {
+      return;
+    }
 
-      const query =
-        input.value.trim();
 
-      if (query) {
-        window.location.href =
-          "tasks.html?search=" +
-          encodeURIComponent(query);
-      } else {
-        window.location.href =
-          "tasks.html";
+    form.addEventListener(
+      "submit",
+      function (event) {
+        event.preventDefault();
+
+
+        const query =
+          input.value.trim();
+
+
+        if (query) {
+          window.location.href =
+            "tasks.html?search=" +
+            encodeURIComponent(
+              query
+            );
+
+        } else {
+          window.location.href =
+            "tasks.html";
+        }
       }
-    });
+    );
   }
 
 
@@ -555,137 +1255,225 @@
 
   function setupPostJob() {
     const form =
-      document.getElementById("job-form");
+      document.getElementById(
+        "job-form"
+      );
+
 
     if (!form) return;
 
-    form.addEventListener("submit", async function (event) {
-      event.preventDefault();
 
-      try {
-        const { auth, db } =
-          getFirebase();
+    form.addEventListener(
+      "submit",
+      async function (event) {
+        event.preventDefault();
 
-        const user =
-          auth.currentUser;
 
-        if (!user) {
+        try {
+          const { auth, db } =
+            getFirebase();
+
+
+          const user =
+            auth.currentUser;
+
+
+          if (!user) {
+            window.location.href =
+              "login.html";
+
+            return;
+          }
+
+
+          const profile =
+            await getUserProfile(
+              user.uid
+            );
+
+
+          if (!profile) {
+            showError(
+              "Your profile could not be loaded."
+            );
+
+            return;
+          }
+
+
+          if (
+            profile.role !==
+            "client"
+          ) {
+            showError(
+              "Only client accounts can post jobs."
+            );
+
+            return;
+          }
+
+
+          const title =
+            document
+              .getElementById("title")
+              ?.value
+              .trim() || "";
+
+
+          const description =
+            document
+              .getElementById("desc")
+              ?.value
+              .trim() || "";
+
+
+          const budget =
+            Number(
+              document
+                .getElementById("budget")
+                ?.value ||
+              0
+            );
+
+
+          const skills =
+            document
+              .getElementById("skills")
+              ?.value
+              .trim() || "";
+
+
+          const deliveryDays =
+            Number(
+              document
+                .getElementById(
+                  "delivery-days"
+                )
+                ?.value ||
+              0
+            );
+
+
+          if (
+            !title ||
+            !description ||
+            budget <= 0 ||
+            !skills ||
+            deliveryDays <= 0
+          ) {
+            showError(
+              "Please complete all job details."
+            );
+
+            return;
+          }
+
+
+          const button =
+            document.getElementById(
+              "post-job-btn"
+            );
+
+
+          if (button) {
+            button.disabled =
+              true;
+
+            button.textContent =
+              "Posting...";
+          }
+
+
+          await db
+            .collection("jobs")
+            .add({
+              title:
+                title,
+
+              description:
+                description,
+
+              budget:
+                budget,
+
+              skills:
+                skills,
+
+              deliveryDays:
+                deliveryDays,
+
+              category:
+                "",
+
+              clientId:
+                user.uid,
+
+              clientName:
+                profile.name ||
+                "Client",
+
+              clientAccountId:
+                profile.accountId ||
+                "",
+
+              status:
+                "open",
+
+              proposalCount:
+                0,
+
+              hiredFreelancerId:
+                null,
+
+              createdAt:
+                firebase.firestore.FieldValue
+                  .serverTimestamp(),
+
+              updatedAt:
+                firebase.firestore.FieldValue
+                  .serverTimestamp()
+            });
+
+
+          alert(
+            "Your job has been posted successfully."
+          );
+
+
+          form.reset();
+
+
           window.location.href =
-            "login.html";
-          return;
-        }
+            "client-dashboard.html";
 
-        const profile =
-          await getUserProfile(
-            user.uid
+        } catch (error) {
+          console.error(
+            "Post job error:",
+            error
           );
 
-        if (!profile) {
+
+          const button =
+            document.getElementById(
+              "post-job-btn"
+            );
+
+
+          if (button) {
+            button.disabled =
+              false;
+
+            button.textContent =
+              "Post Job";
+          }
+
+
           showError(
-            "Your profile could not be loaded."
+            "Unable to post the job. Please try again."
           );
-          return;
         }
-
-        if (profile.role !== "client") {
-          showError(
-            "Only client accounts can post jobs."
-          );
-          return;
-        }
-
-        const title =
-          document.getElementById("title")
-            ?.value.trim() || "";
-
-        const description =
-          document.getElementById("desc")
-            ?.value.trim() || "";
-
-        const budget =
-          Number(
-            document.getElementById("budget")
-              ?.value || 0
-          );
-
-        const skills =
-          document.getElementById("skills")
-            ?.value.trim() || "";
-
-        const deliveryDays =
-          Number(
-            document.getElementById("delivery-days")
-              ?.value || 0
-          );
-
-        if (
-          !title ||
-          !description ||
-          budget <= 0 ||
-          !skills ||
-          deliveryDays <= 0
-        ) {
-          showError(
-            "Please complete all job details."
-          );
-          return;
-        }
-
-        const button =
-          document.getElementById("post-job-btn");
-
-        if (button) {
-          button.disabled = true;
-          button.textContent =
-            "Posting...";
-        }
-
-        await db.collection("jobs").add({
-          title: title,
-          description: description,
-          budget: budget,
-          skills: skills,
-          deliveryDays: deliveryDays,
-          category: "",
-          clientId: user.uid,
-          clientName: profile.name || "Client",
-          clientAccountId:
-            profile.accountId || "",
-          status: "open",
-          proposalCount: 0,
-          hiredFreelancerId: null,
-          createdAt:
-            firebase.firestore.FieldValue.serverTimestamp(),
-          updatedAt:
-            firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        alert(
-          "Your job has been posted successfully."
-        );
-
-        form.reset();
-
-        window.location.href =
-          "client-dashboard.html";
-
-      } catch (error) {
-        console.error("Post job error:", error);
-
-        const button =
-          document.getElementById("post-job-btn");
-
-        if (button) {
-          button.disabled = false;
-          button.textContent =
-            "Post Job";
-        }
-
-        showError(
-          "Unable to post the job. Please try again."
-        );
       }
-    });
+    );
   }
 
 
@@ -695,30 +1483,48 @@
 
   async function loadJobDetails() {
     const titleElement =
-      document.getElementById("job-title");
+      document.getElementById(
+        "job-title"
+      );
 
-    if (!titleElement) return;
+
+    if (!titleElement) {
+      return;
+    }
+
 
     const loading =
-      document.getElementById("job-loading");
+      document.getElementById(
+        "job-loading"
+      );
+
 
     const content =
-      document.getElementById("job-content");
+      document.getElementById(
+        "job-content"
+      );
+
 
     const errorBox =
-      document.getElementById("job-error");
+      document.getElementById(
+        "job-error"
+      );
+
 
     try {
       const { db } =
         getFirebase();
+
 
       const params =
         new URLSearchParams(
           window.location.search
         );
 
+
       const jobId =
         params.get("id");
+
 
       if (!jobId) {
         throw new Error(
@@ -726,11 +1532,13 @@
         );
       }
 
+
       const snapshot =
         await db
           .collection("jobs")
           .doc(jobId)
           .get();
+
 
       if (!snapshot.exists) {
         throw new Error(
@@ -738,43 +1546,65 @@
         );
       }
 
+
       const job = {
         id: snapshot.id,
         ...snapshot.data()
       };
 
-      /* -----------------------------
-         Basic Job Information
-         ----------------------------- */
 
       const title =
-        document.getElementById("job-title");
+        document.getElementById(
+          "job-title"
+        );
+
 
       const description =
-        document.getElementById("job-desc");
+        document.getElementById(
+          "job-desc"
+        );
+
 
       const budget =
-        document.getElementById("job-budget");
+        document.getElementById(
+          "job-budget"
+        );
+
 
       const skills =
-        document.getElementById("job-skills");
+        document.getElementById(
+          "job-skills"
+        );
+
 
       const delivery =
-        document.getElementById("job-delivery");
+        document.getElementById(
+          "job-delivery"
+        );
+
 
       const proposals =
-        document.getElementById("job-proposals");
+        document.getElementById(
+          "job-proposals"
+        );
+
 
       const client =
-        document.getElementById("job-client");
+        document.getElementById(
+          "job-client"
+        );
+
 
       const status =
-        document.getElementById("job-status");
+        document.getElementById(
+          "job-status"
+        );
 
 
       if (title) {
         title.textContent =
-          job.title || "Untitled Job";
+          job.title ||
+          "Untitled Job";
       }
 
 
@@ -787,13 +1617,19 @@
 
       if (budget) {
         budget.textContent =
-          formatBudget(job.budget);
+          formatBudget(
+            job.budget
+          );
       }
 
 
       if (delivery) {
         const days =
-          Number(job.deliveryDays || 0);
+          Number(
+            job.deliveryDays ||
+            0
+          );
+
 
         delivery.textContent =
           days > 0
@@ -804,29 +1640,41 @@
 
       if (proposals) {
         proposals.textContent =
-          Number(job.proposalCount || 0);
+          Number(
+            job.proposalCount ||
+            0
+          );
       }
 
 
       if (client) {
         client.textContent =
-          job.clientName || "Client";
+          job.clientName ||
+          "Client";
       }
 
 
       if (status) {
         const currentStatus =
           String(
-            job.status || "open"
+            job.status ||
+            "open"
           ).toLowerCase();
+
 
         status.textContent =
           currentStatus === "open"
             ? "Open"
-            : currentStatus.charAt(0).toUpperCase() +
+            : currentStatus
+                .charAt(0)
+                .toUpperCase() +
               currentStatus.slice(1);
 
-        if (currentStatus !== "open") {
+
+        if (
+          currentStatus !==
+          "open"
+        ) {
           status.style.background =
             "#f2f2f2";
 
@@ -836,31 +1684,45 @@
       }
 
 
-      /* -----------------------------
-         Skills
-         ----------------------------- */
+      /* Skills */
 
       if (skills) {
         const skillText =
-          String(job.skills || "");
+          String(
+            job.skills ||
+            ""
+          );
+
 
         const skillItems =
           skillText
             .split(",")
-            .map(function (item) {
-              return item.trim();
-            })
+            .map(
+              function (item) {
+                return item.trim();
+              }
+            )
             .filter(Boolean);
 
-        if (skillItems.length) {
+
+        if (
+          skillItems.length
+        ) {
           skills.innerHTML =
-            skillItems.map(function (skill) {
-              return `
-                <span class="skill-tag">
-                  ${escapeHtml(skill)}
-                </span>
-              `;
-            }).join("");
+            skillItems
+              .map(
+                function (skill) {
+                  return `
+                    <span class="skill-tag">
+                      ${escapeHtml(
+                        skill
+                      )}
+                    </span>
+                  `;
+                }
+              )
+              .join("");
+
         } else {
           skills.innerHTML =
             '<span class="skill-tag">General</span>';
@@ -868,29 +1730,23 @@
       }
 
 
-      /* -----------------------------
-         Show Page
-         ----------------------------- */
-
       if (loading) {
         loading.style.display =
           "none";
       }
+
 
       if (errorBox) {
         errorBox.style.display =
           "none";
       }
 
+
       if (content) {
         content.style.display =
           "grid";
       }
 
-
-      /* -----------------------------
-         Proposal Form
-         ----------------------------- */
 
       setupProposalForm(job);
 
@@ -900,15 +1756,18 @@
         error
       );
 
+
       if (loading) {
         loading.style.display =
           "none";
       }
 
+
       if (content) {
         content.style.display =
           "none";
       }
+
 
       if (errorBox) {
         errorBox.style.display =
@@ -924,26 +1783,38 @@
 
   function setupProposalForm(job) {
     const form =
-      document.getElementById("bid-form");
+      document.getElementById(
+        "bid-form"
+      );
+
 
     if (!form) return;
 
+
     const notice =
-      document.getElementById("job-notice");
+      document.getElementById(
+        "job-notice"
+      );
+
 
     const submitButton =
       form.querySelector(
         'button[type="submit"]'
       );
 
+
     const { auth } =
       getFirebase();
+
 
     const user =
       auth.currentUser;
 
+
     if (
-      String(job.status || "").toLowerCase() !==
+      String(
+        job.status || ""
+      ).toLowerCase() !==
       "open"
     ) {
       if (notice) {
@@ -954,10 +1825,12 @@
           "block";
       }
 
+
       if (submitButton) {
         submitButton.disabled =
           true;
       }
+
 
       return;
     }
@@ -972,11 +1845,15 @@
           "block";
       }
 
+
       return;
     }
 
 
-    if (user.uid === job.clientId) {
+    if (
+      user.uid ===
+      job.clientId
+    ) {
       if (notice) {
         notice.textContent =
           "You cannot submit a proposal to your own job.";
@@ -985,10 +1862,12 @@
           "block";
       }
 
+
       if (submitButton) {
         submitButton.disabled =
           true;
       }
+
 
       return;
     }
@@ -999,40 +1878,52 @@
       async function (event) {
         event.preventDefault();
 
+
         try {
           const { auth, db } =
             getFirebase();
 
+
           const currentUser =
             auth.currentUser;
+
 
           if (!currentUser) {
             window.location.href =
               "login.html";
+
             return;
           }
+
 
           const profile =
             await getUserProfile(
               currentUser.uid
             );
 
+
           if (!profile) {
             showError(
               "Your freelancer profile could not be loaded."
             );
+
             return;
           }
 
+
           if (
-            profile.role !== "worker" &&
-            profile.role !== "freelancer"
+            profile.role !==
+              "worker" &&
+            profile.role !==
+              "freelancer"
           ) {
             showError(
               "Only freelancer accounts can submit proposals."
             );
+
             return;
           }
+
 
           if (
             currentUser.uid ===
@@ -1041,17 +1932,16 @@
             showError(
               "You cannot apply to your own job."
             );
+
             return;
           }
 
 
-          /* -------------------------
-             Check Duplicate Proposal
-             ------------------------- */
-
           const duplicate =
             await db
-              .collection("proposals")
+              .collection(
+                "proposals"
+              )
               .where(
                 "jobId",
                 "==",
@@ -1065,28 +1955,44 @@
               .limit(1)
               .get();
 
-          if (!duplicate.empty) {
+
+          if (
+            !duplicate.empty
+          ) {
             showError(
               "You have already submitted a proposal for this job."
             );
+
             return;
           }
 
 
           const coverLetter =
-            document.getElementById("cover")
-              ?.value.trim() || "";
+            document
+              .getElementById("cover")
+              ?.value
+              .trim() || "";
+
 
           const amount =
             Number(
-              document.getElementById("bid-amount")
-                ?.value || 0
+              document
+                .getElementById(
+                  "bid-amount"
+                )
+                ?.value ||
+              0
             );
+
 
           const deliveryDays =
             Number(
-              document.getElementById("delivery-days")
-                ?.value || 0
+              document
+                .getElementById(
+                  "delivery-days"
+                )
+                ?.value ||
+              0
             );
 
 
@@ -1098,6 +2004,7 @@
             showError(
               "Please complete all proposal details."
             );
+
             return;
           }
 
@@ -1111,52 +2018,66 @@
           }
 
 
-          /* -------------------------
-             Create Proposal
-             ------------------------- */
-
           await db
-            .collection("proposals")
+            .collection(
+              "proposals"
+            )
             .add({
-              jobId: job.id,
+              jobId:
+                job.id,
+
               jobTitle:
-                job.title || "",
+                job.title ||
+                "",
+
               clientId:
-                job.clientId || "",
+                job.clientId ||
+                "",
+
               freelancerId:
                 currentUser.uid,
+
               freelancerName:
-                profile.name || "Freelancer",
+                profile.name ||
+                "Freelancer",
+
               freelancerAccountId:
-                profile.accountId || "",
+                profile.accountId ||
+                "",
+
               coverLetter:
                 coverLetter,
+
               amount:
                 amount,
+
               deliveryDays:
                 deliveryDays,
+
               status:
                 "submitted",
+
               createdAt:
-                firebase.firestore.FieldValue.serverTimestamp(),
+                firebase.firestore.FieldValue
+                  .serverTimestamp(),
+
               updatedAt:
-                firebase.firestore.FieldValue.serverTimestamp()
+                firebase.firestore.FieldValue
+                  .serverTimestamp()
             });
 
-
-          /* -------------------------
-             Update Proposal Count
-             ------------------------- */
 
           await db
             .collection("jobs")
             .doc(job.id)
             .update({
               proposalCount:
-                firebase.firestore.FieldValue.increment(1),
+                firebase.firestore.FieldValue
+                  .increment(1),
 
               updatedAt:
-                firebase.firestore.FieldValue.serverTimestamp()
+                firebase.firestore.FieldValue
+                  .serverTimestamp()
             });
 
 
@@ -1164,7 +2085,9 @@
             "Your proposal has been submitted successfully."
           );
 
+
           form.reset();
+
 
           if (notice) {
             notice.textContent =
@@ -1183,6 +2106,7 @@
               "#168b08";
           }
 
+
           if (submitButton) {
             submitButton.disabled =
               true;
@@ -1191,14 +2115,21 @@
               "Proposal Submitted";
           }
 
+
           const proposalsElement =
             document.getElementById(
               "job-proposals"
             );
 
-          if (proposalsElement) {
+
+          if (
+            proposalsElement
+          ) {
             proposalsElement.textContent =
-              Number(job.proposalCount || 0) + 1;
+              Number(
+                job.proposalCount ||
+                0
+              ) + 1;
           }
 
         } catch (error) {
@@ -1207,6 +2138,7 @@
             error
           );
 
+
           if (submitButton) {
             submitButton.disabled =
               false;
@@ -1214,6 +2146,7 @@
             submitButton.textContent =
               "Submit Proposal";
           }
+
 
           showError(
             "Unable to submit your proposal. Please try again."
@@ -1230,28 +2163,37 @@
 
   async function loadProfile() {
     const nameElement =
-      document.getElementById("user-name");
+      document.getElementById(
+        "user-name"
+      );
+
 
     if (!nameElement) return;
+
 
     try {
       const { auth } =
         getFirebase();
 
+
       const user =
         auth.currentUser;
+
 
       const localUser =
         getCurrentUserLocal();
 
+
       let profile =
         localUser;
+
 
       if (user) {
         const firebaseProfile =
           await getUserProfile(
             user.uid
           );
+
 
         if (firebaseProfile) {
           profile =
@@ -1263,15 +2205,18 @@
         }
       }
 
+
       if (!profile) {
         window.location.href =
           "login.html";
+
         return;
       }
 
 
       nameElement.textContent =
-        profile.name || "User";
+        profile.name ||
+        "User";
 
 
       const emailElement =
@@ -1279,9 +2224,11 @@
           "user-email"
         );
 
+
       if (emailElement) {
         emailElement.textContent =
-          profile.email || "";
+          profile.email ||
+          "";
       }
 
 
@@ -1290,9 +2237,12 @@
           "user-role"
         );
 
+
       if (roleElement) {
         roleElement.textContent =
-          getRoleName(profile.role);
+          getRoleName(
+            profile.role
+          );
       }
 
 
@@ -1301,9 +2251,11 @@
           "user-skills"
         );
 
+
       if (skillsElement) {
         skillsElement.textContent =
-          profile.skills || "Not added yet";
+          profile.skills ||
+          "Not added yet";
       }
 
 
@@ -1312,9 +2264,11 @@
           "user-bio"
         );
 
+
       if (bioElement) {
         bioElement.textContent =
-          profile.bio || "No bio added yet.";
+          profile.bio ||
+          "No bio added yet.";
       }
 
 
@@ -1323,9 +2277,11 @@
           "account-id"
         );
 
+
       if (accountElement) {
         accountElement.textContent =
-          profile.accountId || "—";
+          profile.accountId ||
+          "—";
       }
 
     } catch (error) {
@@ -1347,26 +2303,36 @@
         "logout-btn"
       );
 
+
     if (!button) return;
+
 
     button.addEventListener(
       "click",
       async function () {
+
         try {
           const { auth } =
             getFirebase();
 
+
           await auth.signOut();
+
 
           localStorage.removeItem(
             "currentUser"
           );
 
+
           window.location.href =
             "index.html";
 
         } catch (error) {
-          console.error(error);
+          console.error(
+            "Logout error:",
+            error
+          );
+
 
           showError(
             "Unable to log out."
@@ -1386,14 +2352,20 @@
       const { auth } =
         getFirebase();
 
+
       auth.onAuthStateChanged(
         async function (user) {
-          if (!user) return;
+
+          if (!user) {
+            return;
+          }
+
 
           try {
             await createOrLoadUserProfile(
               user
             );
+
           } catch (error) {
             console.error(
               "Auth profile error:",
@@ -1425,6 +2397,10 @@
       setupSignup();
 
       setupLogin();
+
+      setupForgotPassword();
+
+      setupGoogleLogin();
 
       setupPostJob();
 
