@@ -151,6 +151,547 @@
 
 
   /* ---------------------------------------------------------
+     Account Status / Moderation Helpers
+     --------------------------------------------------------- */
+
+  const ACCOUNT_STATUS = {
+    ACTIVE: "active",
+    WARNING: "warning",
+    RESTRICTED: "restricted",
+    SUSPENDED: "suspended",
+    UNDER_REVIEW: "under_review"
+  };
+
+
+  function normalizeAccountStatus(status) {
+    const value =
+      String(status || "")
+        .trim()
+        .toLowerCase();
+
+    if (
+      value === ACCOUNT_STATUS.WARNING ||
+      value === ACCOUNT_STATUS.RESTRICTED ||
+      value === ACCOUNT_STATUS.SUSPENDED ||
+      value === ACCOUNT_STATUS.UNDER_REVIEW
+    ) {
+      return value;
+    }
+
+    return ACCOUNT_STATUS.ACTIVE;
+  }
+
+
+  function getAccountStatus(profile) {
+    if (!profile) {
+      return ACCOUNT_STATUS.ACTIVE;
+    }
+
+    return normalizeAccountStatus(
+      profile.accountStatus
+    );
+  }
+
+
+  function isAccountMessagingBlocked(profile) {
+    const status =
+      getAccountStatus(profile);
+
+    return (
+      status === ACCOUNT_STATUS.RESTRICTED ||
+      status === ACCOUNT_STATUS.SUSPENDED
+    );
+  }
+
+
+  function getAccountStatusMessage(profile) {
+    const status =
+      getAccountStatus(profile);
+
+    if (
+      status === ACCOUNT_STATUS.SUSPENDED
+    ) {
+      return (
+        "Your account is currently suspended. " +
+        "Messaging and other restricted activities are unavailable. " +
+        "You can request a review from Support."
+      );
+    }
+
+    if (
+      status === ACCOUNT_STATUS.RESTRICTED
+    ) {
+      return (
+        "Your account currently has messaging restrictions " +
+        "because of repeated policy violations. " +
+        "You can request a review from Support."
+      );
+    }
+
+    if (
+      status === ACCOUNT_STATUS.UNDER_REVIEW
+    ) {
+      return (
+        "Your account is currently under review. " +
+        "Some activities may be temporarily limited."
+      );
+    }
+
+    if (
+      status === ACCOUNT_STATUS.WARNING
+    ) {
+      return (
+        "Your account has received a policy warning. " +
+        "Please keep communication and transactions inside SocialWorkBD."
+      );
+    }
+
+    return "";
+  }
+
+
+  /*
+   * Detect content that attempts to move communication
+   * outside SocialWorkBD.
+   *
+   * This is only a first-level client-side detector.
+   * Final enforcement should be done with Firestore Rules
+   * and/or trusted backend functions.
+   */
+
+  function detectOffPlatformContent(text) {
+    const value =
+      String(text || "")
+        .trim();
+
+    if (!value) {
+      return {
+        flagged: false,
+        reasons: []
+      };
+    }
+
+
+    const reasons = [];
+
+
+    /* Website / URL */
+
+    const urlPattern =
+      /(?:https?:\/\/|www\.)[^\s]+/i;
+
+    if (urlPattern.test(value)) {
+      reasons.push("external link");
+    }
+
+
+    /* Email */
+
+    const emailPattern =
+      /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
+
+    if (emailPattern.test(value)) {
+      reasons.push("email address");
+    }
+
+
+    /* Phone / mobile number */
+
+    const phonePattern =
+      /(?:\+?\d[\d\s().-]{7,}\d)/i;
+
+    if (phonePattern.test(value)) {
+      reasons.push("phone number");
+    }
+
+
+    /* Common external communication services */
+
+    const platformPattern =
+      /\b(whatsapp|telegram|discord|signal|messenger|facebook|instagram|linkedin|tiktok|skype|snapchat)\b/i;
+
+    if (platformPattern.test(value)) {
+      reasons.push("external communication platform");
+    }
+
+
+    /* Direct off-platform requests */
+
+    const offPlatformPattern =
+      /\b(contact me|message me|text me|call me|reach me|talk to me|send me your number|send your number|my number|my email|email me|dm me|add me|chat outside|outside socialworkbd|off[- ]platform|off platform|outside the platform|move to whatsapp|move to telegram|contact outside)\b/i;
+
+    if (offPlatformPattern.test(value)) {
+      reasons.push("off-platform communication request");
+    }
+
+
+    return {
+      flagged: reasons.length > 0,
+      reasons: reasons
+    };
+  }
+
+
+  async function recordModerationViolation(
+    uid,
+    messageText,
+    reasons
+  ) {
+    const { db } =
+      getFirebase();
+
+
+    if (!uid) {
+      return null;
+    }
+
+
+    const userRef =
+      db
+        .collection("users")
+        .doc(uid);
+
+
+    const snapshot =
+      await userRef.get();
+
+
+    if (!snapshot.exists) {
+      return null;
+    }
+
+
+    const profile =
+      snapshot.data();
+
+
+    const previousViolations =
+      Number(
+        profile.violationCount || 0
+      );
+
+
+    const previousWarnings =
+      Number(
+        profile.warningCount || 0
+      );
+
+
+    const violationCount =
+      previousViolations + 1;
+
+
+    const warningCount =
+      previousWarnings + 1;
+
+
+    /*
+     * Escalation policy:
+     *
+     * 1st violation  -> warning
+     * 2nd violation  -> warning
+     * 3rd violation  -> restricted
+     * 5th violation  -> suspended
+     *
+     * This is intentionally gradual rather than
+     * permanently blocking someone after one mistake.
+     */
+
+    let nextStatus =
+      ACCOUNT_STATUS.WARNING;
+
+
+    if (violationCount >= 5) {
+      nextStatus =
+        ACCOUNT_STATUS.SUSPENDED;
+
+    } else if (
+      violationCount >= 3
+    ) {
+      nextStatus =
+        ACCOUNT_STATUS.RESTRICTED;
+    }
+
+
+    const eventData = {
+      userId:
+        uid,
+
+      accountId:
+        profile.accountId || "",
+
+      type:
+        "off_platform_communication",
+
+      message:
+        String(messageText || "")
+          .substring(0, 1000),
+
+      reasons:
+        Array.isArray(reasons)
+          ? reasons
+          : [],
+
+      violationNumber:
+        violationCount,
+
+      previousStatus:
+        normalizeAccountStatus(
+          profile.accountStatus
+        ),
+
+      resultingStatus:
+        nextStatus,
+
+      createdAt:
+        firebase.firestore.FieldValue
+          .serverTimestamp()
+    };
+
+
+    await db
+      .collection("moderationEvents")
+      .add(eventData);
+
+
+    await userRef.update({
+      accountStatus:
+        nextStatus,
+
+      warningCount:
+        warningCount,
+
+      violationCount:
+        violationCount,
+
+      lastViolationAt:
+        firebase.firestore.FieldValue
+          .serverTimestamp(),
+
+      lastViolationType:
+        "off_platform_communication",
+
+      lastViolationReasons:
+        Array.isArray(reasons)
+          ? reasons
+          : [],
+
+      updatedAt:
+        firebase.firestore.FieldValue
+          .serverTimestamp()
+    });
+
+
+    const updatedProfile = {
+      id: uid,
+      ...profile,
+
+      accountStatus:
+        nextStatus,
+
+      warningCount:
+        warningCount,
+
+      violationCount:
+        violationCount
+    };
+
+
+    saveCurrentUser(
+      updatedProfile
+    );
+
+
+    return {
+      status:
+        nextStatus,
+
+      violationCount:
+        violationCount,
+
+      warningCount:
+        warningCount,
+
+      reasons:
+        Array.isArray(reasons)
+          ? reasons
+          : []
+    };
+  }
+
+
+  async function moderateMessageAttempt(
+    messageText
+  ) {
+    const { auth } =
+      getFirebase();
+
+
+    const user =
+      auth.currentUser;
+
+
+    if (!user) {
+      return {
+        allowed: false,
+        reason:
+          "login_required"
+      };
+    }
+
+
+    const profile =
+      await getUserProfile(
+        user.uid
+      );
+
+
+    if (!profile) {
+      return {
+        allowed: false,
+        reason:
+          "profile_missing"
+      };
+    }
+
+
+    const accountStatus =
+      getAccountStatus(
+        profile
+      );
+
+
+    if (
+      accountStatus ===
+      ACCOUNT_STATUS.SUSPENDED
+    ) {
+      return {
+        allowed: false,
+        reason:
+          "account_suspended",
+
+        message:
+          getAccountStatusMessage(
+            profile
+          )
+      };
+    }
+
+
+    if (
+      accountStatus ===
+      ACCOUNT_STATUS.RESTRICTED
+    ) {
+      return {
+        allowed: false,
+        reason:
+          "account_restricted",
+
+        message:
+          getAccountStatusMessage(
+            profile
+          )
+      };
+    }
+
+
+    const detection =
+      detectOffPlatformContent(
+        messageText
+      );
+
+
+    if (!detection.flagged) {
+      return {
+        allowed: true,
+        reason:
+          "clean"
+      };
+    }
+
+
+    const violation =
+      await recordModerationViolation(
+        user.uid,
+        messageText,
+        detection.reasons
+      );
+
+
+    const resultingStatus =
+      violation?.status ||
+      ACCOUNT_STATUS.WARNING;
+
+
+    let message =
+      "This message could not be sent because it appears to contain contact information or an attempt to move communication outside SocialWorkBD. Please keep communication on the platform.";
+
+
+    if (
+      resultingStatus ===
+      ACCOUNT_STATUS.RESTRICTED
+    ) {
+      message =
+        "This message was blocked. Your account has received repeated policy violations and messaging is now restricted. You can request a review from Support.";
+    }
+
+
+    if (
+      resultingStatus ===
+      ACCOUNT_STATUS.SUSPENDED
+    ) {
+      message =
+        "This message was blocked. Your account has been suspended because of repeated policy violations. You can request a review from Support.";
+    }
+
+
+    return {
+      allowed: false,
+
+      reason:
+        "policy_violation",
+
+      message:
+        message,
+
+      status:
+        resultingStatus,
+
+      violationCount:
+        violation?.violationCount || 0,
+
+      reasons:
+        detection.reasons
+    };
+  }
+
+
+  /*
+   * Public moderation helper.
+   * messages.html can use:
+   *
+   * window.SocialWorkBDModeration
+   */
+
+  window.SocialWorkBDModeration = {
+    detectOffPlatformContent:
+      detectOffPlatformContent,
+
+    moderateMessageAttempt:
+      moderateMessageAttempt,
+
+    getAccountStatus:
+      getAccountStatus,
+
+    isAccountMessagingBlocked:
+      isAccountMessagingBlocked,
+
+    getAccountStatusMessage:
+      getAccountStatusMessage
+  };
+
+
+  /* ---------------------------------------------------------
      Create / Load User Profile
      --------------------------------------------------------- */
 
@@ -179,8 +720,10 @@
       const existing =
         snapshot.data();
 
+
       const profile = {
         id: user.uid,
+
         uid: user.uid,
 
         accountId:
@@ -222,13 +765,96 @@
           "",
 
         balance:
-          Number(existing.balance || 0),
+          Number(
+            existing.balance || 0
+          ),
 
         pendingBalance:
-          Number(existing.pendingBalance || 0)
+          Number(
+            existing.pendingBalance || 0
+          ),
+
+        accountStatus:
+          normalizeAccountStatus(
+            existing.accountStatus
+          ),
+
+        warningCount:
+          Number(
+            existing.warningCount || 0
+          ),
+
+        violationCount:
+          Number(
+            existing.violationCount || 0
+          ),
+
+        lastViolationAt:
+          existing.lastViolationAt ||
+          null
       };
 
-      saveCurrentUser(profile);
+
+      /*
+       * Add moderation defaults to older accounts
+       * without changing their account ID.
+       */
+
+      const moderationUpdate = {};
+
+
+      if (
+        !existing.accountStatus
+      ) {
+        moderationUpdate.accountStatus =
+          ACCOUNT_STATUS.ACTIVE;
+      }
+
+
+      if (
+        existing.warningCount ===
+        undefined
+      ) {
+        moderationUpdate.warningCount =
+          0;
+      }
+
+
+      if (
+        existing.violationCount ===
+        undefined
+      ) {
+        moderationUpdate.violationCount =
+          0;
+      }
+
+
+      if (
+        Object.keys(
+          moderationUpdate
+        ).length
+      ) {
+        moderationUpdate.updatedAt =
+          firebase.firestore.FieldValue
+            .serverTimestamp();
+
+        try {
+          await ref.update(
+            moderationUpdate
+          );
+        } catch (updateError) {
+          console.warn(
+            "Moderation profile defaults could not be updated:",
+            updateError
+          );
+        }
+      }
+
+
+      saveCurrentUser(
+        profile
+      );
+
 
       return profile;
     }
@@ -298,6 +924,24 @@
       pendingBalance:
         0,
 
+      accountStatus:
+        ACCOUNT_STATUS.ACTIVE,
+
+      warningCount:
+        0,
+
+      violationCount:
+        0,
+
+      lastViolationAt:
+        null,
+
+      lastViolationType:
+        "",
+
+      lastViolationReasons:
+        [],
+
       createdAt:
         firebase.firestore.FieldValue
           .serverTimestamp(),
@@ -319,7 +963,10 @@
     };
 
 
-    saveCurrentUser(profile);
+    saveCurrentUser(
+      profile
+    );
+
 
     return profile;
   }
@@ -509,7 +1156,9 @@
           }
 
 
-          showError(message);
+          showError(
+            message
+          );
         }
       }
     );
@@ -592,6 +1241,55 @@
             );
 
 
+          /*
+           * Account status check.
+           * Account ID remains unchanged.
+           */
+
+          const accountStatus =
+            getAccountStatus(
+              profile
+            );
+
+
+          if (
+            accountStatus ===
+            ACCOUNT_STATUS.SUSPENDED
+          ) {
+            alert(
+              "Your account is currently suspended. " +
+              "You can request a review from Support."
+            );
+
+            await auth.signOut();
+
+            localStorage.removeItem(
+              "currentUser"
+            );
+
+            if (button) {
+              button.disabled =
+                false;
+
+              button.textContent =
+                "Log In";
+            }
+
+            return;
+          }
+
+
+          if (
+            accountStatus ===
+            ACCOUNT_STATUS.RESTRICTED
+          ) {
+            alert(
+              "Your account currently has restrictions. " +
+              "Some platform activities may be unavailable."
+            );
+          }
+
+
           if (
             profile.role ===
             "client"
@@ -663,7 +1361,9 @@
           }
 
 
-          showError(message);
+          showError(
+            message
+          );
         }
       }
     );
@@ -720,8 +1420,6 @@
     }
 
 
-    /* Open Reset Panel */
-
     forgotLink.addEventListener(
       "click",
       function (event) {
@@ -759,8 +1457,6 @@
       }
     );
 
-
-    /* Send Reset Email */
 
     form.addEventListener(
       "submit",
@@ -901,7 +1597,9 @@
             );
 
           } else {
-            showError(message);
+            showError(
+              message
+            );
           }
         }
       }
@@ -962,6 +1660,37 @@
             await createOrLoadUserProfile(
               result.user
             );
+
+
+          const accountStatus =
+            getAccountStatus(
+              profile
+            );
+
+
+          if (
+            accountStatus ===
+            ACCOUNT_STATUS.SUSPENDED
+          ) {
+            alert(
+              "Your account is currently suspended. " +
+              "You can request a review from Support."
+            );
+
+            await auth.signOut();
+
+            localStorage.removeItem(
+              "currentUser"
+            );
+
+            button.disabled =
+              false;
+
+            button.textContent =
+              "Continue with Google";
+
+            return;
+          }
 
 
           if (
@@ -1031,7 +1760,9 @@
           }
 
 
-          showError(message);
+          showError(
+            message
+          );
         }
       }
     );
@@ -1100,7 +1831,9 @@
       );
 
 
-      renderHomeJobs(jobs);
+      renderHomeJobs(
+        jobs
+      );
 
     } catch (error) {
       console.error(
@@ -1295,6 +2028,36 @@
           if (!profile) {
             showError(
               "Your profile could not be loaded."
+            );
+
+            return;
+          }
+
+
+          const accountStatus =
+            getAccountStatus(
+              profile
+            );
+
+
+          if (
+            accountStatus ===
+            ACCOUNT_STATUS.SUSPENDED
+          ) {
+            showError(
+              "Your account is suspended. You cannot post jobs."
+            );
+
+            return;
+          }
+
+
+          if (
+            accountStatus ===
+            ACCOUNT_STATUS.RESTRICTED
+          ) {
+            showError(
+              "Your account currently has restrictions. You cannot post new jobs right now."
             );
 
             return;
@@ -1684,8 +2447,6 @@
       }
 
 
-      /* Skills */
-
       if (skills) {
         const skillText =
           String(
@@ -1748,7 +2509,9 @@
       }
 
 
-      setupProposalForm(job);
+      setupProposalForm(
+        job
+      );
 
     } catch (error) {
       console.error(
@@ -1911,6 +2674,36 @@
           }
 
 
+          const accountStatus =
+            getAccountStatus(
+              profile
+            );
+
+
+          if (
+            accountStatus ===
+            ACCOUNT_STATUS.SUSPENDED
+          ) {
+            showError(
+              "Your account is suspended. You cannot submit proposals."
+            );
+
+            return;
+          }
+
+
+          if (
+            accountStatus ===
+            ACCOUNT_STATUS.RESTRICTED
+          ) {
+            showError(
+              "Your account currently has restrictions. You cannot submit proposals right now."
+            );
+
+            return;
+          }
+
+
           if (
             profile.role !==
               "worker" &&
@@ -2009,11 +2802,15 @@
           }
 
 
-          if (submitButton) {
-            submitButton.disabled =
+          const button =
+            submitButton;
+
+
+          if (button) {
+            button.disabled =
               true;
 
-            submitButton.textContent =
+            button.textContent =
               "Submitting...";
           }
 
@@ -2362,9 +3159,38 @@
 
 
           try {
-            await createOrLoadUserProfile(
-              user
+            const profile =
+              await createOrLoadUserProfile(
+                user
+              );
+
+
+            /*
+             * Keep local profile synchronized.
+             */
+
+            saveCurrentUser(
+              profile
             );
+
+
+            /*
+             * Do not automatically sign out restricted
+             * accounts. Their identity/account ID stays
+             * intact so they can request a review.
+             */
+
+            if (
+              getAccountStatus(
+                profile
+              ) ===
+              ACCOUNT_STATUS.SUSPENDED
+            ) {
+              console.warn(
+                "Account is suspended:",
+                profile.accountId
+              );
+            }
 
           } catch (error) {
             console.error(
