@@ -1,101 +1,518 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Job Post - SocialWorkBD</title>
+  <title>Post a Job — SocialWorkBD</title>
+  <meta
+    name="description"
+    content="Post a freelance job on SocialWorkBD and find skilled freelancers for your project."
+  >
 
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="styles.css">
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <style>
+    .post-job-page {
+      background: #f7f8f6;
+      min-height: calc(100vh - 80px);
+      padding: 48px 20px 80px;
+    }
+
+    .post-job-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .post-job-heading {
+      margin-bottom: 28px;
+    }
+
+    .post-job-heading .eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #14a800;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+    }
+
+    .post-job-heading h1 {
+      margin: 0 0 10px;
+      font-size: 36px;
+      line-height: 1.2;
+      color: #181818;
+    }
+
+    .post-job-heading p {
+      margin: 0;
+      max-width: 680px;
+      color: #5f6368;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .post-job-card {
+      background: #ffffff;
+      border: 1px solid #e4e7e3;
+      border-radius: 16px;
+      padding: 34px;
+      box-shadow: 0 5px 22px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-section-title {
+      margin: 0 0 6px;
+      font-size: 20px;
+      color: #181818;
+    }
+
+    .form-section-text {
+      margin: 0 0 28px;
+      color: #6b6f72;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #242424;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #cfd4cf;
+      border-radius: 8px;
+      background: #fff;
+      color: #222;
+      font-size: 15px;
+      padding: 13px 14px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      min-height: 170px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: #14a800;
+      box-shadow: 0 0 0 3px rgba(20, 168, 0, 0.10);
+    }
+
+    .form-help {
+      display: block;
+      margin-top: 7px;
+      color: #777;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .budget-input-wrap {
+      position: relative;
+    }
+
+    .budget-currency {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #555;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .budget-input-wrap input {
+      padding-left: 48px;
+    }
+
+    .post-job-submit {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 20px;
+      background: #14a800;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+
+    .post-job-submit:hover {
+      background: #108f00;
+    }
+
+    .post-job-submit:active {
+      transform: translateY(1px);
+    }
+
+    .post-job-submit:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    .posting-tips {
+      margin-top: 22px;
+      padding: 20px;
+      border-radius: 12px;
+      background: #f1f8ef;
+      border: 1px solid #dcebd8;
+    }
+
+    .posting-tips h3 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: #222;
+    }
+
+    .posting-tips ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #555;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 22px;
+      color: #14a800;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 700px) {
+      .post-job-page {
+        padding: 32px 15px 60px;
+      }
+
+      .post-job-heading h1 {
+        font-size: 29px;
+      }
+
+      .post-job-card {
+        padding: 23px 18px;
+        border-radius: 12px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .post-job-heading h1 {
+        font-size: 26px;
+      }
+
+      .post-job-heading p {
+        font-size: 14px;
+      }
+
+      .post-job-card {
+        padding: 20px 15px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-  <header>
-    <h1>SocialWorkBD</h1>
-    <p>নতুন কাজ পোস্ট করুন</p>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
 
-    <nav>
-      <a href="index.html">হোম</a>
-      <a href="dashboard.html">ড্যাশবোর্ড</a>
-      <a href="profile.html">প্রোফাইল</a>
-    </nav>
+      <div class="logo-area">
+        <a href="index.html" class="logo">SW</a>
+
+        <nav class="main-nav">
+          <a href="tasks.html">Find Work</a>
+          <a href="profile.html">Find Talent</a>
+          <a href="post-job.html" class="active">Post a Job</a>
+          <a href="support.html">Help</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="login.html" class="login-link">Log In</a>
+          <a href="signup.html" class="signup-btn">Sign Up</a>
+          <a href="profile.html" class="profile-link" aria-label="Profile">👤</a>
+        </div>
+
+      </div>
+    </div>
   </header>
 
-  <main>
 
-    <section class="auth-box">
+  <!-- Main -->
+  <main class="post-job-page">
 
-      <h2>💼 নতুন Job Post করুন</h2>
+    <div class="post-job-container">
 
-      <form id="job-form">
+      <div class="post-job-heading">
+        <span class="eyebrow">For Clients</span>
 
-        <label for="title">কাজের শিরোনাম</label>
+        <h1>Post a Job</h1>
 
-        <input
-          type="text"
-          id="title"
-          placeholder="যেমন: একটি Logo Design প্রয়োজন"
-          required
-        >
+        <p>
+          Tell freelancers what you need, set your budget and deadline,
+          and start receiving proposals from skilled professionals.
+        </p>
+      </div>
 
-        <label for="desc">কাজের বিস্তারিত</label>
 
-        <textarea
-          id="desc"
-          rows="6"
-          placeholder="কাজ সম্পর্কে বিস্তারিত লিখুন"
-          required
-        ></textarea>
+      <section class="post-job-card">
 
-        <label for="budget">বাজেট (BDT)</label>
+        <h2 class="form-section-title">Project details</h2>
 
-        <input
-          type="number"
-          id="budget"
-          min="1"
-          placeholder="যেমন: 1000"
-          required
-        >
+        <p class="form-section-text">
+          Provide clear information so freelancers can understand your
+          project and send you the right proposal.
+        </p>
 
-        <label for="skills">প্রয়োজনীয় Skills</label>
 
-        <input
-          type="text"
-          id="skills"
-          placeholder="যেমন: Graphic Design, Photoshop"
-          required
-        >
+        <form id="job-form">
 
-        <label for="delivery-days">কাজের সময়সীমা (দিন)</label>
+          <!-- Job Title -->
+          <div class="form-group">
 
-        <input
-          type="number"
-          id="delivery-days"
-          min="1"
-          placeholder="যেমন: 7"
-          required
-        >
+            <label for="title">
+              Job title
+            </label>
 
-        <button type="submit" id="post-job-btn">
-          Job Post করুন
-        </button>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Example: Design a modern logo for my business"
+              maxlength="150"
+              required
+            >
 
-      </form>
+            <span class="form-help">
+              Use a clear and specific title that describes the work.
+            </span>
 
-    </section>
+          </div>
+
+
+          <!-- Description -->
+          <div class="form-group">
+
+            <label for="desc">
+              Job description
+            </label>
+
+            <textarea
+              id="desc"
+              name="description"
+              placeholder="Describe your project, requirements, expected result, and any important details..."
+              required
+            ></textarea>
+
+            <span class="form-help">
+              Include the main requirements, expected deliverables, and
+              any important instructions.
+            </span>
+
+          </div>
+
+
+          <!-- Budget + Delivery -->
+          <div class="form-row">
+
+            <div class="form-group">
+
+              <label for="budget">
+                Project budget
+              </label>
+
+              <div class="budget-input-wrap">
+                <span class="budget-currency">৳</span>
+
+                <input
+                  type="number"
+                  id="budget"
+                  name="budget"
+                  min="1"
+                  step="1"
+                  placeholder="1000"
+                  required
+                >
+              </div>
+
+              <span class="form-help">
+                Enter your total project budget in BDT.
+              </span>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="delivery-days">
+                Delivery time
+              </label>
+
+              <input
+                type="number"
+                id="delivery-days"
+                name="deliveryDays"
+                min="1"
+                step="1"
+                placeholder="7"
+                required
+              >
+
+              <span class="form-help">
+                How many days should the freelancer have to complete the job?
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- Skills -->
+          <div class="form-group">
+
+            <label for="skills">
+              Required skills
+            </label>
+
+            <input
+              type="text"
+              id="skills"
+              name="skills"
+              placeholder="Example: Graphic Design, Photoshop, Illustrator"
+              required
+            >
+
+            <span class="form-help">
+              Separate multiple skills with commas.
+            </span>
+
+          </div>
+
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            id="post-job-btn"
+            class="post-job-submit"
+          >
+            Post Job
+          </button>
+
+        </form>
+
+
+        <!-- Tips -->
+        <div class="posting-tips">
+
+          <h3>Tips for a better job post</h3>
+
+          <ul>
+            <li>Use a specific and easy-to-understand job title.</li>
+            <li>Explain exactly what you want the freelancer to deliver.</li>
+            <li>List the skills or tools required for the project.</li>
+            <li>Set a realistic budget and delivery deadline.</li>
+          </ul>
+
+        </div>
+
+      </section>
+
+
+      <a href="index.html" class="back-link">
+        ← Back to Home
+      </a>
+
+    </div>
 
   </main>
 
-  <footer>
-    <p>© 2026 SocialWorkBD</p>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+
+      <p>
+        © 2026 SocialWorkBD. Bangladesh's Freelance Marketplace.
+      </p>
+
+      <div class="footer-links">
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="support.html">Help</a>
+      </div>
+
+    </div>
   </footer>
 
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-bottom-nav">
+
+    <a href="index.html">
+      <span>⌂</span>
+      <small>Home</small>
+    </a>
+
+    <a href="tasks.html">
+      <span>⌕</span>
+      <small>Find Work</small>
+    </a>
+
+    <a href="post-job.html" class="active">
+      <span>＋</span>
+      <small>Post Job</small>
+    </a>
+
+    <a href="profile.html">
+      <span>♙</span>
+      <small>Profile</small>
+    </a>
+
+  </nav>
+
+
+  <!-- App -->
   <script src="firebase-config.js"></script>
   <script src="app.js"></script>
 
