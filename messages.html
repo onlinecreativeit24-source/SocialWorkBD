@@ -1,1 +1,1224 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Messages - SocialWorkBD</title>
+  <meta
+    name="description"
+    content="Communicate securely with clients and freelancers through SocialWorkBD messages."
+  >
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body {
+      margin: 0;
+      background: #f7f9f8;
+      color: #17201c;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .messages-page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 20px 70px;
+    }
+
+    .messages-header {
+      margin-bottom: 22px;
+    }
+
+    .messages-header h1 {
+      margin: 0 0 7px;
+      font-size: 30px;
+    }
+
+    .messages-header p {
+      margin: 0;
+      color: #68746e;
+    }
+
+    .messages-layout {
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      min-height: 650px;
+      background: #fff;
+      border: 1px solid #e0e8e3;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .conversation-sidebar {
+      border-right: 1px solid #e4ebe7;
+      background: #fbfcfb;
+    }
+
+    .sidebar-title {
+      padding: 20px;
+      border-bottom: 1px solid #e8eeea;
+      font-weight: 700;
+    }
+
+    .conversation-list {
+      max-height: 590px;
+      overflow-y: auto;
+    }
+
+    .conversation-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: 0;
+      border-bottom: 1px solid #edf1ef;
+      background: transparent;
+      padding: 17px 18px;
+      cursor: pointer;
+    }
+
+    .conversation-item:hover {
+      background: #f0f6f2;
+    }
+
+    .conversation-item.active {
+      background: #eaf7f0;
+      border-left: 3px solid #16834b;
+    }
+
+    .conversation-name {
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .conversation-preview {
+      color: #6b756f;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .chat-top {
+      padding: 18px 22px;
+      border-bottom: 1px solid #e4ebe7;
+      background: #fff;
+    }
+
+    .chat-user-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .chat-job {
+      color: #69746e;
+      font-size: 13px;
+    }
+
+    .security-notice {
+      margin: 14px 20px 0;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #fff8e8;
+      border: 1px solid #ead9a8;
+      color: #765b14;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .security-notice strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .message-area {
+      flex: 1;
+      padding: 22px;
+      overflow-y: auto;
+      min-height: 390px;
+      background: #f8faf9;
+    }
+
+    .empty-chat {
+      height: 100%;
+      min-height: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #758079;
+    }
+
+    .message-row {
+      display: flex;
+      margin-bottom: 15px;
+    }
+
+    .message-row.mine {
+      justify-content: flex-end;
+    }
+
+    .message-bubble {
+      max-width: 72%;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #e1e9e4;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .message-row.mine .message-bubble {
+      background: #eaf7f0;
+      border-color: #cfe7d9;
+    }
+
+    .message-time {
+      display: block;
+      margin-top: 5px;
+      font-size: 11px;
+      color: #7b857f;
+    }
+
+    .composer {
+      padding: 16px 20px;
+      border-top: 1px solid #e4ebe7;
+      background: #fff;
+    }
+
+    .composer textarea {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 90px;
+      resize: vertical;
+      border: 1px solid #cdd8d2;
+      border-radius: 9px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .composer textarea:focus {
+      border-color: #16834b;
+      box-shadow: 0 0 0 3px rgba(22, 131, 75, 0.1);
+    }
+
+    .composer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .composer-help {
+      color: #77827c;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .send-btn,
+    .report-btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .send-btn {
+      background: #16834b;
+      color: #fff;
+    }
+
+    .send-btn:hover {
+      background: #116c3d;
+    }
+
+    .report-btn {
+      margin-top: 10px;
+      background: #f5eeee;
+      color: #9a3832;
+      border: 1px solid #ecd4d2;
+    }
+
+    .report-btn:hover {
+      background: #f0e3e2;
+    }
+
+    .page-message {
+      display: none;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .page-message.error {
+      display: block;
+      background: #fff0f0;
+      color: #a3211c;
+      border: 1px solid #f0d2d2;
+    }
+
+    .page-message.success {
+      display: block;
+      background: #eaf7f0;
+      color: #17683f;
+      border: 1px solid #cfe7d9;
+    }
+
+    .login-box {
+      background: #fff;
+      border: 1px solid #e0e8e3;
+      border-radius: 14px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      margin-top: 0;
+    }
+
+    .login-box a {
+      color: #16834b;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .restricted-box {
+      margin: 18px 20px;
+      padding: 18px;
+      border-radius: 10px;
+      background: #fff0f0;
+      border: 1px solid #edcecc;
+      color: #8f2d28;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .restricted-box strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    @media (max-width: 800px) {
+      .messages-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .conversation-sidebar {
+        display: none;
+      }
+
+      .message-bubble {
+        max-width: 85%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .messages-page {
+        padding: 22px 12px 60px;
+      }
+
+      .messages-header h1 {
+        font-size: 25px;
+      }
+
+      .chat-top {
+        padding: 16px;
+      }
+
+      .message-area {
+        padding: 16px;
+      }
+
+      .composer {
+        padding: 14px;
+      }
+
+      .composer-bottom {
+        align-items: flex-end;
+        flex-direction: column;
+      }
+
+      .send-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">SocialWorkBD</a>
+
+      <nav class="main-nav">
+        <a href="tasks.html">Find Work</a>
+        <a href="post-job.html">Find Talent</a>
+        <a href="tasks.html">Jobs</a>
+        <a href="support.html">Help</a>
+        <a href="profile.html">Profile</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="messages-page">
+
+    <div class="messages-header">
+      <h1>Messages</h1>
+      <p>Communicate with clients and freelancers securely on SocialWorkBD.</p>
+    </div>
+
+    <div id="page-message" class="page-message"></div>
+
+    <div id="login-box" class="login-box" style="display:none;">
+      <h2>Log in to view your messages</h2>
+      <p>You need an active SocialWorkBD account to use messages.</p>
+      <a href="login.html">Log In</a>
+    </div>
+
+    <div id="messages-layout" class="messages-layout" style="display:none;">
+
+      <aside class="conversation-sidebar">
+
+        <div class="sidebar-title">
+          Conversations
+        </div>
+
+        <div id="conversation-list" class="conversation-list">
+          <div style="padding:20px;color:#758079;">
+            Loading conversations...
+          </div>
+        </div>
+
+      </aside>
+
+      <section class="chat-panel">
+
+        <div class="chat-top">
+
+          <div id="chat-user-name" class="chat-user-name">
+            Select a conversation
+          </div>
+
+          <div id="chat-job" class="chat-job">
+            No conversation selected
+          </div>
+
+        </div>
+
+        <div class="security-notice">
+          <strong>Keep communication on SocialWorkBD</strong>
+          Do not share phone numbers, email addresses, external contact details,
+          payment instructions, or links to move a transaction outside the platform.
+          Messages may be reviewed when required for safety and marketplace protection.
+        </div>
+
+        <div id="restricted-box" class="restricted-box">
+          <strong>Messaging is temporarily restricted.</strong>
+          Your account currently has a moderation restriction. You can request an
+          admin review through the support system.
+          <br><br>
+          <a href="support.html">Request a Review</a>
+        </div>
+
+        <div id="message-area" class="message-area">
+
+          <div class="empty-chat">
+            Select a conversation to start messaging.
+          </div>
+
+        </div>
+
+        <div class="composer">
+
+          <textarea
+            id="message-input"
+            placeholder="Write a message..."
+            maxlength="3000"
+            disabled
+          ></textarea>
+
+          <div class="composer-bottom">
+
+            <div class="composer-help">
+              Keep project communication and payments on SocialWorkBD.
+            </div>
+
+            <button
+              id="send-message-btn"
+              type="button"
+              class="send-btn"
+              disabled
+            >
+              Send Message
+            </button>
+
+          </div>
+
+          <button
+            id="report-conversation-btn"
+            type="button"
+            class="report-btn"
+            style="display:none;"
+          >
+            Report Conversation
+          </button>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 SocialWorkBD · Global Freelance Marketplace</p>
+
+      <div>
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="support.html">Help</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
+      const loginBox =
+        document.getElementById("login-box");
+
+      const messagesLayout =
+        document.getElementById("messages-layout");
+
+      const conversationList =
+        document.getElementById("conversation-list");
+
+      const messageArea =
+        document.getElementById("message-area");
+
+      const messageInput =
+        document.getElementById("message-input");
+
+      const sendMessageBtn =
+        document.getElementById("send-message-btn");
+
+      const reportBtn =
+        document.getElementById("report-conversation-btn");
+
+      const chatUserName =
+        document.getElementById("chat-user-name");
+
+      const chatJob =
+        document.getElementById("chat-job");
+
+      const restrictedBox =
+        document.getElementById("restricted-box");
+
+      const pageMessage =
+        document.getElementById("page-message");
+
+      let currentUser = null;
+      let currentProfile = null;
+      let selectedConversation = null;
+      let unsubscribeMessages = null;
+
+      function escapeHtml(value) {
+        const div = document.createElement("div");
+        div.textContent = value == null ? "" : String(value);
+        return div.innerHTML;
+      }
+
+      function showPageMessage(text, type) {
+        pageMessage.textContent = text;
+        pageMessage.className =
+          "page-message " + type;
+      }
+
+      function formatTime(timestamp) {
+
+        if (!timestamp) return "";
+
+        try {
+
+          const date =
+            timestamp.toDate
+              ? timestamp.toDate()
+              : new Date(timestamp);
+
+          return date.toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+          });
+
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function isRestricted(profile) {
+
+        if (!profile) return false;
+
+        const status =
+          String(profile.accountStatus || "active")
+            .toLowerCase();
+
+        return [
+          "restricted",
+          "suspended",
+          "under_review"
+        ].includes(status);
+      }
+
+      /*
+       * Basic marketplace safety detection.
+       *
+       * This is only the first layer.
+       * Server-side/admin moderation should later provide
+       * stronger protection.
+       */
+      function detectExternalContact(text) {
+
+        const value =
+          String(text || "").toLowerCase();
+
+        const patterns = [
+
+          /(?:https?:\/\/|www\.)\S+/i,
+
+          /\b[\w.+-]+@[\w-]+\.[\w.-]+\b/i,
+
+          /\b(?:whatsapp|telegram|discord|signal|messenger)\b/i,
+
+          /\b(?:contact me|message me|reach me|call me|text me)\b/i,
+
+          /\b(?:outside|off platform|off-platform)\b/i,
+
+          /\b(?:phone|mobile|telephone|email address)\b/i,
+
+          /\b(?:facebook|instagram|linkedin|tiktok)\b/i
+
+        ];
+
+        return patterns.some(pattern =>
+          pattern.test(value)
+        );
+      }
+
+      function getConversationId(otherUserId, jobId) {
+
+        return [
+          currentUser.uid,
+          otherUserId,
+          jobId || "general"
+        ]
+          .sort()
+          .join("_");
+      }
+
+      async function loadProfile(user) {
+
+        try {
+
+          const snap =
+            await db.collection("users")
+              .doc(user.uid)
+              .get();
+
+          if (snap.exists) {
+
+            currentProfile = {
+              ...snap.data(),
+              uid: user.uid
+            };
+
+          } else {
+
+            currentProfile = {
+              uid: user.uid,
+              name: user.displayName || "User",
+              email: user.email || "",
+              role: "worker",
+              accountStatus: "active"
+            };
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Profile loading error:",
+            error
+          );
+
+          currentProfile = {
+            uid: user.uid,
+            name: user.displayName || "User",
+            email: user.email || "",
+            role: "worker",
+            accountStatus: "active"
+          };
+        }
+      }
+
+      async function loadConversations() {
+
+        conversationList.innerHTML =
+          '<div style="padding:20px;color:#758079;">Loading conversations...</div>';
+
+        /*
+         * Conversations collection will be created when
+         * the first real conversation is started.
+         *
+         * For now we query conversations where the current
+         * user is a participant.
+         */
+
+        try {
+
+          const snapshot =
+            await db.collection("conversations")
+              .where(
+                "participants",
+                "array-contains",
+                currentUser.uid
+              )
+              .get();
+
+          const conversations = [];
+
+          snapshot.forEach(doc => {
+
+            conversations.push({
+              id: doc.id,
+              ...doc.data()
+            });
+
+          });
+
+          conversations.sort((a, b) => {
+
+            const aTime =
+              a.updatedAt && a.updatedAt.toMillis
+                ? a.updatedAt.toMillis()
+                : 0;
+
+            const bTime =
+              b.updatedAt && b.updatedAt.toMillis
+                ? b.updatedAt.toMillis()
+                : 0;
+
+            return bTime - aTime;
+          });
+
+          if (!conversations.length) {
+
+            conversationList.innerHTML =
+              `
+                <div style="padding:20px;color:#758079;line-height:1.6;">
+                  No conversations yet.<br>
+                  Conversations will appear here when you start working with a client or freelancer.
+                </div>
+              `;
+
+            return;
+          }
+
+          conversationList.innerHTML =
+            conversations.map(renderConversation).join("");
+
+          document
+            .querySelectorAll("[data-conversation-id]")
+            .forEach(item => {
+
+              item.addEventListener(
+                "click",
+                function () {
+
+                  const id =
+                    this.getAttribute(
+                      "data-conversation-id"
+                    );
+
+                  const conversation =
+                    conversations.find(
+                      item => item.id === id
+                    );
+
+                  if (conversation) {
+                    selectConversation(
+                      conversation
+                    );
+                  }
+
+                }
+              );
+
+            });
+
+        } catch (error) {
+
+          console.error(
+            "Conversation loading error:",
+            error
+          );
+
+          conversationList.innerHTML =
+            `
+              <div style="padding:20px;color:#a3211c;line-height:1.6;">
+                Conversations could not be loaded.
+                Make sure your Firestore rules allow authenticated users to access their own conversations.
+              </div>
+            `;
+        }
+      }
+
+      function renderConversation(conversation) {
+
+        const otherName =
+          conversation.otherUserName ||
+          "User";
+
+        const preview =
+          conversation.lastMessage ||
+          "No messages yet.";
+
+        return `
+          <button
+            type="button"
+            class="conversation-item"
+            data-conversation-id="${escapeHtml(conversation.id)}"
+          >
+            <div class="conversation-name">
+              ${escapeHtml(otherName)}
+            </div>
+
+            <div class="conversation-preview">
+              ${escapeHtml(preview)}
+            </div>
+          </button>
+        `;
+      }
+
+      function selectConversation(conversation) {
+
+        selectedConversation =
+          conversation;
+
+        chatUserName.textContent =
+          conversation.otherUserName ||
+          "User";
+
+        chatJob.textContent =
+          conversation.jobTitle
+            ? "Project: " + conversation.jobTitle
+            : "SocialWorkBD conversation";
+
+        messageInput.disabled =
+          isRestricted(currentProfile);
+
+        sendMessageBtn.disabled =
+          isRestricted(currentProfile);
+
+        reportBtn.style.display =
+          "inline-block";
+
+        if (isRestricted(currentProfile)) {
+
+          restrictedBox.style.display =
+            "block";
+
+        } else {
+
+          restrictedBox.style.display =
+            "none";
+        }
+
+        loadMessages(conversation.id);
+      }
+
+      function loadMessages(conversationId) {
+
+        if (unsubscribeMessages) {
+          unsubscribeMessages();
+        }
+
+        messageArea.innerHTML =
+          '<div class="empty-chat">Loading messages...</div>';
+
+        unsubscribeMessages =
+          db.collection("conversations")
+            .doc(conversationId)
+            .collection("messages")
+            .orderBy("createdAt", "asc")
+            .onSnapshot(
+
+              snapshot => {
+
+                if (snapshot.empty) {
+
+                  messageArea.innerHTML =
+                    `
+                      <div class="empty-chat">
+                        No messages yet. Start the conversation.
+                      </div>
+                    `;
+
+                  return;
+                }
+
+                messageArea.innerHTML = "";
+
+                snapshot.forEach(doc => {
+
+                  const message =
+                    doc.data();
+
+                  const mine =
+                    message.senderId ===
+                    currentUser.uid;
+
+                  const row =
+                    document.createElement("div");
+
+                  row.className =
+                    "message-row" +
+                    (mine ? " mine" : "");
+
+                  row.innerHTML =
+                    `
+                      <div class="message-bubble">
+                        ${escapeHtml(message.text || "")}
+
+                        <span class="message-time">
+                          ${formatTime(message.createdAt)}
+                        </span>
+                      </div>
+                    `;
+
+                  messageArea.appendChild(row);
+                });
+
+                messageArea.scrollTop =
+                  messageArea.scrollHeight;
+              },
+
+              error => {
+
+                console.error(
+                  "Message listener error:",
+                  error
+                );
+
+                messageArea.innerHTML =
+                  `
+                    <div class="empty-chat">
+                      Messages could not be loaded.
+                    </div>
+                  `;
+              }
+            );
+      }
+
+      async function sendMessage() {
+
+        if (!currentUser) return;
+
+        if (!selectedConversation) {
+          showPageMessage(
+            "Select a conversation first.",
+            "error"
+          );
+          return;
+        }
+
+        if (isRestricted(currentProfile)) {
+
+          showPageMessage(
+            "Messaging is currently restricted for this account.",
+            "error"
+          );
+
+          return;
+        }
+
+        const text =
+          messageInput.value.trim();
+
+        if (!text) return;
+
+        /*
+         * First-level safety check.
+         * Later this will be backed by stronger admin/server
+         * moderation rules.
+         */
+
+        if (detectExternalContact(text)) {
+
+          const confirmed =
+            confirm(
+              "This message appears to contain external contact information or an off-platform communication request. SocialWorkBD requires project communication to stay on the platform. Do you want to remove the flagged content and continue?"
+            );
+
+          if (confirmed) {
+            messageInput.value = "";
+          }
+
+          return;
+        }
+
+        sendMessageBtn.disabled = true;
+        sendMessageBtn.textContent =
+          "Sending...";
+
+        try {
+
+          const conversationRef =
+            db.collection("conversations")
+              .doc(selectedConversation.id);
+
+          const messageRef =
+            conversationRef
+              .collection("messages")
+              .doc();
+
+          const batch =
+            db.batch();
+
+          batch.set(
+            messageRef,
+            {
+              senderId:
+                currentUser.uid,
+
+              senderName:
+                currentProfile.name ||
+                currentUser.displayName ||
+                "User",
+
+              text:
+                text,
+
+              moderationStatus:
+                "clear",
+
+              createdAt:
+                firebase.firestore.FieldValue
+                  .serverTimestamp()
+            }
+          );
+
+          batch.update(
+            conversationRef,
+            {
+              lastMessage:
+                text,
+
+              lastMessageSenderId:
+                currentUser.uid,
+
+              updatedAt:
+                firebase.firestore.FieldValue
+                  .serverTimestamp()
+            }
+          );
+
+          await batch.commit();
+
+          messageInput.value = "";
+
+        } catch (error) {
+
+          console.error(
+            "Message sending error:",
+            error
+          );
+
+          showPageMessage(
+            "Unable to send the message right now.",
+            "error"
+          );
+
+        } finally {
+
+          sendMessageBtn.disabled =
+            isRestricted(currentProfile);
+
+          sendMessageBtn.textContent =
+            "Send Message";
+        }
+      }
+
+      async function reportConversation() {
+
+        if (
+          !currentUser ||
+          !selectedConversation
+        ) {
+          return;
+        }
+
+        const reason =
+          prompt(
+            "Please briefly explain why you are reporting this conversation:"
+          );
+
+        if (!reason || !reason.trim()) {
+          return;
+        }
+
+        try {
+
+          await db.collection("reports").add({
+
+            type:
+              "conversation",
+
+            conversationId:
+              selectedConversation.id,
+
+            reporterId:
+              currentUser.uid,
+
+            reportedUserId:
+              selectedConversation.otherUserId ||
+              null,
+
+            reason:
+              reason.trim(),
+
+            status:
+              "pending",
+
+            createdAt:
+              firebase.firestore.FieldValue
+                .serverTimestamp()
+          });
+
+          showPageMessage(
+            "Your report has been submitted for review.",
+            "success"
+          );
+
+        } catch (error) {
+
+          console.error(
+            "Report error:",
+            error
+          );
+
+          showPageMessage(
+            "Unable to submit the report.",
+            "error"
+          );
+        }
+      }
+
+      sendMessageBtn.addEventListener(
+        "click",
+        sendMessage
+      );
+
+      reportBtn.addEventListener(
+        "click",
+        reportConversation
+      );
+
+      messageInput.addEventListener(
+        "keydown",
+        function (event) {
+
+          if (
+            event.key === "Enter" &&
+            !event.shiftKey
+          ) {
+
+            event.preventDefault();
+
+            sendMessage();
+          }
+
+        }
+      );
+
+      auth.onAuthStateChanged(
+        async function (user) {
+
+          if (!user) {
+
+            loginBox.style.display =
+              "block";
+
+            messagesLayout.style.display =
+              "none";
+
+            return;
+          }
+
+          currentUser = user;
+
+          loginBox.style.display =
+            "none";
+
+          messagesLayout.style.display =
+            "grid";
+
+          await loadProfile(user);
+
+          if (isRestricted(currentProfile)) {
+
+            restrictedBox.style.display =
+              "block";
+
+            messageInput.disabled =
+              true;
+
+            sendMessageBtn.disabled =
+              true;
+
+          } else {
+
+            restrictedBox.style.display =
+              "none";
+          }
+
+          await loadConversations();
+        }
+      );
+
+    });
+  </script>
+
+</body>
+</html>
