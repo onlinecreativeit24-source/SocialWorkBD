@@ -1,49 +1,630 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>জব বিবরণ</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Job Details — SocialWorkBD</title>
+  <meta
+    name="description"
+    content="View freelance job details and submit a proposal on SocialWorkBD."
+  >
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <style>
+    .job-details-page {
+      background: #f7f8f6;
+      min-height: calc(100vh - 80px);
+      padding: 42px 20px 80px;
+    }
+
+    .job-details-container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb {
+      margin-bottom: 22px;
+      font-size: 13px;
+    }
+
+    .breadcrumb a {
+      color: #14a800;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .breadcrumb span {
+      color: #777;
+      margin: 0 7px;
+    }
+
+    .job-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 350px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .job-card,
+    .proposal-card,
+    .client-card {
+      background: #fff;
+      border: 1px solid #e3e6e1;
+      border-radius: 15px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, .04);
+    }
+
+    .job-card {
+      padding: 32px;
+    }
+
+    .job-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 11px;
+      border-radius: 20px;
+      background: #eef8ec;
+      color: #168b08;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+    }
+
+    .job-title {
+      margin: 0 0 18px;
+      color: #181818;
+      font-size: 32px;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .job-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      padding-bottom: 25px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .meta-item {
+      min-width: 100px;
+    }
+
+    .meta-label {
+      display: block;
+      margin-bottom: 4px;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .meta-value {
+      color: #222;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .job-section {
+      margin-bottom: 30px;
+    }
+
+    .job-section h2 {
+      margin: 0 0 13px;
+      color: #222;
+      font-size: 19px;
+    }
+
+    .job-description {
+      color: #4e5250;
+      font-size: 15px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .skill-tag {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 6px;
+      background: #f1f2f0;
+      color: #4d504e;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .side-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .proposal-card {
+      padding: 24px;
+    }
+
+    .proposal-card h2,
+    .client-card h2 {
+      margin: 0 0 8px;
+      color: #202020;
+      font-size: 20px;
+    }
+
+    .proposal-subtitle {
+      margin: 0 0 22px;
+      color: #707472;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      color: #292929;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .form-group textarea,
+    .form-group input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #cfd4cf;
+      border-radius: 8px;
+      background: #fff;
+      color: #222;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      padding: 11px 12px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-group textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #14a800;
+      box-shadow: 0 0 0 3px rgba(20, 168, 0, .1);
+    }
+
+    .proposal-submit {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      padding: 13px 16px;
+      background: #14a800;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .proposal-submit:hover {
+      background: #108f00;
+    }
+
+    .proposal-submit:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    .client-card {
+      padding: 24px;
+    }
+
+    .client-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .client-avatar {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: #e9f5e6;
+      color: #168b08;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .client-name {
+      color: #222;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .client-label {
+      margin-top: 3px;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .job-notice {
+      display: none;
+      margin-bottom: 18px;
+      padding: 13px 15px;
+      border-radius: 8px;
+      background: #fff6e6;
+      border: 1px solid #f0d7a3;
+      color: #765700;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .job-loading {
+      padding: 50px 20px;
+      text-align: center;
+      color: #666;
+    }
+
+    .job-error {
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    .job-error h2 {
+      margin-bottom: 8px;
+      color: #222;
+    }
+
+    .job-error p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .back-button {
+      display: inline-flex;
+      padding: 10px 15px;
+      border: 1px solid #d3d7d1;
+      border-radius: 7px;
+      color: #333;
+      background: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .back-button:hover {
+      border-color: #14a800;
+      color: #14a800;
+    }
+
+    @media (max-width: 850px) {
+      .job-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .job-details-page {
+        padding: 28px 14px 70px;
+      }
+
+      .job-card {
+        padding: 22px 18px;
+      }
+
+      .job-title {
+        font-size: 26px;
+      }
+
+      .side-column {
+        display: flex;
+      }
+
+      .job-meta {
+        gap: 14px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <header>
-    <h1>জব বিবরণ</h1>
-    <nav>
-      <a href="index.html">হোম</a>
-      <a href="dashboard.html">ড্যাশবোর্ড</a>
-    </nav>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+
+      <div class="logo-area">
+
+        <a href="index.html" class="logo">SW</a>
+
+        <nav class="main-nav">
+          <a href="tasks.html">Find Work</a>
+          <a href="profile.html">Find Talent</a>
+          <a href="post-job.html">Post a Job</a>
+          <a href="support.html">Help</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="login.html" class="login-link">Log In</a>
+          <a href="signup.html" class="signup-btn">Sign Up</a>
+          <a href="profile.html" class="profile-link" aria-label="Profile">👤</a>
+        </div>
+
+      </div>
+    </div>
   </header>
 
-  <main>
-    <section id="job-detail">
-      <h2 id="job-title"></h2>
-      <p id="job-desc"></p>
-      <p><strong>বাজেট:</strong> <span id="job-budget"></span> BDT</p>
-      <p><strong>স্কিল:</strong> <span id="job-skills"></span></p>
-    </section>
 
-    <section id="bid-section">
-      <h2>বিড করুন</h2>
-      <form id="bid-form">
-        <label>কভার লেটার:</label>
-        <textarea id="cover" required></textarea>
+  <!-- Main -->
+  <main class="job-details-page">
 
-        <label>অফার (BDT):</label>
-        <input type="number" id="bid-amount" required />
+    <div class="job-details-container">
 
-        <label>ডেলিভারি (দিন):</label>
-        <input type="number" id="delivery-days" required />
+      <div class="breadcrumb">
+        <a href="tasks.html">Find Work</a>
+        <span>›</span>
+        <span>Job Details</span>
+      </div>
 
-        <button type="submit">বিড জমা দিন</button>
-      </form>
-    </section>
+
+      <div id="job-loading" class="job-loading">
+        Loading job details...
+      </div>
+
+
+      <div id="job-error" class="job-error" style="display:none;">
+
+        <h2>Job not found</h2>
+
+        <p>
+          This job may have been removed or the link may be invalid.
+        </p>
+
+        <a href="tasks.html" class="back-button">
+          ← Browse Jobs
+        </a>
+
+      </div>
+
+
+      <div id="job-content" class="job-layout" style="display:none;">
+
+        <!-- Job Details -->
+        <section class="job-card">
+
+          <div id="job-status" class="job-status">
+            Open
+          </div>
+
+          <h1 id="job-title" class="job-title"></h1>
+
+
+          <div class="job-meta">
+
+            <div class="meta-item">
+              <span class="meta-label">Budget</span>
+              <span id="job-budget" class="meta-value">৳0</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Delivery</span>
+              <span id="job-delivery" class="meta-value">—</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Proposals</span>
+              <span id="job-proposals" class="meta-value">0</span>
+            </div>
+
+          </div>
+
+
+          <div class="job-section">
+
+            <h2>About the project</h2>
+
+            <div id="job-desc" class="job-description"></div>
+
+          </div>
+
+
+          <div class="job-section">
+
+            <h2>Skills required</h2>
+
+            <div id="job-skills" class="skills-list"></div>
+
+          </div>
+
+        </section>
+
+
+        <!-- Sidebar -->
+        <aside class="side-column">
+
+          <!-- Proposal -->
+          <section class="proposal-card">
+
+            <h2>Submit a Proposal</h2>
+
+            <p class="proposal-subtitle">
+              Tell the client why you're the right freelancer for this project.
+            </p>
+
+            <div id="job-notice" class="job-notice"></div>
+
+
+            <form id="bid-form">
+
+              <div class="form-group">
+
+                <label for="cover">
+                  Cover letter
+                </label>
+
+                <textarea
+                  id="cover"
+                  placeholder="Introduce yourself and explain how you can complete this project..."
+                  required
+                ></textarea>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="bid-amount">
+                  Your offer (BDT)
+                </label>
+
+                <input
+                  type="number"
+                  id="bid-amount"
+                  min="1"
+                  step="1"
+                  placeholder="1000"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="delivery-days">
+                  Delivery time (days)
+                </label>
+
+                <input
+                  type="number"
+                  id="delivery-days"
+                  min="1"
+                  step="1"
+                  placeholder="7"
+                  required
+                >
+
+              </div>
+
+
+              <button
+                type="submit"
+                class="proposal-submit"
+              >
+                Submit Proposal
+              </button>
+
+            </form>
+
+          </section>
+
+
+          <!-- Client -->
+          <section class="client-card">
+
+            <h2>About the Client</h2>
+
+            <div class="client-info">
+
+              <div class="client-avatar">
+                C
+              </div>
+
+              <div>
+                <div id="job-client" class="client-name">
+                  Client
+                </div>
+
+                <div class="client-label">
+                  Project Client
+                </div>
+              </div>
+
+            </div>
+
+          </section>
+
+        </aside>
+
+      </div>
+
+    </div>
+
   </main>
 
-  <footer>
-    <p>© 2026 SocialWorkBD (ডেমো)</p>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+
+      <p>
+        © 2026 SocialWorkBD. Bangladesh's Freelance Marketplace.
+      </p>
+
+      <div class="footer-links">
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="support.html">Help</a>
+      </div>
+
+    </div>
   </footer>
 
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-bottom-nav">
+
+    <a href="index.html">
+      <span>⌂</span>
+      <small>Home</small>
+    </a>
+
+    <a href="tasks.html">
+      <span>⌕</span>
+      <small>Find Work</small>
+    </a>
+
+    <a href="post-job.html">
+      <span>＋</span>
+      <small>Post Job</small>
+    </a>
+
+    <a href="profile.html">
+      <span>♙</span>
+      <small>Profile</small>
+    </a>
+
+  </nav>
+
+
+  <!-- App -->
+  <script src="firebase-config.js"></script>
   <script src="app.js"></script>
+
 </body>
 </html>
