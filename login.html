@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 
 <head>
 
@@ -10,7 +10,14 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Login - SocialWorkBD</title>
+  <meta
+    name="description"
+    content="Log in to SocialWorkBD, a professional global freelance marketplace for clients and freelancers."
+  >
+
+  <title>Log In - SocialWorkBD</title>
+
+  <link rel="icon" href="favicon.svg">
 
   <link rel="stylesheet" href="styles.css">
 
@@ -23,183 +30,286 @@
 
     .login-page {
       min-height: 100vh;
-      background: #f5f9fc;
+      background: #f6f8f7;
     }
 
     .login-header {
-      background:
-        linear-gradient(
-          135deg,
-          #061c49,
-          #0069c9
-        );
+      background: #ffffff;
+      border-bottom: 1px solid #e7ece9;
+      padding: 18px 24px;
+    }
 
-      color: white;
+    .login-header-inner {
+      width: min(1180px, 100%);
+      margin: auto;
 
-      padding: 28px 18px 65px;
-
-      text-align: center;
-
-      border-radius: 0 0 38px 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
     }
 
     .login-brand {
-      font-size: 29px;
+      color: #111827;
+      font-size: 25px;
       font-weight: 800;
+      text-decoration: none;
+      letter-spacing: -0.5px;
     }
 
     .login-brand span {
-      color: #18d8b0;
+      color: #14a800;
     }
 
-    .login-header p {
-      margin-top: 7px;
-      font-size: 13px;
+    .login-header-link {
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
     }
 
-    .login-container {
-      width: min(430px, calc(100% - 26px));
-
-      margin: -35px auto 30px;
-
-      position: relative;
-      z-index: 2;
+    .login-header-link:hover {
+      color: #14a800;
     }
 
-    .login-card {
-      background: white;
-
-      padding: 26px 21px;
-
-      border-radius: 24px;
-
-      box-shadow:
-        0 12px 35px rgba(20,70,120,0.10);
-    }
-
-    .login-icon {
-      width: 70px;
-      height: 70px;
-
-      margin: -58px auto 15px;
-
-      border-radius: 50%;
-
-      background:
-        linear-gradient(
-          135deg,
-          #08ae78,
-          #0877db
-        );
+    .login-main {
+      min-height: calc(100vh - 155px);
 
       display: flex;
-
       align-items: center;
       justify-content: center;
 
-      font-size: 34px;
-
-      border: 6px solid white;
-
-      box-shadow:
-        0 6px 20px rgba(0,100,180,0.18);
+      padding: 50px 18px;
     }
 
-    .login-card h2 {
+    .login-container {
+      width: min(440px, 100%);
+    }
+
+    .login-card {
+      background: #ffffff;
+
+      border: 1px solid #e4e9e6;
+      border-radius: 16px;
+
+      padding: 34px;
+
+      box-shadow:
+        0 10px 35px rgba(17, 24, 39, 0.06);
+    }
+
+    .login-icon {
+      width: 52px;
+      height: 52px;
+
+      margin: 0 auto 20px;
+
+      border-radius: 50%;
+
+      background: #eaf7e8;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: #14a800;
+      font-size: 24px;
+    }
+
+    .login-card h1 {
       text-align: center;
 
-      color: #102b55;
+      color: #111827;
 
-      font-size: 22px;
+      font-size: 28px;
+      line-height: 1.2;
 
-      margin-bottom: 7px;
+      margin: 0 0 9px;
     }
 
     .login-description {
       text-align: center;
 
-      color: #657b95;
+      color: #6b7280;
 
-      font-size: 13px;
+      font-size: 14px;
+      line-height: 1.6;
 
-      margin-bottom: 22px;
+      margin: 0 0 28px;
     }
 
     .login-card label {
       display: block;
 
-      margin-top: 14px;
-      margin-bottom: 7px;
+      margin: 16px 0 7px;
 
-      color: #18375f;
+      color: #374151;
 
       font-size: 13px;
-
       font-weight: 700;
     }
 
     .login-card input {
+      box-sizing: border-box;
+
       width: 100%;
 
       padding: 13px 14px;
 
-      border: 1px solid #d9e5ef;
-
-      border-radius: 12px;
+      border: 1px solid #d5dbd7;
+      border-radius: 8px;
 
       outline: none;
 
+      background: #ffffff;
+
+      color: #111827;
+
       font-size: 14px;
 
-      background: #fbfdff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .login-card input::placeholder {
+      color: #9ca3af;
     }
 
     .login-card input:focus {
-      border-color: #1683df;
+      border-color: #14a800;
 
       box-shadow:
-        0 0 0 3px rgba(22,131,223,0.10);
+        0 0 0 3px rgba(20, 168, 0, 0.10);
     }
 
     .login-submit {
       width: 100%;
 
-      margin-top: 20px;
+      margin-top: 22px;
 
-      padding: 13px;
+      padding: 13px 16px;
 
       border: none;
+      border-radius: 8px;
 
-      border-radius: 13px;
+      background: #14a800;
 
-      background:
-        linear-gradient(
-          135deg,
-          #0879df,
-          #05aa8b
-        );
-
-      color: white;
+      color: #ffffff;
 
       font-size: 15px;
-
-      font-weight: 800;
+      font-weight: 700;
 
       cursor: pointer;
+
+      transition: background 0.2s;
+    }
+
+    .login-submit:hover {
+      background: #108a00;
+    }
+
+    .login-submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
     }
 
     .forgot-password {
       display: block;
 
-      margin-top: 13px;
+      margin-top: 14px;
 
       text-align: center;
 
-      color: #0875d1;
+      color: #14a800;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      text-decoration: none;
+    }
+
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+
+    /*
+      Forgot Password Panel
+      app.js will handle the reset functionality.
+    */
+
+    .forgot-password-panel {
+      display: none;
+
+      margin-top: 20px;
+
+      padding: 20px;
+
+      border: 1px solid #dfe8df;
+      border-radius: 12px;
+
+      background: #f8fbf8;
+    }
+
+    .forgot-password-panel.active {
+      display: block;
+    }
+
+    .forgot-password-panel h3 {
+      margin: 0 0 7px;
+
+      color: #111827;
+
+      font-size: 17px;
+    }
+
+    .forgot-password-panel p {
+      margin: 0 0 15px;
+
+      color: #6b7280;
+
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .reset-password-btn {
+      width: 100%;
+
+      margin-top: 13px;
+
+      padding: 12px;
+
+      border: none;
+      border-radius: 8px;
+
+      background: #111827;
+
+      color: #ffffff;
+
+      font-size: 14px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .reset-password-btn:hover {
+      background: #273244;
+    }
+
+    .reset-message {
+      display: none;
+
+      margin-top: 12px;
+
+      padding: 10px 12px;
+
+      border-radius: 8px;
 
       font-size: 13px;
 
-      text-decoration: none;
+      line-height: 1.5;
+    }
+
+    .reset-message.show {
+      display: block;
     }
 
     .login-divider {
@@ -207,11 +317,11 @@
 
       align-items: center;
 
-      gap: 10px;
+      gap: 12px;
 
-      margin: 21px 0;
+      margin: 24px 0;
 
-      color: #8a9bad;
+      color: #9ca3af;
 
       font-size: 12px;
     }
@@ -224,66 +334,101 @@
 
       flex: 1;
 
-      background: #e3ebf2;
+      background: #e5e7eb;
     }
 
     .google-login {
       width: 100%;
 
-      padding: 13px;
+      padding: 12px 16px;
 
-      border: none;
+      border: 1px solid #d5dbd7;
+      border-radius: 8px;
 
-      border-radius: 13px;
+      background: #ffffff;
 
-      background:
-        linear-gradient(
-          135deg,
-          #ff2d55,
-          #e91e63
-        );
-
-      color: white;
+      color: #374151;
 
       font-size: 14px;
-
-      font-weight: 800;
+      font-weight: 700;
 
       cursor: pointer;
     }
 
+    .google-login:hover {
+      background: #f8faf8;
+      border-color: #bfc8c1;
+    }
+
     .signup-box {
-      margin-top: 20px;
+      margin-top: 25px;
 
-      padding: 15px;
+      padding-top: 22px;
 
-      border-radius: 14px;
-
-      background: #f1f8ff;
+      border-top: 1px solid #e8ece9;
 
       text-align: center;
 
-      color: #536b85;
+      color: #6b7280;
 
       font-size: 13px;
     }
 
     .signup-box a {
-      color: #0875d1;
+      color: #14a800;
 
-      font-weight: 800;
+      font-weight: 700;
 
       text-decoration: none;
+    }
+
+    .signup-box a:hover {
+      text-decoration: underline;
     }
 
     .login-footer {
       text-align: center;
 
-      color: #7890a8;
+      color: #8a948e;
 
-      font-size: 11px;
+      font-size: 12px;
 
-      padding: 0 15px 25px;
+      padding: 0 18px 25px;
+    }
+
+    .login-footer a {
+      color: #6b746e;
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+
+      .login-header {
+        padding: 16px 18px;
+      }
+
+      .login-brand {
+        font-size: 22px;
+      }
+
+      .login-header-link {
+        font-size: 13px;
+      }
+
+      .login-main {
+        min-height: auto;
+        padding: 35px 14px 45px;
+      }
+
+      .login-card {
+        padding: 28px 20px;
+        border-radius: 14px;
+      }
+
+      .login-card h1 {
+        font-size: 25px;
+      }
+
     }
 
   </style>
@@ -298,136 +443,204 @@
 
   <header class="login-header">
 
-    <div class="login-brand">
-      SocialWork<span>BD</span>
-    </div>
+    <div class="login-header-inner">
 
-    <p>
-      কাজ করুন, দক্ষতা দিয়ে আয় করুন
-    </p>
+      <a
+        href="index.html"
+        class="login-brand"
+      >
+        SocialWork<span>BD</span>
+      </a>
+
+      <a
+        href="signup.html"
+        class="login-header-link"
+      >
+        Create an account
+      </a>
+
+    </div>
 
   </header>
 
 
-  <!-- ================= LOGIN CARD ================= -->
+  <!-- ================= MAIN ================= -->
 
-  <main class="login-container">
+  <main class="login-main">
 
-    <section class="login-card">
+    <div class="login-container">
 
-      <div class="login-icon">
-        🔐
-      </div>
+      <section class="login-card">
 
-
-      <h2>
-        আপনার অ্যাকাউন্টে Login করুন
-      </h2>
+        <div class="login-icon">
+          🔐
+        </div>
 
 
-      <p class="login-description">
-        Worker অথবা Client Account দিয়ে Login করুন
-      </p>
+        <h1>
+          Welcome back
+        </h1>
 
 
-      <!-- EMAIL LOGIN -->
+        <p class="login-description">
+          Log in to your SocialWorkBD account and continue working, hiring, and growing globally.
+        </p>
 
-      <form id="login-form">
 
-        <label for="email">
-          📧 ইমেইল
-        </label>
+        <!-- ================= LOGIN FORM ================= -->
 
-        <input
-          type="email"
-          id="email"
-          placeholder="আপনার Email লিখুন"
-          autocomplete="email"
-          required
+        <form id="login-form">
+
+          <label for="email">
+            Email address
+          </label>
+
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+            required
+          >
+
+
+          <label for="password">
+            Password
+          </label>
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+
+
+          <button
+            type="submit"
+            id="login-btn"
+            class="login-submit"
+          >
+            Log In
+          </button>
+
+        </form>
+
+
+        <!-- ================= FORGOT PASSWORD ================= -->
+
+        <a
+          href="#"
+          id="forgot-password"
+          class="forgot-password"
         >
-
-
-        <label for="password">
-          🔒 পাসওয়ার্ড
-        </label>
-
-        <input
-          type="password"
-          id="password"
-          placeholder="আপনার Password লিখুন"
-          autocomplete="current-password"
-          required
-        >
-
-
-        <button
-          type="submit"
-          class="login-submit"
-        >
-          🔑 লগইন করুন
-        </button>
-
-      </form>
-
-
-      <!-- FORGOT PASSWORD -->
-
-      <a
-        href="#"
-        id="forgot-password"
-        class="forgot-password"
-      >
-        পাসওয়ার্ড ভুলে গেছেন?
-      </a>
-
-
-      <!-- DIVIDER -->
-
-      <div class="login-divider">
-        অথবা
-      </div>
-
-
-      <!-- GOOGLE -->
-
-      <button
-        type="button"
-        id="google-login"
-        class="google-login"
-      >
-        🔵 Continue with Google
-      </button>
-
-
-      <!-- SIGNUP -->
-
-      <div class="signup-box">
-
-        নতুন User?
-
-        <a href="signup.html">
-          নতুন Account তৈরি করুন →
+          Forgot password?
         </a>
 
-      </div>
 
-    </section>
+        <div
+          id="forgot-password-panel"
+          class="forgot-password-panel"
+        >
+
+          <h3>
+            Reset your password
+          </h3>
+
+          <p>
+            Enter your account email and we will send you a password reset link.
+          </p>
+
+
+          <form id="forgot-password-form">
+
+            <label for="reset-email">
+              Email address
+            </label>
+
+            <input
+              type="email"
+              id="reset-email"
+              name="reset-email"
+              placeholder="Enter your account email"
+              autocomplete="email"
+              required
+            >
+
+
+            <button
+              type="submit"
+              id="reset-password-btn"
+              class="reset-password-btn"
+            >
+              Send Reset Link
+            </button>
+
+          </form>
+
+
+          <div
+            id="reset-message"
+            class="reset-message"
+          ></div>
+
+        </div>
+
+
+        <!-- ================= DIVIDER ================= -->
+
+        <div class="login-divider">
+          <span>OR</span>
+        </div>
+
+
+        <!-- ================= GOOGLE LOGIN ================= -->
+
+        <button
+          type="button"
+          id="google-login"
+          class="google-login"
+        >
+          Continue with Google
+        </button>
+
+
+        <!-- ================= SIGN UP ================= -->
+
+        <div class="signup-box">
+
+          Don't have an account?
+
+          <a href="signup.html">
+            Sign up
+          </a>
+
+        </div>
+
+      </section>
+
+    </div>
 
   </main>
 
 
+  <!-- ================= FOOTER ================= -->
+
   <footer class="login-footer">
 
-    © 2026 SocialWorkBD
-    <br>
-    বাংলাদেশি Freelance & Microtask Marketplace
+    © 2026 SocialWorkBD · Global Freelance Marketplace
 
   </footer>
 
 
-  <!-- Firebase -->
+  <!-- Firebase Configuration -->
 
   <script src="firebase-config.js"></script>
+
+  <!-- Main Application -->
 
   <script src="app.js"></script>
 
