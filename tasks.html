@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
 
@@ -8,7 +8,18 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Tasks - SocialWorkBD</title>
+  <title>Find Work - SocialWorkBD</title>
+
+  <meta
+    name="description"
+    content="Browse freelance jobs and find projects that match your skills on SocialWorkBD."
+  >
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="favicon.svg"
+  >
 
   <link
     rel="stylesheet"
@@ -24,93 +35,393 @@
 
   <style>
 
-    .tasks-page {
+    /* =====================================================
+       FIND WORK PAGE
+    ===================================================== */
+
+    .find-work-page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 45px 24px 80px;
+    }
+
+    .find-work-hero {
+      background: linear-gradient(
+        135deg,
+        #17202a,
+        #263238
+      );
+      border-radius: 24px;
+      padding: 48px;
+      color: #fff;
+      margin-bottom: 35px;
+    }
+
+    .find-work-hero .section-label {
+      color: #8ff08a;
+    }
+
+    .find-work-hero h1 {
+      margin: 10px 0 12px;
+      font-size: 42px;
+      line-height: 1.15;
+    }
+
+    .find-work-hero p {
       max-width: 700px;
-      margin: 20px auto;
-      padding: 15px;
+      margin: 0;
+      color: #d7dde2;
+      font-size: 17px;
+      line-height: 1.7;
     }
 
-    .task-create-box {
+    .job-search-panel {
+      display: grid;
+      grid-template-columns: 1fr 210px 130px;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .job-search-field,
+    .job-filter-select {
       background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-      margin-bottom: 25px;
-    }
-
-    .task-create-box h2 {
-      margin-top: 0;
-    }
-
-    .task-create-box label {
-      display: block;
-      margin-top: 14px;
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
-
-    .task-create-box input,
-    .task-create-box textarea,
-    .task-create-box select {
-      width: 100%;
+      border: 1px solid #dfe3e7;
+      border-radius: 10px;
+      min-height: 52px;
       box-sizing: border-box;
-      padding: 11px;
-      border: 1px solid #ddd;
-      border-radius: 9px;
-      font-size: 15px;
     }
 
-    .task-create-box textarea {
-      resize: vertical;
-      min-height: 90px;
-    }
-
-    .task-link-row {
+    .job-search-field {
       display: flex;
-      gap: 7px;
-      margin-bottom: 9px;
+      align-items: center;
+      padding: 0 15px;
     }
 
-    .task-link-row input {
+    .job-search-field span {
+      font-size: 22px;
+      color: #68737d;
+      margin-right: 9px;
+    }
+
+    .job-search-field input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      font-size: 15px;
+      color: #17202a;
+      background: transparent;
+    }
+
+    .job-filter-select {
+      width: 100%;
+      padding: 0 13px;
+      outline: 0;
+      font-size: 15px;
+      color: #27313a;
+    }
+
+    .job-search-button {
+      border: 0;
+      border-radius: 10px;
+      background: #14a800;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 52px;
+    }
+
+    .job-search-button:hover {
+      background: #108c00;
+    }
+
+    /* =====================================================
+       TOOLBAR
+    ===================================================== */
+
+    .jobs-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .jobs-toolbar h2 {
+      margin: 0;
+      font-size: 25px;
+      color: #17202a;
+    }
+
+    .jobs-count {
+      color: #68737d;
+      font-size: 14px;
+    }
+
+    /* =====================================================
+       JOB CARDS
+    ===================================================== */
+
+    .find-work-job-list {
+      display: grid;
+      gap: 15px;
+    }
+
+    .find-work-job-card {
+      background: #fff;
+      border: 1px solid #e1e5e8;
+      border-radius: 16px;
+      padding: 25px;
+      display: flex;
+      justify-content: space-between;
+      gap: 25px;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .find-work-job-card:hover {
+      transform: translateY(-2px);
+      border-color: #b8cdb4;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+    }
+
+    .find-work-job-main {
+      min-width: 0;
       flex: 1;
     }
 
-    .remove-link-btn {
-      width: 40px !important;
-      padding: 8px !important;
-      background: #f1f1f1;
-      color: #555;
-      border: 0;
-      border-radius: 8px;
-      font-size: 20px;
+    .job-top-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
 
-    #add-link-btn {
-      width: auto;
-      padding: 7px 12px;
-      margin-top: 3px;
-      background: #f3f4f6;
-      color: #333;
-      border: 0;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    #create-task-btn {
-      width: 100%;
-      margin-top: 18px;
-      padding: 12px;
-      border: 0;
-      border-radius: 10px;
-      background: #2563eb;
-      color: white;
-      font-size: 16px;
+    .open-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #e9f8e7;
+      color: #168500;
+      font-size: 12px;
       font-weight: 700;
     }
 
-    .task-list-title {
-      margin-top: 25px;
+    .open-badge::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: #14a800;
+      border-radius: 50%;
+    }
+
+    .job-posted-date {
+      color: #7a838b;
+      font-size: 12px;
+    }
+
+    .find-work-job-card h3 {
+      margin: 0 0 9px;
+      color: #17202a;
+      font-size: 21px;
+      line-height: 1.35;
+    }
+
+    .find-work-job-description {
+      color: #59636c;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0 0 17px;
+      max-width: 780px;
+    }
+
+    .job-info-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      color: #505b64;
+      font-size: 13px;
+    }
+
+    .job-info-item strong {
+      color: #17202a;
+      margin-right: 5px;
+    }
+
+    .job-skills {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .job-skill-tag {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: #f2f4f5;
+      color: #46515a;
+      font-size: 12px;
+    }
+
+    .find-work-job-action {
+      min-width: 125px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .view-job-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 45px;
+      box-sizing: border-box;
+      padding: 0 15px;
+      border: 1px solid #14a800;
+      border-radius: 9px;
+      color: #108c00;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .view-job-button:hover {
+      background: #f0faee;
+    }
+
+    /* =====================================================
+       EMPTY STATE
+    ===================================================== */
+
+    .jobs-empty-state {
+      background: #fff;
+      border: 1px solid #e1e5e8;
+      border-radius: 16px;
+      text-align: center;
+      padding: 65px 25px;
+    }
+
+    .jobs-empty-icon {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: #f1f5f0;
+      font-size: 25px;
+    }
+
+    .jobs-empty-state h3 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      color: #17202a;
+    }
+
+    .jobs-empty-state p {
+      margin: 0;
+      color: #69737b;
+      font-size: 14px;
+    }
+
+    /* =====================================================
+       CATEGORY QUICK LINKS
+    ===================================================== */
+
+    .job-category-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 22px;
+    }
+
+    .job-category-links a {
+      display: inline-block;
+      padding: 8px 13px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .job-category-links a:hover {
+      background: rgba(255, 255, 255, 0.17);
+    }
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 850px) {
+
+      .find-work-page {
+        padding: 30px 16px 70px;
+      }
+
+      .find-work-hero {
+        padding: 32px 24px;
+        border-radius: 18px;
+      }
+
+      .find-work-hero h1 {
+        font-size: 32px;
+      }
+
+      .job-search-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .find-work-job-card {
+        flex-direction: column;
+      }
+
+      .find-work-job-action {
+        width: 100%;
+      }
+
+      .view-job-button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 520px) {
+
+      .find-work-hero {
+        padding: 26px 18px;
+      }
+
+      .find-work-hero h1 {
+        font-size: 28px;
+      }
+
+      .find-work-hero p {
+        font-size: 14px;
+      }
+
+      .find-work-job-card {
+        padding: 19px;
+      }
+
+      .find-work-job-card h3 {
+        font-size: 18px;
+      }
+
+      .jobs-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
     }
 
   </style>
@@ -119,230 +430,1134 @@
 
 <body>
 
-  <!-- ======================================
+  <!-- =====================================================
        HEADER
-  ======================================= -->
+  ====================================================== -->
 
-  <header class="site-header">
+  <header class="app-header">
 
-    <div class="container">
+    <div class="brand-area">
 
-      <h1>SocialWorkBD</h1>
+      <a
+        href="index.html"
+        class="brand-logo-link"
+      >
+        <div class="brand-logo">
+          SW
+        </div>
+      </a>
 
-      <p>
-        ছোট ছোট Task করুন, MHR GOLD আয় করুন
-      </p>
+      <div class="brand-text">
 
-      <nav>
-
-        <a href="index.html">
-          হোম
+        <a
+          href="index.html"
+          class="brand-name"
+        >
+          SocialWork<span>BD</span>
         </a>
 
-        <a href="tasks.html">
-          Tasks
-        </a>
+        <p>
+          Find Work. Hire Talent.
+        </p>
 
-        <a href="profile.html">
-          প্রোফাইল
-        </a>
+      </div>
 
-        <a href="dashboard.html">
-          ড্যাশবোর্ড
-        </a>
+    </div>
 
-      </nav>
+
+    <nav class="main-nav">
+
+      <a
+        href="tasks.html"
+        class="active"
+      >
+        Find Work
+      </a>
+
+      <a href="post-job.html">
+        Find Talent
+      </a>
+
+      <a href="tasks.html">
+        Jobs
+      </a>
+
+      <a href="support.html">
+        Help
+      </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+      <button
+        class="icon-btn"
+        id="notification-btn"
+        type="button"
+        aria-label="Notifications"
+      >
+        🔔
+        <span class="notification-badge">
+          0
+        </span>
+      </button>
+
+      <a
+        href="login.html"
+        class="header-login"
+      >
+        Log In
+      </a>
+
+      <a
+        href="signup.html"
+        class="header-signup"
+      >
+        Sign Up
+      </a>
+
+      <a
+        href="profile.html"
+        class="profile-icon"
+        aria-label="Profile"
+      >
+        👤
+      </a>
 
     </div>
 
   </header>
 
 
-  <!-- ======================================
+  <!-- =====================================================
        MAIN
-  ======================================= -->
+  ====================================================== -->
 
-  <main class="tasks-page">
+  <main class="find-work-page">
 
 
-    <!-- ====================================
-         CREATE TASK
-    ===================================== -->
+    <!-- ===================================================
+         HERO
+    ==================================================== -->
 
-    <section class="task-create-box">
+    <section class="find-work-hero">
 
-      <h2>
-        ➕ নতুন Task তৈরি করুন
-      </h2>
+      <span class="section-label">
+        FREELANCE MARKETPLACE
+      </span>
+
+      <h1>
+        Find work that matches your skills.
+      </h1>
 
       <p>
-        Client এখানে ছোট কাজ তৈরি করতে পারবেন।
+        Explore freelance projects, discover new opportunities,
+        and connect with clients looking for talented people.
       </p>
 
 
-      <form id="task-form">
+      <!-- Search -->
 
+      <form
+        class="job-search-panel"
+        id="find-work-search-form"
+      >
 
-        <!-- Task Title -->
+        <div class="job-search-field">
 
-        <label for="task-title">
-          Task-এর নাম
-        </label>
+          <span>
+            ⌕
+          </span>
 
-        <input
-          type="text"
-          id="task-title"
-          placeholder="যেমন: একটি Website Visit করুন"
-          maxlength="100"
-          required
-        >
+          <input
+            type="search"
+            id="job-search"
+            placeholder="Search jobs, skills, or projects"
+            autocomplete="off"
+          >
 
+        </div>
 
-        <!-- Description -->
-
-        <label for="task-description">
-          Task সম্পর্কে বিস্তারিত
-        </label>
-
-        <textarea
-          id="task-description"
-          placeholder="Worker কী করবে তা সংক্ষেপে লিখুন"
-          maxlength="500"
-        ></textarea>
-
-
-        <!-- Task Type -->
-
-        <label for="task-type">
-          Task Type
-        </label>
 
         <select
-          id="task-type"
-          required
+          id="job-category-filter"
+          class="job-filter-select"
         >
 
-          <option value="link_visit">
-            Link Visit
+          <option value="">
+            All Categories
           </option>
 
-          <option value="link_share">
-            Link Share
+          <option value="web-development">
+            Web Development
+          </option>
+
+          <option value="design">
+            Design & Creative
+          </option>
+
+          <option value="writing">
+            Writing & Content
+          </option>
+
+          <option value="marketing">
+            Sales & Marketing
+          </option>
+
+          <option value="virtual-assistance">
+            Admin & Support
+          </option>
+
+          <option value="video">
+            Video & Animation
           </option>
 
         </select>
 
 
-        <!-- Reward -->
-
-        <label for="task-reward">
-          Reward (MHR GOLD)
-        </label>
-
-        <input
-          type="number"
-          id="task-reward"
-          placeholder="যেমন: 100"
-          min="1"
-          step="1"
-          required
-        >
-
-
-        <!-- Links -->
-
-        <label>
-          Task Link
-        </label>
-
-        <div id="task-links-container">
-
-          <!-- tasks.js এখানে প্রথম Link তৈরি করবে -->
-
-        </div>
-
-
-        <!-- Add More -->
-
-        <button
-          type="button"
-          id="add-link-btn"
-        >
-          + Add More
-        </button>
-
-
-        <!-- Submit -->
-
         <button
           type="submit"
-          id="create-task-btn"
+          class="job-search-button"
         >
-          Task তৈরি করুন
+          Search Jobs
         </button>
 
       </form>
 
-    </section>
 
+      <div class="job-category-links">
 
-    <!-- ====================================
-         TASK LIST
-    ===================================== -->
+        <a href="tasks.html?category=web-development">
+          Web Development
+        </a>
 
-    <section>
+        <a href="tasks.html?category=design">
+          Design
+        </a>
 
-      <h2 class="task-list-title">
-        📋 Available Tasks
-      </h2>
+        <a href="tasks.html?category=writing">
+          Writing
+        </a>
 
-      <div id="task-list">
+        <a href="tasks.html?category=marketing">
+          Marketing
+        </a>
 
-        <p>
-          Task লোড হচ্ছে...
-        </p>
+        <a href="tasks.html?category=video">
+          Video
+        </a>
 
       </div>
 
     </section>
 
 
+    <!-- ===================================================
+         JOB LIST HEADER
+    ==================================================== -->
+
+    <section class="jobs-toolbar">
+
+      <div>
+
+        <h2>
+          Latest Jobs
+        </h2>
+
+        <span
+          class="jobs-count"
+          id="jobs-count"
+        >
+          Loading jobs...
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         JOB LIST
+    ==================================================== -->
+
+    <section
+      id="find-work-job-list"
+      class="find-work-job-list"
+    >
+
+      <div class="jobs-empty-state">
+
+        <div class="jobs-empty-icon">
+          🔎
+        </div>
+
+        <h3>
+          Loading freelance jobs...
+        </h3>
+
+        <p>
+          Please wait while we find the latest opportunities.
+        </p>
+
+      </div>
+
+    </section>
+
   </main>
 
 
-  <!-- ======================================
+  <!-- =====================================================
        FOOTER
-  ======================================= -->
+  ====================================================== -->
 
-  <footer>
+  <footer class="app-footer">
 
-    <div class="container">
+    <div class="footer-main">
 
-      <p>
-        © 2026 SocialWorkBD
-      </p>
+      <div class="footer-brand">
 
-      <p>
-        বাংলাদেশি Freelance & Task Marketplace
-      </p>
+        <a
+          href="index.html"
+          class="footer-logo"
+        >
+          SocialWork<span>BD</span>
+        </a>
+
+        <p>
+          A professional freelance marketplace
+          connecting clients and freelancers.
+        </p>
+
+      </div>
+
+
+      <div class="footer-column">
+
+        <h4>
+          For Freelancers
+        </h4>
+
+        <a href="tasks.html">
+          Find Work
+        </a>
+
+        <a href="profile.html">
+          My Profile
+        </a>
+
+        <a href="support.html">
+          Support
+        </a>
+
+      </div>
+
+
+      <div class="footer-column">
+
+        <h4>
+          For Clients
+        </h4>
+
+        <a href="post-job.html">
+          Post a Job
+        </a>
+
+        <a href="tasks.html">
+          Find Talent
+        </a>
+
+        <a href="support.html">
+          Help Center
+        </a>
+
+      </div>
+
+
+      <div class="footer-column">
+
+        <h4>
+          SocialWorkBD
+        </h4>
+
+        <a href="profile.html">
+          My Account
+        </a>
+
+        <a href="support.html">
+          Contact Support
+        </a>
+
+        <a href="terms.html">
+          Terms
+        </a>
+
+        <a href="privacy.html">
+          Privacy
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      <span>
+        © 2026 SocialWorkBD. All rights reserved.
+      </span>
+
+      <span>
+        Built for freelancers and clients.
+      </span>
 
     </div>
 
   </footer>
 
 
-  <!-- ======================================
-       FIREBASE CONFIG
-  ======================================= -->
+  <!-- =====================================================
+       MOBILE NAVIGATION
+  ====================================================== -->
+
+  <nav class="bottom-nav">
+
+    <a
+      href="index.html"
+      class="bottom-item"
+    >
+      <span>⌂</span>
+      <small>Home</small>
+    </a>
+
+    <a
+      href="tasks.html"
+      class="bottom-item active"
+    >
+      <span>🔎</span>
+      <small>Find Work</small>
+    </a>
+
+    <a
+      href="post-job.html"
+      class="bottom-item"
+    >
+      <span>＋</span>
+      <small>Post Job</small>
+    </a>
+
+    <a
+      href="profile.html"
+      class="bottom-item"
+    >
+      <span>♙</span>
+      <small>Profile</small>
+    </a>
+
+    <a
+      href="support.html"
+      class="bottom-item"
+    >
+      <span>☰</span>
+      <small>Menu</small>
+    </a>
+
+  </nav>
+
+
+  <!-- =====================================================
+       FIREBASE
+  ====================================================== -->
 
   <script src="firebase-config.js"></script>
 
+  <!-- Main marketplace logic -->
 
-  <!-- ======================================
-       TASK JAVASCRIPT
-  ======================================= -->
+  <script src="app.js"></script>
 
-  <script src="tasks.js"></script>
+
+  <!-- =====================================================
+       FIND WORK PAGE LOGIC
+       Search + category filtering
+  ====================================================== -->
+
+  <script>
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        const searchInput =
+          document.getElementById("job-search");
+
+        const categoryFilter =
+          document.getElementById(
+            "job-category-filter"
+          );
+
+        const searchForm =
+          document.getElementById(
+            "find-work-search-form"
+          );
+
+        const jobList =
+          document.getElementById(
+            "find-work-job-list"
+          );
+
+        const jobsCount =
+          document.getElementById(
+            "jobs-count"
+          );
+
+        if (!jobList) {
+          return;
+        }
+
+        /*
+          app.js loads jobs on the homepage.
+          This page independently loads the same
+          Firestore jobs collection for the full
+          Find Work marketplace.
+        */
+
+        if (
+          typeof firebase === "undefined"
+        ) {
+          jobList.innerHTML = `
+            <div class="jobs-empty-state">
+              <div class="jobs-empty-icon">!</div>
+              <h3>Service unavailable</h3>
+              <p>Please refresh the page and try again.</p>
+            </div>
+          `;
+
+          return;
+        }
+
+
+        let allJobs = [];
+
+
+        function escapeHtml(value) {
+
+          return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+        }
+
+
+        function formatBudget(value) {
+
+          const amount =
+            Number(value);
+
+          if (
+            !Number.isFinite(amount)
+          ) {
+            return "Not specified";
+          }
+
+          return (
+            "৳" +
+            amount.toLocaleString("en-BD")
+          );
+
+        }
+
+
+        function formatDate(timestamp) {
+
+          if (!timestamp) {
+            return "Recently posted";
+          }
+
+          try {
+
+            const date =
+              timestamp.toDate
+                ? timestamp.toDate()
+                : new Date(timestamp);
+
+            return date.toLocaleDateString(
+              "en-US",
+              {
+                year: "numeric",
+                month: "short",
+                day: "numeric"
+              }
+            );
+
+          } catch {
+
+            return "Recently posted";
+
+          }
+
+        }
+
+
+        function categoryMatches(
+          job,
+          selectedCategory
+        ) {
+
+          if (!selectedCategory) {
+            return true;
+          }
+
+          const category =
+            String(
+              job.category || ""
+            ).toLowerCase();
+
+          const skills =
+            String(
+              job.skills || ""
+            ).toLowerCase();
+
+          const title =
+            String(
+              job.title || ""
+            ).toLowerCase();
+
+          const description =
+            String(
+              job.description || ""
+            ).toLowerCase();
+
+          const combined =
+            [
+              category,
+              skills,
+              title,
+              description
+            ].join(" ");
+
+          const categoryWords = {
+
+            "web-development":
+              [
+                "web",
+                "development",
+                "developer",
+                "website",
+                "wordpress",
+                "html",
+                "css",
+                "javascript",
+                "react"
+              ],
+
+            "design":
+              [
+                "design",
+                "designer",
+                "graphic",
+                "logo",
+                "ui",
+                "ux",
+                "figma",
+                "branding"
+              ],
+
+            "writing":
+              [
+                "writing",
+                "writer",
+                "content",
+                "article",
+                "copywriting",
+                "blog",
+                "editing"
+              ],
+
+            "marketing":
+              [
+                "marketing",
+                "seo",
+                "social media",
+                "advertising",
+                "sales",
+                "digital marketing"
+              ],
+
+            "virtual-assistance":
+              [
+                "admin",
+                "support",
+                "virtual assistant",
+                "data entry",
+                "assistant"
+              ],
+
+            "video":
+              [
+                "video",
+                "animation",
+                "editing",
+                "youtube",
+                "motion"
+              ]
+
+          };
+
+
+          const words =
+            categoryWords[
+              selectedCategory
+            ] || [];
+
+
+          return words.some(
+            word =>
+              combined.includes(word)
+          );
+
+        }
+
+
+        function renderJobs() {
+
+          const search =
+            (
+              searchInput?.value ||
+              ""
+            )
+              .trim()
+              .toLowerCase();
+
+          const selectedCategory =
+            categoryFilter?.value || "";
+
+
+          const filteredJobs =
+            allJobs.filter(
+              job => {
+
+                const searchableText =
+                  [
+                    job.title || "",
+                    job.description || "",
+                    job.skills || "",
+                    job.category || "",
+                    job.clientName || ""
+                  ]
+                    .join(" ")
+                    .toLowerCase();
+
+
+                const matchesSearch =
+                  !search ||
+                  searchableText.includes(
+                    search
+                  );
+
+
+                const matchesCategory =
+                  categoryMatches(
+                    job,
+                    selectedCategory
+                  );
+
+
+                return (
+                  matchesSearch &&
+                  matchesCategory
+                );
+
+              }
+            );
+
+
+          if (jobsCount) {
+
+            jobsCount.textContent =
+              `${filteredJobs.length} job${
+                filteredJobs.length === 1
+                  ? ""
+                  : "s"
+              } found`;
+
+          }
+
+
+          if (
+            filteredJobs.length === 0
+          ) {
+
+            jobList.innerHTML = `
+              <div class="jobs-empty-state">
+
+                <div class="jobs-empty-icon">
+                  🔎
+                </div>
+
+                <h3>
+                  No jobs found
+                </h3>
+
+                <p>
+                  Try a different keyword or category.
+                </p>
+
+              </div>
+            `;
+
+            return;
+
+          }
+
+
+          jobList.innerHTML =
+            filteredJobs
+              .map(
+                job => {
+
+                  const title =
+                    escapeHtml(
+                      job.title ||
+                      "Untitled Project"
+                    );
+
+
+                  const description =
+                    escapeHtml(
+                      job.description ||
+                      "No project description provided."
+                    );
+
+
+                  const budget =
+                    formatBudget(
+                      job.budget
+                    );
+
+
+                  const date =
+                    formatDate(
+                      job.createdAt
+                    );
+
+
+                  const skills =
+                    String(
+                      job.skills || ""
+                    )
+                      .split(",")
+                      .map(
+                        skill =>
+                          skill.trim()
+                      )
+                      .filter(Boolean);
+
+
+                  const skillHtml =
+                    skills
+                      .slice(0, 8)
+                      .map(
+                        skill =>
+                          `
+                            <span class="job-skill-tag">
+                              ${escapeHtml(skill)}
+                            </span>
+                          `
+                      )
+                      .join("");
+
+
+                  return `
+                    <article
+                      class="find-work-job-card"
+                    >
+
+                      <div
+                        class="find-work-job-main"
+                      >
+
+                        <div
+                          class="job-top-row"
+                        >
+
+                          <span
+                            class="open-badge"
+                          >
+                            Open
+                          </span>
+
+                          <span
+                            class="job-posted-date"
+                          >
+                            Posted ${escapeHtml(date)}
+                          </span>
+
+                        </div>
+
+
+                        <h3>
+                          ${title}
+                        </h3>
+
+
+                        <p
+                          class="find-work-job-description"
+                        >
+                          ${description}
+                        </p>
+
+
+                        <div
+                          class="job-info-row"
+                        >
+
+                          <span
+                            class="job-info-item"
+                          >
+                            <strong>
+                              Budget:
+                            </strong>
+                            ${escapeHtml(budget)}
+                          </span>
+
+
+                          <span
+                            class="job-info-item"
+                          >
+                            <strong>
+                              Proposals:
+                            </strong>
+                            ${Number(
+                              job.proposalCount || 0
+                            )}
+                          </span>
+
+
+                          <span
+                            class="job-info-item"
+                          >
+                            <strong>
+                              Delivery:
+                            </strong>
+                            ${
+                              job.deliveryDays
+                                ? escapeHtml(
+                                    job.deliveryDays
+                                  ) +
+                                  " days"
+                                : "Flexible"
+                            }
+                          </span>
+
+                        </div>
+
+
+                        ${
+                          skillHtml
+                            ? `
+                              <div
+                                class="job-skills"
+                              >
+                                ${skillHtml}
+                              </div>
+                            `
+                            : ""
+                        }
+
+                      </div>
+
+
+                      <div
+                        class="find-work-job-action"
+                      >
+
+                        <a
+                          href="job-details.html?id=${encodeURIComponent(
+                            job.id
+                          )}"
+                          class="view-job-button"
+                        >
+                          View Job
+                        </a>
+
+                      </div>
+
+                    </article>
+                  `;
+
+                }
+              )
+              .join("");
+
+        }
+
+
+        async function loadJobs() {
+
+          try {
+
+            const snapshot =
+              await firebase
+                .firestore()
+                .collection("jobs")
+                .where(
+                  "status",
+                  "==",
+                  "open"
+                )
+                .get();
+
+
+            allJobs = [];
+
+
+            snapshot.forEach(
+              doc => {
+
+                allJobs.push({
+                  id: doc.id,
+                  ...doc.data()
+                });
+
+              }
+            );
+
+
+            allJobs.sort(
+              (a, b) => {
+
+                const aTime =
+                  a.createdAt?.toMillis
+                    ? a.createdAt.toMillis()
+                    : 0;
+
+                const bTime =
+                  b.createdAt?.toMillis
+                    ? b.createdAt.toMillis()
+                    : 0;
+
+                return bTime - aTime;
+
+              }
+            );
+
+
+            renderJobs();
+
+          } catch (error) {
+
+            console.error(
+              "Find Work Error:",
+              error
+            );
+
+
+            if (jobsCount) {
+              jobsCount.textContent =
+                "Unable to load jobs";
+            }
+
+
+            jobList.innerHTML = `
+              <div class="jobs-empty-state">
+
+                <div class="jobs-empty-icon">
+                  !
+                </div>
+
+                <h3>
+                  Unable to load jobs
+                </h3>
+
+                <p>
+                  Please check your connection
+                  and try again.
+                </p>
+
+              </div>
+            `;
+
+          }
+
+        }
+
+
+        searchForm?.addEventListener(
+          "submit",
+          event => {
+
+            event.preventDefault();
+
+            renderJobs();
+
+          }
+        );
+
+
+        searchInput?.addEventListener(
+          "input",
+          () => {
+
+            renderJobs();
+
+          }
+        );
+
+
+        categoryFilter?.addEventListener(
+          "change",
+          () => {
+
+            renderJobs();
+
+          }
+        );
+
+
+        // Read category from URL
+        const params =
+          new URLSearchParams(
+            window.location.search
+          );
+
+        const urlCategory =
+          params.get("category");
+
+
+        if (
+          urlCategory &&
+          categoryFilter
+        ) {
+
+          const validOption =
+            Array.from(
+              categoryFilter.options
+            ).some(
+              option =>
+                option.value ===
+                urlCategory
+            );
+
+
+          if (validOption) {
+
+            categoryFilter.value =
+              urlCategory;
+
+          }
+
+        }
+
+
+        loadJobs();
+
+      }
+    );
+
+  </script>
 
 </body>
 </html>
