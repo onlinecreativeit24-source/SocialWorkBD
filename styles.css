@@ -1,1334 +1,769 @@
-/* =====================================================
-   SocialWorkBD - Dashboard UI
-   ===================================================== */
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family:
-    "Noto Sans Bengali",
-    "Hind Siliguri",
-    Arial,
-    sans-serif;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  background: #f5f9fc;
-  color: #102b55;
-  padding-bottom: 88px;
-}
+  <title>SocialWorkBD — Find Work. Hire Talent.</title>
 
+  <meta
+    name="description"
+    content="SocialWorkBD is a freelance marketplace where clients find skilled freelancers and freelancers find professional projects."
+  >
 
-/* =====================================================
-   HEADER
-   ===================================================== */
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="shortcut icon" href="favicon.svg">
 
-.app-header {
-  min-height: 150px;
-  padding: 28px 22px 42px;
+  <link rel="stylesheet" href="styles.css">
+</head>
 
-  background:
-    linear-gradient(
-      135deg,
-      #061c49 0%,
-      #063d88 48%,
-      #0069c9 100%
-    );
+<body>
 
-  color: #fff;
+  <!-- ================= HEADER ================= -->
 
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  <header class="app-header">
 
-  border-radius: 0 0 42px 42px;
-}
+    <div class="brand-area">
+      <a href="index.html" class="brand-logo-link">
+        <div class="brand-logo">
+          SW
+        </div>
+      </a>
 
-.brand-area {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+      <div class="brand-text">
+        <a href="index.html" class="brand-name">
+          SocialWork<span>BD</span>
+        </a>
 
-.brand-logo {
-  width: 64px;
-  height: 64px;
+        <p>Find Work. Hire Talent.</p>
+      </div>
+    </div>
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
-  font-size: 39px;
+    <nav class="main-nav">
 
-  background: rgba(255,255,255,0.10);
-  border-radius: 20px;
-}
+      <a href="tasks.html">Find Work</a>
 
-.brand-area h1 {
-  font-size: 30px;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: -1px;
-}
+      <a href="post-job.html">Find Talent</a>
 
-.brand-area h1 span {
-  color: #18d8b0;
-}
+      <a href="tasks.html">Jobs</a>
 
-.brand-area p {
-  margin-top: 7px;
-  font-size: 13px;
-  color: #eaf5ff;
-}
+      <a href="support.html">Help</a>
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-}
+    </nav>
 
-.icon-btn,
-.profile-icon {
-  position: relative;
 
-  width: 48px;
-  height: 48px;
+    <div class="header-actions">
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+      <button
+        class="icon-btn"
+        id="notification-btn"
+        type="button"
+        aria-label="Notifications"
+      >
+        🔔
+        <span class="notification-badge">0</span>
+      </button>
 
-  border-radius: 50%;
+      <a href="login.html" class="header-login">
+        Log In
+      </a>
 
-  border: 1px solid rgba(255,255,255,0.45);
+      <a href="signup.html" class="header-signup">
+        Sign Up
+      </a>
 
-  background: rgba(255,255,255,0.12);
+      <a
+        href="profile.html"
+        class="profile-icon"
+        aria-label="Profile"
+      >
+        👤
+      </a>
 
-  color: #fff;
+    </div>
 
-  text-decoration: none;
+  </header>
 
-  font-size: 25px;
 
-  cursor: pointer;
-}
+  <!-- ================= MAIN ================= -->
 
-.notification-badge {
-  position: absolute;
+  <main class="marketplace-home">
 
-  right: -3px;
-  top: -4px;
 
-  min-width: 22px;
-  height: 22px;
+    <!-- ================= HERO ================= -->
 
-  padding: 0 5px;
+    <section class="hero-section">
 
-  border-radius: 50%;
+      <div class="hero-content">
 
-  background: #ff3167;
+        <span class="hero-eyebrow">
+          Bangladesh's Freelance Marketplace
+        </span>
 
-  color: #fff;
+        <h1>
+          Find the right work.
+          <br>
+          <span>Build your future.</span>
+        </h1>
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+        <p>
+          Connect with clients, discover freelance projects,
+          and work with talented people from Bangladesh and around the world.
+        </p>
 
-  font-size: 12px;
-  font-weight: 800;
-}
 
+        <!-- Search -->
 
-/* =====================================================
-   MAIN
-   ===================================================== */
+        <form class="marketplace-search" id="job-search-form">
 
-.dashboard-container {
-  width: min(960px, calc(100% - 30px));
-  margin: -20px auto 30px;
-  position: relative;
-  z-index: 2;
-}
+          <div class="search-field">
 
+            <span class="search-icon">⌕</span>
 
-/* =====================================================
-   WELCOME BANNER
-   ===================================================== */
+            <input
+              type="search"
+              id="job-search"
+              placeholder="Search for jobs, skills, or projects"
+              autocomplete="off"
+            >
 
-.welcome-banner {
-  min-height: 195px;
+          </div>
 
-  position: relative;
-  overflow: hidden;
+          <button type="submit" class="search-button">
+            Search
+          </button>
 
-  display: flex;
-  align-items: center;
+        </form>
 
-  padding: 25px 30px;
 
-  border-radius: 24px;
+        <!-- Popular searches -->
 
-  background:
-    linear-gradient(
-      105deg,
-      #f7fcff 0%,
-      #edfaff 58%,
-      #d9f7ff 100%
-    );
+        <div class="popular-searches">
 
-  border: 1px solid #d4e9f5;
+          <span>Popular:</span>
 
-  box-shadow: 0 8px 25px rgba(20,80,130,0.08);
-}
+          <a href="tasks.html?skill=web-development">
+            Web Development
+          </a>
 
-.welcome-text {
-  position: relative;
-  z-index: 3;
-  width: 54%;
-}
+          <a href="tasks.html?skill=graphic-design">
+            Graphic Design
+          </a>
 
-.welcome-text h2 {
-  font-size: 29px;
-  margin-bottom: 10px;
-}
+          <a href="tasks.html?skill=writing">
+            Writing
+          </a>
 
-.welcome-text h3 {
-  font-size: 20px;
-  margin-bottom: 6px;
-}
+          <a href="tasks.html?skill=digital-marketing">
+            Digital Marketing
+          </a>
 
-.welcome-text p {
-  color: #31547c;
-  font-size: 15px;
-  line-height: 1.6;
-}
+        </div>
 
-.welcome-art {
-  position: absolute;
-  right: 18px;
-  bottom: 0;
+      </div>
 
-  width: 42%;
-  height: 100%;
-}
 
-.person {
-  position: absolute;
+      <div class="hero-visual">
 
-  right: 70px;
-  bottom: 47px;
+        <div class="hero-card hero-card-main">
 
-  font-size: 76px;
-  z-index: 3;
-}
+          <div class="hero-card-top">
 
-.laptop {
-  position: absolute;
+            <span class="status-dot"></span>
 
-  right: 55px;
-  bottom: 15px;
+            <span>Freelance Project</span>
 
-  font-size: 70px;
-  z-index: 4;
-}
+          </div>
 
-.plant {
-  position: absolute;
+          <h3>
+            Build a Modern Website
+          </h3>
 
-  right: 225px;
-  bottom: 18px;
+          <p>
+            Looking for an experienced web developer
+            to create a responsive website.
+          </p>
 
-  font-size: 48px;
-}
+          <div class="hero-project-info">
 
-.banner-slogan {
-  position: absolute;
+            <div>
+              <small>Budget</small>
+              <strong>$150 - $300</strong>
+            </div>
 
-  right: 24px;
-  top: 32px;
+            <div>
+              <small>Proposals</small>
+              <strong>12</strong>
+            </div>
 
-  color: #153a78;
+          </div>
 
-  font-size: 22px;
-  line-height: 1.1;
+        </div>
 
-  font-weight: 800;
 
-  transform: rotate(-4deg);
-}
+        <div class="hero-floating-card">
 
+          <span class="floating-icon">✓</span>
 
-/* =====================================================
-   BALANCE CARDS
-   ===================================================== */
+          <div>
+            <strong>Project Completed</strong>
+            <small>Great work!</small>
+          </div>
 
-.balance-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.85fr 0.85fr;
+        </div>
 
-  gap: 15px;
+      </div>
 
-  margin-top: 16px;
-}
+    </section>
 
-.balance-card {
-  min-height: 145px;
 
-  border-radius: 22px;
+    <!-- ================= TRUST BAR ================= -->
 
-  padding: 22px 18px;
+    <section class="trust-section">
 
-  color: #fff;
+      <p>
+        A better way to connect clients and freelancers
+      </p>
 
-  position: relative;
-  overflow: hidden;
+      <div class="trust-items">
 
-  display: flex;
-  align-items: center;
+        <span>✓ Secure Profiles</span>
 
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
+        <span>✓ Professional Projects</span>
 
-.balance-card::after {
-  content: "";
+        <span>✓ Direct Communication</span>
 
-  position: absolute;
+        <span>✓ Work & Earn</span>
 
-  width: 150px;
-  height: 150px;
+      </div>
 
-  border-radius: 50%;
+    </section>
 
-  right: -60px;
-  bottom: -70px;
 
-  background: rgba(255,255,255,0.10);
-}
+    <!-- ================= CHOOSE YOUR PATH ================= -->
 
-.wallet-card {
-  background:
-    linear-gradient(
-      135deg,
-      #5424ef,
-      #3944ef
-    );
-}
+    <section class="path-section">
 
-.income-card {
-  background:
-    linear-gradient(
-      135deg,
-      #04a978,
-      #0bbd91
-    );
-}
+      <div class="section-heading">
 
-.referral-card {
-  background:
-    linear-gradient(
-      135deg,
-      #ff314e,
-      #ff9a28
-    );
-}
+        <span class="section-label">
+          GET STARTED
+        </span>
 
-.balance-icon {
-  width: 62px;
-  height: 62px;
+        <h2>
+          What are you looking to do?
+        </h2>
 
-  flex-shrink: 0;
+        <p>
+          Whether you're looking for work or hiring talent,
+          SocialWorkBD gives you the tools to get started.
+        </p>
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+      </div>
 
-  border-radius: 50%;
 
-  background: rgba(255,255,255,0.17);
+      <div class="path-grid">
 
-  font-size: 30px;
 
-  margin-right: 13px;
-}
+        <!-- Freelancer -->
 
-.balance-content {
-  position: relative;
-  z-index: 2;
-}
+        <a href="tasks.html" class="path-card freelancer-path">
 
-.balance-content p {
-  font-size: 14px;
-  font-weight: 700;
-}
+          <div class="path-icon">
+            💼
+          </div>
 
-.balance-content h2 {
-  margin-top: 4px;
+          <div class="path-content">
 
-  font-size: 28px;
+            <span class="path-tag">
+              FOR FREELANCERS
+            </span>
 
-  white-space: nowrap;
-}
+            <h3>
+              Find Work
+            </h3>
 
-.balance-content a {
-  display: inline-block;
+            <p>
+              Discover projects that match your skills,
+              send proposals, and build your freelance career.
+            </p>
 
-  margin-top: 10px;
+            <strong>
+              Browse Jobs →
+            </strong>
 
-  padding: 7px 14px;
+          </div>
 
-  border-radius: 20px;
+        </a>
 
-  background: rgba(255,255,255,0.88);
 
-  color: #15396d;
+        <!-- Client -->
 
-  font-size: 12px;
-  font-weight: 800;
+        <a href="post-job.html" class="path-card client-path">
 
-  text-decoration: none;
-}
+          <div class="path-icon">
+            👥
+          </div>
 
-.income-arrow {
-  position: absolute;
+          <div class="path-content">
 
-  right: 18px;
-  bottom: 17px;
+            <span class="path-tag">
+              FOR CLIENTS
+            </span>
 
-  font-size: 35px;
+            <h3>
+              Hire Talent
+            </h3>
 
-  opacity: .9;
-}
+            <p>
+              Post your project and connect with skilled
+              freelancers who can get the work done.
+            </p>
 
+            <strong>
+              Post a Job →
+            </strong>
 
-/* =====================================================
-   QUICK MENU
-   ===================================================== */
+          </div>
 
-.quick-menu {
-  display: grid;
+        </a>
 
-  grid-template-columns:
-    repeat(5, 1fr);
+      </div>
 
-  background: #fff;
+    </section>
 
-  border-radius: 23px;
 
-  margin-top: 17px;
+    <!-- ================= JOB CATEGORIES ================= -->
 
-  padding: 12px 8px;
+    <section class="categories-section">
 
-  box-shadow:
-    0 7px 25px rgba(30,90,140,0.07);
-}
+      <div class="section-heading inline-heading">
 
-.quick-item {
-  min-height: 125px;
+        <div>
 
-  display: flex;
+          <span class="section-label">
+            EXPLORE
+          </span>
 
-  flex-direction: column;
+          <h2>
+            Explore job categories
+          </h2>
 
-  align-items: center;
-  justify-content: center;
+        </div>
 
-  text-align: center;
+        <a href="tasks.html" class="view-all-link">
+          View All Jobs →
+        </a>
 
-  text-decoration: none;
+      </div>
 
-  color: #102b55;
 
-  border-right: 1px solid #e4edf5;
-}
+      <div class="category-grid">
 
-.quick-item:last-child {
-  border-right: none;
-}
 
-.quick-icon {
-  width: 57px;
-  height: 57px;
+        <a href="tasks.html?category=web-development" class="category-card">
 
-  border-radius: 50%;
+          <span class="category-icon">
+            💻
+          </span>
 
-  display: flex;
+          <h3>Web Development</h3>
 
-  align-items: center;
-  justify-content: center;
+          <p>Websites, apps & software</p>
 
-  font-size: 25px;
+        </a>
 
-  margin-bottom: 8px;
-}
 
-.quick-icon.pink {
-  background: #ffe0ef;
-  color: #ed2872;
-}
+        <a href="tasks.html?category=design" class="category-card">
 
-.quick-icon.blue {
-  background: #dceeff;
-  color: #1375dc;
-}
+          <span class="category-icon">
+            🎨
+          </span>
 
-.quick-icon.purple {
-  background: #efe0ff;
-  color: #7023dd;
-}
+          <h3>Design & Creative</h3>
 
-.quick-icon.green {
-  background: #d9faed;
-  color: #04966c;
-}
+          <p>Graphics, UI/UX & branding</p>
 
-.quick-icon.cyan {
-  background: #dff3ff;
-  color: #0871ce;
-}
+        </a>
 
-.quick-item strong {
-  font-size: 14px;
-}
 
-.quick-item small {
-  margin-top: 3px;
+        <a href="tasks.html?category=writing" class="category-card">
 
-  color: #59718f;
+          <span class="category-icon">
+            ✍️
+          </span>
 
-  font-size: 12px;
-}
+          <h3>Writing & Content</h3>
 
+          <p>Articles, copy & editing</p>
 
-/* =====================================================
-   BONUS BANNER
-   ===================================================== */
+        </a>
 
-.bonus-banner {
-  min-height: 125px;
 
-  margin-top: 18px;
+        <a href="tasks.html?category=marketing" class="category-card">
 
-  padding: 17px 24px;
+          <span class="category-icon">
+            📈
+          </span>
 
-  border-radius: 23px;
+          <h3>Sales & Marketing</h3>
 
-  background:
-    linear-gradient(
-      105deg,
-      #4b16dc,
-      #9e18e8 55%,
-      #ef1593
-    );
+          <p>Marketing, SEO & social media</p>
 
-  color: #fff;
+        </a>
 
-  display: flex;
 
-  align-items: center;
+        <a href="tasks.html?category=virtual-assistance" class="category-card">
 
-  position: relative;
+          <span class="category-icon">
+            🗂️
+          </span>
 
-  overflow: hidden;
+          <h3>Admin & Support</h3>
 
-  box-shadow:
-    0 8px 25px rgba(117,32,210,0.20);
-}
+          <p>Virtual assistance & support</p>
 
-.gift-box {
-  font-size: 70px;
+        </a>
 
-  margin-right: 24px;
 
-  transform: rotate(-4deg);
-}
+        <a href="tasks.html?category=video" class="category-card">
 
-.bonus-content {
-  flex: 1;
-}
+          <span class="category-icon">
+            🎬
+          </span>
 
-.bonus-content span {
-  display: inline-block;
+          <h3>Video & Animation</h3>
 
-  padding: 5px 15px;
+          <p>Video editing & animation</p>
 
-  background: #ffd426;
+        </a>
 
-  color: #172d55;
+      </div>
 
-  border-radius: 20px;
+    </section>
 
-  font-weight: 800;
 
-  font-size: 12px;
-}
+    <!-- ================= RECENT JOBS ================= -->
 
-.bonus-content h2 {
-  font-size: 24px;
+    <section class="jobs-section" id="jobs-section">
 
-  margin-top: 6px;
-}
+      <div class="section-heading inline-heading">
 
-.bonus-content p {
-  font-size: 14px;
-  margin-top: 2px;
-}
+        <div>
 
-.bonus-btn {
-  text-decoration: none;
+          <span class="section-label">
+            MARKETPLACE
+          </span>
 
-  padding: 12px 20px;
+          <h2>
+            Latest freelance jobs
+          </h2>
 
-  border-radius: 30px;
+        </div>
 
-  background: #ffe232;
+        <a href="tasks.html" class="view-all-link">
+          Browse All Jobs →
+        </a>
 
-  color: #172d55;
+      </div>
 
-  font-weight: 800;
 
-  white-space: nowrap;
-}
+      <div id="job-list" class="job-list">
 
+        <!-- Firebase jobs will appear here -->
 
-/* =====================================================
-   SECTION TITLE
-   ===================================================== */
+        <div class="empty-jobs">
 
-.popular-section,
-.recent-jobs {
-  margin-top: 22px;
-}
+          <div class="empty-jobs-icon">
+            🔎
+          </div>
 
-.section-title {
-  display: flex;
+          <h3>
+            Find your next opportunity
+          </h3>
 
-  align-items: center;
+          <p>
+            New freelance projects will appear here.
+          </p>
 
-  justify-content: space-between;
+          <a href="tasks.html">
+            Browse Jobs
+          </a>
 
-  margin-bottom: 12px;
-}
+        </div>
 
-.section-title h2 {
-  font-size: 24px;
-}
+      </div>
 
-.section-title a {
-  color: #1768db;
+    </section>
 
-  font-weight: 700;
 
-  text-decoration: none;
+    <!-- ================= HOW IT WORKS ================= -->
 
-  font-size: 14px;
-}
+    <section class="how-section">
 
+      <div class="section-heading">
 
-/* =====================================================
-   TASK CARDS
-   ===================================================== */
+        <span class="section-label">
+          HOW IT WORKS
+        </span>
 
-.task-card {
-  min-height: 98px;
+        <h2>
+          Start working in three simple steps
+        </h2>
 
-  background: #fff;
+      </div>
 
-  border: 1px solid #e2edf5;
 
-  border-radius: 19px;
+      <div class="steps-grid">
 
-  margin-bottom: 11px;
 
-  padding: 12px 14px 12px 18px;
+        <div class="step-card">
 
-  display: flex;
+          <div class="step-number">
+            01
+          </div>
 
-  align-items: center;
+          <div class="step-icon">
+            👤
+          </div>
 
-  gap: 15px;
+          <h3>
+            Create your profile
+          </h3>
 
-  box-shadow:
-    0 4px 16px rgba(20,70,120,0.05);
-}
+          <p>
+            Showcase your skills, experience,
+            portfolio, and professional background.
+          </p>
 
-.task-logo {
-  width: 62px;
-  height: 62px;
+        </div>
 
-  flex-shrink: 0;
 
-  border-radius: 17px;
+        <div class="step-card">
 
-  display: flex;
+          <div class="step-number">
+            02
+          </div>
 
-  align-items: center;
-  justify-content: center;
+          <div class="step-icon">
+            🔎
+          </div>
 
-  color: #fff;
+          <h3>
+            Find the right project
+          </h3>
 
-  font-size: 30px;
+          <p>
+            Search jobs based on your skills,
+            category, budget, and project requirements.
+          </p>
 
-  font-weight: 900;
-}
+        </div>
 
-.task-logo.youtube {
-  background: #ff1833;
-}
 
-.task-logo.facebook {
-  background: #1769e8;
-}
+        <div class="step-card">
 
-.task-logo.survey {
-  background: #661ce8;
-}
+          <div class="step-number">
+            03
+          </div>
 
-.task-logo.referral-task {
-  background: #06b871;
-}
+          <div class="step-icon">
+            🚀
+          </div>
 
-.task-details {
-  flex: 1;
-  min-width: 0;
-}
+          <h3>
+            Submit a proposal & work
+          </h3>
 
-.task-details h3 {
-  font-size: 16px;
+          <p>
+            Send your proposal, get hired,
+            complete the project, and build your reputation.
+          </p>
 
-  color: #102b55;
+        </div>
 
-  margin-bottom: 2px;
-}
+      </div>
 
-.task-details p {
-  color: #557394;
+    </section>
 
-  font-size: 13px;
 
-  margin-bottom: 3px;
-}
+    <!-- ================= CTA ================= -->
 
-.task-details strong {
-  color: #08a86d;
+    <section class="cta-section">
 
-  font-size: 17px;
-}
+      <div class="cta-content">
 
-.task-action {
-  flex-shrink: 0;
+        <span class="section-label">
+          SOCIALWORKBD
+        </span>
 
-  padding: 11px 20px;
+        <h2>
+          Ready to start your freelance journey?
+        </h2>
 
-  border-radius: 30px;
+        <p>
+          Create your free account and start discovering
+          opportunities or hiring skilled freelancers.
+        </p>
 
-  background:
-    linear-gradient(
-      135deg,
-      #08ae78,
-      #10c18d
-    );
+        <div class="cta-actions">
 
-  color: #fff;
+          <a href="signup.html" class="cta-primary">
+            Create an Account
+          </a>
 
-  text-decoration: none;
+          <a href="tasks.html" class="cta-secondary">
+            Explore Jobs
+          </a>
 
-  font-size: 14px;
+        </div>
 
-  font-weight: 800;
+      </div>
 
-  box-shadow:
-    0 5px 12px rgba(0,170,115,0.18);
-}
+    </section>
 
 
-/* =====================================================
-   DAILY TARGET
-   ===================================================== */
+  </main>
 
-.daily-target {
-  background: #effff9;
 
-  border: 1px solid #9deed6;
+  <!-- ================= FOOTER ================= -->
 
-  border-radius: 19px;
+  <footer class="app-footer">
 
-  padding: 12px 18px;
+    <div class="footer-main">
 
-  margin-top: 8px;
-}
+      <div class="footer-brand">
 
-.target-top {
-  display: flex;
+        <a href="index.html" class="footer-logo">
+          SocialWork<span>BD</span>
+        </a>
 
-  justify-content: space-between;
+        <p>
+          A professional freelance marketplace
+          connecting clients and freelancers.
+        </p>
 
-  align-items: center;
+      </div>
 
-  gap: 10px;
 
-  color: #087a59;
+      <div class="footer-column">
 
-  font-size: 14px;
-}
+        <h4>For Freelancers</h4>
 
-.target-top span {
-  white-space: nowrap;
-}
+        <a href="tasks.html">Find Work</a>
 
-.progress-track {
-  height: 10px;
+        <a href="profile.html">My Profile</a>
 
-  background: #cceee3;
+        <a href="tasks.html">Browse Jobs</a>
 
-  border-radius: 20px;
+        <a href="support.html">Support</a>
 
-  margin-top: 9px;
+      </div>
 
-  overflow: hidden;
-}
 
-.progress-fill {
-  width: 25%;
+      <div class="footer-column">
 
-  height: 100%;
+        <h4>For Clients</h4>
 
-  background:
-    linear-gradient(
-      90deg,
-      #08b98a,
-      #19cf9b
-    );
+        <a href="post-job.html">Post a Job</a>
 
-  border-radius: inherit;
-}
+        <a href="tasks.html">Find Talent</a>
 
-.daily-target > a {
-  display: block;
+        <a href="support.html">Help Center</a>
 
-  text-align: right;
+      </div>
 
-  color: #069b72;
 
-  text-decoration: none;
+      <div class="footer-column">
 
-  font-size: 13px;
+        <h4>SocialWorkBD</h4>
 
-  font-weight: 700;
+        <a href="profile.html">My Account</a>
 
-  margin-top: -20px;
-}
+        <a href="support.html">Contact Support</a>
 
+        <a href="terms.html">Terms</a>
 
-/* =====================================================
-   RECENT JOBS
-   ===================================================== */
+        <a href="privacy.html">Privacy</a>
 
-#job-search {
-  width: 100%;
+      </div>
 
-  border: 1px solid #dbe7f0;
+    </div>
 
-  background: #fff;
 
-  border-radius: 14px;
+    <div class="footer-bottom">
 
-  padding: 13px 16px;
+      <span>
+        © 2026 SocialWorkBD. All rights reserved.
+      </span>
 
-  font-size: 14px;
+      <span>
+        Built for freelancers and clients.
+      </span>
 
-  outline: none;
+    </div>
 
-  margin-bottom: 12px;
-}
+  </footer>
 
-#job-search:focus {
-  border-color: #2793ec;
 
-  box-shadow:
-    0 0 0 3px rgba(39,147,236,0.10);
-}
+  <!-- ================= MOBILE NAV ================= -->
 
-#job-list {
-  list-style: none;
-}
+  <nav class="bottom-nav">
 
+    <a href="index.html" class="bottom-item active">
 
-/* =====================================================
-   BOTTOM NAVIGATION
-   ===================================================== */
+      <span>⌂</span>
 
-.bottom-nav {
-  position: fixed;
+      <small>Home</small>
 
-  left: 0;
-  right: 0;
-  bottom: 0;
+    </a>
 
-  height: 76px;
 
-  background: rgba(255,255,255,0.97);
+    <a href="tasks.html" class="bottom-item">
 
-  backdrop-filter: blur(12px);
+      <span>🔎</span>
 
-  border-top: 1px solid #e3edf5;
+      <small>Find Work</small>
 
-  box-shadow:
-    0 -5px 25px rgba(20,70,120,0.08);
+    </a>
 
-  display: grid;
 
-  grid-template-columns:
-    repeat(5, 1fr);
+    <a href="post-job.html" class="bottom-item">
 
-  z-index: 1000;
-}
+      <span>＋</span>
 
-.bottom-item {
-  display: flex;
+      <small>Post Job</small>
 
-  flex-direction: column;
+    </a>
 
-  align-items: center;
-  justify-content: center;
 
-  gap: 3px;
+    <a href="profile.html" class="bottom-item">
 
-  text-decoration: none;
+      <span>♙</span>
 
-  color: #526b8c;
+      <small>Profile</small>
 
-  font-weight: 600;
-}
+    </a>
 
-.bottom-item span {
-  font-size: 25px;
 
-  line-height: 1;
-}
+    <a href="support.html" class="bottom-item">
 
-.bottom-item small {
-  font-size: 11px;
-}
+      <span>☰</span>
 
-.bottom-item.active {
-  color: #08a879;
-}
+      <small>Menu</small>
 
-.bottom-item.active span {
-  font-size: 28px;
-}
+    </a>
 
+  </nav>
 
-/* =====================================================
-   TABLET
-   ===================================================== */
 
-@media (max-width: 760px) {
+  <!-- ================= FIREBASE ================= -->
 
-  .app-header {
-    min-height: 130px;
+  <script src="firebase-config.js"></script>
 
-    padding: 20px 15px 35px;
+  <!-- Existing App JS -->
+  <script src="app.js"></script>
 
-    border-radius: 0 0 30px 30px;
-  }
-
-  .brand-logo {
-    width: 50px;
-    height: 50px;
-
-    font-size: 30px;
-
-    border-radius: 16px;
-  }
-
-  .brand-area h1 {
-    font-size: 24px;
-  }
-
-  .brand-area p {
-    font-size: 11px;
-  }
-
-  .header-actions {
-    gap: 7px;
-  }
-
-  .icon-btn,
-  .profile-icon {
-    width: 42px;
-    height: 42px;
-
-    font-size: 21px;
-  }
-
-  .dashboard-container {
-    width: calc(100% - 20px);
-    margin-top: -15px;
-  }
-
-  .balance-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .wallet-card {
-    grid-column: 1 / -1;
-  }
-
-  .quick-menu {
-    grid-template-columns:
-      repeat(5, 1fr);
-  }
-
-  .quick-item {
-    min-height: 105px;
-  }
-
-  .quick-icon {
-    width: 47px;
-    height: 47px;
-    font-size: 21px;
-  }
-
-  .quick-item strong {
-    font-size: 11px;
-  }
-
-  .quick-item small {
-    font-size: 10px;
-  }
-
-  .bonus-content h2 {
-    font-size: 19px;
-  }
-
-  .bonus-content p {
-    font-size: 12px;
-  }
-
-  .bonus-btn {
-    padding: 9px 13px;
-    font-size: 12px;
-  }
-
-  .gift-box {
-    font-size: 50px;
-    margin-right: 12px;
-  }
-
-}
-
-
-/* =====================================================
-   MOBILE
-   ===================================================== */
-
-@media (max-width: 520px) {
-
-  body {
-    padding-bottom: 80px;
-  }
-
-  .app-header {
-    min-height: 122px;
-  }
-
-  .brand-logo {
-    display: none;
-  }
-
-  .brand-area h1 {
-    font-size: 22px;
-  }
-
-  .brand-area p {
-    font-size: 10px;
-  }
-
-  .dashboard-container {
-    width: calc(100% - 14px);
-  }
-
-  .welcome-banner {
-    min-height: 190px;
-
-    padding: 20px;
-
-    border-radius: 20px;
-  }
-
-  .welcome-text {
-    width: 100%;
-  }
-
-  .welcome-text h2 {
-    font-size: 23px;
-  }
-
-  .welcome-text h3 {
-    font-size: 16px;
-  }
-
-  .welcome-text p {
-    width: 57%;
-
-    font-size: 12px;
-  }
-
-  .welcome-art {
-    width: 52%;
-    right: -20px;
-  }
-
-  .person {
-    right: 35px;
-    bottom: 38px;
-    font-size: 58px;
-  }
-
-  .laptop {
-    right: 12px;
-    bottom: 9px;
-    font-size: 55px;
-  }
-
-  .plant {
-    right: 120px;
-    font-size: 35px;
-  }
-
-  .banner-slogan {
-    display: none;
-  }
-
-
-  /* Balance */
-
-  .balance-grid {
-    grid-template-columns: 1fr 1fr;
-
-    gap: 9px;
-  }
-
-  .balance-card {
-    min-height: 128px;
-
-    padding: 14px 10px;
-
-    border-radius: 18px;
-  }
-
-  .wallet-card {
-    grid-column: 1 / -1;
-  }
-
-  .balance-icon {
-    width: 45px;
-    height: 45px;
-
-    font-size: 22px;
-
-    margin-right: 8px;
-  }
-
-  .balance-content p {
-    font-size: 11px;
-  }
-
-  .balance-content h2 {
-    font-size: 22px;
-  }
-
-  .balance-content a {
-    padding: 5px 9px;
-    font-size: 10px;
-  }
-
-  .income-arrow {
-    font-size: 25px;
-    right: 10px;
-    bottom: 10px;
-  }
-
-
-  /* Quick menu */
-
-  .quick-menu {
-    overflow-x: auto;
-
-    grid-template-columns:
-      repeat(5, 92px);
-
-    padding: 8px 2px;
-
-    border-radius: 18px;
-
-    scrollbar-width: none;
-  }
-
-  .quick-menu::-webkit-scrollbar {
-    display: none;
-  }
-
-  .quick-item {
-    min-height: 100px;
-  }
-
-
-  /* Bonus */
-
-  .bonus-banner {
-    min-height: 115px;
-
-    padding: 12px;
-
-    border-radius: 18px;
-  }
-
-  .gift-box {
-    font-size: 42px;
-    margin-right: 7px;
-  }
-
-  .bonus-content span {
-    font-size: 9px;
-    padding: 4px 9px;
-  }
-
-  .bonus-content h2 {
-    font-size: 15px;
-  }
-
-  .bonus-content p {
-    font-size: 9px;
-  }
-
-  .bonus-btn {
-    padding: 8px 9px;
-
-    font-size: 10px;
-  }
-
-
-  /* Section */
-
-  .section-title h2 {
-    font-size: 19px;
-  }
-
-  .section-title a {
-    font-size: 12px;
-  }
-
-
-  /* Tasks */
-
-  .task-card {
-    min-height: 86px;
-
-    padding: 9px;
-
-    gap: 9px;
-
-    border-radius: 16px;
-  }
-
-  .task-logo {
-    width: 49px;
-    height: 49px;
-
-    border-radius: 14px;
-
-    font-size: 22px;
-  }
-
-  .task-details h3 {
-    font-size: 12px;
-  }
-
-  .task-details p {
-    font-size: 9px;
-  }
-
-  .task-details strong {
-    font-size: 13px;
-  }
-
-  .task-action {
-    padding: 8px 10px;
-
-    font-size: 10px;
-  }
-
-
-  /* Target */
-
-  .daily-target {
-    padding: 11px;
-
-    border-radius: 16px;
-  }
-
-  .target-top {
-    font-size: 11px;
-  }
-
-  .progress-track {
-    height: 8px;
-  }
-
-
-  /* Bottom */
-
-  .bottom-nav {
-    height: 70px;
-
-    border-radius: 22px 22px 0 0;
-  }
-
-  .bottom-item span {
-    font-size: 21px;
-  }
-
-  .bottom-item small {
-    font-size: 9px;
-  }
-
-}
-
-
-/* =====================================================
-   VERY SMALL PHONES
-   ===================================================== */
-
-@media (max-width: 360px) {
-
-  .header-actions {
-    gap: 4px;
-  }
-
-  .icon-btn,
-  .profile-icon {
-    width: 37px;
-    height: 37px;
-  }
-
-  .brand-area h1 {
-    font-size: 20px;
-  }
-
-  .balance-content h2 {
-    font-size: 19px;
-  }
-
-  .task-action {
-    padding: 7px 8px;
-  }
-
-}
+</body>
+</html>
