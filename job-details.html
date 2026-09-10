@@ -4,317 +4,350 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Job Details — SocialWorkBD</title>
+  <title>Job Details - SocialWorkBD</title>
   <meta
     name="description"
-    content="View freelance job details and submit a proposal on SocialWorkBD."
+    content="View freelance job details, submit proposals, and manage hiring on SocialWorkBD."
   >
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
   <style>
-    .job-details-page {
-      background: #f7f8f6;
-      min-height: calc(100vh - 80px);
-      padding: 42px 20px 80px;
+    body {
+      margin: 0;
+      background: #f7f9f8;
+      color: #17201c;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    .job-details-container {
-      max-width: 1120px;
+    .page-wrap {
+      max-width: 1180px;
       margin: 0 auto;
+      padding: 32px 20px 80px;
     }
 
-    .breadcrumb {
-      margin-bottom: 22px;
-      font-size: 13px;
-    }
-
-    .breadcrumb a {
-      color: #14a800;
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #16834b;
       text-decoration: none;
       font-weight: 600;
     }
 
-    .breadcrumb span {
-      color: #777;
-      margin: 0 7px;
-    }
-
     .job-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 350px;
+      grid-template-columns: minmax(0, 1fr) 330px;
       gap: 24px;
       align-items: start;
     }
 
-    .job-card,
-    .proposal-card,
-    .client-card {
+    .card {
       background: #fff;
-      border: 1px solid #e3e6e1;
-      border-radius: 15px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, .04);
+      border: 1px solid #e4ebe7;
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
     }
 
-    .job-card {
-      padding: 32px;
+    .job-header {
+      border-bottom: 1px solid #edf1ef;
+      padding-bottom: 22px;
+      margin-bottom: 24px;
     }
 
     .job-status {
       display: inline-flex;
-      align-items: center;
       padding: 6px 11px;
-      border-radius: 20px;
-      background: #eef8ec;
-      color: #168b08;
-      font-size: 12px;
+      border-radius: 999px;
+      background: #eaf7f0;
+      color: #137443;
+      font-size: 13px;
       font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 15px;
+      margin-bottom: 14px;
+      text-transform: capitalize;
     }
 
     .job-title {
-      margin: 0 0 18px;
-      color: #181818;
+      margin: 0 0 14px;
       font-size: 32px;
-      line-height: 1.25;
-      word-break: break-word;
+      line-height: 1.2;
+      color: #17201c;
     }
 
     .job-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 18px;
-      padding-bottom: 25px;
-      margin-bottom: 28px;
-      border-bottom: 1px solid #e8e8e8;
+      color: #5d6963;
+      font-size: 14px;
     }
 
-    .meta-item {
-      min-width: 100px;
-    }
-
-    .meta-label {
-      display: block;
-      margin-bottom: 4px;
-      color: #777;
-      font-size: 12px;
-    }
-
-    .meta-value {
-      color: #222;
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .job-section {
-      margin-bottom: 30px;
-    }
-
-    .job-section h2 {
-      margin: 0 0 13px;
-      color: #222;
-      font-size: 19px;
-    }
-
-    .job-description {
-      color: #4e5250;
-      font-size: 15px;
-      line-height: 1.8;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .skills-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .skill-tag {
-      display: inline-block;
-      padding: 7px 11px;
-      border-radius: 6px;
-      background: #f1f2f0;
-      color: #4d504e;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .side-column {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .proposal-card {
-      padding: 24px;
-    }
-
-    .proposal-card h2,
-    .client-card h2 {
-      margin: 0 0 8px;
-      color: #202020;
+    .section-title {
+      margin: 0 0 14px;
       font-size: 20px;
     }
 
-    .proposal-subtitle {
-      margin: 0 0 22px;
-      color: #707472;
+    .description {
+      color: #46524c;
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .skill {
+      background: #f0f5f2;
+      border: 1px solid #dce7e1;
+      color: #345046;
+      padding: 7px 11px;
+      border-radius: 7px;
       font-size: 13px;
-      line-height: 1.6;
+    }
+
+    .sidebar-card {
+      position: sticky;
+      top: 20px;
+    }
+
+    .budget {
+      font-size: 28px;
+      font-weight: 700;
+      color: #17201c;
+      margin-bottom: 6px;
+    }
+
+    .budget-label {
+      color: #69746f;
+      font-size: 13px;
+      margin-bottom: 22px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 13px 0;
+      border-bottom: 1px solid #edf1ef;
+      font-size: 14px;
+    }
+
+    .detail-row:last-child {
+      border-bottom: 0;
+    }
+
+    .detail-label {
+      color: #6a756f;
+    }
+
+    .detail-value {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .primary-btn {
+      background: #16834b;
+      color: #fff;
+    }
+
+    .primary-btn:hover {
+      background: #116c3d;
+    }
+
+    .secondary-btn {
+      background: #eef3f0;
+      color: #254237;
+      margin-top: 10px;
+    }
+
+    .secondary-btn:hover {
+      background: #e2ebe6;
+    }
+
+    .danger-btn {
+      background: #fff0f0;
+      color: #b3261e;
+      border: 1px solid #f0d2d2;
+    }
+
+    .proposal-section {
+      margin-top: 24px;
+    }
+
+    .proposal-form {
+      display: none;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #edf1ef;
     }
 
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 17px;
     }
 
     .form-group label {
       display: block;
       margin-bottom: 7px;
-      color: #292929;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
     }
 
-    .form-group textarea,
-    .form-group input {
+    .form-group input,
+    .form-group textarea {
       width: 100%;
       box-sizing: border-box;
-      border: 1px solid #cfd4cf;
+      border: 1px solid #ccd8d2;
       border-radius: 8px;
-      background: #fff;
-      color: #222;
+      padding: 12px;
+      font-size: 15px;
       font-family: inherit;
-      font-size: 14px;
       outline: none;
-      padding: 11px 12px;
-      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #16834b;
+      box-shadow: 0 0 0 3px rgba(22, 131, 75, 0.1);
     }
 
     .form-group textarea {
       min-height: 150px;
       resize: vertical;
-      line-height: 1.6;
     }
 
-    .form-group input:focus,
-    .form-group textarea:focus {
-      border-color: #14a800;
-      box-shadow: 0 0 0 3px rgba(20, 168, 0, .1);
-    }
-
-    .proposal-submit {
-      width: 100%;
-      border: 0;
+    .message {
+      margin-top: 14px;
+      padding: 11px 13px;
       border-radius: 8px;
-      padding: 13px 16px;
-      background: #14a800;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .proposal-submit:hover {
-      background: #108f00;
-    }
-
-    .proposal-submit:disabled {
-      opacity: .65;
-      cursor: not-allowed;
-    }
-
-    .client-card {
-      padding: 24px;
-    }
-
-    .client-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .client-avatar {
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      border-radius: 50%;
-      background: #e9f5e6;
-      color: #168b08;
-      font-size: 17px;
-      font-weight: 800;
-    }
-
-    .client-name {
-      color: #222;
+      display: none;
       font-size: 14px;
-      font-weight: 700;
+      line-height: 1.5;
     }
 
-    .client-label {
-      margin-top: 3px;
-      color: #777;
+    .message.success {
+      display: block;
+      background: #eaf7f0;
+      color: #17683f;
+    }
+
+    .message.error {
+      display: block;
+      background: #fff0f0;
+      color: #a3211c;
+    }
+
+    .loading,
+    .error-box {
+      background: #fff;
+      border: 1px solid #e4ebe7;
+      border-radius: 14px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .error-box {
+      color: #a3211c;
+    }
+
+    .proposal-list {
+      display: grid;
+      gap: 15px;
+    }
+
+    .proposal-card {
+      border: 1px solid #e1e9e4;
+      border-radius: 12px;
+      padding: 20px;
+      background: #fff;
+    }
+
+    .proposal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 13px;
+    }
+
+    .freelancer-name {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .account-id {
+      color: #6d7772;
       font-size: 12px;
     }
 
-    .job-notice {
-      display: none;
-      margin-bottom: 18px;
-      padding: 13px 15px;
-      border-radius: 8px;
-      background: #fff6e6;
-      border: 1px solid #f0d7a3;
-      color: #765700;
+    .proposal-status {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: capitalize;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #eef3f0;
+      color: #42564d;
+    }
+
+    .proposal-status.hired {
+      background: #eaf7f0;
+      color: #137443;
+    }
+
+    .proposal-status.rejected,
+    .proposal-status.not_selected {
+      background: #f5eeee;
+      color: #8a3a35;
+    }
+
+    .proposal-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      color: #5d6963;
       font-size: 13px;
-      line-height: 1.6;
+      margin-bottom: 14px;
     }
 
-    .job-loading {
-      padding: 50px 20px;
-      text-align: center;
-      color: #666;
+    .cover-letter {
+      color: #46524c;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      margin-bottom: 16px;
     }
 
-    .job-error {
-      padding: 50px 20px;
-      text-align: center;
+    .proposal-actions {
+      display: flex;
+      gap: 10px;
     }
 
-    .job-error h2 {
-      margin-bottom: 8px;
-      color: #222;
+    .proposal-actions button {
+      width: auto;
+      flex: 1;
     }
 
-    .job-error p {
-      color: #666;
-      margin-bottom: 20px;
-    }
-
-    .back-button {
-      display: inline-flex;
-      padding: 10px 15px;
-      border: 1px solid #d3d7d1;
-      border-radius: 7px;
-      color: #333;
-      background: #fff;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .back-button:hover {
-      border-color: #14a800;
-      color: #14a800;
+    .empty {
+      color: #6d7772;
+      padding: 15px 0;
     }
 
     @media (max-width: 850px) {
@@ -322,31 +355,34 @@
         grid-template-columns: 1fr;
       }
 
-      .side-column {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+      .sidebar-card {
+        position: static;
       }
     }
 
-    @media (max-width: 650px) {
-      .job-details-page {
-        padding: 28px 14px 70px;
+    @media (max-width: 600px) {
+      .page-wrap {
+        padding: 22px 14px 60px;
       }
 
-      .job-card {
-        padding: 22px 18px;
+      .card {
+        padding: 20px;
       }
 
       .job-title {
-        font-size: 26px;
+        font-size: 25px;
       }
 
-      .side-column {
-        display: flex;
+      .proposal-top {
+        flex-direction: column;
       }
 
-      .job-meta {
-        gap: 14px;
+      .proposal-actions {
+        flex-direction: column;
+      }
+
+      .proposal-actions button {
+        width: 100%;
       }
     }
   </style>
@@ -354,277 +390,1047 @@
 
 <body>
 
-  <!-- Header -->
   <header class="site-header">
     <div class="container">
+      <a href="index.html" class="logo">SocialWorkBD</a>
 
-      <div class="logo-area">
-
-        <a href="index.html" class="logo">SW</a>
-
-        <nav class="main-nav">
-          <a href="tasks.html">Find Work</a>
-          <a href="profile.html">Find Talent</a>
-          <a href="post-job.html">Post a Job</a>
-          <a href="support.html">Help</a>
-        </nav>
-
-        <div class="header-actions">
-          <a href="login.html" class="login-link">Log In</a>
-          <a href="signup.html" class="signup-btn">Sign Up</a>
-          <a href="profile.html" class="profile-link" aria-label="Profile">👤</a>
-        </div>
-
-      </div>
+      <nav class="main-nav">
+        <a href="tasks.html">Find Work</a>
+        <a href="post-job.html">Find Talent</a>
+        <a href="tasks.html">Jobs</a>
+        <a href="support.html">Help</a>
+        <a href="login.html">Log In</a>
+        <a href="signup.html" class="nav-button">Sign Up</a>
+      </nav>
     </div>
   </header>
 
+  <main class="page-wrap">
 
-  <!-- Main -->
-  <main class="job-details-page">
+    <a href="tasks.html" class="back-link">Back to Find Work</a>
 
-    <div class="job-details-container">
+    <div id="job-loading" class="loading">
+      Loading job details...
+    </div>
 
-      <div class="breadcrumb">
-        <a href="tasks.html">Find Work</a>
-        <span>›</span>
-        <span>Job Details</span>
-      </div>
+    <div id="job-error" class="error-box" style="display:none;">
+      Unable to load this job.
+    </div>
 
+    <section id="job-content" style="display:none;">
 
-      <div id="job-loading" class="job-loading">
-        Loading job details...
-      </div>
+      <div class="job-layout">
 
+        <div>
 
-      <div id="job-error" class="job-error" style="display:none;">
+          <div class="card job-header">
+            <div id="job-status" class="job-status">Open</div>
 
-        <h2>Job not found</h2>
+            <h1 id="job-title" class="job-title">
+              Job Title
+            </h1>
 
-        <p>
-          This job may have been removed or the link may be invalid.
-        </p>
-
-        <a href="tasks.html" class="back-button">
-          ← Browse Jobs
-        </a>
-
-      </div>
-
-
-      <div id="job-content" class="job-layout" style="display:none;">
-
-        <!-- Job Details -->
-        <section class="job-card">
-
-          <div id="job-status" class="job-status">
-            Open
+            <div class="job-meta">
+              <span id="job-client">Client</span>
+              <span id="job-proposals">0 proposals</span>
+            </div>
           </div>
 
-          <h1 id="job-title" class="job-title"></h1>
+          <div class="card">
+            <h2 class="section-title">Job Description</h2>
 
-
-          <div class="job-meta">
-
-            <div class="meta-item">
-              <span class="meta-label">Budget</span>
-              <span id="job-budget" class="meta-value">৳0</span>
+            <div id="job-desc" class="description">
+              Loading description...
             </div>
 
-            <div class="meta-item">
-              <span class="meta-label">Delivery</span>
-              <span id="job-delivery" class="meta-value">—</span>
+            <div class="proposal-section">
+              <h2 class="section-title">Required Skills</h2>
+
+              <div id="job-skills" class="skills">
+                <span class="skill">General</span>
+              </div>
             </div>
+          </div>
 
-            <div class="meta-item">
-              <span class="meta-label">Proposals</span>
-              <span id="job-proposals" class="meta-value">0</span>
+          <div id="client-proposals-card" class="card proposal-section" style="display:none;">
+            <h2 class="section-title">Proposals</h2>
+
+            <div id="proposal-list" class="proposal-list">
+              <div class="empty">Loading proposals...</div>
             </div>
-
           </div>
 
+          <div id="freelancer-proposal-card" class="card proposal-section">
 
-          <div class="job-section">
+            <h2 class="section-title">Submit a Proposal</h2>
 
-            <h2>About the project</h2>
-
-            <div id="job-desc" class="job-description"></div>
-
-          </div>
-
-
-          <div class="job-section">
-
-            <h2>Skills required</h2>
-
-            <div id="job-skills" class="skills-list"></div>
-
-          </div>
-
-        </section>
-
-
-        <!-- Sidebar -->
-        <aside class="side-column">
-
-          <!-- Proposal -->
-          <section class="proposal-card">
-
-            <h2>Submit a Proposal</h2>
-
-            <p class="proposal-subtitle">
-              Tell the client why you're the right freelancer for this project.
+            <p style="color:#66736c; line-height:1.6;">
+              Tell the client why you are a good fit for this project.
             </p>
 
-            <div id="job-notice" class="job-notice"></div>
+            <button
+              id="show-proposal-btn"
+              type="button"
+              class="primary-btn"
+            >
+              Submit a Proposal
+            </button>
 
-
-            <form id="bid-form">
+            <form id="bid-form" class="proposal-form">
 
               <div class="form-group">
-
-                <label for="cover">
-                  Cover letter
-                </label>
-
+                <label for="cover">Cover Letter</label>
                 <textarea
                   id="cover"
-                  placeholder="Introduce yourself and explain how you can complete this project..."
+                  placeholder="Explain your experience, approach, and why you can complete this project successfully."
                   required
                 ></textarea>
-
               </div>
 
-
               <div class="form-group">
-
-                <label for="bid-amount">
-                  Your offer (BDT)
-                </label>
-
+                <label for="bid-amount">Your Proposed Amount</label>
                 <input
-                  type="number"
                   id="bid-amount"
+                  type="number"
                   min="1"
-                  step="1"
-                  placeholder="1000"
+                  step="0.01"
+                  placeholder="Enter your amount"
                   required
                 >
-
               </div>
-
 
               <div class="form-group">
-
-                <label for="delivery-days">
-                  Delivery time (days)
-                </label>
-
+                <label for="delivery-days">Delivery Time</label>
                 <input
-                  type="number"
                   id="delivery-days"
+                  type="number"
                   min="1"
-                  step="1"
-                  placeholder="7"
+                  placeholder="Number of days"
                   required
                 >
-
               </div>
-
 
               <button
+                id="submit-proposal-btn"
                 type="submit"
-                class="proposal-submit"
+                class="primary-btn"
               >
-                Submit Proposal
+                Send Proposal
               </button>
+
+              <div id="job-notice" class="message"></div>
 
             </form>
 
-          </section>
+          </div>
 
+        </div>
 
-          <!-- Client -->
-          <section class="client-card">
+        <aside>
 
-            <h2>About the Client</h2>
+          <div class="card sidebar-card">
 
-            <div class="client-info">
-
-              <div class="client-avatar">
-                C
-              </div>
-
-              <div>
-                <div id="job-client" class="client-name">
-                  Client
-                </div>
-
-                <div class="client-label">
-                  Project Client
-                </div>
-              </div>
-
+            <div id="job-budget" class="budget">
+              $0
             </div>
 
-          </section>
+            <div class="budget-label">
+              Project budget
+            </div>
+
+            <div class="detail-row">
+              <span class="detail-label">Delivery</span>
+              <span id="job-delivery" class="detail-value">Not specified</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="detail-label">Proposals</span>
+              <span id="sidebar-proposals" class="detail-value">0</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="detail-label">Status</span>
+              <span id="sidebar-status" class="detail-value">Open</span>
+            </div>
+
+            <button
+              id="sidebar-proposal-btn"
+              type="button"
+              class="primary-btn"
+              style="margin-top:20px;"
+            >
+              Submit a Proposal
+            </button>
+
+          </div>
 
         </aside>
 
       </div>
 
-    </div>
+    </section>
 
   </main>
 
-
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
+      <p>© 2026 SocialWorkBD · Global Freelance Marketplace</p>
 
-      <p>
-        © 2026 SocialWorkBD. Bangladesh's Freelance Marketplace.
-      </p>
-
-      <div class="footer-links">
+      <div>
         <a href="terms.html">Terms</a>
         <a href="privacy.html">Privacy</a>
         <a href="support.html">Help</a>
       </div>
-
     </div>
   </footer>
 
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-  <!-- Mobile Bottom Navigation -->
-  <nav class="mobile-bottom-nav">
-
-    <a href="index.html">
-      <span>⌂</span>
-      <small>Home</small>
-    </a>
-
-    <a href="tasks.html">
-      <span>⌕</span>
-      <small>Find Work</small>
-    </a>
-
-    <a href="post-job.html">
-      <span>＋</span>
-      <small>Post Job</small>
-    </a>
-
-    <a href="profile.html">
-      <span>♙</span>
-      <small>Profile</small>
-    </a>
-
-  </nav>
-
-
-  <!-- App -->
   <script src="firebase-config.js"></script>
   <script src="app.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const firebaseApp = window.firebase;
+
+      if (!firebaseApp) {
+        console.error("Firebase is not available.");
+        return;
+      }
+
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+
+      const jobLoading = document.getElementById("job-loading");
+      const jobError = document.getElementById("job-error");
+      const jobContent = document.getElementById("job-content");
+
+      const jobStatus = document.getElementById("job-status");
+      const jobTitle = document.getElementById("job-title");
+      const jobBudget = document.getElementById("job-budget");
+      const jobDelivery = document.getElementById("job-delivery");
+      const jobProposals = document.getElementById("job-proposals");
+      const sidebarProposals = document.getElementById("sidebar-proposals");
+      const sidebarStatus = document.getElementById("sidebar-status");
+      const jobDesc = document.getElementById("job-desc");
+      const jobSkills = document.getElementById("job-skills");
+      const jobClient = document.getElementById("job-client");
+
+      const freelancerProposalCard =
+        document.getElementById("freelancer-proposal-card");
+
+      const clientProposalsCard =
+        document.getElementById("client-proposals-card");
+
+      const proposalList =
+        document.getElementById("proposal-list");
+
+      const showProposalBtn =
+        document.getElementById("show-proposal-btn");
+
+      const sidebarProposalBtn =
+        document.getElementById("sidebar-proposal-btn");
+
+      const bidForm =
+        document.getElementById("bid-form");
+
+      const notice =
+        document.getElementById("job-notice");
+
+      const submitProposalBtn =
+        document.getElementById("submit-proposal-btn");
+
+      const params = new URLSearchParams(window.location.search);
+      const jobId = params.get("id");
+
+      let currentJob = null;
+      let currentUser = null;
+      let currentProfile = null;
+
+      function escapeHtml(value) {
+        const div = document.createElement("div");
+        div.textContent = value == null ? "" : String(value);
+        return div.innerHTML;
+      }
+
+      function showNotice(message, type) {
+        notice.textContent = message;
+        notice.className = "message " + type;
+      }
+
+      function formatBudget(value) {
+        const number = Number(value || 0);
+
+        if (!Number.isFinite(number)) {
+          return "$0";
+        }
+
+        return "$" + number.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+
+      function formatDate(timestamp) {
+        if (!timestamp) return "";
+
+        try {
+          const date = timestamp.toDate
+            ? timestamp.toDate()
+            : new Date(timestamp);
+
+          return date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+          });
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function getSkills(value) {
+        if (Array.isArray(value)) {
+          return value.filter(Boolean);
+        }
+
+        if (typeof value === "string") {
+          return value
+            .split(",")
+            .map(item => item.trim())
+            .filter(Boolean);
+        }
+
+        return [];
+      }
+
+      async function loadUser() {
+        return new Promise((resolve) => {
+
+          auth.onAuthStateChanged(async function (user) {
+
+            currentUser = user || null;
+
+            if (!user) {
+              currentProfile = null;
+              resolve(null);
+              return;
+            }
+
+            try {
+              const profileSnap =
+                await db.collection("users").doc(user.uid).get();
+
+              if (profileSnap.exists) {
+                currentProfile = {
+                  ...profileSnap.data(),
+                  uid: user.uid
+                };
+              } else {
+                currentProfile = {
+                  uid: user.uid,
+                  name: user.displayName || "User",
+                  email: user.email || "",
+                  role: "worker"
+                };
+              }
+
+            } catch (error) {
+              console.error("Profile load error:", error);
+
+              currentProfile = {
+                uid: user.uid,
+                name: user.displayName || "User",
+                email: user.email || "",
+                role: "worker"
+              };
+            }
+
+            resolve(currentProfile);
+          });
+
+        });
+      }
+
+      async function loadJob() {
+
+        if (!jobId) {
+          jobLoading.style.display = "none";
+          jobError.style.display = "block";
+          jobError.textContent = "No job was selected.";
+          return;
+        }
+
+        try {
+
+          const snap =
+            await db.collection("jobs").doc(jobId).get();
+
+          if (!snap.exists) {
+            throw new Error("Job not found.");
+          }
+
+          currentJob = {
+            id: snap.id,
+            ...snap.data()
+          };
+
+          renderJob();
+
+          await loadProposals();
+
+          jobLoading.style.display = "none";
+          jobContent.style.display = "block";
+
+        } catch (error) {
+
+          console.error("Job loading error:", error);
+
+          jobLoading.style.display = "none";
+          jobError.style.display = "block";
+          jobError.textContent =
+            error.message || "Unable to load this job.";
+        }
+      }
+
+      function renderJob() {
+
+        const status =
+          currentJob.status || "open";
+
+        jobStatus.textContent =
+          status.replace(/_/g, " ");
+
+        jobTitle.textContent =
+          currentJob.title || "Untitled Job";
+
+        jobBudget.textContent =
+          formatBudget(currentJob.budget);
+
+        const delivery =
+          currentJob.deliveryDays ||
+          currentJob.delivery ||
+          "";
+
+        jobDelivery.textContent =
+          delivery
+            ? delivery + (Number(delivery) === 1 ? " day" : " days")
+            : "Not specified";
+
+        jobDesc.textContent =
+          currentJob.description ||
+          "No description provided.";
+
+        jobClient.textContent =
+          "Client: " +
+          (currentJob.clientName || "Client");
+
+        const proposalCount =
+          Number(currentJob.proposalCount || 0);
+
+        jobProposals.textContent =
+          proposalCount +
+          (proposalCount === 1 ? " proposal" : " proposals");
+
+        sidebarProposals.textContent =
+          String(proposalCount);
+
+        sidebarStatus.textContent =
+          status.replace(/_/g, " ");
+
+        const skills =
+          getSkills(currentJob.skills);
+
+        if (!skills.length) {
+          jobSkills.innerHTML =
+            '<span class="skill">General</span>';
+        } else {
+          jobSkills.innerHTML =
+            skills.map(skill =>
+              '<span class="skill">' +
+              escapeHtml(skill) +
+              "</span>"
+            ).join("");
+        }
+
+        const isClient =
+          currentUser &&
+          currentJob.clientId === currentUser.uid;
+
+        if (isClient) {
+          freelancerProposalCard.style.display = "none";
+          clientProposalsCard.style.display = "block";
+          sidebarProposalBtn.style.display = "none";
+        } else {
+          clientProposalsCard.style.display = "none";
+
+          if (status === "open") {
+            freelancerProposalCard.style.display = "block";
+            sidebarProposalBtn.style.display = "block";
+          } else {
+            freelancerProposalCard.style.display = "none";
+            sidebarProposalBtn.style.display = "none";
+          }
+        }
+      }
+
+      async function loadProposals() {
+
+        if (!currentJob) return;
+
+        const isClient =
+          currentUser &&
+          currentJob.clientId === currentUser.uid;
+
+        if (!isClient) return;
+
+        proposalList.innerHTML =
+          '<div class="empty">Loading proposals...</div>';
+
+        try {
+
+          const snapshot =
+            await db.collection("proposals")
+              .where("jobId", "==", jobId)
+              .get();
+
+          const proposals = [];
+
+          snapshot.forEach(doc => {
+            proposals.push({
+              id: doc.id,
+              ...doc.data()
+            });
+          });
+
+          proposals.sort((a, b) => {
+
+            const aTime =
+              a.createdAt && a.createdAt.toMillis
+                ? a.createdAt.toMillis()
+                : 0;
+
+            const bTime =
+              b.createdAt && b.createdAt.toMillis
+                ? b.createdAt.toMillis()
+                : 0;
+
+            return bTime - aTime;
+          });
+
+          if (!proposals.length) {
+            proposalList.innerHTML =
+              '<div class="empty">No proposals have been submitted yet.</div>';
+            return;
+          }
+
+          proposalList.innerHTML =
+            proposals.map(renderProposal).join("");
+
+          document
+            .querySelectorAll("[data-hire-proposal]")
+            .forEach(button => {
+
+              button.addEventListener("click", function () {
+
+                const proposalId =
+                  this.getAttribute("data-hire-proposal");
+
+                hireFreelancer(proposalId);
+              });
+
+            });
+
+        } catch (error) {
+
+          console.error("Proposal loading error:", error);
+
+          proposalList.innerHTML =
+            '<div class="empty">Unable to load proposals right now.</div>';
+        }
+      }
+
+      function renderProposal(proposal) {
+
+        const status =
+          proposal.status || "submitted";
+
+        const statusClass =
+          status.toLowerCase().replace(/\s+/g, "_");
+
+        const canHire =
+          currentJob.status === "open" &&
+          status === "submitted";
+
+        return `
+          <div class="proposal-card">
+
+            <div class="proposal-top">
+
+              <div>
+                <div class="freelancer-name">
+                  ${escapeHtml(
+                    proposal.freelancerName || "Freelancer"
+                  )}
+                </div>
+
+                <div class="account-id">
+                  ${escapeHtml(
+                    proposal.freelancerAccountId || ""
+                  )}
+                </div>
+              </div>
+
+              <span class="proposal-status ${statusClass}">
+                ${escapeHtml(status.replace(/_/g, " "))}
+              </span>
+
+            </div>
+
+            <div class="proposal-meta">
+
+              <span>
+                Proposed: ${formatBudget(proposal.amount)}
+              </span>
+
+              <span>
+                Delivery:
+                ${escapeHtml(
+                  proposal.deliveryDays
+                    ? proposal.deliveryDays + " days"
+                    : "Not specified"
+                )}
+              </span>
+
+              <span>
+                ${formatDate(proposal.createdAt)}
+              </span>
+
+            </div>
+
+            <div class="cover-letter">
+              ${escapeHtml(
+                proposal.coverLetter || "No cover letter provided."
+              )}
+            </div>
+
+            ${
+              canHire
+                ? `
+                  <div class="proposal-actions">
+                    <button
+                      type="button"
+                      class="primary-btn"
+                      data-hire-proposal="${escapeHtml(proposal.id)}"
+                    >
+                      Hire Freelancer
+                    </button>
+                  </div>
+                `
+                : ""
+            }
+
+          </div>
+        `;
+      }
+
+      async function hireFreelancer(proposalId) {
+
+        if (!currentUser || !currentJob) {
+          alert("Please log in to continue.");
+          return;
+        }
+
+        if (currentJob.clientId !== currentUser.uid) {
+          alert("Only the job owner can hire a freelancer.");
+          return;
+        }
+
+        if (currentJob.status !== "open") {
+          alert("This job is no longer open for hiring.");
+          return;
+        }
+
+        const confirmed =
+          confirm(
+            "Hire this freelancer for this project?"
+          );
+
+        if (!confirmed) return;
+
+        try {
+
+          const proposalRef =
+            db.collection("proposals").doc(proposalId);
+
+          const proposalSnap =
+            await proposalRef.get();
+
+          if (!proposalSnap.exists) {
+            throw new Error("Proposal not found.");
+          }
+
+          const proposal =
+            proposalSnap.data();
+
+          if (proposal.jobId !== jobId) {
+            throw new Error("Invalid proposal.");
+          }
+
+          if (proposal.status !== "submitted") {
+            throw new Error(
+              "This proposal is no longer available."
+            );
+          }
+
+          const batch = db.batch();
+
+          batch.update(
+            db.collection("jobs").doc(jobId),
+            {
+              status: "in_progress",
+              hiredFreelancerId:
+                proposal.freelancerId || null,
+              hiredFreelancerName:
+                proposal.freelancerName || "",
+              hiredProposalId:
+                proposalId,
+              hiredAmount:
+                Number(proposal.amount || 0),
+              hiredDeliveryDays:
+                Number(proposal.deliveryDays || 0),
+              updatedAt:
+                firebase.firestore.FieldValue.serverTimestamp()
+            }
+          );
+
+          batch.update(
+            proposalRef,
+            {
+              status: "hired",
+              hiredAt:
+                firebase.firestore.FieldValue.serverTimestamp(),
+              updatedAt:
+                firebase.firestore.FieldValue.serverTimestamp()
+            }
+          );
+
+          const otherProposals =
+            await db.collection("proposals")
+              .where("jobId", "==", jobId)
+              .get();
+
+          otherProposals.forEach(doc => {
+
+            if (doc.id !== proposalId) {
+
+              const data = doc.data();
+
+              if (data.status === "submitted") {
+
+                batch.update(
+                  doc.ref,
+                  {
+                    status: "not_selected",
+                    updatedAt:
+                      firebase.firestore.FieldValue.serverTimestamp()
+                  }
+                );
+
+              }
+
+            }
+
+          });
+
+          await batch.commit();
+
+          alert("Freelancer hired successfully.");
+
+          window.location.reload();
+
+        } catch (error) {
+
+          console.error("Hire error:", error);
+
+          alert(
+            error.message ||
+            "Unable to hire this freelancer."
+          );
+        }
+      }
+
+      function openProposalForm() {
+
+        if (!currentUser) {
+          window.location.href =
+            "login.html?redirect=" +
+            encodeURIComponent(
+              window.location.href
+            );
+          return;
+        }
+
+        if (
+          currentJob &&
+          currentJob.clientId === currentUser.uid
+        ) {
+          alert(
+            "You cannot submit a proposal to your own job."
+          );
+          return;
+        }
+
+        if (
+          !currentJob ||
+          currentJob.status !== "open"
+        ) {
+          alert(
+            "This job is no longer accepting proposals."
+          );
+          return;
+        }
+
+        bidForm.style.display = "block";
+        showProposalBtn.style.display = "none";
+
+        bidForm.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+      showProposalBtn.addEventListener(
+        "click",
+        openProposalForm
+      );
+
+      sidebarProposalBtn.addEventListener(
+        "click",
+        openProposalForm
+      );
+
+      bidForm.addEventListener(
+        "submit",
+        async function (event) {
+
+          event.preventDefault();
+
+          if (!currentUser) {
+            alert("Please log in to submit a proposal.");
+            return;
+          }
+
+          if (!currentJob) {
+            return;
+          }
+
+          if (
+            currentJob.clientId === currentUser.uid
+          ) {
+            showNotice(
+              "You cannot submit a proposal to your own job.",
+              "error"
+            );
+            return;
+          }
+
+          if (currentJob.status !== "open") {
+            showNotice(
+              "This job is no longer accepting proposals.",
+              "error"
+            );
+            return;
+          }
+
+          const cover =
+            document.getElementById("cover").value.trim();
+
+          const amount =
+            Number(
+              document.getElementById("bid-amount").value
+            );
+
+          const deliveryDays =
+            Number(
+              document.getElementById("delivery-days").value
+            );
+
+          if (!cover) {
+            showNotice(
+              "Please write a cover letter.",
+              "error"
+            );
+            return;
+          }
+
+          if (!Number.isFinite(amount) || amount <= 0) {
+            showNotice(
+              "Please enter a valid proposal amount.",
+              "error"
+            );
+            return;
+          }
+
+          if (
+            !Number.isFinite(deliveryDays) ||
+            deliveryDays <= 0
+          ) {
+            showNotice(
+              "Please enter a valid delivery time.",
+              "error"
+            );
+            return;
+          }
+
+          submitProposalBtn.disabled = true;
+          submitProposalBtn.textContent =
+            "Sending...";
+
+          try {
+
+            const existing =
+              await db.collection("proposals")
+                .where("jobId", "==", jobId)
+                .get();
+
+            let alreadySubmitted = false;
+
+            existing.forEach(doc => {
+
+              const data = doc.data();
+
+              if (
+                data.freelancerId === currentUser.uid &&
+                ["submitted", "hired"].includes(
+                  data.status || "submitted"
+                )
+              ) {
+                alreadySubmitted = true;
+              }
+
+            });
+
+            if (alreadySubmitted) {
+              throw new Error(
+                "You have already submitted a proposal for this job."
+              );
+            }
+
+            const profile =
+              currentProfile || {};
+
+            await db.collection("proposals").add({
+
+              jobId: jobId,
+
+              jobTitle:
+                currentJob.title || "",
+
+              clientId:
+                currentJob.clientId || "",
+
+              freelancerId:
+                currentUser.uid,
+
+              freelancerName:
+                profile.name ||
+                currentUser.displayName ||
+                "Freelancer",
+
+              freelancerAccountId:
+                profile.accountId ||
+                "",
+
+              coverLetter:
+                cover,
+
+              amount:
+                amount,
+
+              deliveryDays:
+                deliveryDays,
+
+              status:
+                "submitted",
+
+              createdAt:
+                firebase.firestore.FieldValue.serverTimestamp(),
+
+              updatedAt:
+                firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            await db.collection("jobs")
+              .doc(jobId)
+              .update({
+
+                proposalCount:
+                  firebase.firestore.FieldValue.increment(1),
+
+                updatedAt:
+                  firebase.firestore.FieldValue.serverTimestamp()
+              });
+
+            showNotice(
+              "Your proposal has been submitted successfully.",
+              "success"
+            );
+
+            bidForm.reset();
+
+            submitProposalBtn.disabled = false;
+            submitProposalBtn.textContent =
+              "Proposal Submitted";
+
+            setTimeout(() => {
+              window.location.reload();
+            }, 1200);
+
+          } catch (error) {
+
+            console.error(
+              "Proposal submission error:",
+              error
+            );
+
+            showNotice(
+              error.message ||
+              "Unable to submit your proposal.",
+              "error"
+            );
+
+            submitProposalBtn.disabled = false;
+            submitProposalBtn.textContent =
+              "Send Proposal";
+          }
+
+        }
+      );
+
+      async function startPage() {
+
+        await loadUser();
+
+        await loadJob();
+
+        if (
+          currentUser &&
+          currentJob &&
+          currentJob.clientId === currentUser.uid
+        ) {
+          clientProposalsCard.style.display =
+            "block";
+        }
+      }
+
+      startPage();
+
+    });
+  </script>
 
 </body>
 </html>
