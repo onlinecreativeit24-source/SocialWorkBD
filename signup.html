@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 
 <head>
 
@@ -10,27 +10,246 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>সাইনআপ - SocialWorkBD</title>
+  <meta
+    name="description"
+    content="Create your SocialWorkBD account and start finding freelance work or hiring skilled talent."
+  >
+
+  <title>Create Account - SocialWorkBD</title>
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="favicon.svg"
+  >
 
   <link
     rel="stylesheet"
     href="styles.css"
   >
 
-
   <!-- Firebase SDK -->
-
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <style>
+
+    .auth-page {
+      min-height: calc(100vh - 160px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 20px;
+      background: #f7f9f8;
+    }
+
+    .signup-wrapper {
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .signup-card {
+      background: #ffffff;
+      border: 1px solid #e4e9e6;
+      border-radius: 18px;
+      padding: 36px;
+      box-shadow: 0 12px 35px rgba(20, 40, 30, 0.08);
+    }
+
+    .signup-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .signup-header h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      line-height: 1.2;
+      color: #17251d;
+    }
+
+    .signup-header p {
+      margin: 0;
+      color: #66736b;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #26352d;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px 14px;
+      border: 1px solid #d6ded9;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #17251d;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.10);
+    }
+
+    .role-section {
+      margin-bottom: 20px;
+    }
+
+    .role-section > label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #26352d;
+      font-size: 14px;
+    }
+
+    .role-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .role-option {
+      position: relative;
+    }
+
+    .role-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .role-card {
+      display: block;
+      padding: 17px;
+      border: 1px solid #d6ded9;
+      border-radius: 12px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .role-card strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #17251d;
+      font-size: 15px;
+    }
+
+    .role-card span {
+      display: block;
+      color: #6a766f;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .role-option input:checked + .role-card {
+      border-color: #16a34a;
+      background: #f1faf4;
+      box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.10);
+    }
+
+    .form-help {
+      margin: 7px 0 0;
+      color: #7a857e;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .signup-submit {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-top: 6px;
+      background: #16a34a;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .signup-submit:hover {
+      background: #12843d;
+    }
+
+    .signup-submit:active {
+      transform: translateY(1px);
+    }
+
+    .login-prompt {
+      text-align: center;
+      margin: 22px 0 0;
+      color: #66736b;
+      font-size: 14px;
+    }
+
+    .login-prompt a {
+      color: #12843d;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .login-prompt a:hover {
+      text-decoration: underline;
+    }
+
+    .auth-footer-note {
+      text-align: center;
+      margin-top: 20px;
+      color: #7a857e;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+
+      .auth-page {
+        padding: 30px 14px;
+      }
+
+      .signup-card {
+        padding: 25px 18px;
+        border-radius: 14px;
+      }
+
+      .signup-header h1 {
+        font-size: 25px;
+      }
+
+      .role-options {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+  </style>
 
 </head>
 
 
 <body>
 
+
+  <!-- HEADER -->
 
   <header class="site-header">
 
@@ -41,18 +260,17 @@
       </h1>
 
       <p>
-        কাজ করুন, দক্ষতা দিয়ে আয় করুন
+        Find Work. Hire Talent. Build Your Future.
       </p>
-
 
       <nav>
 
         <a href="index.html">
-          হোম
+          Home
         </a>
 
         <a href="login.html">
-          লগইন
+          Log In
         </a>
 
       </nav>
@@ -62,167 +280,273 @@
   </header>
 
 
-  <main class="container">
+  <!-- SIGNUP -->
+
+  <main class="auth-page">
+
+    <div class="signup-wrapper">
+
+      <section class="signup-card">
 
 
-    <section class="jobs-section">
+        <div class="signup-header">
+
+          <h1>
+            Create Your Account
+          </h1>
+
+          <p>
+            Join SocialWorkBD to find freelance work or hire skilled talent.
+          </p>
+
+        </div>
 
 
-      <h2>
-        নতুন অ্যাকাউন্ট তৈরি করুন
-      </h2>
+        <!-- SIGNUP FORM -->
+
+        <form id="signup-form">
 
 
-      <p>
-        SocialWorkBD-তে কাজ করতে বা কাজ দিতে
-        নতুন অ্যাকাউন্ট তৈরি করুন।
-      </p>
+          <!-- NAME -->
+
+          <div class="form-group">
+
+            <label for="name">
+              Full Name
+            </label>
+
+            <input
+              type="text"
+              id="name"
+              placeholder="Enter your full name"
+              autocomplete="name"
+              required
+            >
+
+          </div>
 
 
-      <!-- ==============================
-           SIGNUP FORM
-      =============================== -->
+          <!-- EMAIL -->
 
-      <form id="signup-form">
+          <div class="form-group">
 
+            <label for="email">
+              Email Address
+            </label>
 
-        <!-- NAME -->
+            <input
+              type="email"
+              id="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            >
 
-        <label for="name">
-          নাম
-        </label>
-
-
-        <input
-          type="text"
-          id="name"
-          placeholder="আপনার নাম"
-          autocomplete="name"
-          required
-        >
+          </div>
 
 
-        <!-- EMAIL -->
+          <!-- PASSWORD -->
 
-        <label for="email">
-          ইমেইল
-        </label>
+          <div class="form-group">
 
+            <label for="password">
+              Password
+            </label>
 
-        <input
-          type="email"
-          id="email"
-          placeholder="example@email.com"
-          autocomplete="email"
-          required
-        >
+            <input
+              type="password"
+              id="password"
+              placeholder="At least 6 characters"
+              autocomplete="new-password"
+              minlength="6"
+              required
+            >
 
-
-        <!-- PASSWORD -->
-
-        <label for="password">
-          পাসওয়ার্ড
-        </label>
+          </div>
 
 
-        <input
-          type="password"
-          id="password"
-          placeholder="কমপক্ষে ৬ অক্ষর"
-          autocomplete="new-password"
-          minlength="6"
-          required
-        >
+          <!-- CONFIRM PASSWORD -->
+
+          <div class="form-group">
+
+            <label for="confirm-password">
+              Confirm Password
+            </label>
+
+            <input
+              type="password"
+              id="confirm-password"
+              placeholder="Enter your password again"
+              autocomplete="new-password"
+              minlength="6"
+              required
+            >
+
+          </div>
 
 
-        <!-- CONFIRM PASSWORD -->
+          <!-- ROLE -->
 
-        <label for="confirm-password">
-          পাসওয়ার্ড আবার লিখুন
-        </label>
+          <div class="role-section">
 
-
-        <input
-          type="password"
-          id="confirm-password"
-          placeholder="পাসওয়ার্ড আবার লিখুন"
-          autocomplete="new-password"
-          minlength="6"
-          required
-        >
+            <label>
+              What would you like to do?
+            </label>
 
 
-        <!-- ROLE -->
-
-        <label for="role">
-          আপনি কী করতে চান?
-        </label>
+            <div class="role-options">
 
 
-        <select
-          id="role"
-          required
-        >
+              <!-- FREELANCER -->
 
-          <option value="worker">
-            Worker - কাজ করে আয় করতে চাই
-          </option>
+              <div class="role-option">
 
-          <option value="client">
-            Client - কাজ দিতে চাই
-          </option>
+                <input
+                  type="radio"
+                  id="role-worker"
+                  name="role-choice"
+                  value="worker"
+                  checked
+                >
 
-        </select>
+                <label
+                  for="role-worker"
+                  class="role-card"
+                >
 
+                  <strong>
+                    Freelancer
+                  </strong>
 
-        <!-- SKILLS -->
+                  <span>
+                    Find projects, submit proposals and earn by completing work.
+                  </span>
 
-        <label for="skills">
-          আপনার Skills
-        </label>
+                </label>
 
-
-        <input
-          type="text"
-          id="skills"
-          placeholder="যেমন: Data Entry, Graphic Design, Writing"
-        >
-
-
-        <!-- SUBMIT -->
-
-        <button
-          type="submit"
-        >
-          সাইনআপ করুন
-        </button>
+              </div>
 
 
-      </form>
+              <!-- CLIENT -->
+
+              <div class="role-option">
+
+                <input
+                  type="radio"
+                  id="role-client"
+                  name="role-choice"
+                  value="client"
+                >
+
+                <label
+                  for="role-client"
+                  class="role-card"
+                >
+
+                  <strong>
+                    Client
+                  </strong>
+
+                  <span>
+                    Post projects, review proposals and hire skilled talent.
+                  </span>
+
+                </label>
+
+              </div>
 
 
-      <!-- LOGIN LINK -->
-
-      <p
-        style="
-          margin-top:20px;
-          text-align:center;
-        "
-      >
-
-        ইতিমধ্যে অ্যাকাউন্ট আছে?
-
-        <a href="login.html">
-          লগইন করুন
-        </a>
-
-      </p>
+            </div>
 
 
-    </section>
+            <!-- Hidden role field used by app.js -->
+
+            <select
+              id="role"
+              required
+              style="display:none;"
+              aria-hidden="true"
+              tabindex="-1"
+            >
+
+              <option value="worker">
+                Freelancer
+              </option>
+
+              <option value="client">
+                Client
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- SKILLS -->
+
+          <div class="form-group">
+
+            <label for="skills">
+              Skills
+            </label>
+
+            <input
+              type="text"
+              id="skills"
+              placeholder="Example: Data Entry, Web Development, Graphic Design"
+              autocomplete="off"
+            >
+
+            <p class="form-help">
+              Add a few skills that describe what you can offer.
+            </p>
+
+          </div>
+
+
+          <!-- SUBMIT -->
+
+          <button
+            type="submit"
+            id="signup-btn"
+            class="signup-submit"
+          >
+            Create Account
+          </button>
+
+
+        </form>
+
+
+        <!-- LOGIN -->
+
+        <p class="login-prompt">
+
+          Already have an account?
+
+          <a href="login.html">
+            Log In
+          </a>
+
+        </p>
+
+
+        <p class="auth-footer-note">
+
+          By creating an account, you agree to use SocialWorkBD responsibly
+          and follow our platform policies.
+
+        </p>
+
+
+      </section>
+
+    </div>
 
   </main>
 
+
+  <!-- FOOTER -->
 
   <footer>
 
@@ -233,7 +557,7 @@
       </p>
 
       <p>
-        বাংলাদেশি Freelance & Job Marketplace
+        Global Freelance Marketplace
       </p>
 
     </div>
@@ -241,14 +565,44 @@
   </footer>
 
 
-  <!-- Firebase Configuration -->
+  <!-- FIREBASE CONFIG -->
 
   <script src="firebase-config.js"></script>
 
 
-  <!-- Main App -->
+  <!-- MAIN APP -->
 
   <script src="app.js"></script>
+
+
+  <!-- ROLE SYNC -->
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const workerRole = document.getElementById("role-worker");
+      const clientRole = document.getElementById("role-client");
+      const roleField = document.getElementById("role");
+
+      function syncRole() {
+
+        if (clientRole.checked) {
+          roleField.value = "client";
+        } else {
+          roleField.value = "worker";
+        }
+
+      }
+
+      workerRole.addEventListener("change", syncRole);
+      clientRole.addEventListener("change", syncRole);
+
+      syncRole();
+
+    });
+
+  </script>
 
 
 </body>
