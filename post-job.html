@@ -1,115 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Post a Job — SocialWorkBD</title><meta
+name="description"
+content="Post a professional freelance job on SocialWorkBD and connect with skilled freelancers worldwide."
 
-  <title>Post a Job — SocialWorkBD</title>
-  <meta
-    name="description"
-    content="Post a freelance job on SocialWorkBD and find skilled freelancers for your project."
-  >
+«»
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="styles.css">
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-  <style>
-    .post-job-page {
-      background: #f7f8f6;
-      min-height: calc(100vh - 80px);
-      padding: 48px 20px 80px;
+  <link rel="stylesheet" href="styles.css">  <!-- Firebase -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <style>
+    :root {
+      --green: #14a800;
+      --green-dark: #108a00;
+      --navy: #17324d;
+      --ink: #181818;
+      --muted: #626a72;
+      --line: #e1e5e8;
+      --bg: #f7f8f9;
+      --white: #ffffff;
     }
 
-    .post-job-container {
-      max-width: 900px;
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .job-page {
+      min-height: calc(100vh - 80px);
+      padding: 42px 18px 80px;
+    }
+
+    .job-container {
+      width: min(960px, 100%);
       margin: 0 auto;
     }
 
-    .post-job-heading {
+    .job-top {
       margin-bottom: 28px;
     }
 
-    .post-job-heading .eyebrow {
+    .job-eyebrow {
       display: inline-block;
-      margin-bottom: 10px;
-      font-size: 13px;
-      font-weight: 700;
-      color: #14a800;
+      margin-bottom: 9px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .7px;
       text-transform: uppercase;
-      letter-spacing: .6px;
     }
 
-    .post-job-heading h1 {
+    .job-top h1 {
       margin: 0 0 10px;
       font-size: 36px;
       line-height: 1.2;
-      color: #181818;
+      letter-spacing: -.8px;
     }
 
-    .post-job-heading p {
+    .job-top p {
+      max-width: 720px;
       margin: 0;
-      max-width: 680px;
-      color: #5f6368;
-      font-size: 16px;
+      color: var(--muted);
+      font-size: 15px;
       line-height: 1.7;
     }
 
-    .post-job-card {
-      background: #ffffff;
-      border: 1px solid #e4e7e3;
-      border-radius: 16px;
-      padding: 34px;
-      box-shadow: 0 5px 22px rgba(0, 0, 0, 0.05);
+    .job-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 22px;
+      align-items: start;
     }
 
-    .form-section-title {
+    .job-card,
+    .side-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, .045);
+    }
+
+    .job-card {
+      padding: 32px;
+    }
+
+    .side-card {
+      padding: 22px;
+      position: sticky;
+      top: 20px;
+    }
+
+    .section-heading {
+      margin-bottom: 26px;
+    }
+
+    .section-heading h2 {
       margin: 0 0 6px;
       font-size: 20px;
-      color: #181818;
     }
 
-    .form-section-text {
-      margin: 0 0 28px;
-      color: #6b6f72;
-      font-size: 14px;
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
       line-height: 1.6;
     }
 
     .form-group {
-      margin-bottom: 22px;
+      margin-bottom: 23px;
     }
 
     .form-group label {
       display: block;
       margin-bottom: 8px;
+      color: #252525;
       font-size: 14px;
       font-weight: 700;
-      color: #242424;
+    }
+
+    .required {
+      color: #d93025;
     }
 
     .form-group input,
     .form-group textarea,
     .form-group select {
       width: 100%;
-      box-sizing: border-box;
-      border: 1px solid #cfd4cf;
+      border: 1px solid #cfd5d9;
       border-radius: 8px;
       background: #fff;
-      color: #222;
-      font-size: 15px;
+      color: #202124;
       padding: 13px 14px;
-      outline: none;
-      transition: border-color .2s, box-shadow .2s;
       font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: .2s ease;
+    }
+
+    .form-group input,
+    .form-group select {
+      height: 48px;
     }
 
     .form-group textarea {
-      min-height: 170px;
+      min-height: 180px;
       resize: vertical;
       line-height: 1.6;
     }
@@ -117,14 +156,13 @@
     .form-group input:focus,
     .form-group textarea:focus,
     .form-group select:focus {
-      border-color: #14a800;
-      box-shadow: 0 0 0 3px rgba(20, 168, 0, 0.10);
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(20, 168, 0, .10);
     }
 
     .form-help {
-      display: block;
-      margin-top: 7px;
-      color: #777;
+      margin: 7px 0 0;
+      color: #737a80;
       font-size: 12px;
       line-height: 1.5;
     }
@@ -135,80 +173,121 @@
       gap: 18px;
     }
 
-    .budget-input-wrap {
+    .budget-wrap {
       position: relative;
     }
 
-    .budget-currency {
+    .budget-symbol {
       position: absolute;
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: #555;
-      font-weight: 700;
+      color: #3b4146;
+      font-size: 15px;
+      font-weight: 800;
       pointer-events: none;
     }
 
-    .budget-input-wrap input {
-      padding-left: 48px;
+    .budget-wrap input {
+      padding-left: 32px;
     }
 
-    .post-job-submit {
+    .submit-area {
+      border-top: 1px solid #edf0f1;
+      margin-top: 30px;
+      padding-top: 25px;
+    }
+
+    .post-job-button {
       width: 100%;
-      border: none;
+      height: 50px;
+      border: 0;
       border-radius: 8px;
-      padding: 14px 20px;
-      background: #14a800;
+      background: var(--green);
       color: #fff;
-      font-size: 16px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 800;
       cursor: pointer;
-      transition: background .2s, transform .1s;
+      transition: background .2s ease, transform .1s ease;
     }
 
-    .post-job-submit:hover {
-      background: #108f00;
+    .post-job-button:hover {
+      background: var(--green-dark);
     }
 
-    .post-job-submit:active {
+    .post-job-button:active {
       transform: translateY(1px);
     }
 
-    .post-job-submit:disabled {
-      opacity: .65;
+    .post-job-button:disabled {
+      opacity: .6;
       cursor: not-allowed;
     }
 
-    .posting-tips {
-      margin-top: 22px;
-      padding: 20px;
-      border-radius: 12px;
-      background: #f1f8ef;
-      border: 1px solid #dcebd8;
-    }
-
-    .posting-tips h3 {
-      margin: 0 0 10px;
-      font-size: 15px;
-      color: #222;
-    }
-
-    .posting-tips ul {
-      margin: 0;
-      padding-left: 20px;
-      color: #555;
+    .cancel-link {
+      display: block;
+      margin-top: 13px;
+      text-align: center;
+      color: #5f6368;
       font-size: 13px;
-      line-height: 1.8;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .cancel-link:hover {
+      color: var(--green);
+    }
+
+    .side-card h3 {
+      margin: 0 0 15px;
+      font-size: 16px;
+    }
+
+    .tip-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tip-list li {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      color: #626a72;
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+
+    .tip-icon {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #edf8ea;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .client-note {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 9px;
+      background: #f3f7fb;
+      border: 1px solid #dfe8f0;
+      color: #52606d;
+      font-size: 12px;
+      line-height: 1.6;
     }
 
     .back-link {
       display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 22px;
-      color: #14a800;
-      font-size: 14px;
-      font-weight: 700;
+      margin-top: 20px;
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 800;
       text-decoration: none;
     }
 
@@ -216,18 +295,27 @@
       text-decoration: underline;
     }
 
-    @media (max-width: 700px) {
-      .post-job-page {
-        padding: 32px 15px 60px;
+    @media (max-width: 820px) {
+      .job-layout {
+        grid-template-columns: 1fr;
       }
 
-      .post-job-heading h1 {
+      .side-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .job-page {
+        padding: 28px 14px 70px;
+      }
+
+      .job-top h1 {
         font-size: 29px;
       }
 
-      .post-job-card {
-        padding: 23px 18px;
-        border-radius: 12px;
+      .job-card {
+        padding: 22px 18px;
       }
 
       .form-row {
@@ -235,286 +323,337 @@
         gap: 0;
       }
     }
+  </style></head><body>  <!-- Header -->  <header class="site-header">
+    <div class="container">  <div class="logo-area">
 
-    @media (max-width: 480px) {
-      .post-job-heading h1 {
-        font-size: 26px;
-      }
+    <a href="index.html" class="logo" aria-label="SocialWorkBD Home">
+      SW
+    </a>
 
-      .post-job-heading p {
-        font-size: 14px;
-      }
+    <nav class="main-nav">
+      <a href="tasks.html">Find Work</a>
+      <a href="profile.html">Find Talent</a>
+      <a href="post-job.html" class="active">Post a Job</a>
+      <a href="support.html">Help</a>
+    </nav>
 
-      .post-job-card {
-        padding: 20px 15px;
-      }
-    }
-  </style>
-</head>
+    <div class="header-actions">
+      <a href="login.html" class="login-link">
+        Log In
+      </a>
 
-<body>
+      <a href="signup.html" class="signup-btn">
+        Sign Up
+      </a>
 
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container">
-
-      <div class="logo-area">
-        <a href="index.html" class="logo">SW</a>
-
-        <nav class="main-nav">
-          <a href="tasks.html">Find Work</a>
-          <a href="profile.html">Find Talent</a>
-          <a href="post-job.html" class="active">Post a Job</a>
-          <a href="support.html">Help</a>
-        </nav>
-
-        <div class="header-actions">
-          <a href="login.html" class="login-link">Log In</a>
-          <a href="signup.html" class="signup-btn">Sign Up</a>
-          <a href="profile.html" class="profile-link" aria-label="Profile">👤</a>
-        </div>
-
-      </div>
+      <a
+        href="profile.html"
+        class="profile-link"
+        aria-label="Profile"
+      >
+        👤
+      </a>
     </div>
-  </header>
+
+  </div>
+
+</div>
+
+  </header>  <!-- Main -->  <main class="job-page"><div class="job-container">
+
+  <div class="job-top">
+
+    <span class="job-eyebrow">
+      For Clients
+    </span>
+
+    <h1>
+      Post a Job
+    </h1>
+
+    <p>
+      Describe your project, set your budget and deadline,
+      and connect with freelancers who have the skills you need.
+    </p>
+
+  </div>
 
 
-  <!-- Main -->
-  <main class="post-job-page">
+  <div class="job-layout">
 
-    <div class="post-job-container">
+    <!-- Form -->
+    <section class="job-card">
 
-      <div class="post-job-heading">
-        <span class="eyebrow">For Clients</span>
+      <div class="section-heading">
 
-        <h1>Post a Job</h1>
+        <h2>
+          Tell us about your project
+        </h2>
 
         <p>
-          Tell freelancers what you need, set your budget and deadline,
-          and start receiving proposals from skilled professionals.
+          The more details you provide, the easier it is for
+          qualified freelancers to understand your requirements.
         </p>
+
       </div>
 
 
-      <section class="post-job-card">
+      <form id="job-form">
 
-        <h2 class="form-section-title">Project details</h2>
+        <!-- Title -->
+        <div class="form-group">
 
-        <p class="form-section-text">
-          Provide clear information so freelancers can understand your
-          project and send you the right proposal.
-        </p>
+          <label for="title">
+            Job title <span class="required">*</span>
+          </label>
+
+          <input
+            type="text"
+            id="title"
+            name="title"
+            maxlength="150"
+            placeholder="Example: Build a responsive business website"
+            autocomplete="off"
+            required
+          >
+
+          <p class="form-help">
+            Use a short, specific title that clearly describes the work.
+          </p>
+
+        </div>
 
 
-        <form id="job-form">
+        <!-- Description -->
+        <div class="form-group">
 
-          <!-- Job Title -->
+          <label for="desc">
+            Job description <span class="required">*</span>
+          </label>
+
+          <textarea
+            id="desc"
+            name="description"
+            placeholder="Describe the project, requirements, expected deliverables, preferred experience, and any other important details."
+            required
+          ></textarea>
+
+          <p class="form-help">
+            Include the scope of work, expected result and important requirements.
+          </p>
+
+        </div>
+
+
+        <!-- Budget + Delivery -->
+        <div class="form-row">
+
           <div class="form-group">
 
-            <label for="title">
-              Job title
+            <label for="budget">
+              Project budget <span class="required">*</span>
             </label>
 
-            <input
-              type="text"
-              id="title"
-              name="title"
-              placeholder="Example: Design a modern logo for my business"
-              maxlength="150"
-              required
-            >
+            <div class="budget-wrap">
 
-            <span class="form-help">
-              Use a clear and specific title that describes the work.
-            </span>
-
-          </div>
-
-
-          <!-- Description -->
-          <div class="form-group">
-
-            <label for="desc">
-              Job description
-            </label>
-
-            <textarea
-              id="desc"
-              name="description"
-              placeholder="Describe your project, requirements, expected result, and any important details..."
-              required
-            ></textarea>
-
-            <span class="form-help">
-              Include the main requirements, expected deliverables, and
-              any important instructions.
-            </span>
-
-          </div>
-
-
-          <!-- Budget + Delivery -->
-          <div class="form-row">
-
-            <div class="form-group">
-
-              <label for="budget">
-                Project budget
-              </label>
-
-              <div class="budget-input-wrap">
-                <span class="budget-currency">৳</span>
-
-                <input
-                  type="number"
-                  id="budget"
-                  name="budget"
-                  min="1"
-                  step="1"
-                  placeholder="1000"
-                  required
-                >
-              </div>
-
-              <span class="form-help">
-                Enter your total project budget in BDT.
+              <span class="budget-symbol">
+                $
               </span>
-
-            </div>
-
-
-            <div class="form-group">
-
-              <label for="delivery-days">
-                Delivery time
-              </label>
 
               <input
                 type="number"
-                id="delivery-days"
-                name="deliveryDays"
+                id="budget"
+                name="budget"
                 min="1"
-                step="1"
-                placeholder="7"
+                step="0.01"
+                placeholder="100"
                 required
               >
 
-              <span class="form-help">
-                How many days should the freelancer have to complete the job?
-              </span>
-
             </div>
+
+            <p class="form-help">
+              Enter your total project budget in USD.
+            </p>
 
           </div>
 
 
-          <!-- Skills -->
           <div class="form-group">
 
-            <label for="skills">
-              Required skills
+            <label for="delivery-days">
+              Delivery time <span class="required">*</span>
             </label>
 
             <input
-              type="text"
-              id="skills"
-              name="skills"
-              placeholder="Example: Graphic Design, Photoshop, Illustrator"
+              type="number"
+              id="delivery-days"
+              name="deliveryDays"
+              min="1"
+              step="1"
+              placeholder="7"
               required
             >
 
-            <span class="form-help">
-              Separate multiple skills with commas.
-            </span>
+            <p class="form-help">
+              Set the expected number of days for project delivery.
+            </p>
 
           </div>
 
+        </div>
 
-          <!-- Submit -->
+
+        <!-- Skills -->
+        <div class="form-group">
+
+          <label for="skills">
+            Required skills <span class="required">*</span>
+          </label>
+
+          <input
+            type="text"
+            id="skills"
+            name="skills"
+            placeholder="Example: Web Development, JavaScript, UI Design"
+            autocomplete="off"
+            required
+          >
+
+          <p class="form-help">
+            Separate multiple skills with commas.
+          </p>
+
+        </div>
+
+
+        <!-- Submit -->
+        <div class="submit-area">
+
           <button
             type="submit"
             id="post-job-btn"
-            class="post-job-submit"
+            class="post-job-button"
           >
             Post Job
           </button>
 
-        </form>
-
-
-        <!-- Tips -->
-        <div class="posting-tips">
-
-          <h3>Tips for a better job post</h3>
-
-          <ul>
-            <li>Use a specific and easy-to-understand job title.</li>
-            <li>Explain exactly what you want the freelancer to deliver.</li>
-            <li>List the skills or tools required for the project.</li>
-            <li>Set a realistic budget and delivery deadline.</li>
-          </ul>
+          <a
+            href="index.html"
+            class="cancel-link"
+          >
+            Cancel
+          </a>
 
         </div>
 
-      </section>
+      </form>
+
+    </section>
 
 
-      <a href="index.html" class="back-link">
-        ← Back to Home
-      </a>
+    <!-- Sidebar -->
+    <aside class="side-card">
 
-    </div>
+      <h3>
+        Tips for a great job post
+      </h3>
 
-  </main>
+      <ul class="tip-list">
+
+        <li>
+          <span class="tip-icon">✓</span>
+          <span>
+            Write a clear and specific job title.
+          </span>
+        </li>
+
+        <li>
+          <span class="tip-icon">✓</span>
+          <span>
+            Explain exactly what you expect the freelancer to deliver.
+          </span>
+        </li>
+
+        <li>
+          <span class="tip-icon">✓</span>
+          <span>
+            Add the skills and tools required for the project.
+          </span>
+        </li>
+
+        <li>
+          <span class="tip-icon">✓</span>
+          <span>
+            Set a realistic budget and delivery timeline.
+          </span>
+        </li>
+
+        <li>
+          <span class="tip-icon">✓</span>
+          <span>
+            Keep project communication and transactions on SocialWorkBD.
+          </span>
+        </li>
+
+      </ul>
 
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container">
-
-      <p>
-        © 2026 SocialWorkBD. Bangladesh's Freelance Marketplace.
-      </p>
-
-      <div class="footer-links">
-        <a href="terms.html">Terms</a>
-        <a href="privacy.html">Privacy</a>
-        <a href="support.html">Help</a>
+      <div class="client-note">
+        Your job will be published to the SocialWorkBD marketplace
+        after it is successfully submitted.
       </div>
 
-    </div>
-  </footer>
+    </aside>
+
+  </div>
 
 
-  <!-- Mobile Bottom Navigation -->
-  <nav class="mobile-bottom-nav">
+  <a
+    href="index.html"
+    class="back-link"
+  >
+    ← Back to Home
+  </a>
 
-    <a href="index.html">
-      <span>⌂</span>
-      <small>Home</small>
-    </a>
+</div>
 
-    <a href="tasks.html">
-      <span>⌕</span>
-      <small>Find Work</small>
-    </a>
+  </main>  <!-- Footer -->  <footer class="site-footer"><div class="container">
 
-    <a href="post-job.html" class="active">
-      <span>＋</span>
-      <small>Post Job</small>
-    </a>
+  <p>
+    © 2026 SocialWorkBD. Global Freelance Marketplace.
+  </p>
 
-    <a href="profile.html">
-      <span>♙</span>
-      <small>Profile</small>
-    </a>
+  <div class="footer-links">
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="support.html">Help</a>
+  </div>
 
-  </nav>
+</div>
 
+  </footer>  <!-- Mobile Bottom Navigation -->  <nav class="mobile-bottom-nav"><a href="index.html">
+  <span>⌂</span>
+  <small>Home</small>
+</a>
 
-  <!-- App -->
-  <script src="firebase-config.js"></script>
-  <script src="app.js"></script>
+<a href="tasks.html">
+  <span>⌕</span>
+  <small>Find Work</small>
+</a>
 
-</body>
+<a
+  href="post-job.html"
+  class="active"
+>
+  <span>＋</span>
+  <small>Post Job</small>
+</a>
+
+<a href="profile.html">
+  <span>♙</span>
+  <small>Profile</small>
+</a>
+
+  </nav>  <!-- Firebase Configuration -->  <script src="firebase-config.js"></script>  <!-- Main Application -->  <script src="app.js"></script></body>
 </html>
