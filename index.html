@@ -1,891 +1,2403 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>SocialWorkBD — Find Work. Hire Talent.</title><meta
+name="description"
+content="SocialWorkBD is a global freelance marketplace where clients find skilled freelancers and freelancers discover meaningful projects."
 
-  <title>SocialWorkBD — Find Work. Hire Talent.</title>
+«»
 
-  <meta
-    name="description"
-    content="SocialWorkBD is a professional freelance marketplace for finding skilled talent, discovering projects, and building trusted working relationships."
-  >
+  <meta name="theme-color" content="#146c43">  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="shortcut icon" href="favicon.svg">  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet"
+  >  <style>
+    :root {
+      --green: #146c43;
+      --green-dark: #0d4d30;
+      --green-soft: #eaf5ef;
 
-  <meta
-    name="keywords"
-    content="freelance marketplace, freelance jobs, hire freelancers, remote work, SocialWorkBD, freelance projects"
-  >
+      --ink: #17231d;
+      --muted: #68756e;
 
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="shortcut icon" href="favicon.svg">
+      --paper: #f7f9f7;
+      --white: #ffffff;
 
-  <link rel="stylesheet" href="styles.css">
-</head>
+      --line: #e1e7e3;
 
-<body>
+      --gold: #c28a2c;
+      --gold-soft: #f8f0df;
 
-  <!-- ================= HEADER ================= -->
+      --danger: #b42318;
 
-  <header class="app-header">
+      --radius: 10px;
+      --radius-lg: 16px;
 
-    <div class="brand-area">
+      --max: 1180px;
+    }
 
-      <a href="index.html" class="brand-logo-link" aria-label="SocialWorkBD Home">
-        <div class="brand-logo">SW</div>
-      </a>
+    * {
+      box-sizing: border-box;
+    }
 
-      <div class="brand-text">
+    html {
+      scroll-behavior: smooth;
+    }
 
-        <a href="index.html" class="brand-name">
-          SocialWork<span>BD</span>
-        </a>
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        <p>Find Work. Hire Talent.</p>
+    body.no-scroll {
+      overflow: hidden;
+    }
 
+    a {
+      color: inherit;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    img,
+    svg {
+      max-width: 100%;
+    }
+
+    .wrap {
+      width: min(var(--max), 100%);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    :focus-visible {
+      outline: 3px solid rgba(20, 108, 67, 0.25);
+      outline-offset: 2px;
+    }
+
+    /* ================= HEADER ================= */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .header-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 9px;
+
+      background: var(--green);
+      color: #fff;
+
+      font-family: "Playfair Display", serif;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .brand-name {
+      font-family: "Playfair Display", serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .brand-name span {
+      color: var(--green);
+    }
+
+    .brand-tagline {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      margin-left: auto;
+    }
+
+    .main-nav a {
+      position: relative;
+      text-decoration: none;
+      color: #46544d;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 0;
+    }
+
+    .main-nav a:hover {
+      color: var(--green);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .login-btn,
+    .signup-btn {
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .login-btn {
+      color: var(--ink);
+      padding: 9px 11px;
+    }
+
+    .signup-btn {
+      color: #fff;
+      background: var(--green);
+      padding: 10px 17px;
+      border-radius: 999px;
+    }
+
+    .signup-btn:hover {
+      background: var(--green-dark);
+    }
+
+    .profile-btn,
+    .notification-btn,
+    .menu-btn {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--ink);
+    }
+
+    .notification-btn {
+      position: relative;
+    }
+
+    .notification-count {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+
+      min-width: 16px;
+      height: 16px;
+
+      padding: 0 4px;
+
+      border-radius: 20px;
+
+      background: var(--gold);
+      color: #fff;
+
+      font-size: 9px;
+      font-weight: 700;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-btn {
+      display: none;
+    }
+
+    /* ================= HERO ================= */
+
+    .hero {
+      background:
+        radial-gradient(
+          circle at 80% 20%,
+          rgba(20, 108, 67, 0.07),
+          transparent 32%
+        ),
+        linear-gradient(180deg, #ffffff 0%, #f7f9f7 100%);
+
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-inner {
+      min-height: 570px;
+
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+
+      align-items: center;
+
+      gap: 65px;
+
+      padding-top: 72px;
+      padding-bottom: 72px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      color: var(--green);
+
+      font-size: 12px;
+      font-weight: 800;
+
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+
+      margin-bottom: 16px;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      margin: 0;
+
+      max-width: 620px;
+
+      font-family: "Playfair Display", serif;
+
+      font-size: clamp(42px, 5vw, 64px);
+      line-height: 1.08;
+
+      letter-spacing: -0.025em;
+    }
+
+    .hero h1 span {
+      color: var(--green);
+    }
+
+    .hero-description {
+      max-width: 580px;
+
+      margin: 22px 0 0;
+
+      color: var(--muted);
+
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .hero-search {
+      max-width: 610px;
+
+      margin-top: 30px;
+
+      display: flex;
+
+      padding: 6px;
+
+      background: #fff;
+
+      border: 1px solid var(--line);
+
+      border-radius: 12px;
+
+      box-shadow: 0 8px 30px rgba(23, 35, 29, 0.06);
+    }
+
+    .hero-search-field {
+      flex: 1;
+
+      display: flex;
+      align-items: center;
+
+      gap: 10px;
+
+      padding: 0 12px;
+    }
+
+    .hero-search-icon {
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .hero-search input {
+      width: 100%;
+
+      border: 0;
+      outline: 0;
+
+      background: transparent;
+
+      padding: 12px 0;
+
+      color: var(--ink);
+
+      font-size: 14px;
+    }
+
+    .hero-search button {
+      border: 0;
+
+      background: var(--green);
+      color: #fff;
+
+      border-radius: 8px;
+
+      padding: 0 24px;
+
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .hero-search button:hover {
+      background: var(--green-dark);
+    }
+
+    .popular {
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 8px 14px;
+
+      margin-top: 14px;
+
+      font-size: 12.5px;
+
+      color: var(--muted);
+    }
+
+    .popular a {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .popular a:hover {
+      text-decoration: underline;
+    }
+
+    /* ================= HERO CARD ================= */
+
+    .hero-showcase {
+      position: relative;
+      max-width: 500px;
+      margin-left: auto;
+      width: 100%;
+    }
+
+    .showcase-card {
+      position: relative;
+
+      background: #fff;
+
+      border: 1px solid var(--line);
+
+      border-radius: 18px;
+
+      padding: 27px;
+
+      box-shadow: 0 22px 60px rgba(23, 35, 29, 0.09);
+    }
+
+    .showcase-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding-bottom: 18px;
+
+      border-bottom: 1px solid var(--line);
+    }
+
+    .showcase-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+
+      border-radius: 50%;
+
+      background: #27a36a;
+    }
+
+    .showcase-status {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .project-title {
+      margin: 22px 0 9px;
+
+      font-family: "Playfair Display", serif;
+
+      font-size: 23px;
+      line-height: 1.25;
+    }
+
+    .project-description {
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+
+      margin-top: 18px;
+    }
+
+    .project-tag {
+      padding: 6px 9px;
+
+      border-radius: 6px;
+
+      background: var(--green-soft);
+
+      color: var(--green);
+
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .project-footer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+
+      gap: 18px;
+
+      margin-top: 23px;
+
+      padding-top: 18px;
+
+      border-top: 1px solid var(--line);
+    }
+
+    .project-meta small {
+      display: block;
+
+      color: var(--muted);
+
+      font-size: 11px;
+
+      margin-bottom: 3px;
+    }
+
+    .project-meta strong {
+      font-size: 15px;
+    }
+
+    .showcase-profile {
+      position: absolute;
+
+      right: -24px;
+      bottom: -27px;
+
+      width: 205px;
+
+      background: var(--ink);
+      color: #fff;
+
+      border-radius: 13px;
+
+      padding: 15px;
+
+      box-shadow: 0 16px 35px rgba(23, 35, 29, 0.2);
+    }
+
+    .profile-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: var(--gold);
+
+      color: var(--ink);
+
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .profile-mini strong {
+      display: block;
+      font-size: 12.5px;
+    }
+
+    .profile-mini span {
+      display: block;
+      color: #aebbb3;
+      font-size: 10.5px;
+    }
+
+    /* ================= TRUST ================= */
+
+    .trust {
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .trust-inner {
+      min-height: 82px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 25px;
+    }
+
+    .trust-label {
+      color: var(--muted);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .trust-items {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 9px;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+      color: #425049;
+
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .trust-check {
+      width: 19px;
+      height: 19px;
+
+      border-radius: 50%;
+
+      background: var(--green-soft);
+
+      color: var(--green);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 11px;
+    }
+
+    /* ================= COMMON SECTION ================= */
+
+    .section {
+      padding: 78px 0;
+
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+
+      gap: 25px;
+
+      margin-bottom: 32px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+
+      font-family: "Playfair Display", serif;
+
+      font-size: clamp(28px, 3vw, 36px);
+
+      line-height: 1.15;
+    }
+
+    .section-heading p {
+      max-width: 570px;
+
+      color: var(--muted);
+
+      margin: 9px 0 0;
+
+      font-size: 14px;
+    }
+
+    .view-link {
+      color: var(--green);
+
+      text-decoration: none;
+
+      font-size: 13px;
+      font-weight: 800;
+
+      white-space: nowrap;
+    }
+
+    .view-link:hover {
+      text-decoration: underline;
+    }
+
+    /* ================= PATH ================= */
+
+    .path-grid {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 20px;
+    }
+
+    .path-card {
+      min-height: 275px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      padding: 30px;
+
+      border-radius: var(--radius-lg);
+
+      text-decoration: none;
+
+      border: 1px solid var(--line);
+
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .path-card:hover {
+      transform: translateY(-3px);
+      border-color: #b7c9be;
+    }
+
+    .freelancer-card {
+      background: var(--green-soft);
+    }
+
+    .client-card {
+      background: var(--gold-soft);
+    }
+
+    .path-icon {
+      font-size: 26px;
+    }
+
+    .path-label {
+      display: block;
+
+      margin-top: 25px;
+
+      color: var(--muted);
+
+      font-size: 11px;
+      font-weight: 800;
+
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .path-card h3 {
+      margin: 6px 0 9px;
+
+      font-family: "Playfair Display", serif;
+
+      font-size: 25px;
+    }
+
+    .path-card p {
+      max-width: 470px;
+
+      margin: 0;
+
+      color: var(--muted);
+
+      font-size: 13.5px;
+    }
+
+    .path-action {
+      margin-top: 22px;
+
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .freelancer-card .path-action {
+      color: var(--green);
+    }
+
+    .client-card .path-action {
+      color: #95691f;
+    }
+
+    /* ================= CATEGORIES ================= */
+
+    .category-grid {
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 14px;
+    }
+
+    .category {
+      padding: 22px;
+
+      background: #fff;
+
+      border: 1px solid var(--line);
+
+      border-radius: var(--radius);
+
+      text-decoration: none;
+
+      transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .category:hover {
+      border-color: var(--green);
+      transform: translateY(-2px);
+    }
+
+    .category-icon {
+      width: 39px;
+      height: 39px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: var(--green-soft);
+
+      border-radius: 9px;
+
+      font-size: 18px;
+
+      margin-bottom: 15px;
+    }
+
+    .category h3 {
+      margin: 0 0 5px;
+
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .category p {
+      margin: 0;
+
+      color: var(--muted);
+
+      font-size: 12px;
+    }
+
+    /* ================= JOBS ================= */
+
+    .jobs-section {
+      background: #fff;
+    }
+
+    .job-list {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .job-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      gap: 25px;
+
+      padding: 22px;
+
+      background: #fff;
+
+      border: 1px solid var(--line);
+
+      border-radius: 12px;
+
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .job-card:hover {
+      border-color: #b7c9be;
+
+      box-shadow: 0 8px 25px rgba(23, 35, 29, 0.05);
+    }
+
+    .job-main {
+      min-width: 0;
+    }
+
+    .job-status {
+      display: inline-flex;
+
+      padding: 4px 9px;
+
+      background: var(--green-soft);
+
+      color: var(--green);
+
+      border-radius: 999px;
+
+      font-size: 10px;
+      font-weight: 800;
+
+      margin-bottom: 9px;
+    }
+
+    .job-title {
+      margin: 0 0 6px;
+
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .job-title a {
+      text-decoration: none;
+    }
+
+    .job-title a:hover {
+      color: var(--green);
+    }
+
+    .job-description {
+      margin: 0;
+
+      max-width: 700px;
+
+      color: var(--muted);
+
+      font-size: 13px;
+    }
+
+    .job-skills {
+      margin-top: 10px;
+
+      color: #526159;
+
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+
+    .job-side {
+      min-width: 115px;
+
+      text-align: right;
+    }
+
+    .job-budget {
+      display: block;
+
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .job-time {
+      display: block;
+
+      margin-top: 4px;
+
+      color: var(--muted);
+
+      font-size: 11px;
+    }
+
+    .empty-jobs {
+      padding: 52px 20px;
+
+      text-align: center;
+
+      border: 1px dashed #cfd8d2;
+
+      border-radius: 12px;
+
+      background: #fbfcfb;
+    }
+
+    .empty-jobs-icon {
+      font-size: 25px;
+
+      margin-bottom: 10px;
+    }
+
+    .empty-jobs h3 {
+      margin: 0 0 6px;
+
+      font-family: "Playfair Display", serif;
+
+      font-size: 20px;
+    }
+
+    .empty-jobs p {
+      margin: 0 0 17px;
+
+      color: var(--muted);
+
+      font-size: 13px;
+    }
+
+    .empty-jobs a {
+      display: inline-flex;
+
+      text-decoration: none;
+
+      color: #fff;
+
+      background: var(--green);
+
+      padding: 10px 18px;
+
+      border-radius: 999px;
+
+      font-size: 12.5px;
+      font-weight: 800;
+    }
+
+    /* ================= HOW ================= */
+
+    .steps {
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 30px;
+    }
+
+    .step {
+      padding-top: 19px;
+
+      border-top: 2px solid var(--ink);
+    }
+
+    .step-number {
+      color: var(--gold);
+
+      font-size: 11px;
+      font-weight: 800;
+
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .step h3 {
+      margin: 10px 0 7px;
+
+      font-family: "Playfair Display", serif;
+
+      font-size: 20px;
+    }
+
+    .step p {
+      margin: 0;
+
+      color: var(--muted);
+
+      font-size: 13px;
+    }
+
+    /* ================= CTA ================= */
+
+    .cta {
+      padding: 85px 0;
+    }
+
+    .cta-box {
+      padding: 48px;
+
+      border-radius: 18px;
+
+      background: var(--ink);
+
+      color: #fff;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 40px;
+    }
+
+    .cta-box h2 {
+      margin: 0;
+
+      font-family: "Playfair Display", serif;
+
+      font-size: clamp(28px, 3vw, 39px);
+
+      line-height: 1.15;
+    }
+
+    .cta-box p {
+      max-width: 570px;
+
+      margin: 10px 0 0;
+
+      color: #b7c3bc;
+
+      font-size: 13.5px;
+    }
+
+    .cta-actions {
+      display: flex;
+
+      gap: 10px;
+
+      flex-shrink: 0;
+    }
+
+    .cta-primary,
+    .cta-secondary {
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 12px 20px;
+
+      border-radius: 999px;
+
+      text-decoration: none;
+
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .cta-primary {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .cta-primary:hover {
+      background: #1a7c4e;
+    }
+
+    .cta-secondary {
+      border: 1px solid #506058;
+      color: #fff;
+    }
+
+    .cta-secondary:hover {
+      border-color: #fff;
+    }
+
+    /* ================= FOOTER ================= */
+
+    .footer {
+      background: #101a15;
+
+      color: #9eaba4;
+
+      padding-top: 55px;
+    }
+
+    .footer-grid {
+      display: grid;
+
+      grid-template-columns: 1.7fr 1fr 1fr 1fr;
+
+      gap: 35px;
+
+      padding-bottom: 40px;
+    }
+
+    .footer-brand-name {
+      color: #fff;
+
+      font-family: "Playfair Display", serif;
+
+      font-size: 20px;
+      font-weight: 700;
+
+      text-decoration: none;
+    }
+
+    .footer-brand-name span {
+      color: var(--gold);
+    }
+
+    .footer-description {
+      max-width: 320px;
+
+      margin: 12px 0 0;
+
+      color: #87958d;
+
+      font-size: 12.5px;
+    }
+
+    .footer-column h4 {
+      margin: 0 0 14px;
+
+      color: #fff;
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .footer-column a {
+      display: block;
+
+      margin-bottom: 9px;
+
+      color: #87958d;
+
+      text-decoration: none;
+
+      font-size: 12.5px;
+    }
+
+    .footer-column a:hover {
+      color: #fff;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+
+      gap: 15px;
+
+      padding: 18px 0;
+
+      border-top: 1px solid rgba(255,255,255,0.09);
+
+      color: #68766e;
+
+      font-size: 11px;
+    }
+
+    /* ================= MOBILE NAV ================= */
+
+    .mobile-nav {
+      display: none;
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 1000px) {
+
+      .main-nav {
+        display: none;
+      }
+
+      .hero-inner {
+        grid-template-columns: 1fr;
+
+        gap: 45px;
+      }
+
+      .hero-showcase {
+        margin: 0;
+      }
+
+      .hero h1 {
+        max-width: 700px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+
+      .wrap {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .header-inner {
+        min-height: 64px;
+        gap: 10px;
+      }
+
+      .brand-tagline {
+        display: none;
+      }
+
+      .header-actions {
+        margin-left: auto;
+      }
+
+      .notification-btn {
+        display: none;
+      }
+
+      .login-btn,
+      .signup-btn {
+        display: none;
+      }
+
+      .menu-btn {
+        display: flex;
+      }
+
+      .hero-inner {
+        min-height: auto;
+
+        padding-top: 48px;
+        padding-bottom: 58px;
+      }
+
+      .hero h1 {
+        font-size: clamp(37px, 11vw, 50px);
+      }
+
+      .hero-description {
+        font-size: 15px;
+      }
+
+      .hero-search {
+        display: flex;
+      }
+
+      .hero-search button {
+        padding: 0 17px;
+      }
+
+      .hero-showcase {
+        padding-bottom: 35px;
+      }
+
+      .showcase-profile {
+        right: 10px;
+        bottom: 0;
+      }
+
+      .trust-inner {
+        padding-top: 22px;
+        padding-bottom: 22px;
+
+        align-items: flex-start;
+
+        flex-direction: column;
+      }
+
+      .trust-items {
+        justify-content: flex-start;
+      }
+
+      .section {
+        padding: 55px 0;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        margin-bottom: 25px;
+      }
+
+      .path-grid,
+      .category-grid,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .path-card {
+        min-height: 250px;
+      }
+
+      .job-card {
+        flex-direction: column;
+      }
+
+      .job-side {
+        min-width: 0;
+
+        text-align: left;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+      }
+
+      .job-time {
+        margin-top: 0;
+      }
+
+      .cta {
+        padding: 55px 0;
+      }
+
+      .cta-box {
+        padding: 32px 24px;
+
+        align-items: flex-start;
+
+        flex-direction: column;
+      }
+
+      .cta-actions {
+        width: 100%;
+      }
+
+      .cta-primary,
+      .cta-secondary {
+        flex: 1;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 28px 18px;
+      }
+
+      .footer-brand {
+        grid-column: 1 / -1;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+      }
+
+      .mobile-nav {
+        position: fixed;
+
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        z-index: 120;
+
+        display: flex;
+
+        background: rgba(255,255,255,0.98);
+
+        border-top: 1px solid var(--line);
+
+        backdrop-filter: blur(12px);
+
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      .mobile-nav a {
+        flex: 1;
+
+        min-height: 58px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 3px;
+
+        color: var(--muted);
+
+        text-decoration: none;
+
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .mobile-nav a span {
+        font-size: 17px;
+      }
+
+      .mobile-nav a.active {
+        color: var(--green);
+      }
+
+      body {
+        padding-bottom: 58px;
+      }
+    }
+
+    @media (max-width: 430px) {
+
+      .brand-name {
+        font-size: 18px;
+      }
+
+      .brand-mark {
+        width: 36px;
+        height: 36px;
+      }
+
+      .hero-search {
+        padding: 5px;
+      }
+
+      .hero-search-field {
+        padding-left: 8px;
+      }
+
+      .hero-search button {
+        padding: 0 14px;
+      }
+
+      .popular {
+        gap: 7px 10px;
+      }
+
+      .showcase-card {
+        padding: 21px;
+      }
+
+      .showcase-profile {
+        right: 5px;
+        width: 190px;
+      }
+
+      .project-title {
+        font-size: 20px;
+      }
+
+      .cta-actions {
+        flex-direction: column;
+      }
+
+      .cta-primary,
+      .cta-secondary {
+        width: 100%;
+      }
+    }
+  </style></head><body>  <!-- ================= HEADER ================= -->  <header class="site-header"><div class="wrap header-inner">
+
+  <a href="index.html" class="brand" aria-label="SocialWorkBD Home">
+
+    <div class="brand-mark">SW</div>
+
+    <div>
+      <div class="brand-name">
+        SocialWork<span>BD</span>
       </div>
 
+      <div class="brand-tagline">
+        Find work. Hire talent.
+      </div>
     </div>
 
+  </a>
 
-    <nav class="main-nav" aria-label="Main navigation">
+  <nav class="main-nav" aria-label="Main navigation">
 
-      <a href="tasks.html">
-        Find Work
-      </a>
-
-      <a href="post-job.html">
-        Find Talent
-      </a>
-
-      <a href="tasks.html">
-        Jobs
-      </a>
-
-      <a href="support.html">
-        Help
-      </a>
-
-    </nav>
-
-
-    <div class="header-actions">
-
-      <button
-        class="icon-btn"
-        id="notification-btn"
-        type="button"
-        aria-label="Notifications"
-      >
-        <span aria-hidden="true">●</span>
-        <span class="notification-badge">0</span>
-      </button>
-
-      <a href="login.html" class="header-login">
-        Log In
-      </a>
-
-      <a href="signup.html" class="header-signup">
-        Sign Up
-      </a>
-
-      <a
-        href="profile.html"
-        class="profile-icon"
-        aria-label="Profile"
-      >
-        <span aria-hidden="true">P</span>
-      </a>
-
-    </div>
-
-  </header>
-
-
-  <!-- ================= MAIN ================= -->
-
-  <main class="marketplace-home">
-
-
-    <!-- ================= HERO ================= -->
-
-    <section class="hero-section">
-
-      <div class="hero-content">
-
-        <span class="hero-eyebrow">
-          A Professional Freelance Marketplace
-        </span>
-
-        <h1>
-          Find the right work.
-          <br>
-          <span>Hire the right talent.</span>
-        </h1>
-
-        <p>
-          SocialWorkBD brings freelancers and clients together through
-          professional projects, direct collaboration, and a trusted
-          marketplace experience.
-        </p>
-
-
-        <!-- Search -->
-
-        <form class="marketplace-search" id="job-search-form">
-
-          <div class="search-field">
-
-            <span class="search-icon" aria-hidden="true">
-              Search
-            </span>
-
-            <input
-              type="search"
-              id="job-search"
-              placeholder="Search jobs, skills, or projects"
-              autocomplete="off"
-              aria-label="Search jobs, skills, or projects"
-            >
-
-          </div>
-
-          <button type="submit" class="search-button">
-            Search Jobs
-          </button>
-
-        </form>
-
-
-        <!-- Popular searches -->
-
-        <div class="popular-searches">
-
-          <span>Popular:</span>
-
-          <a href="tasks.html?skill=web-development">
-            Web Development
-          </a>
-
-          <a href="tasks.html?skill=graphic-design">
-            Graphic Design
-          </a>
-
-          <a href="tasks.html?skill=writing">
-            Writing
-          </a>
-
-          <a href="tasks.html?skill=digital-marketing">
-            Digital Marketing
-          </a>
-
-        </div>
-
-      </div>
-
-
-      <!-- ================= HERO VISUAL ================= -->
-
-      <div class="hero-visual">
-
-        <div class="hero-card hero-card-main">
-
-          <div class="hero-card-top">
-
-            <span class="status-dot"></span>
-
-            <span>Built for Real Projects</span>
-
-          </div>
-
-          <h3>
-            From project to professional collaboration
-          </h3>
-
-          <p>
-            Discover opportunities, send proposals, communicate directly,
-            and build long-term working relationships.
-          </p>
-
-
-          <div class="hero-project-info">
-
-            <div>
-              <small>Work</small>
-              <strong>Projects</strong>
-            </div>
-
-            <div>
-              <small>Connect</small>
-              <strong>Direct</strong>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="hero-floating-card">
-
-          <span class="floating-icon">
-            ✓
-          </span>
-
-          <div>
-
-            <strong>
-              Protected Marketplace
-            </strong>
-
-            <small>
-              Built around trusted communication
-            </small>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ================= TRUST BAR ================= -->
-
-    <section class="trust-section">
-
-      <p>
-        Everything you need to work professionally online
-      </p>
-
-      <div class="trust-items">
-
-        <span>✓ Professional Profiles</span>
-
-        <span>✓ Real Project Listings</span>
-
-        <span>✓ Protected Communication</span>
-
-        <span>✓ Clear Work Relationships</span>
-
-      </div>
-
-    </section>
-
-
-    <!-- ================= VALUE PROPOSITION ================= -->
-
-    <section class="path-section">
-
-      <div class="section-heading">
-
-        <span class="section-label">
-          THE SOCIALWORKBD WAY
-        </span>
-
-        <h2>
-          One marketplace. Two ways to grow.
-        </h2>
-
-        <p>
-          Find meaningful freelance work or connect with skilled people
-          who can help move your project forward.
-        </p>
-
-      </div>
-
-
-      <div class="path-grid">
-
-
-        <!-- Freelancer -->
-
-        <a href="tasks.html" class="path-card freelancer-path">
-
-          <div class="path-icon">
-            WORK
-          </div>
-
-          <div class="path-content">
-
-            <span class="path-tag">
-              FOR FREELANCERS
-            </span>
-
-            <h3>
-              Find Work
-            </h3>
-
-            <p>
-              Discover projects that match your skills, create strong
-              proposals, communicate professionally, and grow your
-              freelance reputation.
-            </p>
-
-            <strong>
-              Explore Opportunities →
-            </strong>
-
-          </div>
-
-        </a>
-
-
-        <!-- Client -->
-
-        <a href="post-job.html" class="path-card client-path">
-
-          <div class="path-icon">
-            HIRE
-          </div>
-
-          <div class="path-content">
-
-            <span class="path-tag">
-              FOR CLIENTS
-            </span>
-
-            <h3>
-              Hire Talent
-            </h3>
-
-            <p>
-              Describe your project, attract skilled freelancers,
-              compare proposals, and find the right person for the work.
-            </p>
-
-            <strong>
-              Start a Project →
-            </strong>
-
-          </div>
-
-        </a>
-
-      </div>
-
-    </section>
-
-
-    <!-- ================= WHY SOCIALWORKBD ================= -->
-
-    <section class="categories-section">
-
-      <div class="section-heading inline-heading">
-
-        <div>
-
-          <span class="section-label">
-            WHY SOCIALWORKBD
-          </span>
-
-          <h2>
-            Designed for professional collaboration
-          </h2>
-
-        </div>
-
-      </div>
-
-
-      <div class="category-grid">
-
-
-        <a href="profile.html" class="category-card">
-
-          <span class="category-icon">
-            PROFILE
-          </span>
-
-          <h3>
-            Professional Identity
-          </h3>
-
-          <p>
-            Build a profile that clearly presents your skills and experience.
-          </p>
-
-        </a>
-
-
-        <a href="tasks.html" class="category-card">
-
-          <span class="category-icon">
-            PROJECTS
-          </span>
-
-          <h3>
-            Real Opportunities
-          </h3>
-
-          <p>
-            Discover client-posted projects instead of browsing generic listings.
-          </p>
-
-        </a>
-
-
-        <a href="messages.html" class="category-card">
-
-          <span class="category-icon">
-            CHAT
-          </span>
-
-          <h3>
-            Protected Communication
-          </h3>
-
-          <p>
-            Keep project communication inside the marketplace.
-          </p>
-
-        </a>
-
-
-        <a href="support.html" class="category-card">
-
-          <span class="category-icon">
-            TRUST
-          </span>
-
-          <h3>
-            Platform Protection
-          </h3>
-
-          <p>
-            Reporting, moderation, account controls, and review requests help
-            protect the marketplace.
-          </p>
-
-        </a>
-
-
-        <a href="tasks.html?category=web-development" class="category-card">
-
-          <span class="category-icon">
-            DEV
-          </span>
-
-          <h3>
-            Web & Technology
-          </h3>
-
-          <p>
-            Websites, software, apps, development, and technical projects.
-          </p>
-
-        </a>
-
-
-        <a href="tasks.html?category=design" class="category-card">
-
-          <span class="category-icon">
-            DESIGN
-          </span>
-
-          <h3>
-            Creative Services
-          </h3>
-
-          <p>
-            Design, content, marketing, video, and other creative services.
-          </p>
-
-        </a>
-
-      </div>
-
-    </section>
-
-
-    <!-- ================= RECENT JOBS ================= -->
-
-    <section class="jobs-section" id="jobs-section">
-
-      <div class="section-heading inline-heading">
-
-        <div>
-
-          <span class="section-label">
-            LIVE MARKETPLACE
-          </span>
-
-          <h2>
-            Latest freelance jobs
-          </h2>
-
-          <p>
-            Browse opportunities posted by clients on SocialWorkBD.
-          </p>
-
-        </div>
-
-        <a href="tasks.html" class="view-all-link">
-          Browse All Jobs →
-        </a>
-
-      </div>
-
-
-      <div id="job-list" class="job-list">
-
-        <!--
-          Firebase jobs will automatically appear here.
-          Do not add fake jobs.
-        -->
-
-        <div class="empty-jobs">
-
-          <div class="empty-jobs-icon">
-            JOBS
-          </div>
-
-          <h3>
-            Your next opportunity starts here
-          </h3>
-
-          <p>
-            New client projects will appear here as they are posted.
-            Browse all available jobs to explore current opportunities.
-          </p>
-
-          <a href="tasks.html">
-            Explore Available Jobs
-          </a>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ================= HOW IT WORKS ================= -->
-
-    <section class="how-section">
-
-      <div class="section-heading">
-
-        <span class="section-label">
-          HOW IT WORKS
-        </span>
-
-        <h2>
-          From opportunity to completed work
-        </h2>
-
-        <p>
-          A simple workflow for freelancers and clients.
-        </p>
-
-      </div>
-
-
-      <div class="steps-grid">
-
-
-        <div class="step-card">
-
-          <div class="step-number">
-            01
-          </div>
-
-          <div class="step-icon">
-            PROFILE
-          </div>
-
-          <h3>
-            Build your profile
-          </h3>
-
-          <p>
-            Create a professional profile that highlights your skills,
-            experience, and capabilities.
-          </p>
-
-        </div>
-
-
-        <div class="step-card">
-
-          <div class="step-number">
-            02
-          </div>
-
-          <div class="step-icon">
-            SEARCH
-          </div>
-
-          <h3>
-            Find the right project
-          </h3>
-
-          <p>
-            Explore projects based on skills, categories, requirements,
-            budget, and delivery expectations.
-          </p>
-
-        </div>
-
-
-        <div class="step-card">
-
-          <div class="step-number">
-            03
-          </div>
-
-          <div class="step-icon">
-            WORK
-          </div>
-
-          <h3>
-            Propose, collaborate & deliver
-          </h3>
-
-          <p>
-            Submit a proposal, communicate through the platform,
-            complete the work, and build your professional reputation.
-          </p>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ================= PLATFORM PROTECTION ================= -->
-
-    <section class="cta-section">
-
-      <div class="cta-content">
-
-        <span class="section-label">
-          BUILT FOR TRUST
-        </span>
-
-        <h2>
-          Work with confidence.
-        </h2>
-
-        <p>
-          SocialWorkBD is designed to keep professional work, communication,
-          and account activity connected within one marketplace.
-        </p>
-
-
-        <div class="cta-actions">
-
-          <a href="signup.html" class="cta-primary">
-            Create a Free Account
-          </a>
-
-          <a href="support.html" class="cta-secondary">
-            Learn About Platform Protection
-          </a>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-  </main>
-
-
-  <!-- ================= FOOTER ================= -->
-
-  <footer class="app-footer">
-
-    <div class="footer-main">
-
-
-      <div class="footer-brand">
-
-        <a href="index.html" class="footer-logo">
-          SocialWork<span>BD</span>
-        </a>
-
-        <p>
-          A professional freelance marketplace connecting clients
-          and freelancers through trusted project-based work.
-        </p>
-
-      </div>
-
-
-      <div class="footer-column">
-
-        <h4>
-          For Freelancers
-        </h4>
-
-        <a href="tasks.html">
-          Find Work
-        </a>
-
-        <a href="profile.html">
-          My Profile
-        </a>
-
-        <a href="tasks.html">
-          Browse Jobs
-        </a>
-
-        <a href="messages.html">
-          Messages
-        </a>
-
-      </div>
-
-
-      <div class="footer-column">
-
-        <h4>
-          For Clients
-        </h4>
-
-        <a href="post-job.html">
-          Post a Job
-        </a>
-
-        <a href="tasks.html">
-          Find Talent
-        </a>
-
-        <a href="messages.html">
-          Messages
-        </a>
-
-        <a href="support.html">
-          Help Center
-        </a>
-
-      </div>
-
-
-      <div class="footer-column">
-
-        <h4>
-          SocialWorkBD
-        </h4>
-
-        <a href="profile.html">
-          My Account
-        </a>
-
-        <a href="support.html">
-          Contact Support
-        </a>
-
-        <a href="support.html">
-          Account Review
-        </a>
-
-        <a href="terms.html">
-          Terms
-        </a>
-
-        <a href="privacy.html">
-          Privacy
-        </a>
-
-      </div>
-
-    </div>
-
-
-    <div class="footer-bottom">
-
-      <span>
-        © 2026 SocialWorkBD. All rights reserved.
-      </span>
-
-      <span>
-        Professional work. Trusted connections.
-      </span>
-
-    </div>
-
-  </footer>
-
-
-  <!-- ================= MOBILE NAV ================= -->
-
-  <nav class="bottom-nav" aria-label="Mobile navigation">
-
-    <a href="index.html" class="bottom-item active">
-
-      <span>
-        Home
-      </span>
-
-      <small>
-        Home
-      </small>
-
+    <a href="tasks.html">
+      Find Work
     </a>
 
-
-    <a href="tasks.html" class="bottom-item">
-
-      <span>
-        Work
-      </span>
-
-      <small>
-        Find Work
-      </small>
-
+    <a href="post-job.html">
+      Find Talent
     </a>
 
-
-    <a href="post-job.html" class="bottom-item">
-
-      <span>
-        Post
-      </span>
-
-      <small>
-        Post Job
-      </small>
-
+    <a href="tasks.html">
+      Browse Jobs
     </a>
 
-
-    <a href="profile.html" class="bottom-item">
-
-      <span>
-        Profile
-      </span>
-
-      <small>
-        Profile
-      </small>
-
-    </a>
-
-
-    <a href="support.html" class="bottom-item">
-
-      <span>
-        Help
-      </span>
-
-      <small>
-        Help
-      </small>
-
+    <a href="support.html">
+      Help
     </a>
 
   </nav>
 
+  <div class="header-actions">
 
-  <!-- ================= FIREBASE ================= -->
+    <button
+      class="notification-btn"
+      id="notification-btn"
+      type="button"
+      aria-label="Notifications"
+    >
+      🔔
+      <span class="notification-count">0</span>
+    </button>
 
-  <script src="firebase-config.js"></script>
+    <a href="login.html" class="login-btn">
+      Log In
+    </a>
 
-  <script src="app.js"></script>
+    <a href="signup.html" class="signup-btn">
+      Sign Up
+    </a>
 
-</body>
+    <a
+      href="profile.html"
+      class="profile-btn"
+      aria-label="Profile"
+    >
+      👤
+    </a>
+
+    <button
+      class="menu-btn"
+      id="mobile-menu-btn"
+      type="button"
+      aria-label="Menu"
+    >
+      ☰
+    </button>
+
+  </div>
+
+</div>
+
+  </header>  <main><!-- ================= HERO ================= -->
+
+<section class="hero">
+
+  <div class="wrap hero-inner">
+
+    <div>
+
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        Global freelance marketplace
+      </div>
+
+      <h1>
+        Great work starts with
+        <span>the right connection.</span>
+      </h1>
+
+      <p class="hero-description">
+        Find skilled freelancers for your next project or discover work
+        that matches your skills. SocialWorkBD brings clients and
+        independent professionals together in one simple marketplace.
+      </p>
+
+      <form
+        class="hero-search"
+        id="home-search-form"
+      >
+
+        <div class="hero-search-field">
+
+          <span class="hero-search-icon">⌕</span>
+
+          <input
+            type="search"
+            id="home-search"
+            name="search"
+            placeholder="Search jobs, skills, or projects..."
+            autocomplete="off"
+          >
+
+        </div>
+
+        <button type="submit">
+          Search
+        </button>
+
+      </form>
+
+      <div class="popular">
+
+        <span>Popular:</span>
+
+        <a href="tasks.html?skill=web-development">
+          Web Development
+        </a>
+
+        <a href="tasks.html?skill=graphic-design">
+          Graphic Design
+        </a>
+
+        <a href="tasks.html?skill=writing">
+          Writing
+        </a>
+
+        <a href="tasks.html?skill=digital-marketing">
+          Digital Marketing
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- ================= HERO SHOWCASE ================= -->
+
+    <div class="hero-showcase">
+
+      <div class="showcase-card">
+
+        <div class="showcase-header">
+
+          <div class="showcase-label">
+            <span class="live-dot"></span>
+            Featured project
+          </div>
+
+          <span class="showcase-status">
+            Open
+          </span>
+
+        </div>
+
+        <h2 class="project-title">
+          Build a modern business website
+        </h2>
+
+        <p class="project-description">
+          Looking for a skilled developer to create a responsive,
+          professional website for a growing business.
+        </p>
+
+        <div class="project-tags">
+
+          <span class="project-tag">
+            Web Development
+          </span>
+
+          <span class="project-tag">
+            UI/UX
+          </span>
+
+          <span class="project-tag">
+            Responsive Design
+          </span>
+
+        </div>
+
+        <div class="project-footer">
+
+          <div class="project-meta">
+            <small>Project budget</small>
+            <strong>$800 – $1,500</strong>
+          </div>
+
+          <div class="project-meta">
+            <small>Project type</small>
+            <strong>Fixed price</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="showcase-profile">
+
+        <div class="profile-mini">
+
+          <div class="avatar">
+            SW
+          </div>
+
+          <div>
+            <strong>Skilled professionals</strong>
+            <span>Ready to work remotely</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= TRUST ================= -->
+
+<section class="trust">
+
+  <div class="wrap trust-inner">
+
+    <span class="trust-label">
+      Everything you need to get work moving
+    </span>
+
+    <div class="trust-items">
+
+      <span class="trust-item">
+        <span class="trust-check">✓</span>
+        Professional profiles
+      </span>
+
+      <span class="trust-item">
+        <span class="trust-check">✓</span>
+        Project discovery
+      </span>
+
+      <span class="trust-item">
+        <span class="trust-check">✓</span>
+        Direct communication
+      </span>
+
+      <span class="trust-item">
+        <span class="trust-check">✓</span>
+        Simple workflow
+      </span>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= PATH ================= -->
+
+<section class="section">
+
+  <div class="wrap">
+
+    <div class="section-heading">
+
+      <div>
+
+        <h2>
+          How do you want to use SocialWorkBD?
+        </h2>
+
+        <p>
+          Choose your path and get started with the tools you need.
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="path-grid">
+
+      <a
+        href="tasks.html"
+        class="path-card freelancer-card"
+      >
+
+        <div>
+
+          <div class="path-icon">
+            💼
+          </div>
+
+          <span class="path-label">
+            For freelancers
+          </span>
+
+          <h3>
+            Find meaningful work
+          </h3>
+
+          <p>
+            Discover projects that match your skills, explore
+            opportunities, and build your professional reputation.
+          </p>
+
+        </div>
+
+        <div class="path-action">
+          Explore available jobs →
+        </div>
+
+      </a>
+
+      <a
+        href="post-job.html"
+        class="path-card client-card"
+      >
+
+        <div>
+
+          <div class="path-icon">
+            👥
+          </div>
+
+          <span class="path-label">
+            For clients
+          </span>
+
+          <h3>
+            Hire the right talent
+          </h3>
+
+          <p>
+            Post your project, define your requirements, and connect
+            with freelancers who can help you get the work done.
+          </p>
+
+        </div>
+
+        <div class="path-action">
+          Post your project →
+        </div>
+
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= CATEGORIES ================= -->
+
+<section class="section">
+
+  <div class="wrap">
+
+    <div class="section-heading">
+
+      <div>
+
+        <h2>
+          Explore work by category
+        </h2>
+
+        <p>
+          Find projects across popular freelance and digital service categories.
+        </p>
+
+      </div>
+
+      <a
+        href="tasks.html"
+        class="view-link"
+      >
+        View all jobs →
+      </a>
+
+    </div>
+
+    <div class="category-grid">
+
+      <a
+        href="tasks.html?category=web-development"
+        class="category"
+      >
+
+        <div class="category-icon">
+          💻
+        </div>
+
+        <h3>
+          Web Development
+        </h3>
+
+        <p>
+          Websites, apps & software
+        </p>
+
+      </a>
+
+      <a
+        href="tasks.html?category=design"
+        class="category"
+      >
+
+        <div class="category-icon">
+          🎨
+        </div>
+
+        <h3>
+          Design & Creative
+        </h3>
+
+        <p>
+          Graphics, UI/UX & branding
+        </p>
+
+      </a>
+
+      <a
+        href="tasks.html?category=writing"
+        class="category"
+      >
+
+        <div class="category-icon">
+          ✍️
+        </div>
+
+        <h3>
+          Writing & Content
+        </h3>
+
+        <p>
+          Articles, copy & editing
+        </p>
+
+      </a>
+
+      <a
+        href="tasks.html?category=marketing"
+        class="category"
+      >
+
+        <div class="category-icon">
+          📈
+        </div>
+
+        <h3>
+          Sales & Marketing
+        </h3>
+
+        <p>
+          SEO, marketing & social media
+        </p>
+
+      </a>
+
+      <a
+        href="tasks.html?category=virtual-assistance"
+        class="category"
+      >
+
+        <div class="category-icon">
+          🗂️
+        </div>
+
+        <h3>
+          Admin & Support
+        </h3>
+
+        <p>
+          Virtual assistance & business support
+        </p>
+
+      </a>
+
+      <a
+        href="tasks.html?category=video"
+        class="category"
+      >
+
+        <div class="category-icon">
+          🎬
+        </div>
+
+        <h3>
+          Video & Animation
+        </h3>
+
+        <p>
+          Editing, motion & animation
+        </p>
+
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= LATEST JOBS ================= -->
+
+<section
+  class="section jobs-section"
+  id="jobs-section"
+>
+
+  <div class="wrap">
+
+    <div class="section-heading">
+
+      <div>
+
+        <h2>
+          Latest opportunities
+        </h2>
+
+        <p>
+          Explore the newest projects posted by clients.
+        </p>
+
+      </div>
+
+      <a
+        href="tasks.html"
+        class="view-link"
+      >
+        Browse all jobs →
+      </a>
+
+    </div>
+
+    <div
+      id="job-list"
+      class="job-list"
+    >
+
+      <div class="empty-jobs">
+
+        <div class="empty-jobs-icon">
+          🔎
+        </div>
+
+        <h3>
+          Your next opportunity could be here
+        </h3>
+
+        <p>
+          New projects will appear here as clients post them.
+        </p>
+
+        <a href="tasks.html">
+          Explore jobs
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+
+<section class="section">
+
+  <div class="wrap">
+
+    <div class="section-heading">
+
+      <div>
+
+        <h2>
+          A simple way to get work done
+        </h2>
+
+        <p>
+          From discovering an opportunity to completing a project,
+          keep everything organized in one place.
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="steps">
+
+      <div class="step">
+
+        <span class="step-number">
+          Step 01
+        </span>
+
+        <h3>
+          Create your profile
+        </h3>
+
+        <p>
+          Showcase your skills, experience, and professional strengths
+          so clients can understand what you offer.
+        </p>
+
+      </div>
+
+      <div class="step">
+
+        <span class="step-number">
+          Step 02
+        </span>
+
+        <h3>
+          Find or post a project
+        </h3>
+
+        <p>
+          Freelancers can discover suitable jobs while clients can
+          publish projects with their requirements and budget.
+        </p>
+
+      </div>
+
+      <div class="step">
+
+        <span class="step-number">
+          Step 03
+        </span>
+
+        <h3>
+          Work and deliver
+        </h3>
+
+        <p>
+          Communicate clearly, complete the agreed work, and build
+          a stronger professional track record.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= CTA ================= -->
+
+<section class="cta">
+
+  <div class="wrap">
+
+    <div class="cta-box">
+
+      <div>
+
+        <h2>
+          Ready to make your next move?
+        </h2>
+
+        <p>
+          Join SocialWorkBD to discover freelance opportunities or
+          connect with professionals for your next project.
+        </p>
+
+      </div>
+
+      <div class="cta-actions">
+
+        <a
+          href="signup.html"
+          class="cta-primary"
+        >
+          Create free account
+        </a>
+
+        <a
+          href="tasks.html"
+          class="cta-secondary"
+        >
+          Explore jobs
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+  </main>  <!-- ================= FOOTER ================= -->  <footer class="footer"><div class="wrap">
+
+  <div class="footer-grid">
+
+    <div class="footer-brand">
+
+      <a
+        href="index.html"
+        class="footer-brand-name"
+      >
+        SocialWork<span>BD</span>
+      </a>
+
+      <p class="footer-description">
+        A global freelance marketplace connecting clients and
+        independent professionals to get meaningful work done.
+      </p>
+
+    </div>
+
+    <div class="footer-column">
+
+      <h4>
+        For Freelancers
+      </h4>
+
+      <a href="tasks.html">
+        Find Work
+      </a>
+
+      <a href="profile.html">
+        My Profile
+      </a>
+
+      <a href="tasks.html">
+        Browse Jobs
+      </a>
+
+      <a href="support.html">
+        Support
+      </a>
+
+    </div>
+
+    <div class="footer-column">
+
+      <h4>
+        For Clients
+      </h4>
+
+      <a href="post-job.html">
+        Post a Job
+      </a>
+
+      <a href="tasks.html">
+        Find Talent
+      </a>
+
+      <a href="support.html">
+        Help Center
+      </a>
+
+    </div>
+
+    <div class="footer-column">
+
+      <h4>
+        SocialWorkBD
+      </h4>
+
+      <a href="profile.html">
+        My Account
+      </a>
+
+      <a href="support.html">
+        Contact Support
+      </a>
+
+      <a href="terms.html">
+        Terms
+      </a>
+
+      <a href="privacy.html">
+        Privacy
+      </a>
+
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+
+    <span>
+      © 2026 SocialWorkBD. All rights reserved.
+    </span>
+
+    <span>
+      Built for independent professionals and modern businesses.
+    </span>
+
+  </div>
+
+</div>
+
+  </footer>  <!-- ================= MOBILE NAV ================= -->  <nav
+    class="mobile-nav"
+    aria-label="Mobile navigation"
+  ><a
+  href="index.html"
+  class="active"
+>
+  <span>⌂</span>
+  <small>Home</small>
+</a>
+
+<a href="tasks.html">
+  <span>⌕</span>
+  <small>Find Work</small>
+</a>
+
+<a href="post-job.html">
+  <span>＋</span>
+  <small>Post Job</small>
+</a>
+
+<a href="profile.html">
+  <span>♙</span>
+  <small>Profile</small>
+</a>
+
+<a href="support.html">
+  <span>☰</span>
+  <small>Help</small>
+</a>
+
+  </nav>  <!-- ================= FIREBASE ================= -->  <script src="firebase-config.js"></script>  <script src="app.js"></script>  <!-- ================= HOME SEARCH ================= -->  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const searchForm = document.getElementById("home-search-form");
+      const searchInput = document.getElementById("home-search");
+
+      if (searchForm && searchInput) {
+
+        searchForm.addEventListener("submit", function (event) {
+
+          event.preventDefault();
+
+          const query = searchInput.value.trim();
+
+          if (query) {
+            window.location.href =
+              "tasks.html?search=" +
+              encodeURIComponent(query);
+          } else {
+            window.location.href = "tasks.html";
+          }
+
+        });
+
+      }
+
+    });
+  </script></body>
 </html>
