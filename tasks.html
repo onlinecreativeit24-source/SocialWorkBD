@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,7 +42,7 @@
     }
 
     .topbar {
-      background: #ffffff;
+      background: #fff;
       border-bottom: 1px solid #e5e7eb;
       position: sticky;
       top: 0;
@@ -56,6 +57,7 @@
       display: flex;
       align-items: center;
       gap: 28px;
+      position: relative;
     }
 
     .logo {
@@ -97,13 +99,12 @@
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      transition: 0.2s ease;
+      transition: .2s ease;
     }
 
     .login-btn {
       border: 1px solid #d1d5db;
-      background: #ffffff;
-      color: #17202a;
+      background: #fff;
     }
 
     .login-btn:hover {
@@ -113,7 +114,7 @@
     .signup-btn {
       border: 1px solid #14a800;
       background: #14a800;
-      color: #ffffff;
+      color: #fff;
     }
 
     .signup-btn:hover {
@@ -123,11 +124,11 @@
     .post-job-btn {
       border: 1px solid #17202a;
       background: #17202a;
-      color: #ffffff;
+      color: #fff;
     }
 
     .post-job-btn:hover {
-      background: #000000;
+      background: #000;
     }
 
     .mobile-menu {
@@ -140,7 +141,7 @@
     }
 
     .hero {
-      background: #ffffff;
+      background: #fff;
       border-bottom: 1px solid #e5e7eb;
       padding: 48px 20px 42px;
     }
@@ -156,7 +157,6 @@
       font-size: clamp(32px, 5vw, 48px);
       line-height: 1.1;
       letter-spacing: -1.2px;
-      color: #17202a;
     }
 
     .hero p {
@@ -171,11 +171,11 @@
       max-width: 900px;
       margin: auto;
       display: flex;
-      background: #ffffff;
+      background: #fff;
       border: 1px solid #bfc5cc;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, .07);
     }
 
     .search-box input {
@@ -185,13 +185,12 @@
       outline: 0;
       padding: 17px 18px;
       font-size: 15px;
-      color: #17202a;
     }
 
     .search-box button {
       border: 0;
       background: #14a800;
-      color: #ffffff;
+      color: #fff;
       padding: 0 28px;
       font-weight: 700;
       cursor: pointer;
@@ -203,7 +202,7 @@
 
     .main {
       max-width: 1240px;
-      margin: 0 auto;
+      margin: auto;
       padding: 30px 22px 60px;
     }
 
@@ -235,10 +234,10 @@
 
     .sort-box select {
       border: 1px solid #d1d5db;
-      background: #ffffff;
+      background: #fff;
       border-radius: 7px;
       padding: 10px 12px;
-      outline: none;
+      outline: 0;
     }
 
     .content-grid {
@@ -249,7 +248,7 @@
     }
 
     .filters {
-      background: #ffffff;
+      background: #fff;
       border: 1px solid #e1e4e8;
       border-radius: 10px;
       padding: 20px;
@@ -284,9 +283,9 @@
       width: 100%;
       border: 1px solid #d1d5db;
       border-radius: 7px;
-      background: #ffffff;
+      background: #fff;
       padding: 10px;
-      outline: none;
+      outline: 0;
     }
 
     .budget-row {
@@ -314,12 +313,12 @@
     .apply-filter {
       border: 1px solid #14a800;
       background: #14a800;
-      color: #ffffff;
+      color: #fff;
     }
 
     .clear-filter {
       border: 1px solid #d1d5db;
-      background: #ffffff;
+      background: #fff;
       color: #374151;
     }
 
@@ -330,16 +329,16 @@
     }
 
     .job-card {
-      background: #ffffff;
+      background: #fff;
       border: 1px solid #e1e4e8;
       border-radius: 10px;
       padding: 22px;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: .2s ease;
     }
 
     .job-card:hover {
       border-color: #b9c1c9;
-      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 5px 18px rgba(0, 0, 0, .06);
     }
 
     .job-top {
@@ -353,7 +352,6 @@
       margin: 0;
       font-size: 19px;
       line-height: 1.35;
-      color: #17202a;
     }
 
     .job-title a:hover {
@@ -364,7 +362,6 @@
       white-space: nowrap;
       font-size: 17px;
       font-weight: 800;
-      color: #17202a;
     }
 
     .job-description {
@@ -381,12 +378,6 @@
       color: #59636e;
       font-size: 13px;
       margin-bottom: 15px;
-    }
-
-    .job-meta span {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
     }
 
     .skills {
@@ -425,7 +416,7 @@
       justify-content: center;
       border: 1px solid #14a800;
       color: #108900;
-      background: #ffffff;
+      background: #fff;
       border-radius: 7px;
       padding: 9px 15px;
       font-size: 13px;
@@ -434,22 +425,18 @@
 
     .view-job:hover {
       background: #14a800;
-      color: #ffffff;
+      color: #fff;
     }
 
     .loading,
     .empty-state,
     .error-state {
-      background: #ffffff;
+      background: #fff;
       border: 1px solid #e1e4e8;
       border-radius: 10px;
       padding: 45px 25px;
       text-align: center;
       color: #68717b;
-    }
-
-    .loading {
-      font-size: 15px;
     }
 
     .empty-state h3,
@@ -467,7 +454,7 @@
     .empty-state a {
       display: inline-block;
       background: #14a800;
-      color: #ffffff;
+      color: #fff;
       padding: 10px 17px;
       border-radius: 7px;
       font-size: 14px;
@@ -476,7 +463,7 @@
 
     .how-section {
       margin-top: 55px;
-      background: #ffffff;
+      background: #fff;
       border: 1px solid #e1e4e8;
       border-radius: 12px;
       padding: 35px 25px;
@@ -503,7 +490,7 @@
       height: 40px;
       border-radius: 50%;
       background: #14a800;
-      color: #ffffff;
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -542,7 +529,7 @@
     .footer-brand {
       font-size: 20px;
       font-weight: 800;
-      color: #ffffff;
+      color: #fff;
     }
 
     .footer-text {
@@ -562,11 +549,8 @@
       font-size: 13px;
     }
 
-    .footer-links a:hover {
-      color: #ffffff;
-    }
-
     @media (max-width: 900px) {
+
       .nav-links {
         display: none;
       }
@@ -589,6 +573,7 @@
     }
 
     @media (max-width: 640px) {
+
       .nav {
         padding: 0 15px;
       }
@@ -679,7 +664,7 @@
 
       <a href="index.html" class="logo">SocialWorkBD</a>
 
-      <div class="nav-links">
+      <div class="nav-links" id="nav-links">
         <a href="tasks.html" class="active">Find Work</a>
         <a href="find-talent.html">Find Talent</a>
         <a href="post-job.html">Post a Job</a>
@@ -692,7 +677,13 @@
         <a href="post-job.html" class="post-job-btn">Post a Job</a>
       </div>
 
-      <button class="mobile-menu" type="button" aria-label="Open menu">
+      <button
+        class="mobile-menu"
+        id="mobile-menu"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
         ☰
       </button>
 
@@ -718,7 +709,9 @@
           autocomplete="off"
         >
 
-        <button type="submit">Search Jobs</button>
+        <button type="submit">
+          Search Jobs
+        </button>
 
       </form>
 
@@ -731,21 +724,41 @@
     <div class="toolbar">
 
       <div class="toolbar-left">
+
         <h2>Latest Jobs</h2>
+
         <div class="result-count" id="result-count">
           Loading jobs...
         </div>
+
       </div>
 
       <div class="sort-box">
-        <label for="sort-jobs">Sort:</label>
+
+        <label for="sort-jobs">
+          Sort:
+        </label>
 
         <select id="sort-jobs">
-          <option value="newest">Newest</option>
-          <option value="budget-high">Highest Budget</option>
-          <option value="budget-low">Lowest Budget</option>
-          <option value="proposals-low">Fewest Proposals</option>
+
+          <option value="newest">
+            Newest
+          </option>
+
+          <option value="budget-high">
+            Highest Budget
+          </option>
+
+          <option value="budget-low">
+            Lowest Budget
+          </option>
+
+          <option value="proposals-low">
+            Fewest Proposals
+          </option>
+
         </select>
+
       </div>
 
     </div>
@@ -758,20 +771,51 @@
 
         <div class="filter-group">
 
-          <label class="title" for="category-filter">
+          <label
+            class="title"
+            for="category-filter"
+          >
             Category
           </label>
 
           <select id="category-filter">
-            <option value="">All Categories</option>
-            <option value="Development & IT">Development & IT</option>
-            <option value="Design & Creative">Design & Creative</option>
-            <option value="Writing & Translation">Writing & Translation</option>
-            <option value="Sales & Marketing">Sales & Marketing</option>
-            <option value="Admin & Customer Support">Admin & Customer Support</option>
-            <option value="Finance & Accounting">Finance & Accounting</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Other">Other</option>
+
+            <option value="">
+              All Categories
+            </option>
+
+            <option value="Development & IT">
+              Development & IT
+            </option>
+
+            <option value="Design & Creative">
+              Design & Creative
+            </option>
+
+            <option value="Writing & Translation">
+              Writing & Translation
+            </option>
+
+            <option value="Sales & Marketing">
+              Sales & Marketing
+            </option>
+
+            <option value="Admin & Customer Support">
+              Admin & Customer Support
+            </option>
+
+            <option value="Finance & Accounting">
+              Finance & Accounting
+            </option>
+
+            <option value="Engineering">
+              Engineering
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
           </select>
 
         </div>
@@ -804,16 +848,35 @@
 
         <div class="filter-group">
 
-          <label class="title" for="delivery-filter">
+          <label
+            class="title"
+            for="delivery-filter"
+          >
             Delivery Time
           </label>
 
           <select id="delivery-filter">
-            <option value="">Any delivery time</option>
-            <option value="3">Up to 3 days</option>
-            <option value="7">Up to 7 days</option>
-            <option value="14">Up to 14 days</option>
-            <option value="30">Up to 30 days</option>
+
+            <option value="">
+              Any delivery time
+            </option>
+
+            <option value="3">
+              Up to 3 days
+            </option>
+
+            <option value="7">
+              Up to 7 days
+            </option>
+
+            <option value="14">
+              Up to 14 days
+            </option>
+
+            <option value="30">
+              Up to 30 days
+            </option>
+
           </select>
 
         </div>
@@ -842,7 +905,10 @@
 
       <section>
 
-        <div id="jobs-list" class="jobs-list">
+        <div
+          id="jobs-list"
+          class="jobs-list"
+        >
 
           <div class="loading">
             Loading available jobs...
@@ -856,13 +922,19 @@
 
     <section class="how-section">
 
-      <h2>How SocialWorkBD Works</h2>
+      <h2>
+        How SocialWorkBD Works
+      </h2>
 
       <div class="steps">
 
         <div class="step">
           <div class="step-number">1</div>
-          <h3>Create Your Profile</h3>
+
+          <h3>
+            Create Your Profile
+          </h3>
+
           <p>
             Showcase your skills, experience and professional information.
           </p>
@@ -870,7 +942,11 @@
 
         <div class="step">
           <div class="step-number">2</div>
-          <h3>Find a Job</h3>
+
+          <h3>
+            Find a Job
+          </h3>
+
           <p>
             Search and filter jobs that match your skills and interests.
           </p>
@@ -878,7 +954,11 @@
 
         <div class="step">
           <div class="step-number">3</div>
-          <h3>Submit a Proposal</h3>
+
+          <h3>
+            Submit a Proposal
+          </h3>
+
           <p>
             Tell the client why you are the right person for the project.
           </p>
@@ -886,7 +966,11 @@
 
         <div class="step">
           <div class="step-number">4</div>
-          <h3>Complete the Work</h3>
+
+          <h3>
+            Complete the Work
+          </h3>
+
           <p>
             Work with your client and deliver the agreed project.
           </p>
@@ -894,7 +978,11 @@
 
         <div class="step">
           <div class="step-number">5</div>
-          <h3>Get Paid</h3>
+
+          <h3>
+            Get Paid
+          </h3>
+
           <p>
             Receive payment after successful completion and approval.
           </p>
@@ -911,18 +999,39 @@
     <div class="footer-inner">
 
       <div>
-        <div class="footer-brand">SocialWorkBD</div>
+
+        <div class="footer-brand">
+          SocialWorkBD
+        </div>
+
         <div class="footer-text">
           Global Freelance Marketplace
         </div>
+
       </div>
 
       <div class="footer-links">
-        <a href="index.html">Home</a>
-        <a href="tasks.html">Find Work</a>
-        <a href="find-talent.html">Find Talent</a>
-        <a href="post-job.html">Post a Job</a>
-        <a href="profile.html">Profile</a>
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="tasks.html">
+          Find Work
+        </a>
+
+        <a href="find-talent.html">
+          Find Talent
+        </a>
+
+        <a href="post-job.html">
+          Post a Job
+        </a>
+
+        <a href="profile.html">
+          Profile
+        </a>
+
       </div>
 
     </div>
@@ -932,11 +1041,11 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
   <script src="firebase-config.js"></script>
 
   <script>
+
     (function () {
 
       "use strict";
@@ -944,24 +1053,52 @@
       let allJobs = [];
       let filteredJobs = [];
 
-      const jobsList = document.getElementById("jobs-list");
-      const resultCount = document.getElementById("result-count");
+      const jobsList =
+        document.getElementById("jobs-list");
 
-      const searchForm = document.getElementById("job-search-form");
-      const searchInput = document.getElementById("job-search");
+      const resultCount =
+        document.getElementById("result-count");
 
-      const categoryFilter = document.getElementById("category-filter");
-      const minBudget = document.getElementById("min-budget");
-      const maxBudget = document.getElementById("max-budget");
-      const deliveryFilter = document.getElementById("delivery-filter");
+      const searchForm =
+        document.getElementById("job-search-form");
 
-      const applyFilter = document.getElementById("apply-filter");
-      const clearFilter = document.getElementById("clear-filter");
-      const sortJobs = document.getElementById("sort-jobs");
+      const searchInput =
+        document.getElementById("job-search");
+
+      const categoryFilter =
+        document.getElementById("category-filter");
+
+      const minBudget =
+        document.getElementById("min-budget");
+
+      const maxBudget =
+        document.getElementById("max-budget");
+
+      const deliveryFilter =
+        document.getElementById("delivery-filter");
+
+      const applyFilter =
+        document.getElementById("apply-filter");
+
+      const clearFilter =
+        document.getElementById("clear-filter");
+
+      const sortJobs =
+        document.getElementById("sort-jobs");
+
+      const mobileMenu =
+        document.getElementById("mobile-menu");
+
+      const navLinks =
+        document.getElementById("nav-links");
+
 
       function escapeHtml(value) {
 
-        if (value === null || value === undefined) {
+        if (
+          value === null ||
+          value === undefined
+        ) {
           return "";
         }
 
@@ -971,7 +1108,9 @@
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#039;");
+
       }
+
 
       function getDateValue(timestamp) {
 
@@ -979,96 +1118,147 @@
           return 0;
         }
 
-        if (typeof timestamp.toMillis === "function") {
+        if (
+          typeof timestamp.toMillis === "function"
+        ) {
           return timestamp.toMillis();
         }
 
-        if (timestamp.seconds) {
+        if (
+          typeof timestamp.seconds === "number"
+        ) {
           return timestamp.seconds * 1000;
         }
 
-        const date = new Date(timestamp);
+        const date =
+          new Date(timestamp);
 
-        if (!Number.isNaN(date.getTime())) {
-          return date.getTime();
-        }
+        const time =
+          date.getTime();
 
-        return 0;
+        return Number.isNaN(time)
+          ? 0
+          : time;
+
       }
+
 
       function formatDate(timestamp) {
 
-        const value = getDateValue(timestamp);
+        const value =
+          getDateValue(timestamp);
 
         if (!value) {
           return "Recently";
         }
 
-        return new Intl.DateTimeFormat("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric"
-        }).format(new Date(value));
+        return new Intl.DateTimeFormat(
+          "en-US",
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+          }
+        ).format(
+          new Date(value)
+        );
+
       }
+
 
       function formatBudget(value) {
 
-        const amount = Number(value);
+        const amount =
+          Number(value);
 
         if (!Number.isFinite(amount)) {
           return "$0";
         }
 
-        return new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-          maximumFractionDigits: 2
-        }).format(amount);
+        return new Intl.NumberFormat(
+          "en-US",
+          {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: 2
+          }
+        ).format(amount);
+
       }
+
 
       function normalizeSkills(skills) {
 
         if (Array.isArray(skills)) {
+
           return skills
             .map(function (item) {
               return String(item).trim();
             })
             .filter(Boolean);
+
         }
 
         if (typeof skills === "string") {
+
           return skills
             .split(",")
             .map(function (item) {
               return item.trim();
             })
             .filter(Boolean);
+
         }
 
         return [];
+
       }
+
 
       function getSearchQuery() {
 
-        const params = new URLSearchParams(window.location.search);
+        const params =
+          new URLSearchParams(
+            window.location.search
+          );
 
-        return (params.get("search") || "").trim();
+        return (
+          params.get("search") || ""
+        ).trim();
 
       }
+
 
       function setSearchQuery(value) {
 
-        const url = new URL(window.location.href);
+        const url =
+          new URL(
+            window.location.href
+          );
 
         if (value) {
-          url.searchParams.set("search", value);
+
+          url.searchParams.set(
+            "search",
+            value
+          );
+
         } else {
-          url.searchParams.delete("search");
+
+          url.searchParams.delete(
+            "search"
+          );
+
         }
 
-        window.history.replaceState({}, "", url.toString());
+        window.history.replaceState(
+          {},
+          "",
+          url.toString()
+        );
 
       }
+
 
       function matchesSearch(job, query) {
 
@@ -1076,344 +1266,618 @@
           return true;
         }
 
-        const skills = normalizeSkills(job.skills).join(" ");
+        const skills =
+          normalizeSkills(
+            job.skills
+          ).join(" ");
 
         const searchable = [
+
           job.title || "",
           job.description || "",
           job.category || "",
           job.clientName || "",
+          job.ownerName || "",
           skills
+
         ]
           .join(" ")
           .toLowerCase();
 
-        const words = query
-          .toLowerCase()
-          .split(/\s+/)
-          .filter(Boolean);
+        const words =
+          query
+            .toLowerCase()
+            .split(/\s+/)
+            .filter(Boolean);
 
-        return words.every(function (word) {
-          return searchable.includes(word);
-        });
+        return words.every(
+          function (word) {
+
+            return searchable.includes(
+              word
+            );
+
+          }
+        );
+
       }
+
 
       function applyCurrentFilters() {
 
-        const query = searchInput.value.trim().toLowerCase();
-        const category = categoryFilter.value;
-        const min = Number(minBudget.value);
-        const max = Number(maxBudget.value);
-        const delivery = Number(deliveryFilter.value);
+        const query =
+          searchInput.value
+            .trim()
+            .toLowerCase();
 
-        filteredJobs = allJobs.filter(function (job) {
+        const category =
+          categoryFilter.value;
 
-          if (!matchesSearch(job, query)) {
-            return false;
-          }
+        const min =
+          Number(minBudget.value);
 
-          if (category && String(job.category || "") !== category) {
-            return false;
-          }
+        const max =
+          Number(maxBudget.value);
 
-          const budget = Number(job.budget) || 0;
+        const delivery =
+          Number(deliveryFilter.value);
 
-          if (minBudget.value !== "" && budget < min) {
-            return false;
-          }
 
-          if (maxBudget.value !== "" && budget > max) {
-            return false;
-          }
+        filteredJobs =
+          allJobs.filter(
+            function (job) {
 
-          if (deliveryFilter.value) {
+              if (
+                !matchesSearch(
+                  job,
+                  query
+                )
+              ) {
+                return false;
+              }
 
-            const days = Number(job.deliveryDays) || 0;
 
-            if (!days || days > delivery) {
-              return false;
+              if (
+                category &&
+                String(
+                  job.category || ""
+                ) !== category
+              ) {
+                return false;
+              }
+
+
+              const budget =
+                Number(job.budget) || 0;
+
+
+              if (
+                minBudget.value !== "" &&
+                budget < min
+              ) {
+                return false;
+              }
+
+
+              if (
+                maxBudget.value !== "" &&
+                budget > max
+              ) {
+                return false;
+              }
+
+
+              if (
+                deliveryFilter.value
+              ) {
+
+                const days =
+                  Number(
+                    job.deliveryDays
+                  ) || 0;
+
+                if (
+                  !days ||
+                  days > delivery
+                ) {
+                  return false;
+                }
+
+              }
+
+
+              return true;
+
             }
-          }
+          );
 
-          return true;
-
-        });
 
         sortCurrentJobs();
         renderJobs();
 
       }
 
+
       function sortCurrentJobs() {
 
-        const sortValue = sortJobs.value;
+        const sortValue =
+          sortJobs.value;
 
-        filteredJobs.sort(function (a, b) {
+        filteredJobs.sort(
+          function (a, b) {
 
-          if (sortValue === "budget-high") {
-            return (Number(b.budget) || 0) - (Number(a.budget) || 0);
+            if (
+              sortValue ===
+              "budget-high"
+            ) {
+
+              return (
+                (Number(b.budget) || 0) -
+                (Number(a.budget) || 0)
+              );
+
+            }
+
+
+            if (
+              sortValue ===
+              "budget-low"
+            ) {
+
+              return (
+                (Number(a.budget) || 0) -
+                (Number(b.budget) || 0)
+              );
+
+            }
+
+
+            if (
+              sortValue ===
+              "proposals-low"
+            ) {
+
+              return (
+                (Number(
+                  a.proposalCount
+                ) || 0) -
+                (Number(
+                  b.proposalCount
+                ) || 0)
+              );
+
+            }
+
+
+            return (
+              getDateValue(
+                b.createdAt
+              ) -
+              getDateValue(
+                a.createdAt
+              )
+            );
+
           }
-
-          if (sortValue === "budget-low") {
-            return (Number(a.budget) || 0) - (Number(b.budget) || 0);
-          }
-
-          if (sortValue === "proposals-low") {
-            return (Number(a.proposalCount) || 0) -
-              (Number(b.proposalCount) || 0);
-          }
-
-          return getDateValue(b.createdAt) -
-            getDateValue(a.createdAt);
-
-        });
+        );
 
       }
+
 
       function renderJobs() {
 
         if (!filteredJobs.length) {
 
-          resultCount.textContent = "0 jobs found";
+          resultCount.textContent =
+            "0 jobs found";
 
           jobsList.innerHTML = `
+
             <div class="empty-state">
-              <h3>No jobs found</h3>
+
+              <h3>
+                No jobs found
+              </h3>
+
               <p>
                 Try changing your search or filters to find more opportunities.
               </p>
-              <a href="post-job.html">Post a Job</a>
+
+              <a href="post-job.html">
+                Post a Job
+              </a>
+
             </div>
+
           `;
 
           return;
         }
 
+
         resultCount.textContent =
           filteredJobs.length +
-          (filteredJobs.length === 1 ? " job found" : " jobs found");
+          (
+            filteredJobs.length === 1
+              ? " job found"
+              : " jobs found"
+          );
 
-        jobsList.innerHTML = filteredJobs.map(function (job) {
 
-          const skills = normalizeSkills(job.skills);
+        jobsList.innerHTML =
+          filteredJobs
+            .map(function (job) {
 
-          const skillHtml = skills
-            .slice(0, 8)
-            .map(function (skill) {
-              return `<span class="skill">${escapeHtml(skill)}</span>`;
+              const skills =
+                normalizeSkills(
+                  job.skills
+                );
+
+
+              const skillHtml =
+                skills
+                  .slice(0, 8)
+                  .map(
+                    function (skill) {
+
+                      return `
+                        <span class="skill">
+                          ${escapeHtml(skill)}
+                        </span>
+                      `;
+
+                    }
+                  )
+                  .join("");
+
+
+              const description =
+                String(
+                  job.description ||
+                  "No description provided."
+                ).trim();
+
+
+              const shortDescription =
+                description.length > 240
+                  ? description.substring(
+                      0,
+                      240
+                    ) + "..."
+                  : description;
+
+
+              const jobId =
+                encodeURIComponent(
+                  job.id
+                );
+
+
+              return `
+
+                <article class="job-card">
+
+                  <div class="job-top">
+
+                    <div>
+
+                      <h3 class="job-title">
+
+                        <a
+                          href="job-details.html?id=${jobId}"
+                        >
+                          ${escapeHtml(
+                            job.title ||
+                            "Untitled Job"
+                          )}
+                        </a>
+
+                      </h3>
+
+                    </div>
+
+                    <div class="job-budget">
+                      ${formatBudget(
+                        job.budget
+                      )}
+                    </div>
+
+                  </div>
+
+
+                  <p class="job-description">
+                    ${escapeHtml(
+                      shortDescription
+                    )}
+                  </p>
+
+
+                  <div class="job-meta">
+
+                    <span>
+                      Category:
+                      ${escapeHtml(
+                        job.category ||
+                        "General"
+                      )}
+                    </span>
+
+                    <span>
+                      Delivery:
+                      ${
+                        job.deliveryDays
+                          ? escapeHtml(
+                              job.deliveryDays
+                            )
+                          : "Flexible"
+                      }
+                      days
+                    </span>
+
+                    <span>
+                      Proposals:
+                      ${escapeHtml(
+                        job.proposalCount || 0
+                      )}
+                    </span>
+
+                    <span>
+                      Posted:
+                      ${escapeHtml(
+                        formatDate(
+                          job.createdAt
+                        )
+                      )}
+                    </span>
+
+                  </div>
+
+
+                  <div class="skills">
+
+                    ${
+                      skillHtml ||
+                      '<span class="skill">General Skills</span>'
+                    }
+
+                  </div>
+
+
+                  <div class="job-footer">
+
+                    <div class="client-info">
+
+                      Client:
+                      ${escapeHtml(
+                        job.clientName ||
+                        job.ownerName ||
+                        "Verified Client"
+                      )}
+
+                    </div>
+
+
+                    <a
+                      class="view-job"
+                      href="job-details.html?id=${jobId}"
+                    >
+                      View Job
+                    </a>
+
+                  </div>
+
+                </article>
+
+              `;
+
             })
             .join("");
 
-          const description =
-            String(job.description || "No description provided.")
-              .trim();
-
-          const shortDescription =
-            description.length > 240
-              ? description.substring(0, 240) + "..."
-              : description;
-
-          const jobId = encodeURIComponent(job.id);
-
-          return `
-            <article class="job-card">
-
-              <div class="job-top">
-
-                <div>
-                  <h3 class="job-title">
-                    <a href="job-details.html?id=${jobId}">
-                      ${escapeHtml(job.title || "Untitled Job")}
-                    </a>
-                  </h3>
-                </div>
-
-                <div class="job-budget">
-                  ${formatBudget(job.budget)}
-                </div>
-
-              </div>
-
-              <p class="job-description">
-                ${escapeHtml(shortDescription)}
-              </p>
-
-              <div class="job-meta">
-
-                <span>
-                  Category:
-                  ${escapeHtml(job.category || "General")}
-                </span>
-
-                <span>
-                  Delivery:
-                  ${escapeHtml(job.deliveryDays || "Flexible")} days
-                </span>
-
-                <span>
-                  Proposals:
-                  ${escapeHtml(job.proposalCount || 0)}
-                </span>
-
-                <span>
-                  Posted:
-                  ${escapeHtml(formatDate(job.createdAt))}
-                </span>
-
-              </div>
-
-              <div class="skills">
-                ${skillHtml || '<span class="skill">General Skills</span>'}
-              </div>
-
-              <div class="job-footer">
-
-                <div class="client-info">
-                  Client:
-                  ${escapeHtml(
-                    job.clientName ||
-                    job.ownerName ||
-                    "Verified Client"
-                  )}
-                </div>
-
-                <a
-                  class="view-job"
-                  href="job-details.html?id=${jobId}"
-                >
-                  View Job
-                </a>
-
-              </div>
-
-            </article>
-          `;
-
-        }).join("");
-
       }
+
 
       async function loadJobs() {
 
         try {
 
-          if (!window.db) {
-            throw new Error("Firestore is not available.");
+          if (
+            !window.db ||
+            typeof window.db.collection !==
+              "function"
+          ) {
+            throw new Error(
+              "Firestore is not available."
+            );
           }
 
-          const snapshot = await window.db
-            .collection("jobs")
-            .where("status", "==", "open")
-            .limit(100)
-            .get();
+
+          const snapshot =
+            await window.db
+              .collection("jobs")
+              .where(
+                "status",
+                "==",
+                "open"
+              )
+              .limit(100)
+              .get();
+
 
           allJobs = [];
 
-          snapshot.forEach(function (doc) {
 
-            allJobs.push({
-              id: doc.id,
-              ...doc.data()
-            });
+          snapshot.forEach(
+            function (doc) {
 
-          });
+              allJobs.push({
 
-          const initialSearch = getSearchQuery();
+                id: doc.id,
 
-          searchInput.value = initialSearch;
+                ...doc.data()
+
+              });
+
+            }
+          );
+
+
+          const initialSearch =
+            getSearchQuery();
+
+          searchInput.value =
+            initialSearch;
+
 
           applyCurrentFilters();
 
         } catch (error) {
 
-          console.error("Failed to load jobs:", error);
+          console.error(
+            "Failed to load jobs:",
+            error
+          );
 
-          resultCount.textContent = "Unable to load jobs";
+
+          resultCount.textContent =
+            "Unable to load jobs";
+
 
           jobsList.innerHTML = `
+
             <div class="error-state">
-              <h3>Unable to load jobs</h3>
+
+              <h3>
+                Unable to load jobs
+              </h3>
+
               <p>
                 Please refresh the page and try again.
               </p>
+
             </div>
+
           `;
 
         }
 
       }
 
-      searchForm.addEventListener("submit", function (event) {
 
-        event.preventDefault();
+      searchForm.addEventListener(
+        "submit",
+        function (event) {
 
-        setSearchQuery(searchInput.value.trim());
+          event.preventDefault();
 
-        applyCurrentFilters();
+          setSearchQuery(
+            searchInput.value.trim()
+          );
 
-      });
+          applyCurrentFilters();
 
-      applyFilter.addEventListener("click", function () {
+        }
+      );
 
-        setSearchQuery(searchInput.value.trim());
 
-        applyCurrentFilters();
+      applyFilter.addEventListener(
+        "click",
+        function () {
 
-      });
+          setSearchQuery(
+            searchInput.value.trim()
+          );
 
-      clearFilter.addEventListener("click", function () {
+          applyCurrentFilters();
 
-        searchInput.value = "";
-        categoryFilter.value = "";
-        minBudget.value = "";
-        maxBudget.value = "";
-        deliveryFilter.value = "";
-        sortJobs.value = "newest";
+        }
+      );
 
-        setSearchQuery("");
 
-        applyCurrentFilters();
+      clearFilter.addEventListener(
+        "click",
+        function () {
 
-      });
+          searchInput.value = "";
 
-      sortJobs.addEventListener("change", function () {
+          categoryFilter.value = "";
 
-        sortCurrentJobs();
-        renderJobs();
+          minBudget.value = "";
 
-      });
+          maxBudget.value = "";
 
-      const mobileMenu = document.querySelector(".mobile-menu");
-      const navLinks = document.querySelector(".nav-links");
+          deliveryFilter.value = "";
 
-      if (mobileMenu && navLinks) {
+          sortJobs.value = "newest";
 
-        mobileMenu.addEventListener("click", function () {
+          setSearchQuery("");
 
-          if (navLinks.style.display === "flex") {
-            navLinks.style.display = "";
-          } else {
-            navLinks.style.display = "flex";
-            navLinks.style.flexDirection = "column";
-            navLinks.style.position = "absolute";
-            navLinks.style.top = "70px";
-            navLinks.style.left = "0";
-            navLinks.style.right = "0";
-            navLinks.style.background = "#ffffff";
-            navLinks.style.padding = "20px";
-            navLinks.style.borderBottom = "1px solid #e5e7eb";
+          applyCurrentFilters();
+
+        }
+      );
+
+
+      sortJobs.addEventListener(
+        "change",
+        function () {
+
+          sortCurrentJobs();
+
+          renderJobs();
+
+        }
+      );
+
+
+      mobileMenu.addEventListener(
+        "click",
+        function () {
+
+          const isOpen =
+            navLinks.classList.toggle(
+              "mobile-open"
+            );
+
+          mobileMenu.setAttribute(
+            "aria-expanded",
+            String(isOpen)
+          );
+
+        }
+      );
+
+
+      navLinks.addEventListener(
+        "click",
+        function (event) {
+
+          if (
+            event.target.tagName === "A"
+          ) {
+
+            navLinks.classList.remove(
+              "mobile-open"
+            );
+
+            mobileMenu.setAttribute(
+              "aria-expanded",
+              "false"
+            );
+
           }
 
-        });
+        }
+      );
 
-      }
 
       loadJobs();
 
     })();
+
   </script>
 
   <script src="app.js"></script>
 
 </body>
+
 </html>
