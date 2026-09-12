@@ -2,703 +2,903 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Find Work - SocialWorkBD</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <meta
     name="description"
-    content="Browse freelance jobs and find projects that match your skills on SocialWorkBD."
+    content="Find freelance jobs and remote work on SocialWorkBD. Search jobs by skills, category and budget."
   >
 
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="favicon.svg"
-  >
+  <meta name="theme-color" content="#14a800">
 
-  <link
-    rel="stylesheet"
-    href="styles.css"
-  >
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <title>Find Work - SocialWorkBD</title>
 
   <style>
-
-    /* =====================================================
-       FIND WORK PAGE
-    ===================================================== */
-
-    .find-work-page {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 45px 24px 80px;
-    }
-
-    .find-work-hero {
-      background: linear-gradient(
-        135deg,
-        #17202a,
-        #263238
-      );
-      border-radius: 24px;
-      padding: 48px;
-      color: #fff;
-      margin-bottom: 35px;
-    }
-
-    .find-work-hero .section-label {
-      color: #8ff08a;
-    }
-
-    .find-work-hero h1 {
-      margin: 10px 0 12px;
-      font-size: 42px;
-      line-height: 1.15;
-    }
-
-    .find-work-hero p {
-      max-width: 700px;
-      margin: 0;
-      color: #d7dde2;
-      font-size: 17px;
-      line-height: 1.7;
-    }
-
-    .job-search-panel {
-      display: grid;
-      grid-template-columns: 1fr 210px 130px;
-      gap: 12px;
-      margin-top: 28px;
-    }
-
-    .job-search-field,
-    .job-filter-select {
-      background: #fff;
-      border: 1px solid #dfe3e7;
-      border-radius: 10px;
-      min-height: 52px;
+    * {
       box-sizing: border-box;
     }
 
-    .job-search-field {
-      display: flex;
-      align-items: center;
-      padding: 0 15px;
+    html {
+      scroll-behavior: smooth;
     }
 
-    .job-search-field span {
-      font-size: 22px;
-      color: #68737d;
-      margin-right: 9px;
-    }
-
-    .job-search-field input {
-      width: 100%;
-      border: 0;
-      outline: 0;
-      font-size: 15px;
-      color: #17202a;
-      background: transparent;
-    }
-
-    .job-filter-select {
-      width: 100%;
-      padding: 0 13px;
-      outline: 0;
-      font-size: 15px;
-      color: #27313a;
-    }
-
-    .job-search-button {
-      border: 0;
-      border-radius: 10px;
-      background: #14a800;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      min-height: 52px;
-    }
-
-    .job-search-button:hover {
-      background: #108c00;
-    }
-
-    /* =====================================================
-       TOOLBAR
-    ===================================================== */
-
-    .jobs-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .jobs-toolbar h2 {
+    body {
       margin: 0;
-      font-size: 25px;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: #f7f7f7;
       color: #17202a;
     }
 
-    .jobs-count {
-      color: #68737d;
-      font-size: 14px;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    /* =====================================================
-       JOB CARDS
-    ===================================================== */
-
-    .find-work-job-list {
-      display: grid;
-      gap: 15px;
+    button,
+    input,
+    select {
+      font: inherit;
     }
 
-    .find-work-job-card {
-      background: #fff;
-      border: 1px solid #e1e5e8;
-      border-radius: 16px;
-      padding: 25px;
+    .topbar {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      max-width: 1240px;
+      margin: auto;
+      min-height: 70px;
+      padding: 0 22px;
       display: flex;
-      justify-content: space-between;
-      gap: 25px;
-      transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
+      align-items: center;
+      gap: 28px;
     }
 
-    .find-work-job-card:hover {
-      transform: translateY(-2px);
-      border-color: #b8cdb4;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+    .logo {
+      font-size: 25px;
+      font-weight: 800;
+      color: #14a800;
+      white-space: nowrap;
     }
 
-    .find-work-job-main {
-      min-width: 0;
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
       flex: 1;
     }
 
-    .job-top-row {
+    .nav-links a {
+      font-size: 14px;
+      color: #394150;
+      font-weight: 600;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #14a800;
+    }
+
+    .nav-actions {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
     }
 
-    .open-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 9px;
-      border-radius: 20px;
-      background: #e9f8e7;
-      color: #168500;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .open-badge::before {
-      content: "";
-      width: 6px;
-      height: 6px;
-      background: #14a800;
-      border-radius: 50%;
-    }
-
-    .job-posted-date {
-      color: #7a838b;
-      font-size: 12px;
-    }
-
-    .find-work-job-card h3 {
-      margin: 0 0 9px;
-      color: #17202a;
-      font-size: 21px;
-      line-height: 1.35;
-    }
-
-    .find-work-job-description {
-      color: #59636c;
+    .login-btn,
+    .signup-btn,
+    .post-job-btn {
+      border-radius: 8px;
+      padding: 10px 17px;
       font-size: 14px;
-      line-height: 1.7;
-      margin: 0 0 17px;
-      max-width: 780px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
     }
 
-    .job-info-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-      color: #505b64;
-      font-size: 13px;
-    }
-
-    .job-info-item strong {
+    .login-btn {
+      border: 1px solid #d1d5db;
+      background: #ffffff;
       color: #17202a;
-      margin-right: 5px;
     }
 
-    .job-skills {
-      margin-top: 16px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
+    .login-btn:hover {
+      background: #f3f4f6;
     }
 
-    .job-skill-tag {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 6px;
-      background: #f2f4f5;
-      color: #46515a;
-      font-size: 12px;
-    }
-
-    .find-work-job-action {
-      min-width: 125px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .view-job-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 45px;
-      box-sizing: border-box;
-      padding: 0 15px;
+    .signup-btn {
       border: 1px solid #14a800;
-      border-radius: 9px;
-      color: #108c00;
-      background: #fff;
-      font-size: 14px;
-      font-weight: 700;
-      text-decoration: none;
+      background: #14a800;
+      color: #ffffff;
     }
 
-    .view-job-button:hover {
-      background: #f0faee;
+    .signup-btn:hover {
+      background: #108900;
     }
 
-    /* =====================================================
-       EMPTY STATE
-    ===================================================== */
+    .post-job-btn {
+      border: 1px solid #17202a;
+      background: #17202a;
+      color: #ffffff;
+    }
 
-    .jobs-empty-state {
-      background: #fff;
-      border: 1px solid #e1e5e8;
-      border-radius: 16px;
+    .post-job-btn:hover {
+      background: #000000;
+    }
+
+    .mobile-menu {
+      display: none;
+      margin-left: auto;
+      border: 0;
+      background: transparent;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .hero {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 48px 20px 42px;
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: auto;
       text-align: center;
-      padding: 65px 25px;
     }
 
-    .jobs-empty-icon {
-      width: 60px;
-      height: 60px;
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(32px, 5vw, 48px);
+      line-height: 1.1;
+      letter-spacing: -1.2px;
+      color: #17202a;
+    }
+
+    .hero p {
+      margin: 0 auto 28px;
+      max-width: 700px;
+      color: #5b6470;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .search-box {
+      max-width: 900px;
+      margin: auto;
       display: flex;
+      background: #ffffff;
+      border: 1px solid #bfc5cc;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+    }
+
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      padding: 17px 18px;
+      font-size: 15px;
+      color: #17202a;
+    }
+
+    .search-box button {
+      border: 0;
+      background: #14a800;
+      color: #ffffff;
+      padding: 0 28px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .search-box button:hover {
+      background: #108900;
+    }
+
+    .main {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 30px 22px 60px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      margin: 0 auto 18px;
-      border-radius: 50%;
-      background: #f1f5f0;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .toolbar-left h2 {
+      margin: 0 0 5px;
       font-size: 25px;
     }
 
-    .jobs-empty-state h3 {
-      margin: 0 0 8px;
-      font-size: 21px;
-      color: #17202a;
-    }
-
-    .jobs-empty-state p {
-      margin: 0;
-      color: #69737b;
+    .result-count {
+      color: #6b7280;
       font-size: 14px;
     }
 
-    /* =====================================================
-       CATEGORY QUICK LINKS
-    ===================================================== */
+    .sort-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #4b5563;
+      font-size: 14px;
+    }
 
-    .job-category-links {
+    .sort-box select {
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      border-radius: 7px;
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .filters {
+      background: #ffffff;
+      border: 1px solid #e1e4e8;
+      border-radius: 10px;
+      padding: 20px;
+      position: sticky;
+      top: 92px;
+    }
+
+    .filters h3 {
+      margin: 0 0 20px;
+      font-size: 17px;
+    }
+
+    .filter-group {
+      border-top: 1px solid #edf0f2;
+      padding: 18px 0;
+    }
+
+    .filter-group:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .filter-group label.title {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      background: #ffffff;
+      padding: 10px;
+      outline: none;
+    }
+
+    .budget-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .apply-filter,
+    .clear-filter {
+      flex: 1;
+      border-radius: 7px;
+      padding: 10px 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .apply-filter {
+      border: 1px solid #14a800;
+      background: #14a800;
+      color: #ffffff;
+    }
+
+    .clear-filter {
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #374151;
+    }
+
+    .jobs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .job-card {
+      background: #ffffff;
+      border: 1px solid #e1e4e8;
+      border-radius: 10px;
+      padding: 22px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .job-card:hover {
+      border-color: #b9c1c9;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .job-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .job-title {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.35;
+      color: #17202a;
+    }
+
+    .job-title a:hover {
+      color: #14a800;
+    }
+
+    .job-budget {
+      white-space: nowrap;
+      font-size: 17px;
+      font-weight: 800;
+      color: #17202a;
+    }
+
+    .job-description {
+      margin: 13px 0;
+      color: #5f6873;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .job-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 9px;
-      margin-top: 22px;
+      gap: 17px;
+      color: #59636e;
+      font-size: 13px;
+      margin-bottom: 15px;
     }
 
-    .job-category-links a {
-      display: inline-block;
-      padding: 8px 13px;
+    .job-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 17px;
+    }
+
+    .skill {
+      background: #eef1f3;
+      color: #3f4852;
       border-radius: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      text-decoration: none;
+      padding: 6px 10px;
       font-size: 12px;
+      font-weight: 600;
     }
 
-    .job-category-links a:hover {
-      background: rgba(255, 255, 255, 0.17);
+    .job-footer {
+      border-top: 1px solid #edf0f2;
+      padding-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
     }
 
-    /* =====================================================
-       RESPONSIVE
-    ===================================================== */
+    .client-info {
+      color: #68717b;
+      font-size: 13px;
+    }
 
-    @media (max-width: 850px) {
+    .view-job {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #14a800;
+      color: #108900;
+      background: #ffffff;
+      border-radius: 7px;
+      padding: 9px 15px;
+      font-size: 13px;
+      font-weight: 700;
+    }
 
-      .find-work-page {
-        padding: 30px 16px 70px;
+    .view-job:hover {
+      background: #14a800;
+      color: #ffffff;
+    }
+
+    .loading,
+    .empty-state,
+    .error-state {
+      background: #ffffff;
+      border: 1px solid #e1e4e8;
+      border-radius: 10px;
+      padding: 45px 25px;
+      text-align: center;
+      color: #68717b;
+    }
+
+    .loading {
+      font-size: 15px;
+    }
+
+    .empty-state h3,
+    .error-state h3 {
+      margin: 0 0 8px;
+      color: #17202a;
+    }
+
+    .empty-state p,
+    .error-state p {
+      margin: 0 0 18px;
+      line-height: 1.6;
+    }
+
+    .empty-state a {
+      display: inline-block;
+      background: #14a800;
+      color: #ffffff;
+      padding: 10px 17px;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .how-section {
+      margin-top: 55px;
+      background: #ffffff;
+      border: 1px solid #e1e4e8;
+      border-radius: 12px;
+      padding: 35px 25px;
+    }
+
+    .how-section h2 {
+      text-align: center;
+      margin: 0 0 28px;
+      font-size: 27px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 18px;
+    }
+
+    .step {
+      text-align: center;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #14a800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-weight: 800;
+    }
+
+    .step h3 {
+      margin: 0 0 7px;
+      font-size: 15px;
+    }
+
+    .step p {
+      margin: 0;
+      color: #69727d;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    footer {
+      background: #17202a;
+      color: #d6dbe0;
+      padding: 35px 20px;
+      margin-top: 50px;
+    }
+
+    .footer-inner {
+      max-width: 1240px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-brand {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .footer-text {
+      color: #aeb6bf;
+      font-size: 13px;
+      margin-top: 7px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #d6dbe0;
+      font-size: 13px;
+    }
+
+    .footer-links a:hover {
+      color: #ffffff;
+    }
+
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
       }
 
-      .find-work-hero {
-        padding: 32px 24px;
-        border-radius: 18px;
+      .mobile-menu {
+        display: block;
       }
 
-      .find-work-hero h1 {
-        font-size: 32px;
-      }
-
-      .job-search-panel {
+      .content-grid {
         grid-template-columns: 1fr;
       }
 
-      .find-work-job-card {
-        flex-direction: column;
+      .filters {
+        position: static;
       }
 
-      .find-work-job-action {
-        width: 100%;
-      }
-
-      .view-job-button {
-        width: 100%;
+      .steps {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
-    @media (max-width: 520px) {
-
-      .find-work-hero {
-        padding: 26px 18px;
+    @media (max-width: 640px) {
+      .nav {
+        padding: 0 15px;
       }
 
-      .find-work-hero h1 {
-        font-size: 28px;
+      .logo {
+        font-size: 22px;
       }
 
-      .find-work-hero p {
-        font-size: 14px;
+      .nav-actions .post-job-btn {
+        display: none;
       }
 
-      .find-work-job-card {
-        padding: 19px;
+      .nav-actions {
+        gap: 6px;
       }
 
-      .find-work-job-card h3 {
-        font-size: 18px;
+      .login-btn,
+      .signup-btn {
+        padding: 8px 11px;
+        font-size: 12px;
       }
 
-      .jobs-toolbar {
+      .hero {
+        padding: 35px 15px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero p {
+        font-size: 15px;
+      }
+
+      .search-box {
+        flex-direction: column;
+      }
+
+      .search-box input {
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .search-box button {
+        min-height: 48px;
+      }
+
+      .main {
+        padding: 22px 15px 45px;
+      }
+
+      .toolbar {
         align-items: flex-start;
         flex-direction: column;
       }
 
+      .job-top {
+        flex-direction: column;
+      }
+
+      .job-footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .view-job {
+        width: 100%;
+      }
+
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .how-section {
+        padding: 28px 18px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
     }
-
   </style>
-
 </head>
 
 <body>
 
-  <!-- =====================================================
-       HEADER
-  ====================================================== -->
+  <header class="topbar">
+    <nav class="nav">
 
-  <header class="app-header">
+      <a href="index.html" class="logo">SocialWorkBD</a>
 
-    <div class="brand-area">
-
-      <a
-        href="index.html"
-        class="brand-logo-link"
-      >
-        <div class="brand-logo">
-          SW
-        </div>
-      </a>
-
-      <div class="brand-text">
-
-        <a
-          href="index.html"
-          class="brand-name"
-        >
-          SocialWork<span>BD</span>
-        </a>
-
-        <p>
-          Find Work. Hire Talent.
-        </p>
-
+      <div class="nav-links">
+        <a href="tasks.html" class="active">Find Work</a>
+        <a href="find-talent.html">Find Talent</a>
+        <a href="post-job.html">Post a Job</a>
+        <a href="profile.html">My Profile</a>
       </div>
 
-    </div>
+      <div class="nav-actions">
+        <a href="login.html" class="login-btn">Log In</a>
+        <a href="signup.html" class="signup-btn">Sign Up</a>
+        <a href="post-job.html" class="post-job-btn">Post a Job</a>
+      </div>
 
-
-    <nav class="main-nav">
-
-      <a
-        href="tasks.html"
-        class="active"
-      >
-        Find Work
-      </a>
-
-      <a href="post-job.html">
-        Find Talent
-      </a>
-
-      <a href="tasks.html">
-        Jobs
-      </a>
-
-      <a href="support.html">
-        Help
-      </a>
-
-    </nav>
-
-
-    <div class="header-actions">
-
-      <button
-        class="icon-btn"
-        id="notification-btn"
-        type="button"
-        aria-label="Notifications"
-      >
-        🔔
-        <span class="notification-badge">
-          0
-        </span>
+      <button class="mobile-menu" type="button" aria-label="Open menu">
+        ☰
       </button>
 
-      <a
-        href="login.html"
-        class="header-login"
-      >
-        Log In
-      </a>
-
-      <a
-        href="signup.html"
-        class="header-signup"
-      >
-        Sign Up
-      </a>
-
-      <a
-        href="profile.html"
-        class="profile-icon"
-        aria-label="Profile"
-      >
-        👤
-      </a>
-
-    </div>
-
+    </nav>
   </header>
 
+  <section class="hero">
 
-  <!-- =====================================================
-       MAIN
-  ====================================================== -->
+    <div class="hero-inner">
 
-  <main class="find-work-page">
-
-
-    <!-- ===================================================
-         HERO
-    ==================================================== -->
-
-    <section class="find-work-hero">
-
-      <span class="section-label">
-        FREELANCE MARKETPLACE
-      </span>
-
-      <h1>
-        Find work that matches your skills.
-      </h1>
+      <h1>Find work that fits your skills</h1>
 
       <p>
-        Explore freelance projects, discover new opportunities,
-        and connect with clients looking for talented people.
+        Discover freelance jobs, remote projects and opportunities from clients around the world.
       </p>
 
+      <form class="search-box" id="job-search-form">
 
-      <!-- Search -->
-
-      <form
-        class="job-search-panel"
-        id="find-work-search-form"
-      >
-
-        <div class="job-search-field">
-
-          <span>
-            ⌕
-          </span>
-
-          <input
-            type="search"
-            id="job-search"
-            placeholder="Search jobs, skills, or projects"
-            autocomplete="off"
-          >
-
-        </div>
-
-
-        <select
-          id="job-category-filter"
-          class="job-filter-select"
+        <input
+          type="search"
+          id="job-search"
+          placeholder="Search jobs by title, skill or keyword..."
+          autocomplete="off"
         >
 
-          <option value="">
-            All Categories
-          </option>
-
-          <option value="web-development">
-            Web Development
-          </option>
-
-          <option value="design">
-            Design & Creative
-          </option>
-
-          <option value="writing">
-            Writing & Content
-          </option>
-
-          <option value="marketing">
-            Sales & Marketing
-          </option>
-
-          <option value="virtual-assistance">
-            Admin & Support
-          </option>
-
-          <option value="video">
-            Video & Animation
-          </option>
-
-        </select>
-
-
-        <button
-          type="submit"
-          class="job-search-button"
-        >
-          Search Jobs
-        </button>
+        <button type="submit">Search Jobs</button>
 
       </form>
 
+    </div>
 
-      <div class="job-category-links">
+  </section>
 
-        <a href="tasks.html?category=web-development">
-          Web Development
-        </a>
+  <main class="main">
 
-        <a href="tasks.html?category=design">
-          Design
-        </a>
+    <div class="toolbar">
 
-        <a href="tasks.html?category=writing">
-          Writing
-        </a>
-
-        <a href="tasks.html?category=marketing">
-          Marketing
-        </a>
-
-        <a href="tasks.html?category=video">
-          Video
-        </a>
-
-      </div>
-
-    </section>
-
-
-    <!-- ===================================================
-         JOB LIST HEADER
-    ==================================================== -->
-
-    <section class="jobs-toolbar">
-
-      <div>
-
-        <h2>
-          Latest Jobs
-        </h2>
-
-        <span
-          class="jobs-count"
-          id="jobs-count"
-        >
+      <div class="toolbar-left">
+        <h2>Latest Jobs</h2>
+        <div class="result-count" id="result-count">
           Loading jobs...
-        </span>
-
+        </div>
       </div>
 
-    </section>
+      <div class="sort-box">
+        <label for="sort-jobs">Sort:</label>
 
+        <select id="sort-jobs">
+          <option value="newest">Newest</option>
+          <option value="budget-high">Highest Budget</option>
+          <option value="budget-low">Lowest Budget</option>
+          <option value="proposals-low">Fewest Proposals</option>
+        </select>
+      </div>
 
-    <!-- ===================================================
-         JOB LIST
-    ==================================================== -->
+    </div>
 
-    <section
-      id="find-work-job-list"
-      class="find-work-job-list"
-    >
+    <div class="content-grid">
 
-      <div class="jobs-empty-state">
+      <aside class="filters">
 
-        <div class="jobs-empty-icon">
-          🔎
+        <h3>Filter Jobs</h3>
+
+        <div class="filter-group">
+
+          <label class="title" for="category-filter">
+            Category
+          </label>
+
+          <select id="category-filter">
+            <option value="">All Categories</option>
+            <option value="Development & IT">Development & IT</option>
+            <option value="Design & Creative">Design & Creative</option>
+            <option value="Writing & Translation">Writing & Translation</option>
+            <option value="Sales & Marketing">Sales & Marketing</option>
+            <option value="Admin & Customer Support">Admin & Customer Support</option>
+            <option value="Finance & Accounting">Finance & Accounting</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Other">Other</option>
+          </select>
+
         </div>
 
-        <h3>
-          Loading freelance jobs...
-        </h3>
+        <div class="filter-group">
 
-        <p>
-          Please wait while we find the latest opportunities.
-        </p>
+          <label class="title">
+            Budget
+          </label>
+
+          <div class="budget-row">
+
+            <input
+              type="number"
+              id="min-budget"
+              min="0"
+              placeholder="Min $"
+            >
+
+            <input
+              type="number"
+              id="max-budget"
+              min="0"
+              placeholder="Max $"
+            >
+
+          </div>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label class="title" for="delivery-filter">
+            Delivery Time
+          </label>
+
+          <select id="delivery-filter">
+            <option value="">Any delivery time</option>
+            <option value="3">Up to 3 days</option>
+            <option value="7">Up to 7 days</option>
+            <option value="14">Up to 14 days</option>
+            <option value="30">Up to 30 days</option>
+          </select>
+
+        </div>
+
+        <div class="filter-actions">
+
+          <button
+            type="button"
+            class="apply-filter"
+            id="apply-filter"
+          >
+            Apply
+          </button>
+
+          <button
+            type="button"
+            class="clear-filter"
+            id="clear-filter"
+          >
+            Clear
+          </button>
+
+        </div>
+
+      </aside>
+
+      <section>
+
+        <div id="jobs-list" class="jobs-list">
+
+          <div class="loading">
+            Loading available jobs...
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+    <section class="how-section">
+
+      <h2>How SocialWorkBD Works</h2>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Create Your Profile</h3>
+          <p>
+            Showcase your skills, experience and professional information.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Find a Job</h3>
+          <p>
+            Search and filter jobs that match your skills and interests.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Submit a Proposal</h3>
+          <p>
+            Tell the client why you are the right person for the project.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">4</div>
+          <h3>Complete the Work</h3>
+          <p>
+            Work with your client and deliver the agreed project.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">5</div>
+          <h3>Get Paid</h3>
+          <p>
+            Receive payment after successful completion and approval.
+          </p>
+        </div>
 
       </div>
 
@@ -706,858 +906,514 @@
 
   </main>
 
+  <footer>
 
-  <!-- =====================================================
-       FOOTER
-  ====================================================== -->
+    <div class="footer-inner">
 
-  <footer class="app-footer">
-
-    <div class="footer-main">
-
-      <div class="footer-brand">
-
-        <a
-          href="index.html"
-          class="footer-logo"
-        >
-          SocialWork<span>BD</span>
-        </a>
-
-        <p>
-          A professional freelance marketplace
-          connecting clients and freelancers.
-        </p>
-
+      <div>
+        <div class="footer-brand">SocialWorkBD</div>
+        <div class="footer-text">
+          Global Freelance Marketplace
+        </div>
       </div>
 
-
-      <div class="footer-column">
-
-        <h4>
-          For Freelancers
-        </h4>
-
-        <a href="tasks.html">
-          Find Work
-        </a>
-
-        <a href="profile.html">
-          My Profile
-        </a>
-
-        <a href="support.html">
-          Support
-        </a>
-
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="tasks.html">Find Work</a>
+        <a href="find-talent.html">Find Talent</a>
+        <a href="post-job.html">Post a Job</a>
+        <a href="profile.html">Profile</a>
       </div>
-
-
-      <div class="footer-column">
-
-        <h4>
-          For Clients
-        </h4>
-
-        <a href="post-job.html">
-          Post a Job
-        </a>
-
-        <a href="tasks.html">
-          Find Talent
-        </a>
-
-        <a href="support.html">
-          Help Center
-        </a>
-
-      </div>
-
-
-      <div class="footer-column">
-
-        <h4>
-          SocialWorkBD
-        </h4>
-
-        <a href="profile.html">
-          My Account
-        </a>
-
-        <a href="support.html">
-          Contact Support
-        </a>
-
-        <a href="terms.html">
-          Terms
-        </a>
-
-        <a href="privacy.html">
-          Privacy
-        </a>
-
-      </div>
-
-    </div>
-
-
-    <div class="footer-bottom">
-
-      <span>
-        © 2026 SocialWorkBD. All rights reserved.
-      </span>
-
-      <span>
-        Built for freelancers and clients.
-      </span>
 
     </div>
 
   </footer>
 
-
-  <!-- =====================================================
-       MOBILE NAVIGATION
-  ====================================================== -->
-
-  <nav class="bottom-nav">
-
-    <a
-      href="index.html"
-      class="bottom-item"
-    >
-      <span>⌂</span>
-      <small>Home</small>
-    </a>
-
-    <a
-      href="tasks.html"
-      class="bottom-item active"
-    >
-      <span>🔎</span>
-      <small>Find Work</small>
-    </a>
-
-    <a
-      href="post-job.html"
-      class="bottom-item"
-    >
-      <span>＋</span>
-      <small>Post Job</small>
-    </a>
-
-    <a
-      href="profile.html"
-      class="bottom-item"
-    >
-      <span>♙</span>
-      <small>Profile</small>
-    </a>
-
-    <a
-      href="support.html"
-      class="bottom-item"
-    >
-      <span>☰</span>
-      <small>Menu</small>
-    </a>
-
-  </nav>
-
-
-  <!-- =====================================================
-       FIREBASE
-  ====================================================== -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
   <script src="firebase-config.js"></script>
 
-  <!-- Main marketplace logic -->
-
-  <script src="app.js"></script>
-
-
-  <!-- =====================================================
-       FIND WORK PAGE LOGIC
-       Search + category filtering
-  ====================================================== -->
-
   <script>
+    (function () {
 
-    document.addEventListener(
-      "DOMContentLoaded",
-      () => {
+      "use strict";
 
-        const searchInput =
-          document.getElementById("job-search");
+      let allJobs = [];
+      let filteredJobs = [];
 
-        const categoryFilter =
-          document.getElementById(
-            "job-category-filter"
-          );
+      const jobsList = document.getElementById("jobs-list");
+      const resultCount = document.getElementById("result-count");
 
-        const searchForm =
-          document.getElementById(
-            "find-work-search-form"
-          );
+      const searchForm = document.getElementById("job-search-form");
+      const searchInput = document.getElementById("job-search");
 
-        const jobList =
-          document.getElementById(
-            "find-work-job-list"
-          );
+      const categoryFilter = document.getElementById("category-filter");
+      const minBudget = document.getElementById("min-budget");
+      const maxBudget = document.getElementById("max-budget");
+      const deliveryFilter = document.getElementById("delivery-filter");
 
-        const jobsCount =
-          document.getElementById(
-            "jobs-count"
-          );
+      const applyFilter = document.getElementById("apply-filter");
+      const clearFilter = document.getElementById("clear-filter");
+      const sortJobs = document.getElementById("sort-jobs");
 
-        if (!jobList) {
-          return;
+      function escapeHtml(value) {
+
+        if (value === null || value === undefined) {
+          return "";
         }
 
-        /*
-          app.js loads jobs on the homepage.
-          This page independently loads the same
-          Firestore jobs collection for the full
-          Find Work marketplace.
-        */
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
 
-        if (
-          typeof firebase === "undefined"
-        ) {
-          jobList.innerHTML = `
-            <div class="jobs-empty-state">
-              <div class="jobs-empty-icon">!</div>
-              <h3>Service unavailable</h3>
-              <p>Please refresh the page and try again.</p>
+      function getDateValue(timestamp) {
+
+        if (!timestamp) {
+          return 0;
+        }
+
+        if (typeof timestamp.toMillis === "function") {
+          return timestamp.toMillis();
+        }
+
+        if (timestamp.seconds) {
+          return timestamp.seconds * 1000;
+        }
+
+        const date = new Date(timestamp);
+
+        if (!Number.isNaN(date.getTime())) {
+          return date.getTime();
+        }
+
+        return 0;
+      }
+
+      function formatDate(timestamp) {
+
+        const value = getDateValue(timestamp);
+
+        if (!value) {
+          return "Recently";
+        }
+
+        return new Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        }).format(new Date(value));
+      }
+
+      function formatBudget(value) {
+
+        const amount = Number(value);
+
+        if (!Number.isFinite(amount)) {
+          return "$0";
+        }
+
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 2
+        }).format(amount);
+      }
+
+      function normalizeSkills(skills) {
+
+        if (Array.isArray(skills)) {
+          return skills
+            .map(function (item) {
+              return String(item).trim();
+            })
+            .filter(Boolean);
+        }
+
+        if (typeof skills === "string") {
+          return skills
+            .split(",")
+            .map(function (item) {
+              return item.trim();
+            })
+            .filter(Boolean);
+        }
+
+        return [];
+      }
+
+      function getSearchQuery() {
+
+        const params = new URLSearchParams(window.location.search);
+
+        return (params.get("search") || "").trim();
+
+      }
+
+      function setSearchQuery(value) {
+
+        const url = new URL(window.location.href);
+
+        if (value) {
+          url.searchParams.set("search", value);
+        } else {
+          url.searchParams.delete("search");
+        }
+
+        window.history.replaceState({}, "", url.toString());
+
+      }
+
+      function matchesSearch(job, query) {
+
+        if (!query) {
+          return true;
+        }
+
+        const skills = normalizeSkills(job.skills).join(" ");
+
+        const searchable = [
+          job.title || "",
+          job.description || "",
+          job.category || "",
+          job.clientName || "",
+          skills
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        const words = query
+          .toLowerCase()
+          .split(/\s+/)
+          .filter(Boolean);
+
+        return words.every(function (word) {
+          return searchable.includes(word);
+        });
+      }
+
+      function applyCurrentFilters() {
+
+        const query = searchInput.value.trim().toLowerCase();
+        const category = categoryFilter.value;
+        const min = Number(minBudget.value);
+        const max = Number(maxBudget.value);
+        const delivery = Number(deliveryFilter.value);
+
+        filteredJobs = allJobs.filter(function (job) {
+
+          if (!matchesSearch(job, query)) {
+            return false;
+          }
+
+          if (category && String(job.category || "") !== category) {
+            return false;
+          }
+
+          const budget = Number(job.budget) || 0;
+
+          if (minBudget.value !== "" && budget < min) {
+            return false;
+          }
+
+          if (maxBudget.value !== "" && budget > max) {
+            return false;
+          }
+
+          if (deliveryFilter.value) {
+
+            const days = Number(job.deliveryDays) || 0;
+
+            if (!days || days > delivery) {
+              return false;
+            }
+          }
+
+          return true;
+
+        });
+
+        sortCurrentJobs();
+        renderJobs();
+
+      }
+
+      function sortCurrentJobs() {
+
+        const sortValue = sortJobs.value;
+
+        filteredJobs.sort(function (a, b) {
+
+          if (sortValue === "budget-high") {
+            return (Number(b.budget) || 0) - (Number(a.budget) || 0);
+          }
+
+          if (sortValue === "budget-low") {
+            return (Number(a.budget) || 0) - (Number(b.budget) || 0);
+          }
+
+          if (sortValue === "proposals-low") {
+            return (Number(a.proposalCount) || 0) -
+              (Number(b.proposalCount) || 0);
+          }
+
+          return getDateValue(b.createdAt) -
+            getDateValue(a.createdAt);
+
+        });
+
+      }
+
+      function renderJobs() {
+
+        if (!filteredJobs.length) {
+
+          resultCount.textContent = "0 jobs found";
+
+          jobsList.innerHTML = `
+            <div class="empty-state">
+              <h3>No jobs found</h3>
+              <p>
+                Try changing your search or filters to find more opportunities.
+              </p>
+              <a href="post-job.html">Post a Job</a>
             </div>
           `;
 
           return;
         }
 
+        resultCount.textContent =
+          filteredJobs.length +
+          (filteredJobs.length === 1 ? " job found" : " jobs found");
 
-        let allJobs = [];
+        jobsList.innerHTML = filteredJobs.map(function (job) {
 
+          const skills = normalizeSkills(job.skills);
 
-        function escapeHtml(value) {
-
-          return String(value ?? "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-
-        }
-
-
-        function formatBudget(value) {
-
-          const amount =
-            Number(value);
-
-          if (
-            !Number.isFinite(amount)
-          ) {
-            return "Not specified";
-          }
-
-          return (
-            "৳" +
-            amount.toLocaleString("en-BD")
-          );
-
-        }
-
-
-        function formatDate(timestamp) {
-
-          if (!timestamp) {
-            return "Recently posted";
-          }
-
-          try {
-
-            const date =
-              timestamp.toDate
-                ? timestamp.toDate()
-                : new Date(timestamp);
-
-            return date.toLocaleDateString(
-              "en-US",
-              {
-                year: "numeric",
-                month: "short",
-                day: "numeric"
-              }
-            );
-
-          } catch {
-
-            return "Recently posted";
-
-          }
-
-        }
-
-
-        function categoryMatches(
-          job,
-          selectedCategory
-        ) {
-
-          if (!selectedCategory) {
-            return true;
-          }
-
-          const category =
-            String(
-              job.category || ""
-            ).toLowerCase();
-
-          const skills =
-            String(
-              job.skills || ""
-            ).toLowerCase();
-
-          const title =
-            String(
-              job.title || ""
-            ).toLowerCase();
+          const skillHtml = skills
+            .slice(0, 8)
+            .map(function (skill) {
+              return `<span class="skill">${escapeHtml(skill)}</span>`;
+            })
+            .join("");
 
           const description =
-            String(
-              job.description || ""
-            ).toLowerCase();
+            String(job.description || "No description provided.")
+              .trim();
 
-          const combined =
-            [
-              category,
-              skills,
-              title,
-              description
-            ].join(" ");
+          const shortDescription =
+            description.length > 240
+              ? description.substring(0, 240) + "..."
+              : description;
 
-          const categoryWords = {
+          const jobId = encodeURIComponent(job.id);
 
-            "web-development":
-              [
-                "web",
-                "development",
-                "developer",
-                "website",
-                "wordpress",
-                "html",
-                "css",
-                "javascript",
-                "react"
-              ],
+          return `
+            <article class="job-card">
 
-            "design":
-              [
-                "design",
-                "designer",
-                "graphic",
-                "logo",
-                "ui",
-                "ux",
-                "figma",
-                "branding"
-              ],
+              <div class="job-top">
 
-            "writing":
-              [
-                "writing",
-                "writer",
-                "content",
-                "article",
-                "copywriting",
-                "blog",
-                "editing"
-              ],
-
-            "marketing":
-              [
-                "marketing",
-                "seo",
-                "social media",
-                "advertising",
-                "sales",
-                "digital marketing"
-              ],
-
-            "virtual-assistance":
-              [
-                "admin",
-                "support",
-                "virtual assistant",
-                "data entry",
-                "assistant"
-              ],
-
-            "video":
-              [
-                "video",
-                "animation",
-                "editing",
-                "youtube",
-                "motion"
-              ]
-
-          };
-
-
-          const words =
-            categoryWords[
-              selectedCategory
-            ] || [];
-
-
-          return words.some(
-            word =>
-              combined.includes(word)
-          );
-
-        }
-
-
-        function renderJobs() {
-
-          const search =
-            (
-              searchInput?.value ||
-              ""
-            )
-              .trim()
-              .toLowerCase();
-
-          const selectedCategory =
-            categoryFilter?.value || "";
-
-
-          const filteredJobs =
-            allJobs.filter(
-              job => {
-
-                const searchableText =
-                  [
-                    job.title || "",
-                    job.description || "",
-                    job.skills || "",
-                    job.category || "",
-                    job.clientName || ""
-                  ]
-                    .join(" ")
-                    .toLowerCase();
-
-
-                const matchesSearch =
-                  !search ||
-                  searchableText.includes(
-                    search
-                  );
-
-
-                const matchesCategory =
-                  categoryMatches(
-                    job,
-                    selectedCategory
-                  );
-
-
-                return (
-                  matchesSearch &&
-                  matchesCategory
-                );
-
-              }
-            );
-
-
-          if (jobsCount) {
-
-            jobsCount.textContent =
-              `${filteredJobs.length} job${
-                filteredJobs.length === 1
-                  ? ""
-                  : "s"
-              } found`;
-
-          }
-
-
-          if (
-            filteredJobs.length === 0
-          ) {
-
-            jobList.innerHTML = `
-              <div class="jobs-empty-state">
-
-                <div class="jobs-empty-icon">
-                  🔎
+                <div>
+                  <h3 class="job-title">
+                    <a href="job-details.html?id=${jobId}">
+                      ${escapeHtml(job.title || "Untitled Job")}
+                    </a>
+                  </h3>
                 </div>
 
-                <h3>
-                  No jobs found
-                </h3>
-
-                <p>
-                  Try a different keyword or category.
-                </p>
-
-              </div>
-            `;
-
-            return;
-
-          }
-
-
-          jobList.innerHTML =
-            filteredJobs
-              .map(
-                job => {
-
-                  const title =
-                    escapeHtml(
-                      job.title ||
-                      "Untitled Project"
-                    );
-
-
-                  const description =
-                    escapeHtml(
-                      job.description ||
-                      "No project description provided."
-                    );
-
-
-                  const budget =
-                    formatBudget(
-                      job.budget
-                    );
-
-
-                  const date =
-                    formatDate(
-                      job.createdAt
-                    );
-
-
-                  const skills =
-                    String(
-                      job.skills || ""
-                    )
-                      .split(",")
-                      .map(
-                        skill =>
-                          skill.trim()
-                      )
-                      .filter(Boolean);
-
-
-                  const skillHtml =
-                    skills
-                      .slice(0, 8)
-                      .map(
-                        skill =>
-                          `
-                            <span class="job-skill-tag">
-                              ${escapeHtml(skill)}
-                            </span>
-                          `
-                      )
-                      .join("");
-
-
-                  return `
-                    <article
-                      class="find-work-job-card"
-                    >
-
-                      <div
-                        class="find-work-job-main"
-                      >
-
-                        <div
-                          class="job-top-row"
-                        >
-
-                          <span
-                            class="open-badge"
-                          >
-                            Open
-                          </span>
-
-                          <span
-                            class="job-posted-date"
-                          >
-                            Posted ${escapeHtml(date)}
-                          </span>
-
-                        </div>
-
-
-                        <h3>
-                          ${title}
-                        </h3>
-
-
-                        <p
-                          class="find-work-job-description"
-                        >
-                          ${description}
-                        </p>
-
-
-                        <div
-                          class="job-info-row"
-                        >
-
-                          <span
-                            class="job-info-item"
-                          >
-                            <strong>
-                              Budget:
-                            </strong>
-                            ${escapeHtml(budget)}
-                          </span>
-
-
-                          <span
-                            class="job-info-item"
-                          >
-                            <strong>
-                              Proposals:
-                            </strong>
-                            ${Number(
-                              job.proposalCount || 0
-                            )}
-                          </span>
-
-
-                          <span
-                            class="job-info-item"
-                          >
-                            <strong>
-                              Delivery:
-                            </strong>
-                            ${
-                              job.deliveryDays
-                                ? escapeHtml(
-                                    job.deliveryDays
-                                  ) +
-                                  " days"
-                                : "Flexible"
-                            }
-                          </span>
-
-                        </div>
-
-
-                        ${
-                          skillHtml
-                            ? `
-                              <div
-                                class="job-skills"
-                              >
-                                ${skillHtml}
-                              </div>
-                            `
-                            : ""
-                        }
-
-                      </div>
-
-
-                      <div
-                        class="find-work-job-action"
-                      >
-
-                        <a
-                          href="job-details.html?id=${encodeURIComponent(
-                            job.id
-                          )}"
-                          class="view-job-button"
-                        >
-                          View Job
-                        </a>
-
-                      </div>
-
-                    </article>
-                  `;
-
-                }
-              )
-              .join("");
-
-        }
-
-
-        async function loadJobs() {
-
-          try {
-
-            const snapshot =
-              await firebase
-                .firestore()
-                .collection("jobs")
-                .where(
-                  "status",
-                  "==",
-                  "open"
-                )
-                .get();
-
-
-            allJobs = [];
-
-
-            snapshot.forEach(
-              doc => {
-
-                allJobs.push({
-                  id: doc.id,
-                  ...doc.data()
-                });
-
-              }
-            );
-
-
-            allJobs.sort(
-              (a, b) => {
-
-                const aTime =
-                  a.createdAt?.toMillis
-                    ? a.createdAt.toMillis()
-                    : 0;
-
-                const bTime =
-                  b.createdAt?.toMillis
-                    ? b.createdAt.toMillis()
-                    : 0;
-
-                return bTime - aTime;
-
-              }
-            );
-
-
-            renderJobs();
-
-          } catch (error) {
-
-            console.error(
-              "Find Work Error:",
-              error
-            );
-
-
-            if (jobsCount) {
-              jobsCount.textContent =
-                "Unable to load jobs";
-            }
-
-
-            jobList.innerHTML = `
-              <div class="jobs-empty-state">
-
-                <div class="jobs-empty-icon">
-                  !
+                <div class="job-budget">
+                  ${formatBudget(job.budget)}
                 </div>
 
-                <h3>
-                  Unable to load jobs
-                </h3>
+              </div>
 
-                <p>
-                  Please check your connection
-                  and try again.
-                </p>
+              <p class="job-description">
+                ${escapeHtml(shortDescription)}
+              </p>
+
+              <div class="job-meta">
+
+                <span>
+                  Category:
+                  ${escapeHtml(job.category || "General")}
+                </span>
+
+                <span>
+                  Delivery:
+                  ${escapeHtml(job.deliveryDays || "Flexible")} days
+                </span>
+
+                <span>
+                  Proposals:
+                  ${escapeHtml(job.proposalCount || 0)}
+                </span>
+
+                <span>
+                  Posted:
+                  ${escapeHtml(formatDate(job.createdAt))}
+                </span>
 
               </div>
-            `;
 
-          }
+              <div class="skills">
+                ${skillHtml || '<span class="skill">General Skills</span>'}
+              </div>
 
-        }
+              <div class="job-footer">
 
+                <div class="client-info">
+                  Client:
+                  ${escapeHtml(
+                    job.clientName ||
+                    job.ownerName ||
+                    "Verified Client"
+                  )}
+                </div>
 
-        searchForm?.addEventListener(
-          "submit",
-          event => {
+                <a
+                  class="view-job"
+                  href="job-details.html?id=${jobId}"
+                >
+                  View Job
+                </a>
 
-            event.preventDefault();
+              </div>
 
-            renderJobs();
+            </article>
+          `;
 
-          }
-        );
-
-
-        searchInput?.addEventListener(
-          "input",
-          () => {
-
-            renderJobs();
-
-          }
-        );
-
-
-        categoryFilter?.addEventListener(
-          "change",
-          () => {
-
-            renderJobs();
-
-          }
-        );
-
-
-        // Read category from URL
-        const params =
-          new URLSearchParams(
-            window.location.search
-          );
-
-        const urlCategory =
-          params.get("category");
-
-
-        if (
-          urlCategory &&
-          categoryFilter
-        ) {
-
-          const validOption =
-            Array.from(
-              categoryFilter.options
-            ).some(
-              option =>
-                option.value ===
-                urlCategory
-            );
-
-
-          if (validOption) {
-
-            categoryFilter.value =
-              urlCategory;
-
-          }
-
-        }
-
-
-        loadJobs();
+        }).join("");
 
       }
-    );
 
+      async function loadJobs() {
+
+        try {
+
+          if (!window.db) {
+            throw new Error("Firestore is not available.");
+          }
+
+          const snapshot = await window.db
+            .collection("jobs")
+            .where("status", "==", "open")
+            .limit(100)
+            .get();
+
+          allJobs = [];
+
+          snapshot.forEach(function (doc) {
+
+            allJobs.push({
+              id: doc.id,
+              ...doc.data()
+            });
+
+          });
+
+          const initialSearch = getSearchQuery();
+
+          searchInput.value = initialSearch;
+
+          applyCurrentFilters();
+
+        } catch (error) {
+
+          console.error("Failed to load jobs:", error);
+
+          resultCount.textContent = "Unable to load jobs";
+
+          jobsList.innerHTML = `
+            <div class="error-state">
+              <h3>Unable to load jobs</h3>
+              <p>
+                Please refresh the page and try again.
+              </p>
+            </div>
+          `;
+
+        }
+
+      }
+
+      searchForm.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        setSearchQuery(searchInput.value.trim());
+
+        applyCurrentFilters();
+
+      });
+
+      applyFilter.addEventListener("click", function () {
+
+        setSearchQuery(searchInput.value.trim());
+
+        applyCurrentFilters();
+
+      });
+
+      clearFilter.addEventListener("click", function () {
+
+        searchInput.value = "";
+        categoryFilter.value = "";
+        minBudget.value = "";
+        maxBudget.value = "";
+        deliveryFilter.value = "";
+        sortJobs.value = "newest";
+
+        setSearchQuery("");
+
+        applyCurrentFilters();
+
+      });
+
+      sortJobs.addEventListener("change", function () {
+
+        sortCurrentJobs();
+        renderJobs();
+
+      });
+
+      const mobileMenu = document.querySelector(".mobile-menu");
+      const navLinks = document.querySelector(".nav-links");
+
+      if (mobileMenu && navLinks) {
+
+        mobileMenu.addEventListener("click", function () {
+
+          if (navLinks.style.display === "flex") {
+            navLinks.style.display = "";
+          } else {
+            navLinks.style.display = "flex";
+            navLinks.style.flexDirection = "column";
+            navLinks.style.position = "absolute";
+            navLinks.style.top = "70px";
+            navLinks.style.left = "0";
+            navLinks.style.right = "0";
+            navLinks.style.background = "#ffffff";
+            navLinks.style.padding = "20px";
+            navLinks.style.borderBottom = "1px solid #e5e7eb";
+          }
+
+        });
+
+      }
+
+      loadJobs();
+
+    })();
   </script>
+
+  <script src="app.js"></script>
 
 </body>
 </html>
