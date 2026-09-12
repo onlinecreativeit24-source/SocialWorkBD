@@ -1,6 +1,6 @@
 /* =========================================================
    SocialWorkBD - Wallet
-   Firebase Wallet + SSLCommerz Payment Integration
+   Firebase Wallet + Payment Integration
    ========================================================= */
 
 (function () {
@@ -10,25 +10,47 @@
      Configuration
   --------------------------------------------------------- */
 
-  const PAYMENT_API_URL = "/api/payment/create";
+  const CONFIG = {
+    currency: "USD",
 
-  const MIN_DEPOSIT = 10;
-  const MAX_DEPOSIT = 100000;
+    /*
+      Set this to your secure backend payment endpoint.
 
-  let currentUser = null;
-  let currentProfile = null;
+      Example:
+      https://your-backend-domain.com/api/payment/create
+
+      Do NOT put SSLCommerz Store Password or Secret Key here.
+    */
+    PAYMENT_API_URL:
+      window.SOCIALWORKBD_PAYMENT_API || "",
+
+    TRANSACTIONS_COLLECTION:
+      "walletTransactions",
+
+    USERS_COLLECTION:
+      "users"
+  };
 
   /* ---------------------------------------------------------
-     Firebase
+     Firebase Helpers
   --------------------------------------------------------- */
 
   function getFirebase() {
-    if (typeof firebase === "undefined") {
-      throw new Error("Firebase is not loaded.");
+    if (
+      typeof firebase === "undefined"
+    ) {
+      throw new Error(
+        "Firebase is not loaded."
+      );
     }
 
-    if (!firebase.apps || !firebase.apps.length) {
-      throw new Error("Firebase has not been initialized.");
+    if (
+      !firebase.apps ||
+      !firebase.apps.length
+    ) {
+      throw new Error(
+        "Firebase has not been initialized."
+      );
     }
 
     return {
@@ -46,32 +68,113 @@
   }
 
   /* ---------------------------------------------------------
-     Helpers
+     DOM Helpers
+  --------------------------------------------------------- */
+
+  function getElement(id) {
+    return document.getElementById(id);
+  }
+
+  function setText(id, value) {
+    const element = getElement(id);
+
+    if (element) {
+      element.textContent =
+        value === null ||
+        value === undefined
+          ? ""
+          : String(value);
+    }
+  }
+
+  function showElement(id) {
+    const element = getElement(id);
+
+    if (element) {
+      element.style.display = "";
+    }
+  }
+
+  function hideElement(id) {
+    const element = getElement(id);
+
+    if (element) {
+      element.style.display = "none";
+    }
+  }
+
+  function showMessage(message) {
+    alert(message);
+  }
+
+  /* ---------------------------------------------------------
+     HTML Helpers
   --------------------------------------------------------- */
 
   function escapeHtml(value) {
-    if (value === null || value === undefined) {
+    if (
+      value === null ||
+      value === undefined
+    ) {
       return "";
     }
 
     return String(value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+      .replace(
+        /</g,
+        "&lt;"
+      )
+      .replace(
+        />/g,
+        "&gt;"
+      )
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+      .replace(
+        /'/g,
+        "&#039;"
+      );
   }
 
-  function formatMoney(value) {
-    const amount = Number(value || 0);
+  /* ---------------------------------------------------------
+     Currency Helpers
+  --------------------------------------------------------- */
 
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount);
+  function formatCurrency(amount) {
+    const value = Number(amount || 0);
+
+    return new Intl.NumberFormat(
+      "en-US",
+      {
+        style: "currency",
+        currency: CONFIG.currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }
+    ).format(value);
   }
+
+  function parseAmount(value) {
+    const amount = Number(value);
+
+    if (!Number.isFinite(amount)) {
+      return 0;
+    }
+
+    return Math.round(
+      amount * 100
+    ) / 100;
+  }
+
+  /* ---------------------------------------------------------
+     Date Helpers
+  --------------------------------------------------------- */
 
   function formatDate(timestamp) {
     if (!timestamp) {
@@ -81,88 +184,127 @@
     try {
       let date;
 
-      if (timestamp.toDate) {
+      if (
+        timestamp.toDate &&
+        typeof timestamp.toDate ===
+          "function"
+      ) {
         date = timestamp.toDate();
+      } else if (
+        timestamp instanceof Date
+      ) {
+        date = timestamp;
       } else {
         date = new Date(timestamp);
       }
 
-      return date.toLocaleString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit"
-      });
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return "Recently";
+      }
+
+      return date.toLocaleDateString(
+        "en-US",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      );
     } catch (error) {
       return "Recently";
     }
   }
 
-  function showMessage(message, type) {
-    const element =
-      document.getElementById("wallet-message");
+  /* ---------------------------------------------------------
+     Local User Helpers
+  --------------------------------------------------------- */
 
-    if (!element) {
-      alert(message);
+  function getLocalUser() {
+    try {
+      return JSON.parse(
+        localStorage.getItem(
+          "currentUser"
+        ) || "null"
+      );
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function saveLocalUser(profile) {
+    if (!profile) {
       return;
     }
 
-    element.textContent = message;
-    element.className =
-      "wallet-message " + (type || "info");
+    const existing =
+      getLocalUser() || {};
 
-    element.style.display = "block";
-  }
-
-  function hideMessage() {
-    const element =
-      document.getElementById("wallet-message");
-
-    if (!element) return;
-
-    element.style.display = "none";
-    element.textContent = "";
-  }
-
-  function setButtonLoading(button, loading, text) {
-    if (!button) return;
-
-    if (loading) {
-      button.disabled = true;
-      button.dataset.originalText =
-        button.textContent;
-      button.textContent =
-        text || "Processing...";
-    } else {
-      button.disabled = false;
-
-      button.textContent =
-        button.dataset.originalText ||
-        "Continue to Payment";
-    }
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify({
+        ...existing,
+        id:
+          profile.uid ||
+          profile.id ||
+          existing.id ||
+          "",
+        uid:
+          profile.uid ||
+          profile.id ||
+          existing.uid ||
+          "",
+        name:
+          profile.name ||
+          existing.name ||
+          "",
+        email:
+          profile.email ||
+          existing.email ||
+          "",
+        role:
+          profile.role ||
+          existing.role ||
+          "worker",
+        accountId:
+          profile.accountId ||
+          existing.accountId ||
+          "",
+        balance:
+          Number(
+            profile.balance || 0
+          ),
+        pendingBalance:
+          Number(
+            profile.pendingBalance || 0
+          ),
+        status:
+          profile.status ||
+          existing.status ||
+          "active"
+      })
+    );
   }
 
   /* ---------------------------------------------------------
      Authentication
   --------------------------------------------------------- */
 
-  async function requireUser() {
+  async function requireAuthenticatedUser() {
     const auth = getAuth();
 
-    const user = auth.currentUser;
+    const user =
+      auth.currentUser;
 
     if (!user) {
       window.location.href =
-        "login.html?redirect=" +
-        encodeURIComponent(
-          window.location.href
-        );
+        "login.html";
 
       return null;
     }
-
-    currentUser = user;
 
     return user;
   }
@@ -171,560 +313,925 @@
      User Profile
   --------------------------------------------------------- */
 
-  async function loadProfile() {
-    if (!currentUser) {
+  async function loadUserProfile(uid) {
+    if (!uid) {
       return null;
     }
 
-    try {
-      const db = getDB();
+    const db = getDB();
 
-      const snapshot =
-        await db
-          .collection("users")
-          .doc(currentUser.uid)
-          .get();
+    const snapshot =
+      await db
+        .collection(
+          CONFIG.USERS_COLLECTION
+        )
+        .doc(uid)
+        .get();
 
-      if (!snapshot.exists) {
-        throw new Error(
-          "User profile was not found."
-        );
-      }
-
-      currentProfile = {
-        uid: currentUser.uid,
-        ...snapshot.data()
-      };
-
-      return currentProfile;
-    } catch (error) {
-      console.error(
-        "Wallet profile error:",
-        error
-      );
-
-      throw error;
+    if (!snapshot.exists) {
+      return null;
     }
+
+    return {
+      id: snapshot.id,
+      ...snapshot.data()
+    };
   }
 
   /* ---------------------------------------------------------
-     Wallet Balance
+     Wallet State
   --------------------------------------------------------- */
 
-  function renderBalance() {
-    if (!currentProfile) return;
+  let currentUser = null;
+  let currentProfile = null;
+
+  /* ---------------------------------------------------------
+     Render Balance
+  --------------------------------------------------------- */
+
+  function renderBalance(profile) {
+    if (!profile) {
+      return;
+    }
 
     const balance =
-      Number(currentProfile.balance || 0);
+      Number(
+        profile.balance || 0
+      );
 
     const pendingBalance =
       Number(
-        currentProfile.pendingBalance || 0
+        profile.pendingBalance || 0
       );
 
-    const balanceElements = [
-      document.getElementById("wallet-balance"),
-      document.getElementById("balance"),
-      document.querySelector(
-        "[data-wallet-balance]"
+    setText(
+      "wallet-balance",
+      formatCurrency(balance)
+    );
+
+    setText(
+      "balance",
+      formatCurrency(balance)
+    );
+
+    setText(
+      "available-balance",
+      formatCurrency(balance)
+    );
+
+    setText(
+      "wallet-pending-balance",
+      formatCurrency(
+        pendingBalance
       )
-    ];
+    );
 
-    balanceElements.forEach(function (element) {
-      if (element) {
-        element.textContent =
-          formatMoney(balance);
-      }
-    });
-
-    const pendingElements = [
-      document.getElementById(
-        "pending-balance"
-      ),
-      document.querySelector(
-        "[data-pending-balance]"
+    setText(
+      "pending-balance",
+      formatCurrency(
+        pendingBalance
       )
-    ];
+    );
 
-    pendingElements.forEach(function (element) {
-      if (element) {
-        element.textContent =
-          formatMoney(pendingBalance);
-      }
-    });
-  }
+    setText(
+      "account-balance",
+      formatCurrency(balance)
+    );
 
-  /* ---------------------------------------------------------
-     Payment Amount
-  --------------------------------------------------------- */
+    setText(
+      "wallet-account-id",
+      profile.accountId || ""
+    );
 
-  function getDepositAmount() {
-    const input =
-      document.getElementById(
-        "deposit-amount"
-      ) ||
-      document.getElementById(
-        "amount"
-      );
+    setText(
+      "account-id",
+      profile.accountId || ""
+    );
 
-    if (!input) {
-      throw new Error(
-        "Deposit amount field was not found."
-      );
-    }
+    setText(
+      "wallet-user-name",
+      profile.name || ""
+    );
 
-    const amount =
-      Number(input.value);
-
-    if (
-      !Number.isFinite(amount) ||
-      amount <= 0
-    ) {
-      throw new Error(
-        "Please enter a valid payment amount."
-      );
-    }
-
-    if (amount < MIN_DEPOSIT) {
-      throw new Error(
-        "Minimum deposit amount is $" +
-        MIN_DEPOSIT +
-        "."
-      );
-    }
-
-    if (amount > MAX_DEPOSIT) {
-      throw new Error(
-        "Maximum deposit amount is $" +
-        MAX_DEPOSIT +
-        "."
-      );
-    }
-
-    return Number(
-      amount.toFixed(2)
+    setText(
+      "wallet-user-email",
+      profile.email || ""
     );
   }
 
   /* ---------------------------------------------------------
-     Create Payment
+     Empty Transactions
   --------------------------------------------------------- */
 
-  async function createPayment(amount) {
-    if (!currentUser) {
-      throw new Error(
-        "Please log in before making a payment."
-      );
-    }
+  function renderEmptyTransactions() {
+    const containers = [
+      "wallet-transactions",
+      "transactions-list",
+      "transaction-list",
+      "wallet-history"
+    ];
 
-    /*
-      The Firebase ID token proves the identity
-      of the logged-in user to the backend.
-    */
+    let rendered = false;
 
-    const token =
-      await currentUser.getIdToken(true);
+    containers.forEach(
+      function (id) {
+        const container =
+          getElement(id);
 
-    const response =
-      await fetch(
-        PAYMENT_API_URL,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            "Authorization":
-              "Bearer " + token
-          },
-
-          body: JSON.stringify({
-            amount: amount,
-
-            currency: "USD",
-
-            userId:
-              currentUser.uid,
-
-            accountId:
-              currentProfile &&
-              currentProfile.accountId
-                ? currentProfile.accountId
-                : ""
-          })
+        if (!container) {
+          return;
         }
-      );
 
-    let data = null;
+        if (rendered) {
+          return;
+        }
 
-    try {
-      data = await response.json();
-    } catch (error) {
-      throw new Error(
-        "Invalid payment server response."
-      );
-    }
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>No wallet transactions yet.</p>
+          </div>
+        `;
 
-    if (!response.ok) {
-      throw new Error(
-        data &&
-        data.message
-          ? data.message
-          : "Unable to create payment."
-      );
-    }
-
-    if (!data) {
-      throw new Error(
-        "Payment server returned no data."
-      );
-    }
-
-    return data;
+        rendered = true;
+      }
+    );
   }
 
   /* ---------------------------------------------------------
-     Redirect To SSLCommerz
+     Transaction Type
   --------------------------------------------------------- */
 
-  function redirectToPayment(data) {
-    /*
-      Backend may return the SSLCommerz
-      Gateway URL using one of these fields.
-    */
+  function getTransactionLabel(
+    transaction
+  ) {
+    const type =
+      String(
+        transaction.type || ""
+      ).toLowerCase();
 
-    const paymentUrl =
-      data.paymentUrl ||
-      data.gatewayUrl ||
-      data.GatewayPageURL ||
-      data.url;
-
-    if (!paymentUrl) {
-      throw new Error(
-        "Payment gateway URL was not returned."
-      );
+    if (
+      type === "deposit" ||
+      type === "add_money" ||
+      type === "payment"
+    ) {
+      return "Wallet Deposit";
     }
 
-    window.location.href =
-      paymentUrl;
+    if (
+      type === "withdrawal" ||
+      type === "withdraw"
+    ) {
+      return "Withdrawal";
+    }
+
+    if (
+      type === "earning" ||
+      type === "job_earning"
+    ) {
+      return "Job Earning";
+    }
+
+    if (
+      type === "refund"
+    ) {
+      return "Refund";
+    }
+
+    if (
+      type === "fee"
+    ) {
+      return "Service Fee";
+    }
+
+    return "Wallet Transaction";
   }
 
   /* ---------------------------------------------------------
-     Start Deposit
+     Transaction Status
   --------------------------------------------------------- */
 
-  async function handleDeposit(event) {
-    if (event) {
-      event.preventDefault();
-    }
+  function getTransactionStatus(
+    transaction
+  ) {
+    return (
+      transaction.status ||
+      "completed"
+    );
+  }
 
-    hideMessage();
+  /* ---------------------------------------------------------
+     Render Transactions
+  --------------------------------------------------------- */
 
-    const button =
-      document.getElementById(
-        "deposit-btn"
-      ) ||
-      document.getElementById(
-        "add-money-btn"
-      ) ||
-      document.querySelector(
-        "[data-deposit-button]"
-      );
+  function renderTransactions(
+    transactions
+  ) {
+    const containers = [
+      "wallet-transactions",
+      "transactions-list",
+      "transaction-list",
+      "wallet-history"
+    ];
 
-    try {
-      const user =
-        await requireUser();
+    let container = null;
 
-      if (!user) {
-        return;
-      }
-
-      if (!currentProfile) {
-        await loadProfile();
-      }
-
-      const amount =
-        getDepositAmount();
-
-      const confirmed =
-        window.confirm(
-          "Continue with a $" +
-          amount.toFixed(2) +
-          " wallet deposit?"
+    for (
+      let i = 0;
+      i < containers.length;
+      i++
+    ) {
+      const element =
+        getElement(
+          containers[i]
         );
 
-      if (!confirmed) {
-        return;
+      if (element) {
+        container = element;
+        break;
       }
-
-      setButtonLoading(
-        button,
-        true,
-        "Creating Payment..."
-      );
-
-      const payment =
-        await createPayment(
-          amount
-        );
-
-      /*
-        Important:
-        Do not update wallet balance here.
-
-        Balance must be updated only after
-        SSLCommerz confirms the payment on
-        the secure backend.
-      */
-
-      redirectToPayment(
-        payment
-      );
-    } catch (error) {
-      console.error(
-        "Deposit error:",
-        error
-      );
-
-      showMessage(
-        error.message ||
-        "Unable to start payment.",
-        "error"
-      );
-
-      setButtonLoading(
-        button,
-        false
-      );
     }
-  }
 
-  /* ---------------------------------------------------------
-     Transaction History
-  --------------------------------------------------------- */
+    if (!container) {
+      return;
+    }
 
-  async function loadTransactions() {
-    if (!currentUser) return;
-
-    const container =
-      document.getElementById(
-        "transaction-list"
-      );
-
-    if (!container) return;
+    if (
+      !transactions ||
+      !transactions.length
+    ) {
+      renderEmptyTransactions();
+      return;
+    }
 
     container.innerHTML =
-      '<div class="transaction-loading">Loading transactions...</div>';
+      transactions
+        .map(
+          function (transaction) {
+            const amount =
+              Number(
+                transaction.amount || 0
+              );
+
+            const type =
+              String(
+                transaction.type || ""
+              ).toLowerCase();
+
+            const isCredit =
+              [
+                "deposit",
+                "add_money",
+                "payment",
+                "earning",
+                "job_earning",
+                "refund"
+              ].includes(type);
+
+            const amountPrefix =
+              isCredit
+                ? "+"
+                : "-";
+
+            const status =
+              getTransactionStatus(
+                transaction
+              );
+
+            return `
+              <div class="wallet-transaction">
+                <div class="transaction-info">
+                  <strong>
+                    ${escapeHtml(
+                      getTransactionLabel(
+                        transaction
+                      )
+                    )}
+                  </strong>
+
+                  <small>
+                    ${escapeHtml(
+                      transaction.description ||
+                        transaction.note ||
+                        ""
+                    )}
+                  </small>
+
+                  <small>
+                    ${escapeHtml(
+                      formatDate(
+                        transaction.createdAt
+                      )
+                    )}
+                  </small>
+                </div>
+
+                <div class="transaction-amount">
+                  <strong>
+                    ${amountPrefix}${escapeHtml(
+                      formatCurrency(
+                        amount
+                      )
+                    )}
+                  </strong>
+
+                  <small>
+                    ${escapeHtml(
+                      status
+                    )}
+                  </small>
+                </div>
+              </div>
+            `;
+          }
+        )
+        .join("");
+  }
+
+  /* ---------------------------------------------------------
+     Load Wallet Transactions
+  --------------------------------------------------------- */
+
+  async function loadTransactions(
+    uid
+  ) {
+    if (!uid) {
+      return;
+    }
+
+    const db = getDB();
 
     try {
-      const db = getDB();
-
       const snapshot =
         await db
-          .collection("transactions")
-          .where(
-            "userId",
-            "==",
-            currentUser.uid
+          .collection(
+            CONFIG.TRANSACTIONS_COLLECTION
           )
-          .limit(50)
+          .where(
+            "uid",
+            "==",
+            uid
+          )
+          .limit(100)
           .get();
 
       const transactions = [];
 
-      snapshot.forEach(function (doc) {
-        transactions.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
+      snapshot.forEach(
+        function (doc) {
+          transactions.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        }
+      );
 
       transactions.sort(
         function (a, b) {
           const aTime =
             a.createdAt &&
-            a.createdAt.toMillis
+            typeof a.createdAt.toMillis ===
+              "function"
               ? a.createdAt.toMillis()
               : 0;
 
           const bTime =
             b.createdAt &&
-            b.createdAt.toMillis
+            typeof b.createdAt.toMillis ===
+              "function"
               ? b.createdAt.toMillis()
               : 0;
 
-          return bTime - aTime;
+          return (
+            bTime - aTime
+          );
         }
       );
 
-      if (!transactions.length) {
-        container.innerHTML =
-          '<div class="transaction-empty">No transactions yet.</div>';
-
-        return;
-      }
-
-      container.innerHTML =
+      renderTransactions(
         transactions
-          .map(
-            function (transaction) {
-              return renderTransaction(
-                transaction
-              );
-            }
-          )
-          .join("");
+      );
     } catch (error) {
       console.error(
         "Transaction loading error:",
         error
       );
 
-      container.innerHTML =
-        '<div class="transaction-error">Unable to load transaction history.</div>';
+      renderEmptyTransactions();
     }
   }
 
   /* ---------------------------------------------------------
-     Render Transaction
+     Refresh Wallet
   --------------------------------------------------------- */
 
-  function renderTransaction(transaction) {
-    const status =
-      transaction.status ||
-      "pending";
+  async function refreshWallet() {
+    if (!currentUser) {
+      return;
+    }
 
-    const type =
-      transaction.type ||
-      "deposit";
+    try {
+      const profile =
+        await loadUserProfile(
+          currentUser.uid
+        );
 
-    const amount =
-      Number(
-        transaction.amount || 0
+      if (!profile) {
+        throw new Error(
+          "User profile was not found."
+        );
+      }
+
+      currentProfile =
+        profile;
+
+      saveLocalUser(
+        profile
       );
 
-    const statusClass =
-      String(status)
-        .toLowerCase()
-        .replace(/\s+/g, "-");
+      renderBalance(
+        profile
+      );
 
-    const typeLabel =
-      type === "deposit"
-        ? "Wallet Deposit"
-        : type === "withdrawal"
-          ? "Withdrawal"
-          : "Transaction";
+      await loadTransactions(
+        currentUser.uid
+      );
+    } catch (error) {
+      console.error(
+        "Wallet refresh error:",
+        error
+      );
 
-    return `
-      <div class="transaction-item">
-
-        <div class="transaction-main">
-
-          <div class="transaction-title">
-            ${escapeHtml(typeLabel)}
-          </div>
-
-          <div class="transaction-date">
-            ${escapeHtml(
-              formatDate(
-                transaction.createdAt
-              )
-            )}
-          </div>
-
-          ${
-            transaction.tranId
-              ? `
-                <div class="transaction-id">
-                  ID:
-                  ${escapeHtml(
-                    transaction.tranId
-                  )}
-                </div>
-              `
-              : ""
-          }
-
-        </div>
-
-        <div class="transaction-right">
-
-          <div class="transaction-amount">
-            ${escapeHtml(
-              formatMoney(amount)
-            )}
-          </div>
-
-          <div class="transaction-status ${escapeHtml(
-            statusClass
-          )}">
-            ${escapeHtml(status)}
-          </div>
-
-        </div>
-
-      </div>
-    `;
+      showMessage(
+        "Wallet data could not be loaded. Please try again."
+      );
+    }
   }
 
   /* ---------------------------------------------------------
-     Payment Result
+     Amount Validation
   --------------------------------------------------------- */
 
-  async function checkPaymentResult() {
+  function validateDepositAmount(
+    amount
+  ) {
+    if (
+      !Number.isFinite(amount)
+    ) {
+      return {
+        valid: false,
+        message:
+          "Enter a valid amount."
+      };
+    }
+
+    if (amount <= 0) {
+      return {
+        valid: false,
+        message:
+          "Amount must be greater than zero."
+      };
+    }
+
+    if (amount < 1) {
+      return {
+        valid: false,
+        message:
+          "Minimum deposit amount is $1.00."
+      };
+    }
+
+    if (amount > 10000) {
+      return {
+        valid: false,
+        message:
+          "Maximum deposit amount is $10,000.00."
+      };
+    }
+
+    return {
+      valid: true,
+      message: ""
+    };
+  }
+
+  /* ---------------------------------------------------------
+     Payment Request
+  --------------------------------------------------------- */
+
+  async function createPaymentRequest(
+    amount
+  ) {
+    if (
+      !CONFIG.PAYMENT_API_URL
+    ) {
+      throw new Error(
+        "Payment service is not configured yet."
+      );
+    }
+
+    const user =
+      await requireAuthenticatedUser();
+
+    if (!user) {
+      return null;
+    }
+
+    const profile =
+      currentProfile ||
+      await loadUserProfile(
+        user.uid
+      );
+
+    if (!profile) {
+      throw new Error(
+        "User profile could not be loaded."
+      );
+    }
+
+    const transactionId =
+      "SWB-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
+
+    const payload = {
+      uid: user.uid,
+
+      accountId:
+        profile.accountId || "",
+
+      name:
+        profile.name || "",
+
+      email:
+        profile.email ||
+        user.email ||
+        "",
+
+      amount: amount,
+
+      currency:
+        CONFIG.currency,
+
+      transactionId:
+        transactionId,
+
+      returnUrl:
+        window.location.origin +
+        window.location.pathname,
+
+      cancelUrl:
+        window.location.origin +
+        window.location.pathname,
+
+      failUrl:
+        window.location.origin +
+        window.location.pathname,
+
+      successUrl:
+        window.location.origin +
+        window.location.pathname
+    };
+
+    const response =
+      await fetch(
+        CONFIG.PAYMENT_API_URL,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+        }
+      );
+
+    if (!response.ok) {
+      throw new Error(
+        "Payment server returned an error."
+      );
+    }
+
+    const data =
+      await response.json();
+
+    return data;
+  }
+
+  /* ---------------------------------------------------------
+     Start Payment
+  --------------------------------------------------------- */
+
+  async function startPayment(
+    amount,
+    button
+  ) {
+    const validation =
+      validateDepositAmount(
+        amount
+      );
+
+    if (!validation.valid) {
+      showMessage(
+        validation.message
+      );
+
+      return;
+    }
+
+    if (
+      button &&
+      button.disabled
+    ) {
+      return;
+    }
+
+    try {
+      if (button) {
+        button.disabled =
+          true;
+
+        button.dataset.originalText =
+          button.textContent;
+
+        button.textContent =
+          "Connecting to payment...";
+      }
+
+      const payment =
+        await createPaymentRequest(
+          amount
+        );
+
+      if (!payment) {
+        return;
+      }
+
+      /*
+        The backend must return a secure payment URL
+        generated by SSLCommerz.
+      */
+
+      const paymentUrl =
+        payment.paymentUrl ||
+        payment.GatewayPageURL ||
+        payment.gatewayPageURL ||
+        payment.url ||
+        "";
+
+      if (!paymentUrl) {
+        throw new Error(
+          "Payment URL was not returned by the server."
+        );
+      }
+
+      window.location.href =
+        paymentUrl;
+    } catch (error) {
+      console.error(
+        "Payment start error:",
+        error
+      );
+
+      showMessage(
+        error.message ||
+          "Payment could not be started."
+      );
+    } finally {
+      if (button) {
+        button.disabled =
+          false;
+
+        button.textContent =
+          button.dataset
+            .originalText ||
+          "Add Money";
+      }
+    }
+  }
+
+  /* ---------------------------------------------------------
+     Deposit Form
+  --------------------------------------------------------- */
+
+  function setupDepositForm() {
+    const form =
+      getElement(
+        "wallet-deposit-form"
+      ) ||
+      getElement(
+        "deposit-form"
+      ) ||
+      getElement(
+        "add-money-form"
+      );
+
+    if (!form) {
+      return;
+    }
+
+    if (
+      form.dataset.initialized ===
+      "true"
+    ) {
+      return;
+    }
+
+    form.dataset.initialized =
+      "true";
+
+    form.addEventListener(
+      "submit",
+      async function (event) {
+        event.preventDefault();
+
+        const amountInput =
+          getElement(
+            "deposit-amount"
+          ) ||
+          getElement(
+            "wallet-amount"
+          ) ||
+          getElement(
+            "add-money-amount"
+          ) ||
+          form.querySelector(
+            'input[name="amount"]'
+          );
+
+        const button =
+          form.querySelector(
+            'button[type="submit"]'
+          ) ||
+          getElement(
+            "add-money-btn"
+          ) ||
+          getElement(
+            "deposit-btn"
+          );
+
+        const amount =
+          parseAmount(
+            amountInput
+              ? amountInput.value
+              : 0
+          );
+
+        await startPayment(
+          amount,
+          button
+        );
+      }
+    );
+  }
+
+  /* ---------------------------------------------------------
+     Quick Amount Buttons
+  --------------------------------------------------------- */
+
+  function setupQuickAmountButtons() {
+    const buttons =
+      document.querySelectorAll(
+        "[data-wallet-amount], [data-amount]"
+      );
+
+    buttons.forEach(
+      function (button) {
+        button.addEventListener(
+          "click",
+          function () {
+            const amount =
+              button.dataset
+                .walletAmount ||
+              button.dataset
+                .amount ||
+              "";
+
+            const input =
+              getElement(
+                "deposit-amount"
+              ) ||
+              getElement(
+                "wallet-amount"
+              ) ||
+              getElement(
+                "add-money-amount"
+              );
+
+            if (input) {
+              input.value =
+                amount;
+
+              input.focus();
+            }
+          }
+        );
+      }
+    );
+  }
+
+  /* ---------------------------------------------------------
+     Payment Return Handling
+  --------------------------------------------------------- */
+
+  async function handlePaymentReturn() {
     const params =
       new URLSearchParams(
         window.location.search
       );
 
-    const paymentStatus =
-      params.get("payment");
+    const status =
+      (
+        params.get(
+          "status"
+        ) || ""
+      ).toLowerCase();
 
-    const transactionId =
-      params.get("tran_id");
+    const tranId =
+      params.get(
+        "tran_id"
+      ) ||
+      params.get(
+        "tranId"
+      ) ||
+      params.get(
+        "transaction_id"
+      ) ||
+      "";
 
-    if (!paymentStatus) {
+    const valId =
+      params.get(
+        "val_id"
+      ) ||
+      "";
+
+    if (
+      !status &&
+      !tranId &&
+      !valId
+    ) {
+      return;
+    }
+
+    /*
+      Never update the wallet balance from URL parameters.
+
+      The server must validate the SSLCommerz transaction
+      and update Firestore after successful verification.
+    */
+
+    if (
+      status === "failed" ||
+      status === "cancelled" ||
+      status === "canceled"
+    ) {
+      showMessage(
+        "Payment was not completed."
+      );
+
+      cleanPaymentQuery();
       return;
     }
 
     if (
-      paymentStatus === "success"
+      status === "success" ||
+      status === "successful"
     ) {
       showMessage(
-        transactionId
-          ? "Payment submitted successfully. Transaction: " +
-            transactionId
-          : "Payment submitted successfully.",
-        "success"
+        "Payment received. Your wallet will update after payment verification."
       );
+
+      cleanPaymentQuery();
+
+      await refreshWallet();
+
+      return;
     }
 
     if (
-      paymentStatus === "failed"
+      tranId ||
+      valId
     ) {
-      showMessage(
-        "Payment failed. Your wallet was not credited.",
-        "error"
-      );
+      cleanPaymentQuery();
     }
+  }
 
-    if (
-      paymentStatus === "cancelled"
-    ) {
-      showMessage(
-        "Payment was cancelled. Your wallet was not credited.",
-        "error"
-      );
-    }
+  /* ---------------------------------------------------------
+     Clean Payment Query
+  --------------------------------------------------------- */
 
-    /*
-      Remove payment query parameters
-      after displaying the result.
-    */
-
+  function cleanPaymentQuery() {
     try {
       const cleanUrl =
+        window.location.origin +
         window.location.pathname;
 
       window.history.replaceState(
@@ -733,8 +1240,8 @@
         cleanUrl
       );
     } catch (error) {
-      console.warn(
-        "Unable to clean payment URL:",
+      console.error(
+        "URL cleanup error:",
         error
       );
     }
@@ -752,6 +1259,18 @@
 
     buttons.forEach(
       function (button) {
+        if (
+          button.dataset
+            .walletLogoutInitialized ===
+          "true"
+        ) {
+          return;
+        }
+
+        button.dataset
+          .walletLogoutInitialized =
+          "true";
+
         button.addEventListener(
           "click",
           async function (event) {
@@ -773,8 +1292,7 @@
               );
 
               showMessage(
-                "Unable to log out.",
-                "error"
+                "Logout could not be completed."
               );
             }
           }
@@ -784,86 +1302,143 @@
   }
 
   /* ---------------------------------------------------------
-     Deposit Form
+     Manual Refresh
   --------------------------------------------------------- */
 
-  function setupDepositForm() {
-    const form =
-      document.getElementById(
-        "deposit-form"
+  function setupRefreshButton() {
+    const buttons =
+      document.querySelectorAll(
+        "#refresh-wallet, [data-action='refresh-wallet']"
       );
 
-    if (!form) {
-      return;
-    }
+    buttons.forEach(
+      function (button) {
+        button.addEventListener(
+          "click",
+          async function (event) {
+            event.preventDefault();
 
-    if (
-      form.dataset.initialized ===
-      "true"
-    ) {
-      return;
-    }
+            const originalText =
+              button.textContent;
 
-    form.dataset.initialized =
-      "true";
+            button.disabled =
+              true;
 
-    form.addEventListener(
-      "submit",
-      handleDeposit
+            button.textContent =
+              "Refreshing...";
+
+            try {
+              await refreshWallet();
+            } finally {
+              button.disabled =
+                false;
+
+              button.textContent =
+                originalText ||
+                "Refresh";
+            }
+          }
+        );
+      }
     );
   }
 
   /* ---------------------------------------------------------
-     Refresh Wallet
+     Wallet Auth State
   --------------------------------------------------------- */
 
-  async function refreshWallet() {
-    try {
-      await loadProfile();
+  function setupWalletAuthState() {
+    const auth =
+      getAuth();
 
-      renderBalance();
+    auth.onAuthStateChanged(
+      async function (user) {
+        if (!user) {
+          window.location.href =
+            "login.html";
 
-      await loadTransactions();
-    } catch (error) {
-      console.error(
-        "Wallet refresh error:",
-        error
-      );
+          return;
+        }
 
-      showMessage(
-        "Unable to refresh wallet data.",
-        "error"
-      );
-    }
+        currentUser =
+          user;
+
+        try {
+          currentProfile =
+            await loadUserProfile(
+              user.uid
+            );
+
+          if (
+            !currentProfile
+          ) {
+            showMessage(
+              "Your user profile could not be found."
+            );
+
+            return;
+          }
+
+          if (
+            currentProfile.status ===
+            "suspended"
+          ) {
+            await auth.signOut();
+
+            localStorage.removeItem(
+              "currentUser"
+            );
+
+            window.location.href =
+              "login.html";
+
+            return;
+          }
+
+          saveLocalUser(
+            currentProfile
+          );
+
+          renderBalance(
+            currentProfile
+          );
+
+          await loadTransactions(
+            user.uid
+          );
+        } catch (error) {
+          console.error(
+            "Wallet auth error:",
+            error
+          );
+
+          showMessage(
+            "Wallet could not be loaded."
+          );
+        }
+      }
+    );
   }
 
   /* ---------------------------------------------------------
      Initialize
   --------------------------------------------------------- */
 
-  async function init() {
+  async function initWallet() {
     try {
       getFirebase();
 
-      const user =
-        await requireUser();
-
-      if (!user) {
-        return;
-      }
-
-      await loadProfile();
-
-      renderBalance();
-
       setupDepositForm();
+
+      setupQuickAmountButtons();
 
       setupLogout();
 
-      await loadTransactions();
+      setupRefreshButton();
 
-      await checkPaymentResult();
+      await handlePaymentReturn();
 
+      setupWalletAuthState();
     } catch (error) {
       console.error(
         "Wallet initialization error:",
@@ -871,9 +1446,7 @@
       );
 
       showMessage(
-        error.message ||
-        "Unable to load wallet.",
-        "error"
+        "Wallet initialization failed."
       );
     }
   }
@@ -888,10 +1461,10 @@
   ) {
     document.addEventListener(
       "DOMContentLoaded",
-      init
+      initWallet
     );
   } else {
-    init();
+    initWallet();
   }
 
 })();
