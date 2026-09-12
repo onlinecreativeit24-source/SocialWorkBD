@@ -1,21 +1,22 @@
 /* =========================================================
    SocialWorkBD - Main Application
-   Firebase + Professional Global Freelance Marketplace
+   Firebase + Global Freelance Marketplace
+   Version: Professional Marketplace Core
    ========================================================= */
 
 (function () {
   "use strict";
 
-  /* ---------------------------------------------------------
+  /* =========================================================
      Firebase Helpers
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function getFirebase() {
     if (typeof firebase === "undefined") {
       throw new Error("Firebase is not loaded.");
     }
 
-    if (!firebase.apps.length) {
+    if (!firebase.apps || !firebase.apps.length) {
       throw new Error("Firebase has not been initialized.");
     }
 
@@ -25,9 +26,18 @@
     };
   }
 
-  /* ---------------------------------------------------------
+  function serverTimestamp() {
+    return firebase.firestore.FieldValue.serverTimestamp();
+  }
+
+  function increment(value) {
+    return firebase.firestore.FieldValue.increment(value);
+  }
+
+
+  /* =========================================================
      General Helpers
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function escapeHtml(value) {
     if (value === null || value === undefined) {
@@ -45,10 +55,14 @@
   function saveCurrentUser(user) {
     if (!user) return;
 
-    localStorage.setItem(
-      "currentUser",
-      JSON.stringify(user)
-    );
+    try {
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify(user)
+      );
+    } catch (error) {
+      console.warn("Could not save current user:", error);
+    }
   }
 
   function getCurrentUserLocal() {
@@ -61,25 +75,44 @@
     }
   }
 
+  function clearCurrentUser() {
+    try {
+      localStorage.removeItem("currentUser");
+    } catch (error) {
+      console.warn("Could not clear local user:", error);
+    }
+  }
+
   function getRoleName(role) {
     if (role === "client") {
       return "Client";
     }
 
-    if (
-      role === "worker" ||
-      role === "freelancer"
-    ) {
+    if (role === "worker" || role === "freelancer") {
       return "Freelancer";
     }
 
     return "Member";
   }
 
+  function isFreelancerRole(role) {
+    return role === "worker" || role === "freelancer";
+  }
+
+  function isClientRole(role) {
+    return role === "client";
+  }
+
   function formatBudget(amount) {
     const value = Number(amount || 0);
 
-    return "৳" + value.toLocaleString("en-BD");
+    return (
+      "$" +
+      value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+      })
+    );
   }
 
   function formatDate(timestamp) {
@@ -92,7 +125,11 @@
         ? timestamp.toDate()
         : new Date(timestamp);
 
-      return date.toLocaleDateString("en-BD", {
+      if (Number.isNaN(date.getTime())) {
+        return "";
+      }
+
+      return date.toLocaleDateString("en-US", {
         year: "numeric",
         month: "short",
         day: "numeric"
@@ -102,28 +139,85 @@
     }
   }
 
-  async function getUserProfile(uid) {
-    const { db } = getFirebase();
-
-    const doc = await db
-      .collection("users")
-      .doc(uid)
-      .get();
-
-    if (!doc.exists) {
+  function getUrlParam(name) {
+    try {
+      return new URLSearchParams(window.location.search).get(name);
+    } catch (error) {
       return null;
     }
+  }
 
-    return {
-      id: doc.id,
-      ...doc.data()
-    };
+  function setButtonState(button, disabled, text) {
+    if (!button) return;
+
+    button.disabled = disabled;
+
+    if (text !== undefined) {
+      button.textContent = text;
+    }
+  }
+
+  function showError(message) {
+    alert(message);
+  }
+
+  function showSuccess(message) {
+    alert(message);
+  }
+
+  function getAuthUser() {
+    try {
+      const { auth } = getFirebase();
+      return auth.currentUser || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async function requireFirebaseUser() {
+    const { auth } = getFirebase();
+
+    if (auth.currentUser) {
+      return auth.currentUser;
+    }
+
+    return new Promise(function (resolve) {
+      let finished = false;
+
+      const unsubscribe = auth.onAuthStateChanged(function (user) {
+        if (finished) return;
+
+        finished = true;
+
+        try {
+          unsubscribe();
+        } catch (error) {
+          // Ignore unsubscribe errors.
+        }
+
+        resolve(user || null);
+      });
+
+      setTimeout(function () {
+        if (finished) return;
+
+        finished = true;
+
+        try {
+          unsubscribe();
+        } catch (error) {
+          // Ignore unsubscribe errors.
+        }
+
+        resolve(auth.currentUser || null);
+      }, 3000);
+    });
   }
 
   function requireLogin() {
-    const localUser = getCurrentUserLocal();
+    const user = getAuthUser();
 
-    if (!localUser) {
+    if (!user) {
       window.location.href = "login.html";
       return false;
     }
@@ -131,13 +225,10 @@
     return true;
   }
 
-  function showError(message) {
-    alert(message);
-  }
 
-  /* ---------------------------------------------------------
-     Account Status / Moderation Helpers
-     --------------------------------------------------------- */
+  /* =========================================================
+     Account Status / Moderation
+     ========================================================= */
 
   const ACCOUNT_STATUS = {
     ACTIVE: "active",
@@ -169,9 +260,7 @@
       return ACCOUNT_STATUS.ACTIVE;
     }
 
-    return normalizeAccountStatus(
-      profile.accountStatus
-    );
+    return normalizeAccountStatus(profile.accountStatus);
   }
 
   function isAccountMessagingBlocked(profile) {
@@ -189,7 +278,7 @@
     if (status === ACCOUNT_STATUS.SUSPENDED) {
       return (
         "Your account is currently suspended. " +
-        "Messaging and other restricted activities are unavailable. " +
+        "Messaging and restricted activities are unavailable. " +
         "You can request a review from Support."
       );
     }
@@ -256,18 +345,14 @@
       /\b(whatsapp|telegram|discord|signal|messenger|facebook|instagram|linkedin|tiktok|skype|snapchat)\b/i;
 
     if (platformPattern.test(value)) {
-      reasons.push(
-        "external communication platform"
-      );
+      reasons.push("external communication platform");
     }
 
     const offPlatformPattern =
       /\b(contact me|message me|text me|call me|reach me|talk to me|send me your number|send your number|my number|my email|email me|dm me|add me|chat outside|outside socialworkbd|off[- ]platform|off platform|outside the platform|move to whatsapp|move to telegram|contact outside)\b/i;
 
     if (offPlatformPattern.test(value)) {
-      reasons.push(
-        "off-platform communication request"
-      );
+      reasons.push("off-platform communication request");
     }
 
     return {
@@ -287,10 +372,7 @@
       return null;
     }
 
-    const userRef = db
-      .collection("users")
-      .doc(uid);
-
+    const userRef = db.collection("users").doc(uid);
     const snapshot = await userRef.get();
 
     if (!snapshot.exists) {
@@ -326,20 +408,13 @@
       userId: uid,
       accountId: profile.accountId || "",
       type: "off_platform_communication",
-      message: String(messageText || "")
-        .substring(0, 1000),
-      reasons: Array.isArray(reasons)
-        ? reasons
-        : [],
+      message: String(messageText || "").substring(0, 1000),
+      reasons: Array.isArray(reasons) ? reasons : [],
       violationNumber: violationCount,
       previousStatus:
-        normalizeAccountStatus(
-          profile.accountStatus
-        ),
+        normalizeAccountStatus(profile.accountStatus),
       resultingStatus: nextStatus,
-      createdAt:
-        firebase.firestore.FieldValue
-          .serverTimestamp()
+      createdAt: serverTimestamp()
     };
 
     await db
@@ -350,18 +425,12 @@
       accountStatus: nextStatus,
       warningCount: warningCount,
       violationCount: violationCount,
-      lastViolationAt:
-        firebase.firestore.FieldValue
-          .serverTimestamp(),
+      lastViolationAt: serverTimestamp(),
       lastViolationType:
         "off_platform_communication",
       lastViolationReasons:
-        Array.isArray(reasons)
-          ? reasons
-          : [],
-      updatedAt:
-        firebase.firestore.FieldValue
-          .serverTimestamp()
+        Array.isArray(reasons) ? reasons : [],
+      updatedAt: serverTimestamp()
     });
 
     const updatedProfile = {
@@ -384,9 +453,7 @@
     };
   }
 
-  async function moderateMessageAttempt(
-    messageText
-  ) {
+  async function moderateMessageAttempt(messageText) {
     const { auth } = getFirebase();
 
     const user = auth.currentUser;
@@ -436,9 +503,7 @@
     }
 
     const detection =
-      detectOffPlatformContent(
-        messageText
-      );
+      detectOffPlatformContent(messageText);
 
     if (!detection.flagged) {
       return {
@@ -505,9 +570,47 @@
       getAccountStatusMessage
   };
 
-  /* ---------------------------------------------------------
-     Create / Load User Profile
-     --------------------------------------------------------- */
+
+  /* =========================================================
+     User Profile
+     ========================================================= */
+
+  async function getUserProfile(uid) {
+    if (!uid) {
+      return null;
+    }
+
+    const { db } = getFirebase();
+
+    const doc = await db
+      .collection("users")
+      .doc(uid)
+      .get();
+
+    if (!doc.exists) {
+      return null;
+    }
+
+    return {
+      id: doc.id,
+      ...doc.data()
+    };
+  }
+
+  function generateAccountId(role) {
+    const prefix =
+      role === "client"
+        ? "SWB-C-"
+        : "SWB-F-";
+
+    return (
+      prefix +
+      Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase()
+    );
+  }
 
   async function createOrLoadUserProfile(
     user,
@@ -517,16 +620,19 @@
 
     extraData = extraData || {};
 
-    const ref = db
-      .collection("users")
-      .doc(user.uid);
+    const ref =
+      db.collection("users").doc(user.uid);
 
-    const snapshot = await ref.get();
+    const snapshot =
+      await ref.get();
 
-    /* Existing Profile */
+    /* -------------------------------------------------------
+       Existing Profile
+       ------------------------------------------------------- */
 
     if (snapshot.exists) {
-      const existing = snapshot.data();
+      const existing =
+        snapshot.data();
 
       const profile = {
         id: user.uid,
@@ -546,24 +652,19 @@
           "",
 
         role:
-          existing.role ||
-          "worker",
+          existing.role || "worker",
 
         skills:
-          existing.skills ||
-          "",
+          existing.skills || "",
 
         title:
-          existing.title ||
-          "",
+          existing.title || "",
 
         bio:
-          existing.bio ||
-          "",
+          existing.bio || "",
 
         location:
-          existing.location ||
-          "",
+          existing.location || "",
 
         photoURL:
           existing.photoURL ||
@@ -574,9 +675,7 @@
           Number(existing.balance || 0),
 
         pendingBalance:
-          Number(
-            existing.pendingBalance || 0
-          ),
+          Number(existing.pendingBalance || 0),
 
         accountStatus:
           normalizeAccountStatus(
@@ -584,57 +683,68 @@
           ),
 
         warningCount:
-          Number(
-            existing.warningCount || 0
-          ),
+          Number(existing.warningCount || 0),
 
         violationCount:
-          Number(
-            existing.violationCount || 0
-          ),
+          Number(existing.violationCount || 0),
 
         lastViolationAt:
-          existing.lastViolationAt ||
-          null
+          existing.lastViolationAt || null
       };
 
-      const moderationUpdate = {};
+      const updateData = {};
 
       if (!existing.accountStatus) {
-        moderationUpdate.accountStatus =
+        updateData.accountStatus =
           ACCOUNT_STATUS.ACTIVE;
       }
 
-      if (
-        existing.warningCount ===
-        undefined
-      ) {
-        moderationUpdate.warningCount = 0;
+      if (existing.warningCount === undefined) {
+        updateData.warningCount = 0;
+      }
+
+      if (existing.violationCount === undefined) {
+        updateData.violationCount = 0;
+      }
+
+      if (!existing.accountId) {
+        updateData.accountId =
+          generateAccountId(
+            profile.role
+          );
+
+        profile.accountId =
+          updateData.accountId;
       }
 
       if (
-        existing.violationCount ===
-        undefined
+        existing.email !== user.email &&
+        user.email
       ) {
-        moderationUpdate.violationCount = 0;
+        updateData.email = user.email;
+        profile.email = user.email;
       }
 
       if (
-        Object.keys(
-          moderationUpdate
-        ).length
+        !existing.photoURL &&
+        user.photoURL
       ) {
-        moderationUpdate.updatedAt =
-          firebase.firestore.FieldValue
-            .serverTimestamp();
+        updateData.photoURL =
+          user.photoURL;
+
+        profile.photoURL =
+          user.photoURL;
+      }
+
+      if (Object.keys(updateData).length) {
+        updateData.updatedAt =
+          serverTimestamp();
 
         try {
-          await ref.update(
-            moderationUpdate
-          );
+          await ref.update(updateData);
         } catch (updateError) {
           console.warn(
-            "Moderation profile defaults could not be updated:",
+            "Profile defaults update failed:",
             updateError
           );
         }
@@ -645,29 +755,20 @@
       return profile;
     }
 
-    /* New Profile */
+    /* -------------------------------------------------------
+       New Profile
+       ------------------------------------------------------- */
 
     const role =
       extraData.role === "client"
         ? "client"
         : "worker";
 
-    const accountPrefix =
-      role === "client"
-        ? "SWB-C-"
-        : "SWB-F-";
-
-    const accountId =
-      accountPrefix +
-      Math.random()
-        .toString(36)
-        .substring(2, 8)
-        .toUpperCase();
-
     const profileData = {
       uid: user.uid,
 
-      accountId: accountId,
+      accountId:
+        generateAccountId(role),
 
       name:
         extraData.name ||
@@ -675,14 +776,12 @@
         "",
 
       email:
-        user.email ||
-        "",
+        user.email || "",
 
       role: role,
 
       skills:
-        extraData.skills ||
-        "",
+        extraData.skills || "",
 
       title: "",
 
@@ -691,8 +790,7 @@
       location: "",
 
       photoURL:
-        user.photoURL ||
-        "",
+        user.photoURL || "",
 
       balance: 0,
 
@@ -712,12 +810,10 @@
       lastViolationReasons: [],
 
       createdAt:
-        firebase.firestore.FieldValue
-          .serverTimestamp(),
+        serverTimestamp(),
 
       updatedAt:
-        firebase.firestore.FieldValue
-          .serverTimestamp()
+        serverTimestamp()
     };
 
     await ref.set(profileData);
@@ -732,9 +828,10 @@
     return profile;
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Signup
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function setupSignup() {
     const form =
@@ -768,7 +865,8 @@
             document
               .getElementById("email")
               ?.value
-              .trim() || "";
+              .trim()
+              .toLowerCase() || "";
 
           const password =
             document
@@ -801,15 +899,10 @@
               ?.value
               .trim() || "";
 
-          if (
-            !name ||
-            !email ||
-            !password
-          ) {
+          if (!name || !email || !password) {
             showError(
               "Please complete all required fields."
             );
-
             return;
           }
 
@@ -820,7 +913,6 @@
             showError(
               "Passwords do not match."
             );
-
             return;
           }
 
@@ -828,78 +920,69 @@
             showError(
               "Password must be at least 6 characters."
             );
-
             return;
           }
 
-          if (button) {
-            button.disabled = true;
-            button.textContent =
-              "Creating account...";
-          }
-
-          /* ---------------------------------------------
-             Step 1: Create Firebase Authentication Account
-             --------------------------------------------- */
+          setButtonState(
+            button,
+            true,
+            "Creating account..."
+          );
 
           let result;
 
           try {
             result =
-              await auth.createUserWithEmailAndPassword(
-                email,
-                password
-              );
+              await auth
+                .createUserWithEmailAndPassword(
+                  email,
+                  password
+                );
           } catch (authError) {
             console.error(
-              "Firebase Authentication signup error:",
+              "Firebase signup error:",
               authError
             );
+
+            let message =
+              "Unable to create your account.";
 
             if (
               authError.code ===
               "auth/email-already-in-use"
             ) {
-              showError(
-                "This email is already registered."
-              );
+              message =
+                "This email is already registered.";
             } else if (
               authError.code ===
               "auth/invalid-email"
             ) {
-              showError(
-                "Please enter a valid email address."
-              );
+              message =
+                "Please enter a valid email address.";
             } else if (
               authError.code ===
               "auth/weak-password"
             ) {
-              showError(
-                "Password is too weak."
-              );
+              message =
+                "Password is too weak.";
             } else if (
               authError.code ===
               "auth/network-request-failed"
             ) {
-              showError(
-                "Network error. Please check your internet connection."
-              );
-            } else {
-              showError(
-                "Authentication signup failed.\n\nCode: " +
-                  (authError.code || "unknown") +
-                  "\nMessage: " +
-                  (authError.message ||
-                    "Unknown Firebase Authentication error.")
-              );
+              message =
+                "Network error. Please check your internet connection.";
             }
+
+            showError(message);
+
+            setButtonState(
+              button,
+              false,
+              "Create Account"
+            );
 
             return;
           }
-
-          /* ---------------------------------------------
-             Step 2: Create Firestore User Profile
-             --------------------------------------------- */
 
           try {
             await createOrLoadUserProfile(
@@ -916,43 +999,38 @@
               firestoreError
             );
 
-            if (button) {
-              button.disabled = false;
-              button.textContent =
-                "Create Account";
-            }
+            setButtonState(
+              button,
+              false,
+              "Create Account"
+            );
 
             showError(
-              "Firebase Authentication account was created, but the SocialWorkBD profile could not be created.\n\n" +
-                "Firestore Code: " +
-                (firestoreError.code ||
-                  "unknown") +
-                "\n\nMessage: " +
-                (firestoreError.message ||
-                  "Unknown Firestore error.") +
-                "\n\nPlease send this error to me."
+              "Your authentication account was created, but your SocialWorkBD profile could not be created.\n\n" +
+              "Firestore Code: " +
+              (firestoreError.code ||
+                "unknown") +
+              "\n\nPlease check your Firebase Firestore rules."
             );
 
             return;
           }
 
-          /* ---------------------------------------------
-             Signup Complete
-             --------------------------------------------- */
-
           await auth.signOut();
 
-          alert(
-            "Account created successfully. Please log in."
-          );
+          clearCurrentUser();
 
           form.reset();
 
-          if (button) {
-            button.disabled = false;
-            button.textContent =
-              "Create Account";
-          }
+          showSuccess(
+            "Account created successfully. Please log in."
+          );
+
+          setButtonState(
+            button,
+            false,
+            "Create Account"
+          );
 
           window.location.href =
             "login.html";
@@ -962,27 +1040,54 @@
             error
           );
 
-          if (button) {
-            button.disabled = false;
-            button.textContent =
-              "Create Account";
-          }
+          setButtonState(
+            button,
+            false,
+            "Create Account"
+          );
 
           showError(
-            "Unable to create your account.\n\nCode: " +
-              (error.code || "unknown") +
-              "\n\nMessage: " +
-              (error.message ||
-                "Unknown error.")
+            "Unable to create your account. Please try again."
           );
         }
       }
     );
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Login
-     --------------------------------------------------------- */
+     ========================================================= */
+
+  function redirectAfterLogin(profile) {
+    if (!profile) {
+      window.location.href =
+        "profile.html";
+      return;
+    }
+
+    if (
+      getAccountStatus(profile) ===
+      ACCOUNT_STATUS.SUSPENDED
+    ) {
+      return;
+    }
+
+    if (isClientRole(profile.role)) {
+      window.location.href =
+        "client-dashboard.html";
+      return;
+    }
+
+    if (isFreelancerRole(profile.role)) {
+      window.location.href =
+        "worker-dashboard.html";
+      return;
+    }
+
+    window.location.href =
+      "profile.html";
+  }
 
   function setupLogin() {
     const form =
@@ -1010,7 +1115,8 @@
             document
               .getElementById("email")
               ?.value
-              .trim() || "";
+              .trim()
+              .toLowerCase() || "";
 
           const password =
             document
@@ -1021,21 +1127,21 @@
             showError(
               "Please enter your email and password."
             );
-
             return;
           }
 
-          if (button) {
-            button.disabled = true;
-            button.textContent =
-              "Signing in...";
-          }
+          setButtonState(
+            button,
+            true,
+            "Signing in..."
+          );
 
           const result =
-            await auth.signInWithEmailAndPassword(
-              email,
-              password
-            );
+            await auth
+              .signInWithEmailAndPassword(
+                email,
+                password
+              );
 
           const profile =
             await createOrLoadUserProfile(
@@ -1050,21 +1156,18 @@
             ACCOUNT_STATUS.SUSPENDED
           ) {
             alert(
-              "Your account is currently suspended. " +
-                "You can request a review from Support."
+              "Your account is currently suspended. You can request a review from Support."
             );
 
             await auth.signOut();
 
-            localStorage.removeItem(
-              "currentUser"
-            );
+            clearCurrentUser();
 
-            if (button) {
-              button.disabled = false;
-              button.textContent =
-                "Log In";
-            }
+            setButtonState(
+              button,
+              false,
+              "Log In"
+            );
 
             return;
           }
@@ -1074,35 +1177,22 @@
             ACCOUNT_STATUS.RESTRICTED
           ) {
             alert(
-              "Your account currently has restrictions. " +
-                "Some platform activities may be unavailable."
+              "Your account currently has restrictions. Some platform activities may be unavailable."
             );
           }
 
-          if (profile.role === "client") {
-            window.location.href =
-              "client-dashboard.html";
-          } else if (
-            profile.role === "worker" ||
-            profile.role === "freelancer"
-          ) {
-            window.location.href =
-              "worker-dashboard.html";
-          } else {
-            window.location.href =
-              "profile.html";
-          }
+          redirectAfterLogin(profile);
         } catch (error) {
           console.error(
             "Login error:",
             error
           );
 
-          if (button) {
-            button.disabled = false;
-            button.textContent =
-              "Log In";
-          }
+          setButtonState(
+            button,
+            false,
+            "Log In"
+          );
 
           let message =
             "Unable to log in.";
@@ -1143,9 +1233,10 @@
     );
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Forgot Password
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function setupForgotPassword() {
     const forgotLink =
@@ -1198,7 +1289,8 @@
         const loginEmail =
           document
             .getElementById("email")
-            ?.value.trim() || "";
+            ?.value
+            .trim() || "";
 
         if (
           emailInput &&
@@ -1210,12 +1302,9 @@
         }
 
         if (emailInput) {
-          setTimeout(
-            function () {
-              emailInput.focus();
-            },
-            100
-          );
+          setTimeout(function () {
+            emailInput.focus();
+          }, 100);
         }
       }
     );
@@ -1230,23 +1319,22 @@
             getFirebase();
 
           const email =
-            emailInput
-              ?.value
-              .trim() || "";
+            emailInput?.value
+              .trim()
+              .toLowerCase() || "";
 
           if (!email) {
             showError(
               "Please enter your email address."
             );
-
             return;
           }
 
-          if (button) {
-            button.disabled = true;
-            button.textContent =
-              "Sending...";
-          }
+          setButtonState(
+            button,
+            true,
+            "Sending..."
+          );
 
           await auth.sendPasswordResetEmail(
             email
@@ -1272,22 +1360,22 @@
 
           form.reset();
 
-          if (button) {
-            button.disabled = false;
-            button.textContent =
-              "Send Reset Link";
-          }
+          setButtonState(
+            button,
+            false,
+            "Send Reset Link"
+          );
         } catch (error) {
           console.error(
             "Password reset error:",
             error
           );
 
-          if (button) {
-            button.disabled = false;
-            button.textContent =
-              "Send Reset Link";
-          }
+          setButtonState(
+            button,
+            false,
+            "Send Reset Link"
+          );
 
           let message =
             "Unable to send the password reset email.";
@@ -1342,9 +1430,10 @@
     );
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Google Login
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function setupGoogleLogin() {
     const button =
@@ -1361,9 +1450,11 @@
           const { auth } =
             getFirebase();
 
-          button.disabled = true;
-          button.textContent =
-            "Connecting...";
+          setButtonState(
+            button,
+            true,
+            "Connecting..."
+          );
 
           const provider =
             new firebase.auth.GoogleAuthProvider();
@@ -1371,10 +1462,33 @@
           provider.addScope("profile");
           provider.addScope("email");
 
-          const result =
-            await auth.signInWithPopup(
-              provider
-            );
+          let result;
+
+          try {
+            result =
+              await auth.signInWithPopup(
+                provider
+              );
+          } catch (popupError) {
+            /*
+             * Some mobile browsers block popup flows.
+             * Fall back to redirect when appropriate.
+             */
+            if (
+              popupError.code ===
+                "auth/popup-blocked" ||
+              popupError.code ===
+                "auth/cancelled-popup-request"
+            ) {
+              await auth.signInWithRedirect(
+                provider
+              );
+
+              return;
+            }
+
+            throw popupError;
+          }
 
           const profile =
             await createOrLoadUserProfile(
@@ -1389,46 +1503,34 @@
             ACCOUNT_STATUS.SUSPENDED
           ) {
             alert(
-              "Your account is currently suspended. " +
-                "You can request a review from Support."
+              "Your account is currently suspended. You can request a review from Support."
             );
 
             await auth.signOut();
 
-            localStorage.removeItem(
-              "currentUser"
-            );
+            clearCurrentUser();
 
-            button.disabled = false;
-            button.textContent =
-              "Continue with Google";
+            setButtonState(
+              button,
+              false,
+              "Continue with Google"
+            );
 
             return;
           }
 
-          if (profile.role === "client") {
-            window.location.href =
-              "client-dashboard.html";
-          } else if (
-            profile.role === "worker" ||
-            profile.role === "freelancer"
-          ) {
-            window.location.href =
-              "worker-dashboard.html";
-          } else {
-            window.location.href =
-              "profile.html";
-          }
+          redirectAfterLogin(profile);
         } catch (error) {
           console.error(
             "Google login error:",
             error
           );
 
-          button.disabled = false;
-
-          button.textContent =
-            "Continue with Google";
+          setButtonState(
+            button,
+            false,
+            "Continue with Google"
+          );
 
           let message =
             "Unable to continue with Google.";
@@ -1465,9 +1567,62 @@
     );
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
+     Google Redirect Result
+     ========================================================= */
+
+  async function handleGoogleRedirectResult() {
+    const button =
+      document.getElementById(
+        "google-login"
+      );
+
+    if (!button) return;
+
+    try {
+      const { auth } =
+        getFirebase();
+
+      const result =
+        await auth.getRedirectResult();
+
+      if (!result || !result.user) {
+        return;
+      }
+
+      const profile =
+        await createOrLoadUserProfile(
+          result.user
+        );
+
+      if (
+        getAccountStatus(profile) ===
+        ACCOUNT_STATUS.SUSPENDED
+      ) {
+        await auth.signOut();
+        clearCurrentUser();
+
+        showError(
+          "Your account is currently suspended. You can request a review from Support."
+        );
+
+        return;
+      }
+
+      redirectAfterLogin(profile);
+    } catch (error) {
+      console.error(
+        "Google redirect error:",
+        error
+      );
+    }
+  }
+
+
+  /* =========================================================
      Home Page - Latest Jobs
-     --------------------------------------------------------- */
+     ========================================================= */
 
   async function loadHomeJobs() {
     const container =
@@ -1489,7 +1644,7 @@
             "==",
             "open"
           )
-          .limit(20)
+          .limit(30)
           .get();
 
       const jobs = [];
@@ -1519,7 +1674,9 @@
         }
       );
 
-      renderHomeJobs(jobs);
+      renderHomeJobs(
+        jobs.slice(0, 20)
+      );
     } catch (error) {
       console.error(
         "Home jobs error:",
@@ -1527,9 +1684,7 @@
       );
 
       container.innerHTML =
-        '<div class="empty-state">' +
-        "Unable to load jobs right now." +
-        "</div>";
+        '<div class="empty-state">Unable to load jobs right now.</div>';
     }
   }
 
@@ -1553,71 +1708,68 @@
 
     container.innerHTML =
       jobs
-        .map(
-          function (job) {
-            return `
-              <article class="job-card">
-                <div class="job-card-main">
+        .map(function (job) {
+          return `
+            <article class="job-card">
+              <div class="job-card-main">
 
-                  <span class="job-card-status">
-                    Open
-                  </span>
+                <span class="job-card-status">
+                  Open
+                </span>
 
-                  <h3>
-                    <a href="job-details.html?id=${encodeURIComponent(
-                      job.id
-                    )}">
-                      ${escapeHtml(
-                        job.title ||
+                <h3>
+                  <a href="job-details.html?id=${encodeURIComponent(
+                    job.id
+                  )}">
+                    ${escapeHtml(
+                      job.title ||
                         "Untitled Job"
-                      )}
-                    </a>
-                  </h3>
-
-                  <p>
-                    ${escapeHtml(
-                      (
-                        job.description ||
-                        ""
-                      ).substring(0, 180)
                     )}
-                  </p>
+                  </a>
+                </h3>
 
-                  <div class="job-card-skills">
-                    ${escapeHtml(
-                      job.skills ||
+                <p>
+                  ${escapeHtml(
+                    (
+                      job.description ||
+                      ""
+                    ).substring(0, 180)
+                  )}
+                </p>
+
+                <div class="job-card-skills">
+                  ${escapeHtml(
+                    job.skills ||
                       "General"
-                    )}
-                  </div>
-
+                  )}
                 </div>
 
-                <div class="job-card-side">
+              </div>
 
-                  <strong>
-                    ${formatBudget(
-                      job.budget
-                    )}
-                  </strong>
+              <div class="job-card-side">
+                <strong>
+                  ${formatBudget(
+                    job.budget
+                  )}
+                </strong>
 
-                  <span>
-                    ${Number(
-                      job.deliveryDays ||
+                <span>
+                  ${Number(
+                    job.deliveryDays ||
                       0
-                    )} days
-                  </span>
-
-                </div>
-              </article>
-            `;
-          }
-        )
+                  )} days
+                </span>
+              </div>
+            </article>
+          `;
+        })
         .join("");
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Home Search
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function setupHomeSearch() {
     const form =
@@ -1656,9 +1808,10 @@
     );
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Post Job
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function setupPostJob() {
     const form =
@@ -1673,17 +1826,21 @@
       async function (event) {
         event.preventDefault();
 
+        const button =
+          document.getElementById(
+            "post-job-btn"
+          );
+
         try {
           const { auth, db } =
             getFirebase();
 
           const user =
-            auth.currentUser;
+            await requireFirebaseUser();
 
           if (!user) {
             window.location.href =
               "login.html";
-
             return;
           }
 
@@ -1696,7 +1853,6 @@
             showError(
               "Your profile could not be loaded."
             );
-
             return;
           }
 
@@ -1710,7 +1866,6 @@
             showError(
               "Your account is suspended. You cannot post jobs."
             );
-
             return;
           }
 
@@ -1721,18 +1876,17 @@
             showError(
               "Your account currently has restrictions. You cannot post new jobs right now."
             );
-
             return;
           }
 
           if (
-            profile.role !==
-            "client"
+            !isClientRole(
+              profile.role
+            )
           ) {
             showError(
               "Only client accounts can post jobs."
             );
-
             return;
           }
 
@@ -1782,33 +1936,40 @@
             showError(
               "Please complete all job details."
             );
-
             return;
           }
 
-          const button =
-            document.getElementById(
-              "post-job-btn"
+          if (
+            title.length < 5
+          ) {
+            showError(
+              "Job title should be at least 5 characters."
             );
-
-          if (button) {
-            button.disabled = true;
-            button.textContent =
-              "Posting...";
+            return;
           }
+
+          if (
+            description.length < 20
+          ) {
+            showError(
+              "Please provide a more detailed job description."
+            );
+            return;
+          }
+
+          setButtonState(
+            button,
+            true,
+            "Posting..."
+          );
 
           await db
             .collection("jobs")
             .add({
               title: title,
-
-              description:
-                description,
-
+              description: description,
               budget: budget,
-
               skills: skills,
-
               deliveryDays:
                 deliveryDays,
 
@@ -1833,19 +1994,17 @@
                 null,
 
               createdAt:
-                firebase.firestore.FieldValue
-                  .serverTimestamp(),
+                serverTimestamp(),
 
               updatedAt:
-                firebase.firestore.FieldValue
-                  .serverTimestamp()
+                serverTimestamp()
             });
 
-          alert(
+          form.reset();
+
+          showSuccess(
             "Your job has been posted successfully."
           );
-
-          form.reset();
 
           window.location.href =
             "client-dashboard.html";
@@ -1855,16 +2014,11 @@
             error
           );
 
-          const button =
-            document.getElementById(
-              "post-job-btn"
-            );
-
-          if (button) {
-            button.disabled = false;
-            button.textContent =
-              "Post Job";
-          }
+          setButtonState(
+            button,
+            false,
+            "Post Job"
+          );
 
           showError(
             "Unable to post the job. Please try again."
@@ -1874,9 +2028,10 @@
     );
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Job Details
-     --------------------------------------------------------- */
+     ========================================================= */
 
   async function loadJobDetails() {
     const titleElement =
@@ -1907,13 +2062,8 @@
       const { db } =
         getFirebase();
 
-      const params =
-        new URLSearchParams(
-          window.location.search
-        );
-
       const jobId =
-        params.get("id");
+        getUrlParam("id");
 
       if (!jobId) {
         throw new Error(
@@ -2000,8 +2150,7 @@
       if (delivery) {
         const days =
           Number(
-            job.deliveryDays ||
-            0
+            job.deliveryDays || 0
           );
 
         delivery.textContent =
@@ -2013,8 +2162,7 @@
       if (proposals) {
         proposals.textContent =
           Number(
-            job.proposalCount ||
-            0
+            job.proposalCount || 0
           );
       }
 
@@ -2027,8 +2175,7 @@
       if (status) {
         const currentStatus =
           String(
-            job.status ||
-            "open"
+            job.status || "open"
           ).toLowerCase();
 
         status.textContent =
@@ -2060,27 +2207,25 @@
         const skillItems =
           skillText
             .split(",")
-            .map(
-              function (item) {
-                return item.trim();
-              }
-            )
+            .map(function (item) {
+              return item.trim();
+            })
             .filter(Boolean);
 
         if (skillItems.length) {
           skills.innerHTML =
             skillItems
-              .map(
-                function (skill) {
-                  return `
-                    <span class="skill-tag">
-                      ${escapeHtml(
-                        skill
-                      )}
-                    </span>
-                  `;
-                }
-              )
+              .map(function (
+                skill
+              ) {
+                return `
+                  <span class="skill-tag">
+                    ${escapeHtml(
+                      skill
+                    )}
+                  </span>
+                `;
+              })
               .join("");
         } else {
           skills.innerHTML =
@@ -2127,9 +2272,10 @@
     }
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Proposal Form
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function setupProposalForm(job) {
     const form =
@@ -2149,82 +2295,246 @@
         'button[type="submit"]'
       );
 
-    const { auth } =
-      getFirebase();
+    let initialized = false;
 
-    const user =
-      auth.currentUser;
+    async function initializeProposal() {
+      if (initialized) return;
 
-    if (
-      String(
-        job.status || ""
-      ).toLowerCase() !==
-      "open"
-    ) {
-      if (notice) {
-        notice.textContent =
-          "This job is no longer accepting proposals.";
+      initialized = true;
 
-        notice.style.display =
-          "block";
+      const user =
+        await requireFirebaseUser();
+
+      if (
+        String(
+          job.status || ""
+        ).toLowerCase() !==
+        "open"
+      ) {
+        if (notice) {
+          notice.textContent =
+            "This job is no longer accepting proposals.";
+
+          notice.style.display =
+            "block";
+        }
+
+        if (submitButton) {
+          submitButton.disabled =
+            true;
+        }
+
+        return;
       }
 
-      if (submitButton) {
-        submitButton.disabled =
-          true;
+      if (!user) {
+        if (notice) {
+          notice.textContent =
+            "Please log in as a freelancer to submit a proposal.";
+
+          notice.style.display =
+            "block";
+        }
+
+        return;
       }
 
-      return;
+      if (
+        user.uid ===
+        job.clientId
+      ) {
+        if (notice) {
+          notice.textContent =
+            "You cannot submit a proposal to your own job.";
+
+          notice.style.display =
+            "block";
+        }
+
+        if (submitButton) {
+          submitButton.disabled =
+            true;
+        }
+
+        return;
+      }
+
+      try {
+        const profile =
+          await getUserProfile(
+            user.uid
+          );
+
+        if (!profile) {
+          if (notice) {
+            notice.textContent =
+              "Your profile could not be loaded.";
+
+            notice.style.display =
+              "block";
+          }
+
+          if (submitButton) {
+            submitButton.disabled =
+              true;
+          }
+
+          return;
+        }
+
+        if (
+          !isFreelancerRole(
+            profile.role
+          )
+        ) {
+          if (notice) {
+            notice.textContent =
+              "Only freelancer accounts can submit proposals.";
+
+            notice.style.display =
+              "block";
+          }
+
+          if (submitButton) {
+            submitButton.disabled =
+              true;
+          }
+
+          return;
+        }
+
+        if (
+          getAccountStatus(
+            profile
+          ) ===
+          ACCOUNT_STATUS.SUSPENDED
+        ) {
+          if (notice) {
+            notice.textContent =
+              "Your account is suspended. You cannot submit proposals.";
+
+            notice.style.display =
+              "block";
+          }
+
+          if (submitButton) {
+            submitButton.disabled =
+              true;
+          }
+
+          return;
+        }
+
+        if (
+          getAccountStatus(
+            profile
+          ) ===
+          ACCOUNT_STATUS.RESTRICTED
+        ) {
+          if (notice) {
+            notice.textContent =
+              "Your account currently has restrictions. You cannot submit proposals.";
+
+            notice.style.display =
+              "block";
+          }
+
+          if (submitButton) {
+            submitButton.disabled =
+              true;
+          }
+
+          return;
+        }
+
+        const { db } =
+          getFirebase();
+
+        const duplicate =
+          await db
+            .collection("proposals")
+            .where(
+              "jobId",
+              "==",
+              job.id
+            )
+            .where(
+              "freelancerId",
+              "==",
+              user.uid
+            )
+            .limit(1)
+            .get();
+
+        if (!duplicate.empty) {
+          if (notice) {
+            notice.textContent =
+              "You have already submitted a proposal for this job.";
+
+            notice.style.display =
+              "block";
+          }
+
+          if (submitButton) {
+            submitButton.disabled =
+              true;
+
+            submitButton.textContent =
+              "Proposal Submitted";
+          }
+
+          return;
+        }
+      } catch (error) {
+        console.error(
+          "Proposal initialization error:",
+          error
+        );
+      }
     }
 
-    if (!user) {
-      if (notice) {
-        notice.textContent =
-          "Please log in as a freelancer to submit a proposal.";
-
-        notice.style.display =
-          "block";
-      }
-
-      return;
-    }
-
-    if (
-      user.uid ===
-      job.clientId
-    ) {
-      if (notice) {
-        notice.textContent =
-          "You cannot submit a proposal to your own job.";
-
-        notice.style.display =
-          "block";
-      }
-
-      if (submitButton) {
-        submitButton.disabled =
-          true;
-      }
-
-      return;
-    }
+    initializeProposal();
 
     form.addEventListener(
       "submit",
       async function (event) {
         event.preventDefault();
 
+        const button =
+          submitButton;
+
         try {
           const { auth, db } =
             getFirebase();
 
           const currentUser =
-            auth.currentUser;
+            await requireFirebaseUser();
 
           if (!currentUser) {
             window.location.href =
               "login.html";
+            return;
+          }
 
+          if (
+            String(
+              job.status || ""
+            ).toLowerCase() !==
+            "open"
+          ) {
+            showError(
+              "This job is no longer accepting proposals."
+            );
+            return;
+          }
+
+          if (
+            currentUser.uid ===
+            job.clientId
+          ) {
+            showError(
+              "You cannot apply to your own job."
+            );
             return;
           }
 
@@ -2237,12 +2547,24 @@
             showError(
               "Your freelancer profile could not be loaded."
             );
+            return;
+          }
 
+          if (
+            !isFreelancerRole(
+              profile.role
+            )
+          ) {
+            showError(
+              "Only freelancer accounts can submit proposals."
+            );
             return;
           }
 
           const accountStatus =
-            getAccountStatus(profile);
+            getAccountStatus(
+              profile
+            );
 
           if (
             accountStatus ===
@@ -2251,7 +2573,6 @@
             showError(
               "Your account is suspended. You cannot submit proposals."
             );
-
             return;
           }
 
@@ -2262,31 +2583,6 @@
             showError(
               "Your account currently has restrictions. You cannot submit proposals right now."
             );
-
-            return;
-          }
-
-          if (
-            profile.role !==
-              "worker" &&
-            profile.role !==
-              "freelancer"
-          ) {
-            showError(
-              "Only freelancer accounts can submit proposals."
-            );
-
-            return;
-          }
-
-          if (
-            currentUser.uid ===
-            job.clientId
-          ) {
-            showError(
-              "You cannot apply to your own job."
-            );
-
             return;
           }
 
@@ -2312,7 +2608,6 @@
             showError(
               "You have already submitted a proposal for this job."
             );
-
             return;
           }
 
@@ -2350,32 +2645,59 @@
             showError(
               "Please complete all proposal details."
             );
+            return;
+          }
+
+          if (
+            coverLetter.length < 20
+          ) {
+            showError(
+              "Please write a more detailed proposal."
+            );
+            return;
+          }
+
+          const moderation =
+            detectOffPlatformContent(
+              coverLetter
+            );
+
+          if (moderation.flagged) {
+            const result =
+              await moderateMessageAttempt(
+                coverLetter
+              );
+
+            showError(
+              result.message ||
+                "Your proposal contains content that is not allowed."
+            );
 
             return;
           }
 
-          const button =
-            submitButton;
-
-          if (button) {
-            button.disabled = true;
-            button.textContent =
-              "Submitting...";
-          }
+          setButtonState(
+            button,
+            true,
+            "Submitting..."
+          );
 
           await db
             .collection(
               "proposals"
             )
             .add({
-              jobId:
-                job.id,
+              jobId: job.id,
 
               jobTitle:
                 job.title || "",
 
               clientId:
                 job.clientId || "",
+
+              clientName:
+                job.clientName ||
+                "Client",
 
               freelancerId:
                 currentUser.uid,
@@ -2401,12 +2723,10 @@
                 "submitted",
 
               createdAt:
-                firebase.firestore.FieldValue
-                  .serverTimestamp(),
+                serverTimestamp(),
 
               updatedAt:
-                firebase.firestore.FieldValue
-                  .serverTimestamp()
+                serverTimestamp()
             });
 
           await db
@@ -2414,17 +2734,11 @@
             .doc(job.id)
             .update({
               proposalCount:
-                firebase.firestore.FieldValue
-                  .increment(1),
+                increment(1),
 
               updatedAt:
-                firebase.firestore.FieldValue
-                  .serverTimestamp()
+                serverTimestamp()
             });
-
-          alert(
-            "Your proposal has been submitted successfully."
-          );
 
           form.reset();
 
@@ -2445,13 +2759,11 @@
               "#168b08";
           }
 
-          if (submitButton) {
-            submitButton.disabled =
-              true;
-
-            submitButton.textContent =
-              "Proposal Submitted";
-          }
+          setButtonState(
+            button,
+            true,
+            "Proposal Submitted"
+          );
 
           const proposalsElement =
             document.getElementById(
@@ -2462,22 +2774,26 @@
             proposalsElement.textContent =
               Number(
                 job.proposalCount ||
-                0
+                  0
               ) + 1;
           }
+
+          job.proposalCount =
+            Number(
+              job.proposalCount ||
+                0
+            ) + 1;
         } catch (error) {
           console.error(
             "Proposal error:",
             error
           );
 
-          if (submitButton) {
-            submitButton.disabled =
-              false;
-
-            submitButton.textContent =
-              "Submit Proposal";
-          }
+          setButtonState(
+            button,
+            false,
+            "Submit Proposal"
+          );
 
           showError(
             "Unable to submit your proposal. Please try again."
@@ -2487,9 +2803,10 @@
     );
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Profile
-     --------------------------------------------------------- */
+     ========================================================= */
 
   async function loadProfile() {
     const nameElement =
@@ -2500,38 +2817,32 @@
     if (!nameElement) return;
 
     try {
-      const { auth } =
-        getFirebase();
-
       const user =
-        auth.currentUser;
+        await requireFirebaseUser();
 
-      const localUser =
-        getCurrentUserLocal();
-
-      let profile =
-        localUser;
+      let profile = null;
 
       if (user) {
-        const firebaseProfile =
+        profile =
           await getUserProfile(
             user.uid
           );
 
-        if (firebaseProfile) {
-          profile =
-            firebaseProfile;
-
+        if (profile) {
           saveCurrentUser(
-            firebaseProfile
+            profile
           );
         }
       }
 
       if (!profile) {
+        profile =
+          getCurrentUserLocal();
+      }
+
+      if (!profile) {
         window.location.href =
           "login.html";
-
         return;
       }
 
@@ -2546,8 +2857,7 @@
 
       if (emailElement) {
         emailElement.textContent =
-          profile.email ||
-          "";
+          profile.email || "";
       }
 
       const roleElement =
@@ -2594,6 +2904,41 @@
           profile.accountId ||
           "—";
       }
+
+      const titleElement =
+        document.getElementById(
+          "user-title"
+        );
+
+      if (titleElement) {
+        titleElement.textContent =
+          profile.title ||
+          "";
+      }
+
+      const locationElement =
+        document.getElementById(
+          "user-location"
+        );
+
+      if (locationElement) {
+        locationElement.textContent =
+          profile.location ||
+          "";
+      }
+
+      const photoElement =
+        document.getElementById(
+          "user-photo"
+        );
+
+      if (
+        photoElement &&
+        profile.photoURL
+      ) {
+        photoElement.src =
+          profile.photoURL;
+      }
     } catch (error) {
       console.error(
         "Profile error:",
@@ -2602,9 +2947,10 @@
     }
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Logout
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function setupLogout() {
     const button =
@@ -2621,11 +2967,15 @@
           const { auth } =
             getFirebase();
 
+          setButtonState(
+            button,
+            true,
+            "Logging out..."
+          );
+
           await auth.signOut();
 
-          localStorage.removeItem(
-            "currentUser"
-          );
+          clearCurrentUser();
 
           window.location.href =
             "index.html";
@@ -2633,6 +2983,12 @@
           console.error(
             "Logout error:",
             error
+          );
+
+          setButtonState(
+            button,
+            false,
+            "Logout"
           );
 
           showError(
@@ -2643,9 +2999,10 @@
     );
   }
 
-  /* ---------------------------------------------------------
+
+  /* =========================================================
      Auth State
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function setupAuthState() {
     try {
@@ -2695,9 +3052,100 @@
     }
   }
 
-  /* ---------------------------------------------------------
-     Start Application
-     --------------------------------------------------------- */
+
+  /* =========================================================
+     Prevent Stale Local Sessions
+     ========================================================= */
+
+  async function syncLocalSession() {
+    try {
+      const { auth } =
+        getFirebase();
+
+      const user =
+        auth.currentUser;
+
+      if (!user) {
+        return;
+      }
+
+      const profile =
+        await getUserProfile(
+          user.uid
+        );
+
+      if (profile) {
+        saveCurrentUser(
+          profile
+        );
+      }
+    } catch (error) {
+      console.warn(
+        "Session sync skipped:",
+        error
+      );
+    }
+  }
+
+
+  /* =========================================================
+     Global Public API
+     ========================================================= */
+
+  window.SocialWorkBD = {
+    getFirebase:
+      getFirebase,
+
+    getUserProfile:
+      getUserProfile,
+
+    createOrLoadUserProfile:
+      createOrLoadUserProfile,
+
+    getCurrentUser:
+      getAuthUser,
+
+    getCurrentUserLocal:
+      getCurrentUserLocal,
+
+    saveCurrentUser:
+      saveCurrentUser,
+
+    clearCurrentUser:
+      clearCurrentUser,
+
+    formatBudget:
+      formatBudget,
+
+    formatDate:
+      formatDate,
+
+    escapeHtml:
+      escapeHtml,
+
+    requireLogin:
+      requireLogin,
+
+    getRoleName:
+      getRoleName,
+
+    isClientRole:
+      isClientRole,
+
+    isFreelancerRole:
+      isFreelancerRole,
+
+    getAccountStatus:
+      getAccountStatus,
+
+    ACCOUNT_STATUS:
+      ACCOUNT_STATUS
+  };
+
+
+  /* =========================================================
+     Application Start
+     ========================================================= */
 
   document.addEventListener(
     "DOMContentLoaded",
@@ -2723,7 +3171,10 @@
       loadJobDetails();
 
       loadProfile();
+
+      handleGoogleRedirectResult();
+
+      syncLocalSession();
     }
   );
-
 })();
