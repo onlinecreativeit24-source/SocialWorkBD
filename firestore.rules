@@ -1,36 +1,226 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Users collection - প্রতিটি ব্যবহারকারী নিজের ডেটা পড়া এবং লেখা যাবে
+
+    /* =========================
+       HELPER FUNCTIONS
+       ========================= */
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn()
+             && request.auth.uid == uid;
+    }
+
+
+    /* =========================
+       USERS / PROFILES
+       ========================= */
+
     match /users/{userId} {
-      allow read, write: if request.auth.uid == userId;
-      allow read: if request.auth != null; // অন্যদের profile দেখতে পারবে
+
+      // Users can read their own profile and other public profiles
+      allow read: if isOwner(userId)
+                  || isSignedIn();
+
+      // Users can create only their own profile
+      allow create: if isOwner(userId)
+                    && request.resource.data.uid == userId;
+
+      // Users can update only safe profile fields
+      // Financial and security fields such as:
+      // balance, pendingBalance, accountId, status, uid, createdAt
+      // cannot be changed by the client
+      allow update: if isOwner(userId)
+                    && request.resource.data.uid == resource.data.uid
+                    && request.resource.data.accountId == resource.data.accountId
+                    && request.resource.data.balance == resource.data.balance
+                    && request.resource.data.pendingBalance == resource.data.pendingBalance
+                    && request.resource.data.status == resource.data.status
+                    && request.resource.data.createdAt == resource.data.createdAt
+                    && request.resource.data.diff(resource.data)
+                       .affectedKeys()
+                       .hasOnly([
+                         "name",
+                         "email",
+                         "role",
+                         "skills",
+                         "bio",
+                         "photoURL",
+                         "location",
+                         "title",
+                         "updatedAt"
+                       ]);
+
+      // Users cannot delete their profile
+      allow delete: if false;
     }
-    
-    // Jobs collection - সবাই দেখতে পারবে, কিন্তু শুধু মালিক edit করতে পারবে
+
+
+    /* =========================
+       WALLET TRANSACTIONS
+       ========================= */
+
+    match /walletTransactions/{transactionId} {
+
+      // Users can read only their own transactions
+      allow read: if isSignedIn()
+                  && resource.data.uid == request.auth.uid;
+
+      // Client-side users cannot create wallet transactions
+      // Successful deposits, withdrawals and balance changes
+      // must be handled by trusted backend/admin code
+      allow create: if false;
+
+      // Client-side users cannot modify transactions
+      allow update: if false;
+
+      // Client-side users cannot delete transactions
+      allow delete: if false;
+    }
+
+
+    /* =========================
+       JOBS
+       ========================= */
+
     match /jobs/{jobId} {
-      allow read: if true;
-      allow create: if request.auth != null && 
-                       request.resource.data.ownerId == request.auth.uid;
-      allow update, delete: if request.auth.uid == resource.data.ownerId;
+
+      // Anyone can read open jobs
+      // Owners can read their own jobs
+      allow read: if resource.data.status == "open"
+                  || (
+                    isSignedIn()
+                    && resource.data.ownerId == request.auth.uid
+                  );
+
+      // Authenticated users can create jobs for themselves
+      allow create: if isSignedIn()
+                    && request.resource.data.ownerId == request.auth.uid;
+
+      // Owners can update their own jobs
+      // Ownership cannot be transferred
+      allow update: if isSignedIn()
+                    && resource.data.ownerId == request.auth.uid
+                    && request.resource.data.ownerId == resource.data.ownerId;
+
+      // Owners can delete their own jobs
+      allow delete: if isSignedIn()
+                    && resource.data.ownerId == request.auth.uid;
     }
-    
-    // Proposals collection - সংশ্লিষ্ট পক্ষ দেখতে পারবে, সবাই তৈরি করতে পারবে
+
+
+    /* =========================
+       PROPOSALS
+       ========================= */
+
     match /proposals/{proposalId} {
-      allow create: if request.auth != null &&
-                       request.resource.data.workerId == request.auth.uid;
-      allow read: if request.auth.uid == resource.data.workerId || 
-                     request.auth.uid == resource.data.clientId;
-      allow update, delete: if request.auth.uid == resource.data.workerId || 
-                               request.auth.uid == resource.data.clientId;
+
+      // Workers can read their own proposals
+      // Clients can read proposals for their jobs
+      allow read: if isSignedIn()
+                  && (
+                    resource.data.workerId == request.auth.uid
+                    || resource.data.clientId == request.auth.uid
+                  );
+
+      // Workers can create proposals using their own UID
+      allow create: if isSignedIn()
+                    && request.resource.data.workerId == request.auth.uid;
+
+      // Workers/clients can update their related proposals
+      // Worker/client ownership cannot be changed
+      allow update: if isSignedIn()
+                    && (
+                      (
+                        resource.data.workerId == request.auth.uid
+                        && request.resource.data.workerId == resource.data.workerId
+                        && request.resource.data.clientId == resource.data.clientId
+                      )
+                      ||
+                      (
+                        resource.data.clientId == request.auth.uid
+                        && request.resource.data.clientId == resource.data.clientId
+                        && request.resource.data.workerId == resource.data.workerId
+                      )
+                    );
+
+      // Proposals cannot be deleted by users
+      allow delete: if false;
     }
-    
-    // Moderation Events - শুধু authenticated ব্যবহারকারী তৈরি করতে পারবে
+
+
+    /* =========================
+       MODERATION EVENTS
+       ========================= */
+
     match /moderationEvents/{eventId} {
-      allow create: if request.auth != null;
-      allow read: if request.auth != null;
+
+      // Authenticated users can create moderation events
+      // only for their own UID
+      allow create: if isSignedIn()
+                    && request.resource.data.uid == request.auth.uid;
+
+      // Users cannot read or modify moderation records
+      allow read, update, delete: if false;
+    }
+
+
+    /* =========================
+       DEPOSIT REQUESTS
+       ========================= */
+
+    match /depositRequests/{requestId} {
+
+      // Users can read only their own deposit requests
+      allow read: if isSignedIn()
+                  && resource.data.uid == request.auth.uid;
+
+      // Users may create a pending deposit request for themselves
+      // This does NOT give them wallet balance
+      allow create: if isSignedIn()
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.status == "pending"
+                    && request.resource.data.amount > 0;
+
+      // Users cannot approve or complete deposits
       allow update, delete: if false;
+    }
+
+
+    /* =========================
+       WITHDRAWAL REQUESTS
+       ========================= */
+
+    match /withdrawalRequests/{requestId} {
+
+      // Users can read only their own withdrawal requests
+      allow read: if isSignedIn()
+                  && resource.data.uid == request.auth.uid;
+
+      // Users may create a pending withdrawal request
+      // The actual balance deduction must happen through
+      // trusted backend/admin processing
+      allow create: if isSignedIn()
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.status == "pending"
+                    && request.resource.data.amount > 0;
+
+      // Users cannot approve or complete withdrawals
+      allow update, delete: if false;
+    }
+
+
+    /* =========================
+       DEFAULT DENY
+       ========================= */
+
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
