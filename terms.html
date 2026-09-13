@@ -1,35 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8"><meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
 
-<head>
+«»
 
-  <meta charset="UTF-8">
+<meta
+name="description"
+content="Terms of Use for SocialWorkBD, a global freelance marketplace connecting clients and freelancers."
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+«»
 
-  <meta
-    name="description"
-    content="SocialWorkBD Terms of Service for clients, freelancers, accounts, projects, payments, content, and marketplace use."
-  >
+<meta
+name="theme-color"
+content="#14a800"
 
-  <title>Terms of Service - SocialWorkBD</title>
+«»
 
-  <link rel="icon" href="favicon.svg">
-  <link rel="stylesheet" href="styles.css">
-
-  <style>
-
+  <title>Terms of Use — SocialWorkBD</title>  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="favicon.svg"
+  >  <link
+    rel="stylesheet"
+    href="styles.css"
+  >  <style>
     .terms-page {
-      max-width: 1000px;
+      max-width: 1050px;
       margin: 0 auto;
       padding: 50px 20px 80px;
     }
 
     .terms-hero {
-      margin-bottom: 34px;
+      margin-bottom: 30px;
     }
 
     .terms-hero h1 {
@@ -40,29 +43,28 @@
     }
 
     .terms-hero p {
-      max-width: 760px;
       margin: 0;
+      max-width: 760px;
       color: #667085;
       font-size: 15px;
       line-height: 1.7;
     }
 
     .terms-updated {
-      display: inline-flex;
-      margin-top: 16px;
+      display: inline-block;
+      margin-top: 15px;
       padding: 7px 11px;
       border-radius: 999px;
       background: #ecfdf3;
       color: #027a48;
-      border: 1px solid #abefc6;
       font-size: 12px;
       font-weight: 700;
     }
 
     .terms-layout {
       display: grid;
-      grid-template-columns: 230px 1fr;
-      gap: 28px;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 25px;
       align-items: start;
     }
 
@@ -71,141 +73,110 @@
       top: 20px;
       background: #ffffff;
       border: 1px solid #e5e7eb;
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 18px;
-      box-shadow: 0 6px 24px rgba(16, 24, 40, 0.04);
+      box-shadow: 0 6px 25px rgba(16, 24, 40, 0.04);
     }
 
-    .terms-nav-title {
+    .terms-nav h3 {
       margin: 0 0 12px;
       color: #111827;
       font-size: 14px;
-      font-weight: 700;
     }
 
     .terms-nav a {
       display: block;
       padding: 7px 0;
       color: #667085;
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.4;
       text-decoration: none;
     }
 
     .terms-nav a:hover {
-      color: #12b76a;
+      color: #14a800;
     }
 
     .terms-content {
-      min-width: 0;
-    }
-
-    .terms-card {
       background: #ffffff;
       border: 1px solid #e5e7eb;
-      border-radius: 18px;
-      padding: 30px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 30px rgba(16, 24, 40, 0.04);
-      scroll-margin-top: 20px;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 8px 30px rgba(16, 24, 40, 0.05);
     }
 
-    .terms-card:last-child {
+    .terms-content section {
+      padding-bottom: 27px;
+      margin-bottom: 27px;
+      border-bottom: 1px solid #eaecf0;
+    }
+
+    .terms-content section:last-child {
+      border-bottom: 0;
       margin-bottom: 0;
+      padding-bottom: 0;
     }
 
-    .terms-card h2 {
-      margin: 0 0 12px;
+    .terms-content h2 {
+      margin: 0 0 10px;
       color: #111827;
-      font-size: 22px;
-      line-height: 1.3;
+      font-size: 21px;
+      line-height: 1.35;
     }
 
-    .terms-card h3 {
-      margin: 22px 0 8px;
-      color: #344054;
-      font-size: 16px;
-      line-height: 1.4;
-    }
-
-    .terms-card p {
-      margin: 0 0 13px;
-      color: #667085;
+    .terms-content p {
+      margin: 0 0 12px;
+      color: #475467;
       font-size: 14px;
       line-height: 1.75;
     }
 
-    .terms-card p:last-child {
+    .terms-content p:last-child {
       margin-bottom: 0;
     }
 
-    .terms-card ul {
-      margin: 10px 0 15px;
-      padding-left: 20px;
-      color: #667085;
+    .terms-content ul {
+      margin: 8px 0 0;
+      padding-left: 21px;
+      color: #475467;
     }
 
-    .terms-card li {
+    .terms-content li {
       margin-bottom: 8px;
       font-size: 14px;
       line-height: 1.7;
     }
 
-    .terms-card strong {
-      color: #344054;
-    }
-
-    .terms-notice {
-      margin-bottom: 24px;
-      padding: 18px;
-      border-radius: 14px;
+    .terms-note {
+      margin-top: 25px;
+      padding: 16px;
+      border-radius: 11px;
       background: #f9fafb;
       border: 1px solid #eaecf0;
       color: #667085;
       font-size: 13px;
-      line-height: 1.7;
+      line-height: 1.65;
     }
 
-    .terms-notice strong {
-      color: #111827;
-    }
-
-    .terms-contact {
-      display: inline-block;
-      margin-top: 5px;
-      color: #12b76a;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .terms-contact:hover {
-      text-decoration: underline;
-    }
-
-    .footer-simple {
+    .terms-footer {
       border-top: 1px solid #eaecf0;
-      padding: 24px 20px;
+      padding: 25px 20px;
       text-align: center;
       color: #667085;
       font-size: 13px;
     }
 
-    .footer-simple a {
+    .terms-footer a {
+      margin: 0 8px;
       color: #667085;
       text-decoration: none;
-      margin: 0 8px;
     }
 
-    .footer-simple a:hover {
-      color: #12b76a;
+    .terms-footer a:hover {
+      color: #14a800;
     }
 
     @media (max-width: 800px) {
-
-      .terms-page {
-        padding: 38px 16px 60px;
-      }
-
       .terms-layout {
         grid-template-columns: 1fr;
       }
@@ -216,869 +187,575 @@
 
       .terms-nav a {
         display: inline-block;
-        margin-right: 14px;
+        margin-right: 12px;
       }
 
       .terms-hero h1 {
-        font-size: 32px;
+        font-size: 31px;
       }
-
-      .terms-card {
-        padding: 24px;
-      }
-
     }
 
     @media (max-width: 520px) {
-
       .terms-page {
-        padding: 30px 14px 50px;
+        padding: 32px 14px 60px;
       }
 
-      .terms-hero h1 {
-        font-size: 28px;
+      .terms-content {
+        padding: 22px 18px;
+        border-radius: 14px;
       }
 
-      .terms-card {
-        padding: 20px;
-        border-radius: 15px;
+      .terms-content h2 {
+        font-size: 19px;
       }
 
-      .terms-card h2 {
-        font-size: 20px;
+      .terms-content p,
+      .terms-content li {
+        font-size: 13px;
       }
-
     }
+  </style></head><body>  <!-- HEADER -->  <header class="site-header"><div class="container">
 
-  </style>
+  <a
+    href="index.html"
+    class="brand"
+  >
+    <span class="brand-mark">SW</span>
+    <span>SocialWorkBD</span>
+  </a>
 
-</head>
+  <nav class="main-nav">
 
+    <a href="tasks.html">
+      Find Work
+    </a>
 
-<body>
+    <a href="post-job.html">
+      Post a Job
+    </a>
 
+    <a href="support.html">
+      Help
+    </a>
 
-  <!-- HEADER -->
+    <a
+      href="terms.html"
+      class="active"
+    >
+      Terms
+    </a>
 
-  <header class="site-header">
+  </nav>
 
-    <div class="container">
+  <div class="header-actions">
 
-      <a
-        href="index.html"
-        class="brand"
-      >
+    <a
+      href="login.html"
+      class="login-link"
+    >
+      Log In
+    </a>
 
-        <span class="brand-mark">
-          SW
-        </span>
+    <a
+      href="signup.html"
+      class="signup-link"
+    >
+      Sign Up
+    </a>
 
-        <span>
-          SocialWorkBD
-        </span>
+  </div>
 
-      </a>
+</div>
 
+  </header>  <!-- TERMS PAGE -->  <main class="terms-page"><section class="terms-hero">
 
-      <nav class="main-nav">
+  <h1>
+    Terms of Use
+  </h1>
 
-        <a href="tasks.html">
-          Find Work
-        </a>
+  <p>
+    These Terms of Use explain the rules and responsibilities
+    that apply when using SocialWorkBD and its marketplace services.
+  </p>
 
-        <a href="find-talent.html">
-          Find Talent
-        </a>
+  <span class="terms-updated">
+    Last updated: September 2026
+  </span>
 
-        <a href="post-job.html">
-          Post a Job
-        </a>
-
-        <a href="support.html">
-          Help
-        </a>
-
-      </nav>
-
-
-      <div class="header-actions">
-
-        <a
-          href="login.html"
-          class="login-link"
-        >
-          Log In
-        </a>
-
-        <a
-          href="signup.html"
-          class="signup-link"
-        >
-          Sign Up
-        </a>
-
-      </div>
-
-    </div>
-
-  </header>
+</section>
 
 
-
-  <!-- MAIN -->
-
-  <main class="terms-page">
+<div class="terms-layout">
 
 
-    <section class="terms-hero">
+  <!-- TABLE OF CONTENTS -->
 
-      <h1>
-        Terms of Service
-      </h1>
+  <aside class="terms-nav">
+
+    <h3>
+      On this page
+    </h3>
+
+    <a href="#acceptance">
+      1. Acceptance of Terms
+    </a>
+
+    <a href="#eligibility">
+      2. Account Eligibility
+    </a>
+
+    <a href="#account">
+      3. Account Responsibility
+    </a>
+
+    <a href="#marketplace">
+      4. Marketplace Use
+    </a>
+
+    <a href="#jobs">
+      5. Jobs and Proposals
+    </a>
+
+    <a href="#payments">
+      6. Payments
+    </a>
+
+    <a href="#prohibited">
+      7. Prohibited Activities
+    </a>
+
+    <a href="#content">
+      8. User Content
+    </a>
+
+    <a href="#communication">
+      9. Communication
+    </a>
+
+    <a href="#moderation">
+      10. Account Moderation
+    </a>
+
+    <a href="#availability">
+      11. Service Availability
+    </a>
+
+    <a href="#liability">
+      12. Liability
+    </a>
+
+    <a href="#changes">
+      13. Changes to Terms
+    </a>
+
+    <a href="#contact">
+      14. Contact
+    </a>
+
+  </aside>
+
+
+  <!-- CONTENT -->
+
+  <article class="terms-content">
+
+
+    <section id="acceptance">
+
+      <h2>
+        1. Acceptance of Terms
+      </h2>
 
       <p>
-        These Terms of Service explain the rules and responsibilities
-        that apply when using SocialWorkBD, a global freelance
-        marketplace connecting clients and independent freelancers.
+        By accessing or using SocialWorkBD, you agree to follow
+        these Terms of Use and any additional rules or policies
+        presented on the platform.
       </p>
 
-      <span class="terms-updated">
-        Last updated: September 2026
-      </span>
+      <p>
+        If you do not agree with these terms, please do not use
+        SocialWorkBD services.
+      </p>
 
     </section>
 
 
+    <section id="eligibility">
 
-    <div class="terms-notice">
+      <h2>
+        2. Account Eligibility
+      </h2>
 
-      <strong>
-        Please read these terms carefully.
-      </strong>
+      <p>
+        You must be legally permitted to use an online marketplace
+        service in your location. If you are not legally able to
+        enter into agreements or use marketplace services on your own,
+        you should not create or use an account without appropriate
+        permission and supervision.
+      </p>
 
-      By creating an account, accessing the website, posting a job,
-      submitting a proposal, or otherwise using SocialWorkBD, you
-      acknowledge that you have read and agree to these Terms of Service
-      and the applicable Privacy Policy.
+      <p>
+        You are responsible for providing accurate information
+        during account registration.
+      </p>
 
+    </section>
+
+
+    <section id="account">
+
+      <h2>
+        3. Account Responsibility
+      </h2>
+
+      <p>
+        Your SocialWorkBD account is intended for your own use.
+        You are responsible for protecting your login credentials
+        and for activity performed through your account.
+      </p>
+
+      <ul>
+
+        <li>
+          Keep your account information accurate and up to date.
+        </li>
+
+        <li>
+          Do not share your password with other people.
+        </li>
+
+        <li>
+          Do not impersonate another person or organization.
+        </li>
+
+        <li>
+          Notify SocialWorkBD if you believe your account has been
+          accessed without your permission.
+        </li>
+
+      </ul>
+
+    </section>
+
+
+    <section id="marketplace">
+
+      <h2>
+        4. Marketplace Use
+      </h2>
+
+      <p>
+        SocialWorkBD provides a marketplace where clients can
+        publish work opportunities and freelancers can offer
+        professional services.
+      </p>
+
+      <p>
+        Users are responsible for ensuring that job descriptions,
+        proposals, deliverables and other marketplace activity
+        are accurate, lawful and appropriate.
+      </p>
+
+    </section>
+
+
+    <section id="jobs">
+
+      <h2>
+        5. Jobs and Proposals
+      </h2>
+
+      <p>
+        Clients should provide clear and accurate information about
+        project requirements, budgets and expected deliverables.
+      </p>
+
+      <p>
+        Freelancers should submit proposals that accurately represent
+        their skills, experience and ability to complete the work.
+      </p>
+
+      <p>
+        Users should not create misleading jobs, fake proposals,
+        fraudulent profiles or artificial marketplace activity.
+      </p>
+
+    </section>
+
+
+    <section id="payments">
+
+      <h2>
+        6. Payments
+      </h2>
+
+      <p>
+        Where payment functionality is available, users must follow
+        the payment rules and instructions provided by SocialWorkBD.
+      </p>
+
+      <p>
+        Users must not use the platform to facilitate fraudulent,
+        unauthorized or otherwise unlawful financial activity.
+      </p>
+
+      <p>
+        Any fees, payment requirements or transaction rules applicable
+        to a particular SocialWorkBD service will be presented where
+        relevant.
+      </p>
+
+    </section>
+
+
+    <section id="prohibited">
+
+      <h2>
+        7. Prohibited Activities
+      </h2>
+
+      <p>
+        You must not use SocialWorkBD to conduct activity that is
+        unlawful, fraudulent, abusive or harmful to other users.
+      </p>
+
+      <ul>
+
+        <li>
+          Fraud, scams or deceptive activity.
+        </li>
+
+        <li>
+          Fake accounts or impersonation.
+        </li>
+
+        <li>
+          Harassment, threats or abusive behavior.
+        </li>
+
+        <li>
+          Malicious software, harmful code or security attacks.
+        </li>
+
+        <li>
+          Spam or misleading marketplace activity.
+        </li>
+
+        <li>
+          Intellectual-property infringement.
+        </li>
+
+        <li>
+          Attempts to bypass platform security or account controls.
+        </li>
+
+        <li>
+          Any activity that violates applicable laws or regulations.
+        </li>
+
+      </ul>
+
+    </section>
+
+
+    <section id="content">
+
+      <h2>
+        8. User Content
+      </h2>
+
+      <p>
+        Users remain responsible for content they submit to
+        SocialWorkBD, including profile information, job descriptions,
+        proposals, messages and other materials.
+      </p>
+
+      <p>
+        You should only upload or publish content that you have the
+        right to use and that does not violate another person's rights.
+      </p>
+
+    </section>
+
+
+    <section id="communication">
+
+      <h2>
+        9. Communication
+      </h2>
+
+      <p>
+        SocialWorkBD communication tools are intended for legitimate
+        marketplace communication.
+      </p>
+
+      <p>
+        Do not use messages to harass users, distribute spam,
+        impersonate others, request sensitive credentials or conduct
+        fraudulent activity.
+      </p>
+
+      <p>
+        Keep project-related communication professional and respectful.
+      </p>
+
+    </section>
+
+
+    <section id="moderation">
+
+      <h2>
+        10. Account Moderation
+      </h2>
+
+      <p>
+        SocialWorkBD may review activity when there is a reasonable
+        concern about violations of these terms, platform policies,
+        security or user safety.
+      </p>
+
+      <p>
+        Depending on the circumstances, SocialWorkBD may limit,
+        restrict, suspend or terminate access to certain services.
+      </p>
+
+      <p>
+        If an account review process is available, users may submit
+        relevant information through the Help & Support page.
+      </p>
+
+    </section>
+
+
+    <section id="availability">
+
+      <h2>
+        11. Service Availability
+      </h2>
+
+      <p>
+        SocialWorkBD aims to keep its services available and
+        functional, but uninterrupted access cannot be guaranteed.
+      </p>
+
+      <p>
+        Features may be changed, temporarily unavailable, improved,
+        removed or replaced as the platform develops.
+      </p>
+
+    </section>
+
+
+    <section id="liability">
+
+      <h2>
+        12. Liability
+      </h2>
+
+      <p>
+        SocialWorkBD is a marketplace platform and does not guarantee
+        the quality, legality, accuracy or completion of work offered
+        by individual users.
+      </p>
+
+      <p>
+        Users are responsible for evaluating opportunities,
+        communications and agreements before proceeding.
+      </p>
+
+      <p>
+        To the extent permitted by applicable law, SocialWorkBD is
+        not responsible for losses resulting from user conduct,
+        inaccurate information, third-party services or temporary
+        service interruptions.
+      </p>
+
+    </section>
+
+
+    <section id="changes">
+
+      <h2>
+        13. Changes to These Terms
+      </h2>
+
+      <p>
+        SocialWorkBD may update these Terms of Use when necessary
+        to reflect changes to the platform, policies, legal
+        requirements or services.
+      </p>
+
+      <p>
+        The latest version will be published on this page.
+        Continued use of SocialWorkBD after an update may indicate
+        acceptance of the revised terms, where permitted by law.
+      </p>
+
+    </section>
+
+
+    <section id="contact">
+
+      <h2>
+        14. Contact
+      </h2>
+
+      <p>
+        If you have questions about these Terms of Use or need help
+        with your account, please visit the SocialWorkBD Help &
+        Support page.
+      </p>
+
+      <p>
+        <a
+          href="support.html"
+          style="color:#14a800;font-weight:700;text-decoration:none;"
+        >
+          Visit Help & Support →
+        </a>
+      </p>
+
+    </section>
+
+
+    <div class="terms-note">
+      These Terms of Use are general platform terms for SocialWorkBD
+      and are not a substitute for professional legal advice.
+      Where applicable, mandatory local laws and regulations take
+      precedence over conflicting provisions.
     </div>
 
 
+  </article>
 
-    <div class="terms-layout">
+</div>
 
+  </main>  <!-- FOOTER -->  <footer class="terms-footer"><div>
 
-      <!-- TABLE OF CONTENTS -->
+  <a href="index.html">
+    Home
+  </a>
 
-      <aside class="terms-nav">
+  <a href="tasks.html">
+    Find Work
+  </a>
 
-        <div class="terms-nav-title">
-          On this page
-        </div>
+  <a href="support.html">
+    Help
+  </a>
 
-        <a href="#acceptance">
-          1. Acceptance of Terms
-        </a>
+  <a href="privacy.html">
+    Privacy
+  </a>
 
-        <a href="#platform">
-          2. The Platform
-        </a>
+  <a href="terms.html">
+    Terms
+  </a>
 
-        <a href="#accounts">
-          3. Accounts
-        </a>
+</div>
 
-        <a href="#freelancers">
-          4. Freelancer Responsibilities
-        </a>
+<div style="margin-top:10px;">
+  © 2026 SocialWorkBD. All rights reserved.
+</div>
 
-        <a href="#clients">
-          5. Client Responsibilities
-        </a>
-
-        <a href="#projects">
-          6. Jobs & Projects
-        </a>
-
-        <a href="#payments">
-          7. Payments & Fees
-        </a>
-
-        <a href="#content">
-          8. User Content
-        </a>
-
-        <a href="#prohibited">
-          9. Prohibited Activities
-        </a>
-
-        <a href="#messaging">
-          10. Messaging
-        </a>
-
-        <a href="#intellectual">
-          11. Intellectual Property
-        </a>
-
-        <a href="#suspension">
-          12. Suspension
-        </a>
-
-        <a href="#liability">
-          13. Liability
-        </a>
-
-        <a href="#changes">
-          14. Changes
-        </a>
-
-        <a href="#contact">
-          15. Contact
-        </a>
-
-      </aside>
-
-
-
-      <!-- TERMS CONTENT -->
-
-      <section class="terms-content">
-
-
-        <article
-          class="terms-card"
-          id="acceptance"
-        >
-
-          <h2>
-            1. Acceptance of Terms
-          </h2>
-
-          <p>
-            By accessing or using SocialWorkBD, you agree to follow
-            these Terms of Service and any other policies or rules
-            published on the platform.
-          </p>
-
-          <p>
-            If you do not agree with these Terms, you should not create
-            an account or use SocialWorkBD.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="platform"
-        >
-
-          <h2>
-            2. The SocialWorkBD Platform
-          </h2>
-
-          <p>
-            SocialWorkBD is an online marketplace that helps clients
-            and independent freelancers discover each other and
-            collaborate on projects.
-          </p>
-
-          <p>
-            SocialWorkBD may provide tools for profiles, job postings,
-            proposals, messaging, project management, support and
-            other marketplace activities.
-          </p>
-
-          <p>
-            SocialWorkBD is a marketplace platform and does not
-            automatically become a party to agreements between a
-            client and a freelancer.
-          </p>
-
-          <p>
-            Unless explicitly stated otherwise, SocialWorkBD does not
-            guarantee a user's identity, qualifications, availability,
-            work quality, project outcome or business results.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="accounts"
-        >
-
-          <h2>
-            3. User Accounts
-          </h2>
-
-          <p>
-            You may need an account to access certain SocialWorkBD
-            features.
-          </p>
-
-          <h3>
-            Account information
-          </h3>
-
-          <ul>
-
-            <li>
-              You should provide accurate and current information.
-            </li>
-
-            <li>
-              You are responsible for keeping your login information
-              secure.
-            </li>
-
-            <li>
-              You are responsible for activity performed through
-              your account.
-            </li>
-
-            <li>
-              You should notify SocialWorkBD if you believe your
-              account has been accessed without permission.
-            </li>
-
-          </ul>
-
-          <p>
-            You should not create accounts for deceptive purposes,
-            impersonate another person, or knowingly provide
-            misleading profile information.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="freelancers"
-        >
-
-          <h2>
-            4. Freelancer Responsibilities
-          </h2>
-
-          <p>
-            Freelancers are responsible for accurately representing
-            their skills, experience, availability, pricing and
-            ability to complete the work they offer.
-          </p>
-
-          <ul>
-
-            <li>
-              Submit honest proposals.
-            </li>
-
-            <li>
-              Communicate clearly with clients.
-            </li>
-
-            <li>
-              Deliver work according to agreed requirements.
-            </li>
-
-            <li>
-              Respect deadlines agreed with clients.
-            </li>
-
-            <li>
-              Do not submit work that you do not have the right to use.
-            </li>
-
-          </ul>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="clients"
-        >
-
-          <h2>
-            5. Client Responsibilities
-          </h2>
-
-          <p>
-            Clients are responsible for providing clear project
-            requirements and treating freelancers fairly and
-            professionally.
-          </p>
-
-          <ul>
-
-            <li>
-              Provide accurate project information.
-            </li>
-
-            <li>
-              Set realistic budgets and deadlines.
-            </li>
-
-            <li>
-              Communicate project requirements clearly.
-            </li>
-
-            <li>
-              Review submitted work fairly.
-            </li>
-
-            <li>
-              Pay amounts that are legitimately due under an agreed
-              project arrangement.
-            </li>
-
-          </ul>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="projects"
-        >
-
-          <h2>
-            6. Jobs, Proposals & Projects
-          </h2>
-
-          <p>
-            Clients may publish jobs describing work they need.
-            Freelancers may submit proposals for jobs that match
-            their skills and availability.
-          </p>
-
-          <p>
-            A proposal does not guarantee that a freelancer will be
-            selected. A client may review multiple proposals before
-            selecting a freelancer.
-          </p>
-
-          <p>
-            Once a client and freelancer agree to work together,
-            they are responsible for communicating the project scope,
-            price, deliverables and expected timeline clearly.
-          </p>
-
-          <p>
-            Users should not intentionally misrepresent project
-            requirements, proposal information, deliverables or
-            completion status.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="payments"
-        >
-
-          <h2>
-            7. Payments, Fees & Currency
-          </h2>
-
-          <p>
-            SocialWorkBD may introduce or support payment processing,
-            fees, commissions, withdrawals or other financial features.
-            The specific fees and payment rules applicable to a feature
-            will be shown where relevant.
-          </p>
-
-          <p>
-            Prices and project budgets may be displayed in
-            <strong>United States Dollars (USD)</strong> unless
-            otherwise stated.
-          </p>
-
-          <p>
-            Users are responsible for complying with applicable tax,
-            financial and payment laws in their own jurisdiction.
-          </p>
-
-          <p>
-            SocialWorkBD does not guarantee that every payment method,
-            currency, bank, payment provider or withdrawal option will
-            always be available.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="content"
-        >
-
-          <h2>
-            8. User Content
-          </h2>
-
-          <p>
-            Users may submit profiles, job descriptions, proposals,
-            messages, reviews, images, documents and other content.
-          </p>
-
-          <p>
-            You remain responsible for the content you submit and
-            confirm that you have the necessary rights to submit it.
-          </p>
-
-          <p>
-            By submitting content to SocialWorkBD, you allow the
-            platform to host, store, display and process that content
-            as reasonably necessary to operate the marketplace and
-            provide the requested services.
-          </p>
-
-          <p>
-            SocialWorkBD may remove content that violates these Terms,
-            applicable policies or applicable law.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="prohibited"
-        >
-
-          <h2>
-            9. Prohibited Activities
-          </h2>
-
-          <p>
-            Users must not use SocialWorkBD for unlawful, fraudulent,
-            abusive or harmful activities.
-          </p>
-
-          <h3>
-            Examples of prohibited behavior
-          </h3>
-
-          <ul>
-
-            <li>
-              Fraud, scams or deceptive transactions.
-            </li>
-
-            <li>
-              Impersonation or intentionally false identity information.
-            </li>
-
-            <li>
-              Spam, harassment, threats or abusive communication.
-            </li>
-
-            <li>
-              Fake reviews, ratings or engagement manipulation.
-            </li>
-
-            <li>
-              Posting services or projects that violate applicable law.
-            </li>
-
-            <li>
-              Uploading content that infringes another person's
-              intellectual property rights.
-            </li>
-
-            <li>
-              Attempting to bypass platform security or access
-              another user's account.
-            </li>
-
-            <li>
-              Using automated tools to abuse, overload or interfere
-              with the platform.
-            </li>
-
-            <li>
-              Using the platform to facilitate illegal transactions.
-            </li>
-
-          </ul>
-
-          <p>
-            SocialWorkBD may take appropriate action when prohibited
-            activity is detected or reported.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="messaging"
-        >
-
-          <h2>
-            10. Messaging & Communication
-          </h2>
-
-          <p>
-            SocialWorkBD messaging features are intended for legitimate
-            marketplace communication between users.
-          </p>
-
-          <p>
-            Users must communicate respectfully and must not use
-            messaging tools for spam, harassment, fraud, threats or
-            other prohibited activities.
-          </p>
-
-          <p>
-            SocialWorkBD may review or investigate reported activity
-            when reasonably necessary to protect users, investigate
-            abuse or maintain platform security, subject to applicable
-            law and privacy policies.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="intellectual"
-        >
-
-          <h2>
-            11. Intellectual Property
-          </h2>
-
-          <p>
-            SocialWorkBD and its original platform design, branding,
-            logos, software and related materials may be protected by
-            applicable intellectual property laws.
-          </p>
-
-          <p>
-            Users must not copy, reproduce, modify, distribute or
-            commercially exploit SocialWorkBD platform materials
-            without appropriate authorization.
-          </p>
-
-          <p>
-            Ownership and usage rights for work created by a freelancer
-            should be agreed between the client and freelancer as part
-            of the relevant project.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="suspension"
-        >
-
-          <h2>
-            12. Account Restrictions, Suspension & Termination
-          </h2>
-
-          <p>
-            SocialWorkBD may restrict, suspend or terminate an account
-            when necessary to enforce these Terms, protect users,
-            investigate suspected abuse, address security concerns or
-            comply with applicable legal requirements.
-          </p>
-
-          <p>
-            Depending on the situation, restricted accounts may lose
-            access to some or all marketplace features.
-          </p>
-
-          <p>
-            If you believe an account action was incorrect, you may
-            submit a review request through the
-            <a
-              href="support.html"
-              class="terms-contact"
-            >
-              Help & Support
-            </a>
-            page when that feature is available.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="liability"
-        >
-
-          <h2>
-            13. Disclaimer & Limitation of Liability
-          </h2>
-
-          <p>
-            SocialWorkBD is provided on an availability basis and may
-            occasionally experience interruptions, maintenance,
-            technical problems or changes in functionality.
-          </p>
-
-          <p>
-            SocialWorkBD does not guarantee that the platform will
-            always be uninterrupted, error-free or available.
-          </p>
-
-          <p>
-            Users are responsible for evaluating other users, project
-            requirements, proposals, deliverables and business risks
-            before entering into an agreement.
-          </p>
-
-          <p>
-            To the extent permitted by applicable law, SocialWorkBD
-            is not responsible for indirect, incidental, special or
-            consequential losses arising from use of the platform or
-            agreements between users.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="changes"
-        >
-
-          <h2>
-            14. Changes to These Terms
-          </h2>
-
-          <p>
-            SocialWorkBD may update these Terms from time to time to
-            reflect changes to the platform, marketplace policies,
-            legal requirements or business operations.
-          </p>
-
-          <p>
-            Updated Terms will be published on this page with a revised
-            update date where appropriate.
-          </p>
-
-          <p>
-            Continued use of SocialWorkBD after an update may constitute
-            acceptance of the revised Terms to the extent permitted
-            by applicable law.
-          </p>
-
-        </article>
-
-
-
-        <article
-          class="terms-card"
-          id="contact"
-        >
-
-          <h2>
-            15. Contact & Support
-          </h2>
-
-          <p>
-            If you have a question about these Terms, your account,
-            a marketplace issue or a moderation decision, please use
-            the SocialWorkBD Help & Support page.
-          </p>
-
-          <p>
-
-            <a
-              href="support.html"
-              class="terms-contact"
-            >
-              Go to Help & Support
-            </a>
-
-          </p>
-
-          <p>
-            These Terms should be read together with the SocialWorkBD
-            Privacy Policy and other applicable marketplace policies.
-          </p>
-
-        </article>
-
-
-      </section>
-
-    </div>
-
-  </main>
-
-
-
-  <!-- FOOTER -->
-
-  <footer class="footer-simple">
-
-    <div>
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="tasks.html">
-        Find Work
-      </a>
-
-      <a href="find-talent.html">
-        Find Talent
-      </a>
-
-      <a href="post-job.html">
-        Post a Job
-      </a>
-
-      <a href="support.html">
-        Help
-      </a>
-
-      <a href="terms.html">
-        Terms
-      </a>
-
-      <a href="privacy.html">
-        Privacy
-      </a>
-
-    </div>
-
-
-    <div style="margin-top:10px;">
-
-      © 2026 SocialWorkBD.
-      Global Freelance Marketplace.
-
-    </div>
-
-  </footer>
-
-
-
-</body>
-
-</html>
+  </footer></body></html>
