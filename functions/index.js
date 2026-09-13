@@ -1,1091 +1,1179 @@
-const { onRequest } = require("firebase-functions/v2/https");
-const { defineSecret } = require("firebase-functions/params");
-const admin = require("firebase-admin");
+/* =========================================================
+   SocialWorkBD - Secure Payment Functions
+   Firebase Cloud Functions v2
+   SSLCommerz + Firestore
+
+   SECURITY MODEL
+   ---------------------------------------------------------
+   1. Frontend sends Firebase ID token.
+   2. Server verifies Firebase ID token.
+   3. Server gets UID from verified token.
+   4. Client cannot choose another user's UID.
+   5. Server creates pending payment.
+   6. SSLCommerz processes payment.
+   7. IPN is server-to-server.
+   8. Server validates transaction with SSLCommerz.
+   9. Firestore transaction credits wallet exactly once.
+   ========================================================= */
+
+const {
+  onRequest
+} = require("firebase-functions/v2/https");
+
+const {
+  defineSecret
+} = require("firebase-functions/params");
+
+const admin =
+  require("firebase-admin");
 
 admin.initializeApp();
 
-const db = admin.firestore();
+const db =
+  admin.firestore();
 
-const SSLCOMMERZ_STORE_ID = defineSecret("SSLCOMMERZ_STORE_ID");
-const SSLCOMMERZ_STORE_PASSWORD = defineSecret("SSLCOMMERZ_STORE_PASSWORD");
+const SSLCOMMERZ_STORE_ID =
+  defineSecret(
+    "SSLCOMMERZ_STORE_ID"
+  );
 
-const REGION = "asia-south1";
-
-const PAYMENT_COLLECTION = "payments";
-const WALLET_TRANSACTION_COLLECTION = "walletTransactions";
+const SSLCOMMERZ_STORE_PASSWORD =
+  defineSecret(
+    "SSLCOMMERZ_STORE_PASSWORD"
+  );
 
 /* =========================================================
-   HELPERS
-========================================================= */
+   Configuration
+   ========================================================= */
 
-function json(res, status, data) {
-  return res.status(status).json(data);
-}
+const REGION =
+  "asia-south1";
 
-function getBearerToken(req) {
-  const header = req.headers.authorization || "";
+const SANDBOX = true;
 
-  if (!header.startsWith("Bearer ")) {
-    return null;
+const SUCCESS_URL =
+  "https://onlinecreativeit24-source.github.io/SocialWorkBD/payment-success.html";
+
+const FAIL_URL =
+  "https://onlinecreativeit24-source.github.io/SocialWorkBD/payment-fail.html";
+
+const CANCEL_URL =
+  "https://onlinecreativeit24-source.github.io/SocialWorkBD/payment-cancel.html";
+
+const GATEWAY_URL = SANDBOX
+  ? "https://sandbox.sslcommerz.com/gwprocess/v4/api.php"
+  : "https://securepay.sslcommerz.com/gwprocess/v4/api.php";
+
+const VALIDATION_URL = SANDBOX
+  ? "https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php"
+  : "https://securepay.sslcommerz.com/validator/api/validationserverAPI.php";
+
+/* =========================================================
+   CORS
+   ========================================================= */
+
+const ALLOWED_ORIGIN =
+  "https://onlinecreativeit24-source.github.io";
+
+function setCors(res, origin) {
+  if (
+    origin === ALLOWED_ORIGIN
+  ) {
+    res.set(
+      "Access-Control-Allow-Origin",
+      origin
+    );
   }
 
-  return header.substring(7).trim();
-}
+  res.set(
+    "Vary",
+    "Origin"
+  );
 
-async function verifyFirebaseUser(req) {
-  const token = getBearerToken(req);
+  res.set(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
 
-  if (!token) {
-    throw new Error("AUTH_REQUIRED");
-  }
-
-  return await admin.auth().verifyIdToken(token);
-}
-
-function isValidAmount(amount) {
-  return (
-    Number.isFinite(amount) &&
-    amount > 0 &&
-    amount <= 10000000
+  res.set(
+    "Access-Control-Allow-Methods",
+    "POST, OPTIONS"
   );
 }
 
-function amountsMatch(a, b) {
-  return Math.abs(Number(a) - Number(b)) < 0.01;
+/* =========================================================
+   Helpers
+   ========================================================= */
+
+function jsonError(
+  res,
+  status,
+  message
+) {
+  return res.status(status).json({
+    success: false,
+    message: message
+  });
 }
 
-function createPaymentId() {
+function generatePaymentId() {
   return (
     "SWB-" +
     Date.now() +
     "-" +
-    Math.floor(Math.random() * 1000000)
+    Math.random()
+      .toString(36)
+      .substring(2, 10)
+      .toUpperCase()
+  );
+}
+
+function normalizeAmount(value) {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount)) {
+    return 0;
+  }
+
+  return Math.round(
+    amount * 100
+  ) / 100;
+}
+
+function amountsMatch(
+  first,
+  second
+) {
+  return (
+    Math.abs(
+      Number(first) -
+      Number(second)
+    ) < 0.01
   );
 }
 
 /* =========================================================
-   CREATE PAYMENT
-========================================================= */
-
-exports.createPayment = onRequest(
-  {
-    secrets: [
-      SSLCOMMERZ_STORE_ID,
-      SSLCOMMERZ_STORE_PASSWORD
-    ],
-    region: REGION
-  },
-  async (req, res) => {
-    try {
-      if (req.method !== "POST") {
-        return json(res, 405, {
-          success: false,
-          message: "Method not allowed"
-        });
-      }
-
-      /* ---------------------------------------------------
-         VERIFY FIREBASE AUTH
-      --------------------------------------------------- */
-
-      let decodedToken;
-
-      try {
-        decodedToken = await verifyFirebaseUser(req);
-      } catch (error) {
-        return json(res, 401, {
-          success: false,
-          message: "Authentication required"
-        });
-      }
-
-      const uid = decodedToken.uid;
-
-      const {
-        amount,
-        productName,
-        productCategory
-      } = req.body || {};
-
-      const paymentAmount = Number(amount);
-
-      if (!isValidAmount(paymentAmount)) {
-        return json(res, 400, {
-          success: false,
-          message: "Invalid payment amount"
-        });
-      }
-
-      /* ---------------------------------------------------
-         CHECK USER PROFILE
-      --------------------------------------------------- */
-
-      const userRef = db.collection("users").doc(uid);
-      const userSnapshot = await userRef.get();
-
-      if (!userSnapshot.exists) {
-        return json(res, 404, {
-          success: false,
-          message: "User profile not found"
-        });
-      }
-
-      const userData = userSnapshot.data() || {};
-
-      const accountStatus =
-        userData.status ||
-        userData.accountStatus ||
-        "active";
-
-      if (
-        accountStatus === "suspended" ||
-        accountStatus === "restricted"
-      ) {
-        return json(res, 403, {
-          success: false,
-          message: "Your account is not allowed to make payments"
-        });
-      }
-
-      /* ---------------------------------------------------
-         CHECK PAYMENT CREDENTIALS BEFORE CREATING PAYMENT
-      --------------------------------------------------- */
-
-      const storeId = SSLCOMMERZ_STORE_ID.value();
-      const storePassword =
-        SSLCOMMERZ_STORE_PASSWORD.value();
-
-      if (!storeId || !storePassword) {
-        return json(res, 500, {
-          success: false,
-          message: "Payment service is not configured yet"
-        });
-      }
-
-      /* ---------------------------------------------------
-         CREATE PAYMENT RECORD
-      --------------------------------------------------- */
-
-      const paymentId = createPaymentId();
-
-      const paymentRef =
-        db.collection(PAYMENT_COLLECTION).doc(paymentId);
-
-      const paymentData = {
-        paymentId,
-        uid,
-
-        amount: paymentAmount,
-        currency: "BDT",
-
-        productName:
-          productName ||
-          "SocialWorkBD Wallet Deposit",
-
-        productCategory:
-          productCategory ||
-          "Wallet",
-
-        gateway: "sslcommerz",
-
-        status: "pending",
-
-        creditStatus: "not_credited",
-
-        createdAt:
-          admin.firestore.FieldValue.serverTimestamp(),
-
-        updatedAt:
-          admin.firestore.FieldValue.serverTimestamp()
-      };
-
-      await paymentRef.create(paymentData);
-
-      /* ---------------------------------------------------
-         CUSTOMER INFORMATION
-      --------------------------------------------------- */
-
-      const customerName =
-        userData.name ||
-        decodedToken.name ||
-        "SocialWorkBD User";
-
-      const customerEmail =
-        userData.email ||
-        decodedToken.email ||
-        "";
-
-      if (!customerEmail) {
-        await paymentRef.update({
-          status: "failed",
-          failureReason: "Customer email is missing",
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return json(res, 400, {
-          success: false,
-          message: "Your account email is required for payment"
-        });
-      }
-
-      /* ---------------------------------------------------
-         CURRENT LIVE SOCIALWORKBD URL
-      --------------------------------------------------- */
-
-      const baseUrl =
-        "https://onlinecreativeit24-source.github.io/SocialWorkBD";
-
-      /*
-       * Keep sandbox for testing.
-       * Production endpoint can be switched after sandbox
-       * payment verification is confirmed.
-       */
-      const gatewayUrl =
-        "https://sandbox.sslcommerz.com/gwprocess/v4/api.php";
-
-      const ipnUrl =
-        "https://asia-south1-socialworkbd-b1c00.cloudfunctions.net/paymentIPN";
-
-      /* ---------------------------------------------------
-         SSL COMMERZ REQUEST
-      --------------------------------------------------- */
-
-      const formData = new URLSearchParams();
-
-      formData.append("store_id", storeId);
-      formData.append("store_passwd", storePassword);
-
-      formData.append(
-        "total_amount",
-        paymentAmount.toFixed(2)
-      );
-
-      formData.append("currency", "BDT");
-      formData.append("tran_id", paymentId);
-
-      formData.append(
-        "success_url",
-        `${baseUrl}/payment-success.html?paymentId=${encodeURIComponent(
-          paymentId
-        )}`
-      );
-
-      formData.append(
-        "fail_url",
-        `${baseUrl}/payment-fail.html?paymentId=${encodeURIComponent(
-          paymentId
-        )}`
-      );
-
-      formData.append(
-        "cancel_url",
-        `${baseUrl}/payment-cancel.html?paymentId=${encodeURIComponent(
-          paymentId
-        )}`
-      );
-
-      formData.append("ipn_url", ipnUrl);
-
-      formData.append("cus_name", customerName);
-      formData.append("cus_email", customerEmail);
-
-      formData.append(
-        "cus_add1",
-        userData.location || "Bangladesh"
-      );
-
-      formData.append(
-        "cus_city",
-        userData.city || "Bangladesh"
-      );
-
-      formData.append(
-        "cus_country",
-        userData.country || "Bangladesh"
-      );
-
-      formData.append("shipping_method", "NO");
-
-      formData.append(
-        "product_name",
-        productName ||
-          "SocialWorkBD Wallet Deposit"
-      );
-
-      formData.append(
-        "product_category",
-        productCategory ||
-          "Wallet"
-      );
-
-      formData.append(
-        "product_profile",
-        "general"
-      );
-
-      /* ---------------------------------------------------
-         CALL SSL COMMERZ
-      --------------------------------------------------- */
-
-      const response = await fetch(
-        gatewayUrl,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/x-www-form-urlencoded"
-          },
-
-          body: formData.toString()
-        }
-      );
-
-      if (!response.ok) {
-        await paymentRef.update({
-          status: "gateway_error",
-          gatewayHttpStatus: response.status,
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return json(res, 502, {
-          success: false,
-          message:
-            "Payment gateway could not be reached",
-          paymentId
-        });
-      }
-
-      const result = await response.json();
-
-      /* ---------------------------------------------------
-         CHECK GATEWAY INITIALIZATION
-      --------------------------------------------------- */
-
-      if (
-        !result ||
-        result.status !== "SUCCESS" ||
-        !result.GatewayPageURL
-      ) {
-        await paymentRef.update({
-          status: "gateway_error",
-
-          gatewayResponse: result || {},
-
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return json(res, 502, {
-          success: false,
-          message:
-            "Payment gateway could not be initialized",
-          paymentId
-        });
-      }
-
-      /* ---------------------------------------------------
-         SAVE GATEWAY INFORMATION
-      --------------------------------------------------- */
-
-      await paymentRef.update({
-        gatewayUrl:
-          result.GatewayPageURL,
-
-        sessionKey:
-          result.sessionkey || "",
-
-        gatewaySession:
-          result.sessionkey || "",
-
-        updatedAt:
-          admin.firestore.FieldValue.serverTimestamp()
-      });
-
-      return json(res, 200, {
-        success: true,
-
-        paymentId,
-
-        gatewayUrl:
-          result.GatewayPageURL
-      });
-
-    } catch (error) {
-      console.error(
-        "createPayment error:",
-        error
-      );
-
-      return json(res, 500, {
-        success: false,
-        message:
-          "Payment initialization failed"
-      });
-    }
+   Firebase Auth Verification
+   ========================================================= */
+
+async function getVerifiedUser(
+  req
+) {
+  const header =
+    String(
+      req.headers.authorization ||
+      ""
+    );
+
+  if (
+    !header.startsWith(
+      "Bearer "
+    )
+  ) {
+    throw new Error(
+      "Missing authorization token."
+    );
   }
-);
 
+  const idToken =
+    header.substring(7).trim();
+
+  if (!idToken) {
+    throw new Error(
+      "Missing authorization token."
+    );
+  }
+
+  return admin
+    .auth()
+    .verifyIdToken(
+      idToken
+    );
+}
 
 /* =========================================================
-   SSL COMMERZ IPN
-========================================================= */
+   Create Payment
+   ========================================================= */
 
-exports.paymentIPN = onRequest(
-  {
-    secrets: [
-      SSLCOMMERZ_STORE_ID,
-      SSLCOMMERZ_STORE_PASSWORD
-    ],
-    region: REGION
-  },
-  async (req, res) => {
-    try {
+exports.createPayment =
+  onRequest(
+    {
+      region: REGION,
+
+      secrets: [
+        SSLCOMMERZ_STORE_ID,
+        SSLCOMMERZ_STORE_PASSWORD
+      ],
+
+      timeoutSeconds: 60,
+
+      memory: "256MiB"
+    },
+
+    async (req, res) => {
+      const origin =
+        req.headers.origin || "";
+
+      setCors(
+        res,
+        origin
+      );
+
       if (
-        req.method !== "POST" &&
-        req.method !== "GET"
+        req.method ===
+        "OPTIONS"
+      ) {
+        return res
+          .status(204)
+          .send("");
+      }
+
+      if (
+        req.method !==
+        "POST"
+      ) {
+        return jsonError(
+          res,
+          405,
+          "Method not allowed."
+        );
+      }
+
+      try {
+        /* ---------------------------------------------------
+           Verify Firebase user
+           --------------------------------------------------- */
+
+        const decodedUser =
+          await getVerifiedUser(
+            req
+          );
+
+        const uid =
+          decodedUser.uid;
+
+        /* ---------------------------------------------------
+           Validate amount
+           --------------------------------------------------- */
+
+        const amount =
+          normalizeAmount(
+            req.body?.amount
+          );
+
+        if (
+          amount < 100 ||
+          amount > 1000000
+        ) {
+          return jsonError(
+            res,
+            400,
+            "Deposit amount must be between BDT 100 and BDT 1,000,000."
+          );
+        }
+
+        /* ---------------------------------------------------
+           Load user profile
+           --------------------------------------------------- */
+
+        const userRef =
+          db
+            .collection("users")
+            .doc(uid);
+
+        const userSnapshot =
+          await userRef.get();
+
+        if (
+          !userSnapshot.exists
+        ) {
+          return jsonError(
+            res,
+            404,
+            "User profile not found."
+          );
+        }
+
+        const userData =
+          userSnapshot.data() ||
+          {};
+
+        const accountStatus =
+          String(
+            userData.status ||
+            userData.accountStatus ||
+            "active"
+          ).toLowerCase();
+
+        if (
+          [
+            "suspended",
+            "restricted",
+            "banned"
+          ].includes(
+            accountStatus
+          )
+        ) {
+          return jsonError(
+            res,
+            403,
+            "This account cannot make wallet deposits."
+          );
+        }
+
+        /* ---------------------------------------------------
+           Credentials
+           --------------------------------------------------- */
+
+        const storeId =
+          SSLCOMMERZ_STORE_ID.value();
+
+        const storePassword =
+          SSLCOMMERZ_STORE_PASSWORD.value();
+
+        if (
+          !storeId ||
+          !storePassword
+        ) {
+          console.error(
+            "SSLCommerz secrets are missing."
+          );
+
+          return jsonError(
+            res,
+            500,
+            "Payment service is not configured."
+          );
+        }
+
+        /* ---------------------------------------------------
+           Create unique payment
+           --------------------------------------------------- */
+
+        const paymentId =
+          generatePaymentId();
+
+        const paymentRef =
+          db
+            .collection("payments")
+            .doc(paymentId);
+
+        await paymentRef.set({
+          paymentId: paymentId,
+
+          uid: uid,
+
+          amount: amount,
+
+          currency: "BDT",
+
+          productName:
+            "SocialWorkBD Wallet Deposit",
+
+          productCategory:
+            "Wallet",
+
+          status: "pending",
+
+          gateway:
+            "sslcommerz",
+
+          credited: false,
+
+          createdAt:
+            admin.firestore
+              .FieldValue
+              .serverTimestamp(),
+
+          updatedAt:
+            admin.firestore
+              .FieldValue
+              .serverTimestamp()
+        });
+
+        /* ---------------------------------------------------
+           Customer information
+           --------------------------------------------------- */
+
+        const customerName =
+          String(
+            userData.name ||
+            decodedUser.name ||
+            "SocialWorkBD User"
+          ).substring(
+            0,
+            100
+          );
+
+        const customerEmail =
+          String(
+            userData.email ||
+            decodedUser.email ||
+            ""
+          ).substring(
+            0,
+            150
+          );
+
+        if (
+          !customerEmail
+        ) {
+          await paymentRef.update({
+            status:
+              "invalid_customer",
+            updatedAt:
+              admin.firestore
+                .FieldValue
+                .serverTimestamp()
+          });
+
+          return jsonError(
+            res,
+            400,
+            "A valid email address is required."
+          );
+        }
+
+        /* ---------------------------------------------------
+           SSLCommerz request
+           --------------------------------------------------- */
+
+        const formData =
+          new URLSearchParams();
+
+        formData.append(
+          "store_id",
+          storeId
+        );
+
+        formData.append(
+          "store_passwd",
+          storePassword
+        );
+
+        formData.append(
+          "total_amount",
+          amount.toFixed(2)
+        );
+
+        formData.append(
+          "currency",
+          "BDT"
+        );
+
+        formData.append(
+          "tran_id",
+          paymentId
+        );
+
+        formData.append(
+          "success_url",
+          SUCCESS_URL +
+          "?paymentId=" +
+          encodeURIComponent(
+            paymentId
+          )
+        );
+
+        formData.append(
+          "fail_url",
+          FAIL_URL +
+          "?paymentId=" +
+          encodeURIComponent(
+            paymentId
+          )
+        );
+
+        formData.append(
+          "cancel_url",
+          CANCEL_URL +
+          "?paymentId=" +
+          encodeURIComponent(
+            paymentId
+          )
+        );
+
+        formData.append(
+          "ipn_url",
+          "https://asia-south1-socialworkbd-b1c00.cloudfunctions.net/paymentIPN"
+        );
+
+        formData.append(
+          "cus_name",
+          customerName
+        );
+
+        formData.append(
+          "cus_email",
+          customerEmail
+        );
+
+        formData.append(
+          "cus_add1",
+          String(
+            userData.location ||
+            "Bangladesh"
+          ).substring(
+            0,
+            200
+          )
+        );
+
+        formData.append(
+          "cus_city",
+          "Bangladesh"
+        );
+
+        formData.append(
+          "cus_country",
+          "Bangladesh"
+        );
+
+        formData.append(
+          "shipping_method",
+          "NO"
+        );
+
+        formData.append(
+          "product_name",
+          "SocialWorkBD Wallet Deposit"
+        );
+
+        formData.append(
+          "product_category",
+          "Wallet"
+        );
+
+        formData.append(
+          "product_profile",
+          "general"
+        );
+
+        /* ---------------------------------------------------
+           Send gateway request
+           --------------------------------------------------- */
+
+        const response =
+          await fetch(
+            GATEWAY_URL,
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/x-www-form-urlencoded"
+              },
+
+              body:
+                formData.toString()
+            }
+          );
+
+        if (
+          !response.ok
+        ) {
+          throw new Error(
+            "SSLCommerz gateway HTTP error."
+          );
+        }
+
+        const result =
+          await response.json();
+
+        if (
+          !result ||
+          result.status !==
+            "SUCCESS" ||
+          !result.GatewayPageURL
+        ) {
+          await paymentRef.update({
+            status:
+              "gateway_error",
+
+            gatewayResponse:
+              result || {},
+
+            updatedAt:
+              admin.firestore
+                .FieldValue
+                .serverTimestamp()
+          });
+
+          return jsonError(
+            res,
+            502,
+            "Payment gateway could not be initialized."
+          );
+        }
+
+        /* ---------------------------------------------------
+           Save gateway information
+           --------------------------------------------------- */
+
+        await paymentRef.update({
+          gatewayUrl:
+            result.GatewayPageURL,
+
+          sessionKey:
+            result.sessionkey || "",
+
+          updatedAt:
+            admin.firestore
+              .FieldValue
+              .serverTimestamp()
+        });
+
+        return res.status(
+          200
+        ).json({
+          success: true,
+
+          paymentId:
+            paymentId,
+
+          gatewayUrl:
+            result.GatewayPageURL
+        });
+
+      } catch (error) {
+        console.error(
+          "createPayment error:",
+          error
+        );
+
+        if (
+          String(
+            error.message || ""
+          ).includes(
+            "Firebase ID token"
+          ) ||
+          String(
+            error.message || ""
+          ).includes(
+            "authorization"
+          )
+        ) {
+          return jsonError(
+            res,
+            401,
+            "Authentication failed."
+          );
+        }
+
+        return jsonError(
+          res,
+          500,
+          "Payment initialization failed."
+        );
+      }
+    }
+  );
+
+/* =========================================================
+   SSLCommerz Server-Side Validation
+   ========================================================= */
+
+async function validateSSLCommerzPayment(
+  validationId,
+  storeId,
+  storePassword
+) {
+  if (
+    !validationId
+  ) {
+    throw new Error(
+      "Missing SSLCommerz validation ID."
+    );
+  }
+
+  const url =
+    VALIDATION_URL +
+    "?val_id=" +
+    encodeURIComponent(
+      validationId
+    ) +
+    "&store_id=" +
+    encodeURIComponent(
+      storeId
+    ) +
+    "&store_passwd=" +
+    encodeURIComponent(
+      storePassword
+    ) +
+    "&format=json";
+
+  const response =
+    await fetch(url, {
+      method: "GET"
+    });
+
+  if (
+    !response.ok
+  ) {
+    throw new Error(
+      "SSLCommerz validation request failed."
+    );
+  }
+
+  return response.json();
+}
+
+/* =========================================================
+   Payment IPN
+   ========================================================= */
+
+exports.paymentIPN =
+  onRequest(
+    {
+      region: REGION,
+
+      secrets: [
+        SSLCOMMERZ_STORE_ID,
+        SSLCOMMERZ_STORE_PASSWORD
+      ],
+
+      timeoutSeconds: 60,
+
+      memory: "256MiB"
+    },
+
+    async (req, res) => {
+      if (
+        req.method !==
+        "POST"
       ) {
         return res
           .status(405)
-          .send("Method not allowed");
+          .send(
+            "Method not allowed"
+          );
       }
 
-      const data =
-        req.body || {};
+      try {
+        const data =
+          req.body || {};
 
-      const paymentId =
-        data.tran_id || "";
+        const paymentId =
+          String(
+            data.tran_id || ""
+          ).trim();
 
-      if (!paymentId) {
-        return res
-          .status(400)
-          .send("Missing transaction ID");
-      }
+        if (!paymentId) {
+          return res
+            .status(400)
+            .send(
+              "Missing transaction ID"
+            );
+        }
 
-      const paymentRef =
-        db
-          .collection(PAYMENT_COLLECTION)
-          .doc(paymentId);
+        const paymentRef =
+          db
+            .collection("payments")
+            .doc(paymentId);
 
-      const paymentSnapshot =
-        await paymentRef.get();
+        const paymentSnapshot =
+          await paymentRef.get();
 
-      if (!paymentSnapshot.exists) {
-        return res
-          .status(404)
-          .send("Payment not found");
-      }
+        if (
+          !paymentSnapshot.exists
+        ) {
+          return res
+            .status(404)
+            .send(
+              "Payment not found"
+            );
+        }
 
-      const payment =
-        paymentSnapshot.data();
+        const payment =
+          paymentSnapshot.data() ||
+          {};
 
-      /* ---------------------------------------------------
-         IDEMPOTENCY
-         Do not process already credited payments.
-      --------------------------------------------------- */
+        /* ---------------------------------------------------
+           Idempotency:
+           Already credited = do nothing.
+           --------------------------------------------------- */
 
-      if (
-        payment.creditStatus ===
-        "credited"
-      ) {
+        if (
+          payment.credited === true ||
+          payment.status ===
+            "paid"
+        ) {
+          return res
+            .status(200)
+            .send(
+              "Payment already processed"
+            );
+        }
+
+        const storeId =
+          SSLCOMMERZ_STORE_ID.value();
+
+        const storePassword =
+          SSLCOMMERZ_STORE_PASSWORD.value();
+
+        if (
+          !storeId ||
+          !storePassword
+        ) {
+          console.error(
+            "SSLCommerz secrets are missing."
+          );
+
+          return res
+            .status(500)
+            .send(
+              "Payment service configuration error"
+            );
+        }
+
+        /* ---------------------------------------------------
+           Get validation ID from IPN
+           --------------------------------------------------- */
+
+        const validationId =
+          String(
+            data.val_id || ""
+          ).trim();
+
+        if (!validationId) {
+          await paymentRef.update({
+            status:
+              "awaiting_validation",
+
+            gatewayResponse:
+              data,
+
+            updatedAt:
+              admin.firestore
+                .FieldValue
+                .serverTimestamp()
+          });
+
+          return res
+            .status(200)
+            .send(
+              "Waiting for validation"
+            );
+        }
+
+        /* ---------------------------------------------------
+           Server-to-server SSLCommerz validation
+           --------------------------------------------------- */
+
+        const validation =
+          await validateSSLCommerzPayment(
+            validationId,
+            storeId,
+            storePassword
+          );
+
+        const validationStatus =
+          String(
+            validation.status ||
+            ""
+          ).toUpperCase();
+
+        const validatedTranId =
+          String(
+            validation.tran_id ||
+            ""
+          );
+
+        const validatedAmount =
+          normalizeAmount(
+            validation.amount
+          );
+
+        const expectedAmount =
+          normalizeAmount(
+            payment.amount
+          );
+
+        const validatedCurrency =
+          String(
+            validation.currency ||
+            ""
+          ).toUpperCase();
+
+        const expectedCurrency =
+          String(
+            payment.currency ||
+            "BDT"
+          ).toUpperCase();
+
+        /* ---------------------------------------------------
+           Verify ALL critical fields
+           --------------------------------------------------- */
+
+        const valid =
+          validationStatus ===
+            "VALID" &&
+
+          validatedTranId ===
+            paymentId &&
+
+          amountsMatch(
+            validatedAmount,
+            expectedAmount
+          ) &&
+
+          validatedCurrency ===
+            expectedCurrency;
+
+        if (!valid) {
+          await paymentRef.update({
+            status:
+              "verification_failed",
+
+            gatewayResponse:
+              data,
+
+            validationResponse:
+              validation,
+
+            updatedAt:
+              admin.firestore
+                .FieldValue
+                .serverTimestamp()
+          });
+
+          return res
+            .status(400)
+            .send(
+              "Payment verification failed"
+            );
+        }
+
+        /* ---------------------------------------------------
+           Atomic wallet credit
+           --------------------------------------------------- */
+
+        const uid =
+          payment.uid;
+
+        if (!uid) {
+          await paymentRef.update({
+            status:
+              "invalid_payment_user",
+
+            updatedAt:
+              admin.firestore
+                .FieldValue
+                .serverTimestamp()
+          });
+
+          return res
+            .status(400)
+            .send(
+              "Payment user is missing"
+            );
+        }
+
+        const userRef =
+          db
+            .collection("users")
+            .doc(uid);
+
+        const transactionRef =
+          db
+            .collection(
+              "walletTransactions"
+            )
+            .doc(paymentId);
+
+        await db.runTransaction(
+          async (transaction) => {
+            const latestPayment =
+              await transaction.get(
+                paymentRef
+              );
+
+            const latestData =
+              latestPayment.data() ||
+              {};
+
+            /* ---------------------------------------------
+               Idempotency inside transaction
+               --------------------------------------------- */
+
+            if (
+              latestData.credited ===
+                true ||
+              latestData.status ===
+                "paid"
+            ) {
+              return;
+            }
+
+            const userSnapshot =
+              await transaction.get(
+                userRef
+              );
+
+            if (
+              !userSnapshot.exists
+            ) {
+              throw new Error(
+                "User profile not found."
+              );
+            }
+
+            const userData =
+              userSnapshot.data() ||
+              {};
+
+            const currentBalance =
+              normalizeAmount(
+                userData.balance || 0
+              );
+
+            const newBalance =
+              Math.round(
+                (
+                  currentBalance +
+                  expectedAmount
+                ) * 100
+              ) / 100;
+
+            /* ---------------------------------------------
+               Update user balance
+               --------------------------------------------- */
+
+            transaction.update(
+              userRef,
+              {
+                balance:
+                  newBalance,
+
+                updatedAt:
+                  admin.firestore
+                    .FieldValue
+                    .serverTimestamp()
+              }
+            );
+
+            /* ---------------------------------------------
+               Create immutable wallet transaction
+               --------------------------------------------- */
+
+            transaction.set(
+              transactionRef,
+              {
+                transactionId:
+                  paymentId,
+
+                paymentId:
+                  paymentId,
+
+                uid:
+                  uid,
+
+                type:
+                  "deposit",
+
+                amount:
+                  expectedAmount,
+
+                currency:
+                  expectedCurrency,
+
+                status:
+                  "completed",
+
+                gateway:
+                  "sslcommerz",
+
+                description:
+                  "Wallet deposit via SSLCommerz",
+
+                validationId:
+                  validationId,
+
+                bankTransactionId:
+                  validation.bank_tran_id ||
+                  "",
+
+                cardType:
+                  validation.card_type ||
+                  "",
+
+                createdAt:
+                  admin.firestore
+                    .FieldValue
+                    .serverTimestamp(),
+
+                completedAt:
+                  admin.firestore
+                    .FieldValue
+                    .serverTimestamp()
+              },
+
+              {
+                merge: false
+              }
+            );
+
+            /* ---------------------------------------------
+               Mark payment as credited
+               --------------------------------------------- */
+
+            transaction.update(
+              paymentRef,
+              {
+                status:
+                  "paid",
+
+                credited:
+                  true,
+
+                validationId:
+                  validationId,
+
+                bankTransactionId:
+                  validation.bank_tran_id ||
+                  "",
+
+                cardType:
+                  validation.card_type ||
+                  "",
+
+                gatewayResponse:
+                  data,
+
+                validationResponse:
+                  validation,
+
+                paidAt:
+                  admin.firestore
+                    .FieldValue
+                    .serverTimestamp(),
+
+                updatedAt:
+                  admin.firestore
+                    .FieldValue
+                    .serverTimestamp()
+              }
+            );
+          }
+        );
+
         return res
           .status(200)
-          .send("Payment already processed");
-      }
-
-      /* ---------------------------------------------------
-         BASIC TRANSACTION VALIDATION
-      --------------------------------------------------- */
-
-      const receivedAmount =
-        Number(data.amount || 0);
-
-      const expectedAmount =
-        Number(payment.amount || 0);
-
-      const receivedCurrency =
-        String(
-          data.currency || ""
-        ).toUpperCase();
-
-      const expectedCurrency =
-        String(
-          payment.currency || "BDT"
-        ).toUpperCase();
-
-      const transactionStatus =
-        String(
-          data.status || ""
-        ).toUpperCase();
-
-      if (
-        transactionStatus !== "VALID"
-      ) {
-        await paymentRef.update({
-          status:
-            "verification_failed",
-
-          gatewayResponse:
-            data,
-
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return res
-          .status(400)
           .send(
-            "Payment verification failed"
+            "Payment verified and wallet credited"
           );
-      }
 
-      if (
-        !amountsMatch(
-          receivedAmount,
-          expectedAmount
-        )
-      ) {
-        await paymentRef.update({
-          status:
-            "verification_failed",
+      } catch (error) {
+        console.error(
+          "paymentIPN error:",
+          error
+        );
 
-          failureReason:
-            "Payment amount mismatch",
-
-          gatewayResponse:
-            data,
-
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return res
-          .status(400)
-          .send(
-            "Payment amount mismatch"
-          );
-      }
-
-      if (
-        receivedCurrency !==
-        expectedCurrency
-      ) {
-        await paymentRef.update({
-          status:
-            "verification_failed",
-
-          failureReason:
-            "Payment currency mismatch",
-
-          gatewayResponse:
-            data,
-
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return res
-          .status(400)
-          .send(
-            "Payment currency mismatch"
-          );
-      }
-
-      /* ---------------------------------------------------
-         SSL COMMERZ VALIDATION API
-      --------------------------------------------------- */
-
-      const storeId =
-        SSLCOMMERZ_STORE_ID.value();
-
-      const storePassword =
-        SSLCOMMERZ_STORE_PASSWORD.value();
-
-      if (
-        !storeId ||
-        !storePassword
-      ) {
         return res
           .status(500)
           .send(
-            "Payment credentials are not configured"
+            "IPN processing failed"
           );
       }
-
-      const valId =
-        data.val_id || "";
-
-      if (!valId) {
-        await paymentRef.update({
-          status:
-            "verification_failed",
-
-          failureReason:
-            "Missing validation ID",
-
-          gatewayResponse:
-            data,
-
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return res
-          .status(400)
-          .send(
-            "Missing validation ID"
-          );
-      }
-
-      /*
-       * SSLCommerz Order Validation API.
-       * Sandbox is used while the payment system is being tested.
-       */
-      const validationUrl =
-        "https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php";
-
-      const validationParams =
-        new URLSearchParams();
-
-      validationParams.append(
-        "val_id",
-        valId
-      );
-
-      validationParams.append(
-        "store_id",
-        storeId
-      );
-
-      validationParams.append(
-        "store_passwd",
-        storePassword
-      );
-
-      validationParams.append(
-        "v",
-        "1"
-      );
-
-      validationParams.append(
-        "format",
-        "json"
-      );
-
-      const validationResponse =
-        await fetch(
-          validationUrl +
-            "?" +
-            validationParams.toString(),
-          {
-            method: "GET"
-          }
-        );
-
-      if (
-        !validationResponse.ok
-      ) {
-        await paymentRef.update({
-          status:
-            "verification_pending",
-
-          failureReason:
-            "Gateway validation service unavailable",
-
-          gatewayResponse:
-            data,
-
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return res
-          .status(502)
-          .send(
-            "Gateway validation unavailable"
-          );
-      }
-
-      const validationResult =
-        await validationResponse.json();
-
-      const validationStatus =
-        String(
-          validationResult.status ||
-            ""
-        ).toUpperCase();
-
-      const validationAmount =
-        Number(
-          validationResult.amount || 0
-        );
-
-      const validationCurrency =
-        String(
-          validationResult.currency ||
-            ""
-        ).toUpperCase();
-
-      if (
-        validationStatus !==
-        "VALID"
-      ) {
-        await paymentRef.update({
-          status:
-            "verification_failed",
-
-          failureReason:
-            "Gateway validation rejected payment",
-
-          validationResponse:
-            validationResult,
-
-          gatewayResponse:
-            data,
-
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return res
-          .status(400)
-          .send(
-            "Gateway validation failed"
-          );
-      }
-
-      if (
-        !amountsMatch(
-          validationAmount,
-          expectedAmount
-        )
-      ) {
-        await paymentRef.update({
-          status:
-            "verification_failed",
-
-          failureReason:
-            "Validated amount mismatch",
-
-          validationResponse:
-            validationResult,
-
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return res
-          .status(400)
-          .send(
-            "Validated amount mismatch"
-          );
-      }
-
-      if (
-        validationCurrency !==
-        expectedCurrency
-      ) {
-        await paymentRef.update({
-          status:
-            "verification_failed",
-
-          failureReason:
-            "Validated currency mismatch",
-
-          validationResponse:
-            validationResult,
-
-          updatedAt:
-            admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        return res
-          .status(400)
-          .send(
-            "Validated currency mismatch"
-          );
-      }
-
-      /* ---------------------------------------------------
-         SERVER-SIDE WALLET CREDIT
-         
-         IMPORTANT:
-         Payment + wallet transaction are handled
-         together in a Firestore transaction.
-      --------------------------------------------------- */
-
-      const userRef =
-        db
-          .collection("users")
-          .doc(payment.uid);
-
-      const walletTransactionRef =
-        db
-          .collection(
-            WALLET_TRANSACTION_COLLECTION
-          )
-          .doc(paymentId);
-
-      await db.runTransaction(
-        async (transaction) => {
-
-          const freshPaymentSnapshot =
-            await transaction.get(
-              paymentRef
-            );
-
-          if (
-            !freshPaymentSnapshot.exists
-          ) {
-            throw new Error(
-              "PAYMENT_NOT_FOUND"
-            );
-          }
-
-          const freshPayment =
-            freshPaymentSnapshot.data();
-
-          /*
-           * Another IPN/request may have
-           * already completed this payment.
-           */
-          if (
-            freshPayment.creditStatus ===
-            "credited"
-          ) {
-            return;
-          }
-
-          const userSnapshot =
-            await transaction.get(
-              userRef
-            );
-
-          if (
-            !userSnapshot.exists
-          ) {
-            throw new Error(
-              "USER_NOT_FOUND"
-            );
-          }
-
-          const walletTransactionSnapshot =
-            await transaction.get(
-              walletTransactionRef
-            );
-
-          if (
-            walletTransactionSnapshot.exists
-          ) {
-            const existing =
-              walletTransactionSnapshot.data();
-
-            if (
-              existing.status ===
-              "completed"
-            ) {
-              transaction.update(
-                paymentRef,
-                {
-                  status: "paid",
-                  creditStatus:
-                    "credited",
-
-                  validationId:
-                    valId,
-
-                  bankTransactionId:
-                    data.bank_tran_id ||
-                    validationResult.bank_tran_id ||
-                    "",
-
-                  cardType:
-                    data.card_type ||
-                    validationResult.card_type ||
-                    "",
-
-                  validationResponse:
-                    validationResult,
-
-                  gatewayResponse:
-                    data,
-
-                  paidAt:
-                    admin.firestore.FieldValue.serverTimestamp(),
-
-                  creditedAt:
-                    admin.firestore.FieldValue.serverTimestamp(),
-
-                  updatedAt:
-                    admin.firestore.FieldValue.serverTimestamp()
-                }
-              );
-
-              return;
-            }
-          }
-
-          const user =
-            userSnapshot.data() || {};
-
-          const currentBalance =
-            Number(
-              user.balance || 0
-            );
-
-          const newBalance =
-            currentBalance +
-            expectedAmount;
-
-          /*
-           * Create immutable wallet ledger entry.
-           */
-          transaction.create(
-            walletTransactionRef,
-            {
-              transactionId:
-                paymentId,
-
-              paymentId,
-
-              uid:
-                payment.uid,
-
-              type:
-                "deposit",
-
-              source:
-                "sslcommerz",
-
-              amount:
-                expectedAmount,
-
-              currency:
-                expectedCurrency,
-
-              balanceBefore:
-                currentBalance,
-
-              balanceAfter:
-                newBalance,
-
-              status:
-                "completed",
-
-              description:
-                "SocialWorkBD Wallet Deposit",
-
-              gatewayValidationId:
-                valId,
-
-              createdAt:
-                admin.firestore.FieldValue.serverTimestamp()
-            }
-          );
-
-          /*
-           * Update wallet balance only on the
-           * trusted server.
-           */
-          transaction.update(
-            userRef,
-            {
-              balance:
-                admin.firestore.FieldValue.increment(
-                  expectedAmount
-                ),
-
-              updatedAt:
-                admin.firestore.FieldValue.serverTimestamp()
-            }
-          );
-
-          /*
-           * Mark payment as both paid and credited.
-           */
-          transaction.update(
-            paymentRef,
-            {
-              status:
-                "paid",
-
-              creditStatus:
-                "credited",
-
-              validationId:
-                valId,
-
-              bankTransactionId:
-                data.bank_tran_id ||
-                validationResult.bank_tran_id ||
-                "",
-
-              cardType:
-                data.card_type ||
-                validationResult.card_type ||
-                "",
-
-              validationResponse:
-                validationResult,
-
-              gatewayResponse:
-                data,
-
-              paidAt:
-                admin.firestore.FieldValue.serverTimestamp(),
-
-              creditedAt:
-                admin.firestore.FieldValue.serverTimestamp(),
-
-              updatedAt:
-                admin.firestore.FieldValue.serverTimestamp()
-            }
-          );
-        }
-      );
-
-      return res
-        .status(200)
-        .send(
-          "Payment verified and wallet credited"
-        );
-
-    } catch (error) {
-
-      console.error(
-        "paymentIPN error:",
-        error
-      );
-
-      if (
-        error.message ===
-        "PAYMENT_NOT_FOUND"
-      ) {
-        return res
-          .status(404)
-          .send(
-            "Payment not found"
-          );
-      }
-
-      if (
-        error.message ===
-        "USER_NOT_FOUND"
-      ) {
-        return res
-          .status(404)
-          .send(
-            "User not found"
-          );
-      }
-
-      return res
-        .status(500)
-        .send(
-          "IPN processing failed"
-        );
     }
-  }
-);
+  );
