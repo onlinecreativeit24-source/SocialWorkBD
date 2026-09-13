@@ -1,17 +1,38 @@
-<!DOCTYPE html><html lang="en"><head>  <meta charset="UTF-8">  <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta
-name="description"
-content="Client dashboard for posting freelance jobs, reviewing projects and hiring skilled talent on SocialWorkBD."
+<!DOCTYPE html>
+<html lang="en">
 
-«»
+<head>
+  <meta charset="UTF-8">
 
-  <title>Client Dashboard - SocialWorkBD</title>  <link
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Client dashboard for posting freelance jobs, reviewing projects and hiring skilled talent on SocialWorkBD."
+  >
+
+  <title>Client Dashboard - SocialWorkBD</title>
+
+  <link
     rel="icon"
     type="image/svg+xml"
     href="favicon.svg"
-  >  <link
+  >
+
+  <link
     rel="stylesheet"
     href="styles.css"
-  >  <!-- Firebase -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <style>
+  >
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <style>
 
     .dashboard-page {
       min-height: calc(100vh - 160px);
@@ -397,360 +418,401 @@ content="Client dashboard for posting freelance jobs, reviewing projects and hir
 
     }
 
-  </style></head><body>  <!-- HEADER -->  <header class="site-header"><div class="container">
+  </style>
 
-  <h1>SocialWorkBD</h1>
+</head>
 
-  <p>
-    Find Work. Hire Talent. Build Your Future.
-  </p>
+<body>
 
-  <nav>
+  <!-- HEADER -->
 
-    <a href="index.html">
-      Home
-    </a>
+  <header class="site-header">
 
-    <a href="tasks.html">
-      Find Work
-    </a>
+    <div class="container">
 
-    <a href="profile.html">
-      Profile
-    </a>
-
-  </nav>
-
-</div>
-
-  </header>  <!-- DASHBOARD -->  <main class="dashboard-page"><div class="dashboard-wrapper">
-
-  <!-- DASHBOARD TOP -->
-
-  <div class="dashboard-top">
-
-    <div>
-
-      <h1>
-        Client Dashboard
-      </h1>
+      <h1>SocialWorkBD</h1>
 
       <p>
-        Welcome back,
-        <strong id="user-name">...</strong>
+        Find Work. Hire Talent. Build Your Future.
+      </p>
+
+      <nav>
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="tasks.html">
+          Find Work
+        </a>
+
+        <a href="profile.html">
+          Profile
+        </a>
+
+      </nav>
+
+    </div>
+
+  </header>
+
+
+  <!-- DASHBOARD -->
+
+  <main class="dashboard-page">
+
+    <div class="dashboard-wrapper">
+
+      <!-- DASHBOARD TOP -->
+
+      <div class="dashboard-top">
+
+        <div>
+
+          <h1>
+            Client Dashboard
+          </h1>
+
+          <p>
+            Welcome back,
+            <strong id="user-name">...</strong>
+          </p>
+
+        </div>
+
+        <div class="dashboard-top-actions">
+
+          <a
+            href="#post-job"
+            class="dashboard-btn primary"
+          >
+            Post a Job
+          </a>
+
+          <a
+            href="wallet.html"
+            class="dashboard-btn"
+          >
+            Wallet
+          </a>
+
+          <a
+            href="profile.html"
+            class="dashboard-btn"
+          >
+            My Profile
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <!-- STATS -->
+
+      <section class="stats-grid">
+
+        <div class="stat-card">
+
+          <span class="stat-label">
+            Available Balance
+          </span>
+
+          <span
+            class="stat-value"
+            id="balance"
+          >
+            $0.00
+          </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <span class="stat-label">
+            Total Jobs
+          </span>
+
+          <span
+            class="stat-value"
+            id="total-jobs"
+          >
+            0
+          </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <span class="stat-label">
+            Open Jobs
+          </span>
+
+          <span
+            class="stat-value"
+            id="open-jobs"
+          >
+            0
+          </span>
+
+        </div>
+
+      </section>
+
+
+      <!-- ACCOUNT INFORMATION -->
+
+      <section class="dashboard-section">
+
+        <div class="section-heading">
+
+          <div>
+
+            <h2>
+              Account Information
+            </h2>
+
+            <p>
+              Your SocialWorkBD client account details.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="job-meta">
+
+          <span class="meta-item">
+            Account ID:
+            <strong id="account-id">-</strong>
+          </span>
+
+          <span class="meta-item">
+            Account Type:
+            <strong>Client</strong>
+          </span>
+
+        </div>
+
+      </section>
+
+
+      <!-- POST JOB -->
+
+      <section
+        class="dashboard-section"
+        id="post-job"
+      >
+
+        <div class="section-heading">
+
+          <div>
+
+            <h2>
+              Post a New Job
+            </h2>
+
+            <p>
+              Describe your project and find the right freelancer.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <form id="job-form">
+
+          <div class="job-form-grid">
+
+            <!-- TITLE -->
+
+            <div class="form-group full-width">
+
+              <label for="job-title">
+                Job Title
+              </label>
+
+              <input
+                type="text"
+                id="job-title"
+                placeholder="Example: Build a responsive business website"
+                required
+              >
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group full-width">
+
+              <label for="job-description">
+                Project Description
+              </label>
+
+              <textarea
+                id="job-description"
+                placeholder="Explain what you need, the expected deliverables and important requirements."
+                required
+              ></textarea>
+
+            </div>
+
+
+            <!-- BUDGET -->
+
+            <div class="form-group">
+
+              <label for="job-budget">
+                Budget (USD)
+              </label>
+
+              <input
+                type="number"
+                id="job-budget"
+                placeholder="Enter your project budget"
+                min="1"
+                step="0.01"
+                required
+              >
+
+              <p class="form-help">
+                Your platform budget is shown in USD.
+              </p>
+
+            </div>
+
+
+            <!-- DELIVERY -->
+
+            <div class="form-group">
+
+              <label for="delivery-days">
+                Expected Delivery
+              </label>
+
+              <input
+                type="number"
+                id="delivery-days"
+                placeholder="Number of days"
+                min="1"
+                required
+              >
+
+            </div>
+
+
+            <!-- SKILLS -->
+
+            <div class="form-group full-width">
+
+              <label for="job-skills">
+                Required Skills
+              </label>
+
+              <input
+                type="text"
+                id="job-skills"
+                placeholder="Example: React, WordPress, UI Design"
+              >
+
+              <p class="form-help">
+                Separate multiple skills with commas.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <button
+            type="submit"
+            id="post-job-btn"
+            class="post-job-btn"
+          >
+            Post Job
+          </button>
+
+        </form>
+
+      </section>
+
+
+      <!-- MY JOBS -->
+
+      <section class="dashboard-section">
+
+        <div class="section-heading">
+
+          <div>
+
+            <h2>
+              My Jobs
+            </h2>
+
+            <p>
+              Manage the projects you have posted.
+            </p>
+
+          </div>
+
+          <a href="tasks.html">
+            Browse Marketplace
+          </a>
+
+        </div>
+
+
+        <div
+          id="my-jobs"
+          class="job-list"
+        >
+
+          <div class="loading-state">
+            Loading your jobs...
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <div class="container">
+
+      <p>
+        © 2026 SocialWorkBD
+      </p>
+
+      <p>
+        Global Freelance Marketplace
       </p>
 
     </div>
 
-    <div class="dashboard-top-actions">
+  </footer>
 
-      <a
-        href="#post-job"
-        class="dashboard-btn primary"
-      >
-        Post a Job
-      </a>
 
-      <a
-        href="wallet.html"
-        class="dashboard-btn"
-      >
-        Wallet
-      </a>
+  <!-- FIREBASE CONFIG -->
 
-      <a
-        href="profile.html"
-        class="dashboard-btn"
-      >
-        My Profile
-      </a>
+  <script src="firebase-config.js"></script>
 
-    </div>
+  <!-- MAIN APP -->
 
-  </div>
+  <script src="app.js"></script>
 
 
-  <!-- STATS -->
-
-  <section class="stats-grid">
-
-    <div class="stat-card">
-
-      <span class="stat-label">
-        Available Balance
-      </span>
-
-      <span
-        class="stat-value"
-        id="balance"
-      >
-        0 BDT
-      </span>
-
-    </div>
-
-    <div class="stat-card">
-
-      <span class="stat-label">
-        Total Jobs
-      </span>
-
-      <span
-        class="stat-value"
-        id="total-jobs"
-      >
-        0
-      </span>
-
-    </div>
-
-    <div class="stat-card">
-
-      <span class="stat-label">
-        Open Jobs
-      </span>
-
-      <span
-        class="stat-value"
-        id="open-jobs"
-      >
-        0
-      </span>
-
-    </div>
-
-  </section>
-
-
-  <!-- ACCOUNT INFORMATION -->
-
-  <section class="dashboard-section">
-
-    <div class="section-heading">
-
-      <div>
-
-        <h2>
-          Account Information
-        </h2>
-
-        <p>
-          Your SocialWorkBD client account details.
-        </p>
-
-      </div>
-
-    </div>
-
-    <div class="job-meta">
-
-      <span class="meta-item">
-        Account ID:
-        <strong id="account-id">-</strong>
-      </span>
-
-      <span class="meta-item">
-        Account Type:
-        <strong>Client</strong>
-      </span>
-
-    </div>
-
-  </section>
-
-
-  <!-- POST JOB -->
-
-  <section
-    class="dashboard-section"
-    id="post-job"
-  >
-
-    <div class="section-heading">
-
-      <div>
-
-        <h2>
-          Post a New Job
-        </h2>
-
-        <p>
-          Describe your project and find the right freelancer.
-        </p>
-
-      </div>
-
-    </div>
-
-    <form id="job-form">
-
-      <div class="job-form-grid">
-
-        <!-- TITLE -->
-
-        <div class="form-group full-width">
-
-          <label for="job-title">
-            Job Title
-          </label>
-
-          <input
-            type="text"
-            id="job-title"
-            placeholder="Example: Build a responsive business website"
-            required
-          >
-
-        </div>
-
-
-        <!-- DESCRIPTION -->
-
-        <div class="form-group full-width">
-
-          <label for="job-description">
-            Project Description
-          </label>
-
-          <textarea
-            id="job-description"
-            placeholder="Explain what you need, the expected deliverables and important requirements."
-            required
-          ></textarea>
-
-        </div>
-
-
-        <!-- BUDGET -->
-
-        <div class="form-group">
-
-          <label for="job-budget">
-            Budget
-          </label>
-
-          <input
-            type="number"
-            id="job-budget"
-            placeholder="Enter your project budget"
-            min="1"
-            step="0.01"
-            required
-          >
-
-          <p class="form-help">
-            Your platform budget is shown in BDT.
-          </p>
-
-        </div>
-
-
-        <!-- DELIVERY -->
-
-        <div class="form-group">
-
-          <label for="delivery-days">
-            Expected Delivery
-          </label>
-
-          <input
-            type="number"
-            id="delivery-days"
-            placeholder="Number of days"
-            min="1"
-            required
-          >
-
-        </div>
-
-
-        <!-- SKILLS -->
-
-        <div class="form-group full-width">
-
-          <label for="job-skills">
-            Required Skills
-          </label>
-
-          <input
-            type="text"
-            id="job-skills"
-            placeholder="Example: React, WordPress, UI Design"
-          >
-
-          <p class="form-help">
-            Separate multiple skills with commas.
-          </p>
-
-        </div>
-
-      </div>
-
-      <button
-        type="submit"
-        id="post-job-btn"
-        class="post-job-btn"
-      >
-        Post Job
-      </button>
-
-    </form>
-
-  </section>
-
-
-  <!-- MY JOBS -->
-
-  <section class="dashboard-section">
-
-    <div class="section-heading">
-
-      <div>
-
-        <h2>
-          My Jobs
-        </h2>
-
-        <p>
-          Manage the projects you have posted.
-        </p>
-
-      </div>
-
-      <a href="tasks.html">
-        Browse Marketplace
-      </a>
-
-    </div>
-
-    <div
-      id="my-jobs"
-      class="job-list"
-    >
-
-      <div class="loading-state">
-        Loading your jobs...
-      </div>
-
-    </div>
-
-  </section>
-
-</div>
-
-  </main>  <!-- FOOTER -->  <footer><div class="container">
-
-  <p>
-    © 2026 SocialWorkBD
-  </p>
-
-  <p>
-    Global Freelance Marketplace
-  </p>
-
-</div>
-
-  </footer>  <!-- FIREBASE CONFIG -->  <script src="firebase-config.js"></script>  <!-- MAIN APP -->  <script src="app.js"></script>  <script>
+  <script>
 
     const clientDb = firebase.firestore();
     const clientAuth = firebase.auth();
@@ -947,9 +1009,14 @@ content="Client dashboard for posting freelance jobs, reviewing projects and hir
           document.getElementById(
             "balance"
           ).textContent =
+            "$" +
             balance.toLocaleString(
-              "en-US"
-            ) + " BDT";
+              "en-US",
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              }
+            );
 
 
           localStorage.setItem(
@@ -998,13 +1065,6 @@ content="Client dashboard for posting freelance jobs, reviewing projects and hir
 
 
       try {
-
-        /*
-          IMPORTANT:
-          app.js creates jobs with ownerId.
-          Therefore dashboard must query ownerId,
-          not clientId.
-        */
 
         const snapshot =
           await clientDb
@@ -1240,10 +1300,13 @@ content="Client dashboard for posting freelance jobs, reviewing projects and hir
 
                 <span class="job-budget">
                   Budget:
-                  ${budget.toLocaleString(
-                    "en-US"
+                  $${budget.toLocaleString(
+                    "en-US",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    }
                   )}
-                  BDT
                 </span>
 
                 <a
@@ -1294,4 +1357,8 @@ content="Client dashboard for posting freelance jobs, reviewing projects and hir
 
     }
 
-  </script></body></html>
+  </script>
+
+</body>
+
+</html>
