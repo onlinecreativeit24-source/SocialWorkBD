@@ -1,12 +1,16 @@
 /* =========================================================
-   SocialWorkBD - Secure Wallet
-   Firebase Auth + SSLCommerz Payment Integration
+   SocialWorkBD - Secure Manual Wallet Payments
+   Methods:
+   1. bKash
+   2. Nagad
+   3. Payoneer
 
    IMPORTANT:
-   - No wallet balance is changed from the browser.
-   - No secret/payment credential is stored here.
-   - Backend verifies Firebase ID token.
-   - Backend verifies SSLCommerz payment before crediting wallet.
+   - app.js is NOT touched.
+   - No wallet balance is changed from browser.
+   - User can only create a pending payment request.
+   - Admin/manual verification is required before crediting.
+   - No payment password/API secret is stored here.
    ========================================================= */
 
 (function () {
@@ -15,18 +19,34 @@
   const CONFIG = {
     currency: "BDT",
 
-    PAYMENT_API_URL:
-      window.SOCIALWORKBD_PAYMENT_API ||
-      "https://asia-south1-socialworkbd-b1c00.cloudfunctions.net/createPayment",
+    USERS_COLLECTION: "users",
 
     TRANSACTIONS_COLLECTION:
       "walletTransactions",
 
-    USERS_COLLECTION:
-      "users",
+    PAYMENT_REQUESTS_COLLECTION:
+      "paymentRequests",
 
     MIN_DEPOSIT: 100,
-    MAX_DEPOSIT: 1000000
+
+    MAX_DEPOSIT: 1000000,
+
+    PAYMENT_METHODS: {
+      bkash: {
+        name: "bKash",
+        type: "local"
+      },
+
+      nagad: {
+        name: "Nagad",
+        type: "local"
+      },
+
+      payoneer: {
+        name: "Payoneer",
+        type: "international"
+      }
+    }
   };
 
   let currentUser = null;
@@ -42,7 +62,9 @@
     }
 
     if (!firebase.apps || !firebase.apps.length) {
-      throw new Error("Firebase has not been initialized.");
+      throw new Error(
+        "Firebase has not been initialized."
+      );
     }
 
     return {
@@ -72,18 +94,24 @@
 
     if (element) {
       element.textContent =
-        value === null || value === undefined
+        value === null ||
+        value === undefined
           ? ""
           : String(value);
     }
   }
 
   function showMessage(message) {
-    alert(String(message || "Something went wrong."));
+    alert(
+      String(
+        message ||
+        "Something went wrong."
+      )
+    );
   }
 
   /* =========================================================
-     Security / HTML
+     HTML Security
      ========================================================= */
 
   function escapeHtml(value) {
@@ -100,24 +128,33 @@
      ========================================================= */
 
   function formatCurrency(amount) {
-    const value = Number(amount || 0);
+    const value =
+      Number(amount || 0);
 
-    return new Intl.NumberFormat("en-BD", {
-      style: "currency",
-      currency: CONFIG.currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
+    return new Intl.NumberFormat(
+      "en-BD",
+      {
+        style: "currency",
+        currency: CONFIG.currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }
+    ).format(value);
   }
 
   function parseAmount(value) {
-    const amount = Number(value);
+    const amount =
+      Number(value);
 
-    if (!Number.isFinite(amount)) {
+    if (
+      !Number.isFinite(amount)
+    ) {
       return 0;
     }
 
-    return Math.round(amount * 100) / 100;
+    return Math.round(
+      amount * 100
+    ) / 100;
   }
 
   /* =========================================================
@@ -134,31 +171,41 @@
 
       if (
         timestamp &&
-        typeof timestamp.toDate === "function"
+        typeof timestamp.toDate ===
+          "function"
       ) {
-        date = timestamp.toDate();
+        date =
+          timestamp.toDate();
       } else {
-        date = new Date(timestamp);
+        date =
+          new Date(timestamp);
       }
 
-      if (Number.isNaN(date.getTime())) {
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
         return "Recently";
       }
 
-      return date.toLocaleString("en-BD", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit"
-      });
-    } catch (error) {
+      return date.toLocaleString(
+        "en-BD",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit"
+        }
+      );
+    } catch (_) {
       return "Recently";
     }
   }
 
   /* =========================================================
-     Local User Cache
+     Local User
      ========================================================= */
 
   function saveLocalUser(profile) {
@@ -166,15 +213,18 @@
       return;
     }
 
-    const existing = (() => {
-      try {
-        return JSON.parse(
-          localStorage.getItem("currentUser") || "null"
+    let existing = {};
+
+    try {
+      existing =
+        JSON.parse(
+          localStorage.getItem(
+            "currentUser"
+          ) || "null"
         ) || {};
-      } catch (_) {
-        return {};
-      }
-    })();
+    } catch (_) {
+      existing = {};
+    }
 
     localStorage.setItem(
       "currentUser",
@@ -214,10 +264,14 @@
           "",
 
         balance:
-          Number(profile.balance || 0),
+          Number(
+            profile.balance || 0
+          ),
 
         pendingBalance:
-          Number(profile.pendingBalance || 0),
+          Number(
+            profile.pendingBalance || 0
+          ),
 
         status:
           profile.status ||
@@ -232,12 +286,16 @@
      ========================================================= */
 
   async function requireAuthenticatedUser() {
-    const auth = getAuth();
+    const auth =
+      getAuth();
 
-    const user = auth.currentUser;
+    const user =
+      auth.currentUser;
 
     if (!user) {
-      window.location.href = "login.html";
+      window.location.href =
+        "login.html";
+
       return null;
     }
 
@@ -253,10 +311,13 @@
       return null;
     }
 
-    const snapshot = await getDB()
-      .collection(CONFIG.USERS_COLLECTION)
-      .doc(uid)
-      .get();
+    const snapshot =
+      await getDB()
+        .collection(
+          CONFIG.USERS_COLLECTION
+        )
+        .doc(uid)
+        .get();
 
     if (!snapshot.exists) {
       return null;
@@ -270,7 +331,7 @@
   }
 
   /* =========================================================
-     Render Balance
+     Balance
      ========================================================= */
 
   function renderBalance(profile) {
@@ -279,10 +340,14 @@
     }
 
     const balance =
-      Number(profile.balance || 0);
+      Number(
+        profile.balance || 0
+      );
 
     const pending =
-      Number(profile.pendingBalance || 0);
+      Number(
+        profile.pendingBalance || 0
+      );
 
     setText(
       "wallet-balance",
@@ -339,9 +404,13 @@
      Transactions
      ========================================================= */
 
-  function transactionLabel(transaction) {
+  function transactionLabel(
+    transaction
+  ) {
     const type =
-      String(transaction.type || "").toLowerCase();
+      String(
+        transaction.type || ""
+      ).toLowerCase();
 
     if (
       type === "deposit" ||
@@ -376,7 +445,9 @@
     return "Wallet Transaction";
   }
 
-  function isCreditTransaction(transaction) {
+  function isCreditTransaction(
+    transaction
+  ) {
     return [
       "deposit",
       "wallet_deposit",
@@ -385,7 +456,9 @@
       "job_earning",
       "refund"
     ].includes(
-      String(transaction.type || "").toLowerCase()
+      String(
+        transaction.type || ""
+      ).toLowerCase()
     );
   }
 
@@ -398,7 +471,8 @@
     ];
 
     for (const id of ids) {
-      const container = getElement(id);
+      const container =
+        getElement(id);
 
       if (container) {
         container.innerHTML = `
@@ -406,12 +480,15 @@
             <p>No wallet transactions yet.</p>
           </div>
         `;
+
         return;
       }
     }
   }
 
-  function renderTransactions(transactions) {
+  function renderTransactions(
+    transactions
+  ) {
     const ids = [
       "wallet-transactions",
       "transactions-list",
@@ -422,10 +499,13 @@
     let container = null;
 
     for (const id of ids) {
-      const element = getElement(id);
+      const element =
+        getElement(id);
 
       if (element) {
-        container = element;
+        container =
+          element;
+
         break;
       }
     }
@@ -439,98 +519,137 @@
       return;
     }
 
-    container.innerHTML = transactions
-      .map((transaction) => {
-        const amount =
-          Number(transaction.amount || 0);
+    container.innerHTML =
+      transactions
+        .map(
+          function (transaction) {
+            const amount =
+              Number(
+                transaction.amount || 0
+              );
 
-        const credit =
-          isCreditTransaction(transaction);
+            const credit =
+              isCreditTransaction(
+                transaction
+              );
 
-        const prefix =
-          credit ? "+" : "-";
+            const prefix =
+              credit
+                ? "+"
+                : "-";
 
-        return `
-          <div class="wallet-transaction">
-            <div class="transaction-info">
-              <strong>
-                ${escapeHtml(
-                  transactionLabel(transaction)
-                )}
-              </strong>
+            return `
+              <div class="wallet-transaction">
 
-              <small>
-                ${escapeHtml(
-                  transaction.description ||
-                  transaction.note ||
-                  ""
-                )}
-              </small>
+                <div class="transaction-info">
 
-              <small>
-                ${escapeHtml(
-                  formatDate(transaction.createdAt)
-                )}
-              </small>
-            </div>
+                  <strong>
+                    ${escapeHtml(
+                      transactionLabel(
+                        transaction
+                      )
+                    )}
+                  </strong>
 
-            <div class="transaction-amount">
-              <strong>
-                ${prefix}${escapeHtml(
-                  formatCurrency(amount)
-                )}
-              </strong>
+                  <small>
+                    ${escapeHtml(
+                      transaction.description ||
+                      transaction.note ||
+                      ""
+                    )}
+                  </small>
 
-              <small>
-                ${escapeHtml(
-                  transaction.status || "completed"
-                )}
-              </small>
-            </div>
-          </div>
-        `;
-      })
-      .join("");
+                  <small>
+                    ${escapeHtml(
+                      formatDate(
+                        transaction.createdAt
+                      )
+                    )}
+                  </small>
+
+                </div>
+
+                <div class="transaction-amount">
+
+                  <strong>
+                    ${prefix}${escapeHtml(
+                      formatCurrency(
+                        amount
+                      )
+                    )}
+                  </strong>
+
+                  <small>
+                    ${escapeHtml(
+                      transaction.status ||
+                      "completed"
+                    )}
+                  </small>
+
+                </div>
+
+              </div>
+            `;
+          }
+        )
+        .join("");
   }
 
-  async function loadTransactions(uid) {
+  async function loadTransactions(
+    uid
+  ) {
     if (!uid) {
       return;
     }
 
     try {
-      const snapshot = await getDB()
-        .collection(CONFIG.TRANSACTIONS_COLLECTION)
-        .where("uid", "==", uid)
-        .limit(100)
-        .get();
+      const snapshot =
+        await getDB()
+          .collection(
+            CONFIG.TRANSACTIONS_COLLECTION
+          )
+          .where(
+            "uid",
+            "==",
+            uid
+          )
+          .limit(100)
+          .get();
 
       const transactions = [];
 
-      snapshot.forEach((doc) => {
-        transactions.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
+      snapshot.forEach(
+        function (doc) {
+          transactions.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        }
+      );
 
-      transactions.sort((a, b) => {
-        const aTime =
-          a.createdAt &&
-          typeof a.createdAt.toMillis === "function"
-            ? a.createdAt.toMillis()
-            : 0;
+      transactions.sort(
+        function (a, b) {
+          const aTime =
+            a.createdAt &&
+            typeof a.createdAt.toMillis ===
+              "function"
+              ? a.createdAt.toMillis()
+              : 0;
 
-        const bTime =
-          b.createdAt &&
-          typeof b.createdAt.toMillis === "function"
-            ? b.createdAt.toMillis()
-            : 0;
+          const bTime =
+            b.createdAt &&
+            typeof b.createdAt.toMillis ===
+              "function"
+              ? b.createdAt.toMillis()
+              : 0;
 
-        return bTime - aTime;
-      });
+          return bTime - aTime;
+        }
+      );
 
-      renderTransactions(transactions);
+      renderTransactions(
+        transactions
+      );
     } catch (error) {
       console.error(
         "Transaction loading error:",
@@ -542,10 +661,12 @@
   }
 
   /* =========================================================
-     Wallet Refresh
+     Refresh
      ========================================================= */
 
-  async function refreshWallet(showError = true) {
+  async function refreshWallet(
+    showError = true
+  ) {
     if (!currentUser) {
       return;
     }
@@ -562,13 +683,22 @@
         );
       }
 
-      currentProfile = profile;
+      currentProfile =
+        profile;
 
-      saveLocalUser(profile);
+      saveLocalUser(
+        profile
+      );
 
-      renderBalance(profile);
+      renderBalance(
+        profile
+      );
 
       await loadTransactions(
+        currentUser.uid
+      );
+
+      await loadPaymentRequests(
         currentUser.uid
       );
     } catch (error) {
@@ -589,30 +719,45 @@
      Deposit Validation
      ========================================================= */
 
-  function validateDepositAmount(amount) {
-    if (!Number.isFinite(amount)) {
+  function validateDepositAmount(
+    amount
+  ) {
+    if (
+      !Number.isFinite(amount)
+    ) {
       return {
         valid: false,
-        message: "Enter a valid amount."
+        message:
+          "Enter a valid amount."
       };
     }
 
-    if (amount < CONFIG.MIN_DEPOSIT) {
+    if (
+      amount <
+      CONFIG.MIN_DEPOSIT
+    ) {
       return {
         valid: false,
         message:
           "Minimum deposit is " +
-          formatCurrency(CONFIG.MIN_DEPOSIT) +
+          formatCurrency(
+            CONFIG.MIN_DEPOSIT
+          ) +
           "."
       };
     }
 
-    if (amount > CONFIG.MAX_DEPOSIT) {
+    if (
+      amount >
+      CONFIG.MAX_DEPOSIT
+    ) {
       return {
         valid: false,
         message:
           "Maximum deposit is " +
-          formatCurrency(CONFIG.MAX_DEPOSIT) +
+          formatCurrency(
+            CONFIG.MAX_DEPOSIT
+          ) +
           "."
       };
     }
@@ -624,10 +769,66 @@
   }
 
   /* =========================================================
-     Create Secure Payment Request
+     Payment Method
      ========================================================= */
 
-  async function createPaymentRequest(amount) {
+  function getPaymentMethod() {
+    const select =
+      getElement(
+        "payment-method"
+      ) ||
+      getElement(
+        "deposit-method"
+      ) ||
+      document.querySelector(
+        'select[name="paymentMethod"]'
+      );
+
+    if (select) {
+      return String(
+        select.value || ""
+      ).toLowerCase();
+    }
+
+    const checked =
+      document.querySelector(
+        'input[name="paymentMethod"]:checked'
+      );
+
+    if (checked) {
+      return String(
+        checked.value || ""
+      ).toLowerCase();
+    }
+
+    return "";
+  }
+
+  /* =========================================================
+     Generate Payment ID
+     ========================================================= */
+
+  function generatePaymentId() {
+    return (
+      "SWB-PAY-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase()
+    );
+  }
+
+  /* =========================================================
+     Create Manual Payment Request
+     ========================================================= */
+
+  async function createPaymentRequest(
+    amount,
+    paymentMethod,
+    reference
+  ) {
     const user =
       await requireAuthenticatedUser();
 
@@ -635,130 +836,240 @@
       return null;
     }
 
-    /*
-      Force-refresh the ID token so the backend receives
-      a valid Firebase authentication token.
-    */
-    const idToken =
-      await user.getIdToken(true);
+    const method =
+      CONFIG.PAYMENT_METHODS[
+        paymentMethod
+      ];
 
-    const response =
-      await fetch(
-        CONFIG.PAYMENT_API_URL,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            "Authorization":
-              "Bearer " + idToken
-          },
-
-          body: JSON.stringify({
-            amount: amount,
-            productName:
-              "SocialWorkBD Wallet Deposit",
-            productCategory:
-              "Wallet"
-          })
-        }
-      );
-
-    let data = null;
-
-    try {
-      data = await response.json();
-    } catch (_) {
-      data = null;
-    }
-
-    if (!response.ok) {
+    if (!method) {
       throw new Error(
-        data?.message ||
-        "Payment server returned an error."
+        "Please select a payment method."
       );
     }
 
-    if (
-      !data ||
-      data.success !== true
-    ) {
+    const paymentId =
+      generatePaymentId();
+
+    const profile =
+      currentProfile ||
+      await loadUserProfile(
+        user.uid
+      );
+
+    if (!profile) {
       throw new Error(
-        data?.message ||
-        "Payment could not be initialized."
+        "User profile could not be loaded."
       );
     }
 
-    return data;
+    const request = {
+      paymentId: paymentId,
+
+      uid: user.uid,
+
+      accountId:
+        profile.accountId || "",
+
+      name:
+        profile.name ||
+        user.displayName ||
+        "",
+
+      email:
+        profile.email ||
+        user.email ||
+        "",
+
+      amount: amount,
+
+      currency:
+        CONFIG.currency,
+
+      paymentMethod:
+        paymentMethod,
+
+      paymentMethodName:
+        method.name,
+
+      reference:
+        reference || "",
+
+      status:
+        "pending",
+
+      verificationStatus:
+        "pending",
+
+      createdAt:
+        firebase.firestore
+          .FieldValue
+          .serverTimestamp(),
+
+      updatedAt:
+        firebase.firestore
+          .FieldValue
+          .serverTimestamp()
+    };
+
+    await getDB()
+      .collection(
+        CONFIG.PAYMENT_REQUESTS_COLLECTION
+      )
+      .doc(paymentId)
+      .set(request);
+
+    return paymentId;
   }
 
   /* =========================================================
-     Start Payment
+     Payment Instructions
      ========================================================= */
 
-  async function startPayment(amount, button) {
-    const validation =
-      validateDepositAmount(amount);
+  function showPaymentInstructions(
+    method
+  ) {
+    const instruction =
+      getElement(
+        "payment-instructions"
+      );
 
-    if (!validation.valid) {
-      showMessage(validation.message);
+    if (!instruction) {
       return;
     }
 
-    if (button?.disabled) {
+    const methodConfig =
+      CONFIG.PAYMENT_METHODS[
+        method
+      ];
+
+    if (!methodConfig) {
+      instruction.innerHTML = "";
       return;
     }
 
-    const originalText =
-      button?.textContent ||
-      "Add Money";
+    let html = "";
 
-    try {
-      if (button) {
-        button.disabled = true;
-        button.textContent =
-          "Connecting to payment...";
-      }
+    if (method === "bkash") {
+      html = `
+        <div class="payment-instruction">
+          <h4>bKash Payment</h4>
+          <p>
+            Send the exact amount to the
+            official SocialWorkBD bKash number.
+          </p>
+          <p>
+            <strong>
+              bKash Number:
+            </strong>
+            <span id="bkash-payment-number">
+              Add your bKash number here
+            </span>
+          </p>
+          <p>
+            After payment, enter the transaction
+            reference below and submit the request.
+          </p>
+        </div>
+      `;
+    }
 
-      const payment =
-        await createPaymentRequest(amount);
+    if (method === "nagad") {
+      html = `
+        <div class="payment-instruction">
+          <h4>Nagad Payment</h4>
+          <p>
+            Send the exact amount to the
+            official SocialWorkBD Nagad number.
+          </p>
+          <p>
+            <strong>
+              Nagad Number:
+            </strong>
+            <span id="nagad-payment-number">
+              Add your Nagad number here
+            </span>
+          </p>
+          <p>
+            After payment, enter the transaction
+            reference below and submit the request.
+          </p>
+        </div>
+      `;
+    }
 
-      const paymentUrl =
-        payment.gatewayUrl ||
-        payment.paymentUrl ||
-        payment.GatewayPageURL ||
-        "";
+    if (method === "payoneer") {
+      html = `
+        <div class="payment-instruction">
+          <h4>Payoneer Payment</h4>
+          <p>
+            Use the SocialWorkBD Payoneer payment
+            details provided by the administrator.
+          </p>
+          <p>
+            <strong>
+              Payoneer Account:
+            </strong>
+            <span id="payoneer-payment-account">
+              Add your Payoneer receiving details here
+            </span>
+          </p>
+          <p>
+            After the payment is completed,
+            enter the payment/reference ID below.
+          </p>
+        </div>
+      `;
+    }
 
-      if (!paymentUrl) {
-        throw new Error(
-          "Secure payment URL was not returned."
+    instruction.innerHTML =
+      html;
+  }
+
+  /* =========================================================
+     Setup Payment Method UI
+     ========================================================= */
+
+  function setupPaymentMethodUI() {
+    const select =
+      getElement(
+        "payment-method"
+      ) ||
+      getElement(
+        "deposit-method"
+      );
+
+    if (select) {
+      select.addEventListener(
+        "change",
+        function () {
+          showPaymentInstructions(
+            String(
+              select.value || ""
+            ).toLowerCase()
+          );
+        }
+      );
+    }
+
+    const radios =
+      document.querySelectorAll(
+        'input[name="paymentMethod"]'
+      );
+
+    radios.forEach(
+      function (radio) {
+        radio.addEventListener(
+          "change",
+          function () {
+            showPaymentInstructions(
+              String(
+                radio.value || ""
+              ).toLowerCase()
+            );
+          }
         );
       }
-
-      /*
-        Redirect directly to SSLCommerz.
-      */
-      window.location.assign(
-        paymentUrl
-      );
-    } catch (error) {
-      console.error(
-        "Payment start error:",
-        error
-      );
-
-      showMessage(
-        error.message ||
-        "Payment could not be started."
-      );
-
-      if (button) {
-        button.disabled = false;
-        button.textContent = originalText;
-      }
-    }
+    );
   }
 
   /* =========================================================
@@ -767,54 +1078,330 @@
 
   function setupDepositForm() {
     const form =
-      getElement("wallet-deposit-form") ||
-      getElement("deposit-form") ||
-      getElement("add-money-form");
+      getElement(
+        "wallet-deposit-form"
+      ) ||
+      getElement(
+        "deposit-form"
+      ) ||
+      getElement(
+        "add-money-form"
+      );
 
     if (!form) {
       return;
     }
 
     if (
-      form.dataset.walletInitialized ===
+      form.dataset
+        .walletInitialized ===
       "true"
     ) {
       return;
     }
 
-    form.dataset.walletInitialized = "true";
+    form.dataset
+      .walletInitialized =
+      "true";
 
     form.addEventListener(
       "submit",
-      async (event) => {
+      async function (event) {
         event.preventDefault();
 
         const amountInput =
-          getElement("deposit-amount") ||
-          getElement("wallet-amount") ||
-          getElement("add-money-amount") ||
+          getElement(
+            "deposit-amount"
+          ) ||
+          getElement(
+            "wallet-amount"
+          ) ||
+          getElement(
+            "add-money-amount"
+          ) ||
           form.querySelector(
             'input[name="amount"]'
+          );
+
+        const referenceInput =
+          getElement(
+            "payment-reference"
+          ) ||
+          getElement(
+            "transaction-reference"
+          ) ||
+          getElement(
+            "trx-id"
+          ) ||
+          form.querySelector(
+            'input[name="reference"]'
+          ) ||
+          form.querySelector(
+            'input[name="trxId"]'
           );
 
         const button =
           form.querySelector(
             'button[type="submit"]'
           ) ||
-          getElement("add-money-btn") ||
-          getElement("deposit-btn");
+          getElement(
+            "add-money-btn"
+          ) ||
+          getElement(
+            "deposit-btn"
+          );
 
         const amount =
           parseAmount(
-            amountInput?.value || 0
+            amountInput?.value ||
+            0
           );
 
-        await startPayment(
-          amount,
-          button
-        );
+        const method =
+          getPaymentMethod();
+
+        const reference =
+          String(
+            referenceInput?.value ||
+            ""
+          ).trim();
+
+        const validation =
+          validateDepositAmount(
+            amount
+          );
+
+        if (!validation.valid) {
+          showMessage(
+            validation.message
+          );
+          return;
+        }
+
+        if (!method) {
+          showMessage(
+            "Please select a payment method."
+          );
+          return;
+        }
+
+        if (!reference) {
+          showMessage(
+            "Enter the payment transaction/reference ID."
+          );
+          return;
+        }
+
+        const originalText =
+          button?.textContent ||
+          "Submit Payment";
+
+        try {
+          if (button) {
+            button.disabled =
+              true;
+
+            button.textContent =
+              "Submitting...";
+          }
+
+          const paymentId =
+            await createPaymentRequest(
+              amount,
+              method,
+              reference
+            );
+
+          if (!paymentId) {
+            throw new Error(
+              "Payment request could not be created."
+            );
+          }
+
+          showMessage(
+            "Payment request submitted successfully.\n\n" +
+            "Payment ID: " +
+            paymentId +
+            "\n\n" +
+            "Your payment will be reviewed before your wallet is credited."
+          );
+
+          if (amountInput) {
+            amountInput.value = "";
+          }
+
+          if (referenceInput) {
+            referenceInput.value = "";
+          }
+
+          await loadPaymentRequests(
+            currentUser.uid
+          );
+        } catch (error) {
+          console.error(
+            "Payment request error:",
+            error
+          );
+
+          showMessage(
+            error.message ||
+            "Payment request could not be submitted."
+          );
+        } finally {
+          if (button) {
+            button.disabled =
+              false;
+
+            button.textContent =
+              originalText;
+          }
+        }
       }
     );
+  }
+
+  /* =========================================================
+     Payment Requests
+     ========================================================= */
+
+  async function loadPaymentRequests(
+    uid
+  ) {
+    if (!uid) {
+      return;
+    }
+
+    const container =
+      getElement(
+        "payment-requests"
+      );
+
+    if (!container) {
+      return;
+    }
+
+    try {
+      const snapshot =
+        await getDB()
+          .collection(
+            CONFIG.PAYMENT_REQUESTS_COLLECTION
+          )
+          .where(
+            "uid",
+            "==",
+            uid
+          )
+          .limit(50)
+          .get();
+
+      const requests = [];
+
+      snapshot.forEach(
+        function (doc) {
+          requests.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        }
+      );
+
+      requests.sort(
+        function (a, b) {
+          const aTime =
+            a.createdAt &&
+            typeof a.createdAt.toMillis ===
+              "function"
+              ? a.createdAt.toMillis()
+              : 0;
+
+          const bTime =
+            b.createdAt &&
+            typeof b.createdAt.toMillis ===
+              "function"
+              ? b.createdAt.toMillis()
+              : 0;
+
+          return bTime - aTime;
+        }
+      );
+
+      if (!requests.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>No payment requests yet.</p>
+          </div>
+        `;
+
+        return;
+      }
+
+      container.innerHTML =
+        requests
+          .map(
+            function (request) {
+              return `
+                <div class="payment-request">
+
+                  <div>
+                    <strong>
+                      ${escapeHtml(
+                        request.paymentMethodName ||
+                        request.paymentMethod ||
+                        "Payment"
+                      )}
+                    </strong>
+
+                    <p>
+                      ${escapeHtml(
+                        formatCurrency(
+                          request.amount
+                        )
+                      )}
+                    </p>
+
+                    <small>
+                      ID:
+                      ${escapeHtml(
+                        request.paymentId ||
+                        request.id
+                      )}
+                    </small>
+
+                    <small>
+                      Reference:
+                      ${escapeHtml(
+                        request.reference ||
+                        "—"
+                      )}
+                    </small>
+
+                    <small>
+                      ${escapeHtml(
+                        formatDate(
+                          request.createdAt
+                        )
+                      )}
+                    </small>
+                  </div>
+
+                  <strong>
+                    ${escapeHtml(
+                      request.status ||
+                      "pending"
+                    )}
+                  </strong>
+
+                </div>
+              `;
+            }
+          )
+          .join("");
+    } catch (error) {
+      console.error(
+        "Payment request loading error:",
+        error
+      );
+    }
   }
 
   /* =========================================================
@@ -827,116 +1414,51 @@
         "[data-wallet-amount], [data-amount]"
       );
 
-    buttons.forEach((button) => {
-      if (
-        button.dataset.walletQuickInitialized ===
-        "true"
-      ) {
-        return;
-      }
-
-      button.dataset.walletQuickInitialized =
-        "true";
-
-      button.addEventListener(
-        "click",
-        () => {
-          const amount =
-            button.dataset.walletAmount ||
-            button.dataset.amount ||
-            "";
-
-          const input =
-            getElement("deposit-amount") ||
-            getElement("wallet-amount") ||
-            getElement("add-money-amount");
-
-          if (input) {
-            input.value = amount;
-            input.focus();
-          }
+    buttons.forEach(
+      function (button) {
+        if (
+          button.dataset
+            .walletQuickInitialized ===
+          "true"
+        ) {
+          return;
         }
-      );
-    });
-  }
 
-  /* =========================================================
-     Payment Return
-     ========================================================= */
+        button.dataset
+          .walletQuickInitialized =
+          "true";
 
-  async function handlePaymentReturn() {
-    const params =
-      new URLSearchParams(
-        window.location.search
-      );
+        button.addEventListener(
+          "click",
+          function () {
+            const amount =
+              button.dataset
+                .walletAmount ||
+              button.dataset
+                .amount ||
+              "";
 
-    const paymentId =
-      params.get("paymentId") ||
-      params.get("tran_id") ||
-      "";
+            const input =
+              getElement(
+                "deposit-amount"
+              ) ||
+              getElement(
+                "wallet-amount"
+              ) ||
+              getElement(
+                "add-money-amount"
+              );
 
-    const status =
-      String(
-        params.get("status") || ""
-      ).toLowerCase();
+            if (input) {
+              input.value =
+                amount;
 
-    /*
-      IMPORTANT:
-      We never trust amount/status from the URL.
-      The server is the source of truth.
-    */
-
-    if (!paymentId && !status) {
-      return;
-    }
-
-    if (
-      status === "failed" ||
-      status === "cancelled" ||
-      status === "canceled"
-    ) {
-      showMessage(
-        "Payment was not completed."
-      );
-
-      cleanPaymentQuery();
-      return;
-    }
-
-    if (
-      status === "success" ||
-      status === "successful"
-    ) {
-      showMessage(
-        "Payment submitted. Your wallet will update after server verification."
-      );
-
-      cleanPaymentQuery();
-
-      await refreshWallet(false);
-      return;
-    }
-
-    cleanPaymentQuery();
-  }
-
-  function cleanPaymentQuery() {
-    try {
-      const cleanUrl =
-        window.location.origin +
-        window.location.pathname;
-
-      window.history.replaceState(
-        {},
-        document.title,
-        cleanUrl
-      );
-    } catch (error) {
-      console.error(
-        "URL cleanup error:",
-        error
-      );
-    }
+              input.focus();
+            }
+          }
+        );
+      }
+    );
   }
 
   /* =========================================================
@@ -949,44 +1471,49 @@
         "#logout-btn, [data-action='logout']"
       );
 
-    buttons.forEach((button) => {
-      if (
-        button.dataset.walletLogoutInitialized ===
-        "true"
-      ) {
-        return;
-      }
-
-      button.dataset.walletLogoutInitialized =
-        "true";
-
-      button.addEventListener(
-        "click",
-        async (event) => {
-          event.preventDefault();
-
-          try {
-            await getAuth().signOut();
-
-            localStorage.removeItem(
-              "currentUser"
-            );
-
-            window.location.href =
-              "index.html";
-          } catch (error) {
-            console.error(
-              "Logout error:",
-              error
-            );
-
-            showMessage(
-              "Logout could not be completed."
-            );
-          }
+    buttons.forEach(
+      function (button) {
+        if (
+          button.dataset
+            .walletLogoutInitialized ===
+          "true"
+        ) {
+          return;
         }
-      );
-    });
+
+        button.dataset
+          .walletLogoutInitialized =
+          "true";
+
+        button.addEventListener(
+          "click",
+          async function (event) {
+            event.preventDefault();
+
+            try {
+              await getAuth()
+                .signOut();
+
+              localStorage.removeItem(
+                "currentUser"
+              );
+
+              window.location.href =
+                "index.html";
+            } catch (error) {
+              console.error(
+                "Logout error:",
+                error
+              );
+
+              showMessage(
+                "Logout could not be completed."
+              );
+            }
+          }
+        );
+      }
+    );
   }
 
   /* =========================================================
@@ -999,29 +1526,36 @@
         "#refresh-wallet, [data-action='refresh-wallet']"
       );
 
-    buttons.forEach((button) => {
-      button.addEventListener(
-        "click",
-        async (event) => {
-          event.preventDefault();
+    buttons.forEach(
+      function (button) {
+        button.addEventListener(
+          "click",
+          async function (event) {
+            event.preventDefault();
 
-          const originalText =
-            button.textContent;
+            const originalText =
+              button.textContent;
 
-          button.disabled = true;
-          button.textContent =
-            "Refreshing...";
+            button.disabled =
+              true;
 
-          try {
-            await refreshWallet();
-          } finally {
-            button.disabled = false;
             button.textContent =
-              originalText || "Refresh";
+              "Refreshing...";
+
+            try {
+              await refreshWallet();
+            } finally {
+              button.disabled =
+                false;
+
+              button.textContent =
+                originalText ||
+                "Refresh";
+            }
           }
-        }
-      );
-    });
+        );
+      }
+    );
   }
 
   /* =========================================================
@@ -1030,14 +1564,16 @@
 
   function setupWalletAuthState() {
     getAuth().onAuthStateChanged(
-      async (user) => {
+      async function (user) {
         if (!user) {
           window.location.href =
             "login.html";
+
           return;
         }
 
-        currentUser = user;
+        currentUser =
+          user;
 
         try {
           currentProfile =
@@ -1049,6 +1585,7 @@
             showMessage(
               "Your user profile could not be found."
             );
+
             return;
           }
 
@@ -1056,7 +1593,8 @@
             currentProfile.status ===
             "suspended"
           ) {
-            await getAuth().signOut();
+            await getAuth()
+              .signOut();
 
             localStorage.removeItem(
               "currentUser"
@@ -1077,6 +1615,10 @@
           );
 
           await loadTransactions(
+            user.uid
+          );
+
+          await loadPaymentRequests(
             user.uid
           );
         } catch (error) {
@@ -1102,13 +1644,17 @@
       getFirebase();
 
       setupDepositForm();
+
+      setupPaymentMethodUI();
+
       setupQuickAmountButtons();
+
       setupLogout();
+
       setupRefreshButton();
 
-      await handlePaymentReturn();
-
       setupWalletAuthState();
+
     } catch (error) {
       console.error(
         "Wallet initialization error:",
@@ -1121,6 +1667,10 @@
     }
   }
 
+  /* =========================================================
+     Start
+     ========================================================= */
+
   if (
     document.readyState ===
     "loading"
@@ -1132,4 +1682,5 @@
   } else {
     initWallet();
   }
+
 })();
