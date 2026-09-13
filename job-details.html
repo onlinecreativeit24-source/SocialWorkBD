@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Job Details - SocialWorkBD</title>
+
   <meta
     name="description"
     content="View freelance job details, submit proposals, and manage hiring on SocialWorkBD."
@@ -170,6 +172,11 @@
 
     .primary-btn:hover {
       background: #116c3d;
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
     }
 
     .secondary-btn {
@@ -384,6 +391,11 @@
       .proposal-actions button {
         width: 100%;
       }
+
+      .job-meta {
+        gap: 10px;
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -407,7 +419,7 @@
 
   <main class="page-wrap">
 
-    <a href="tasks.html" class="back-link">Back to Find Work</a>
+    <a href="tasks.html" class="back-link">← Back to Find Work</a>
 
     <div id="job-loading" class="loading">
       Loading job details...
@@ -424,7 +436,10 @@
         <div>
 
           <div class="card job-header">
-            <div id="job-status" class="job-status">Open</div>
+
+            <div id="job-status" class="job-status">
+              Open
+            </div>
 
             <h1 id="job-title" class="job-title">
               Job Title
@@ -434,35 +449,59 @@
               <span id="job-client">Client</span>
               <span id="job-proposals">0 proposals</span>
             </div>
+
           </div>
 
           <div class="card">
-            <h2 class="section-title">Job Description</h2>
+
+            <h2 class="section-title">
+              Job Description
+            </h2>
 
             <div id="job-desc" class="description">
               Loading description...
             </div>
 
             <div class="proposal-section">
-              <h2 class="section-title">Required Skills</h2>
+
+              <h2 class="section-title">
+                Required Skills
+              </h2>
 
               <div id="job-skills" class="skills">
                 <span class="skill">General</span>
               </div>
+
             </div>
+
           </div>
 
-          <div id="client-proposals-card" class="card proposal-section" style="display:none;">
-            <h2 class="section-title">Proposals</h2>
+          <div
+            id="client-proposals-card"
+            class="card proposal-section"
+            style="display:none;"
+          >
+
+            <h2 class="section-title">
+              Proposals
+            </h2>
 
             <div id="proposal-list" class="proposal-list">
-              <div class="empty">Loading proposals...</div>
+              <div class="empty">
+                Loading proposals...
+              </div>
             </div>
+
           </div>
 
-          <div id="freelancer-proposal-card" class="card proposal-section">
+          <div
+            id="freelancer-proposal-card"
+            class="card proposal-section"
+          >
 
-            <h2 class="section-title">Submit a Proposal</h2>
+            <h2 class="section-title">
+              Submit a Proposal
+            </h2>
 
             <p style="color:#66736c; line-height:1.6;">
               Tell the client why you are a good fit for this project.
@@ -476,19 +515,31 @@
               Submit a Proposal
             </button>
 
-            <form id="bid-form" class="proposal-form">
+            <form
+              id="bid-form"
+              class="proposal-form"
+            >
 
               <div class="form-group">
-                <label for="cover">Cover Letter</label>
+
+                <label for="cover">
+                  Cover Letter
+                </label>
+
                 <textarea
                   id="cover"
                   placeholder="Explain your experience, approach, and why you can complete this project successfully."
                   required
                 ></textarea>
+
               </div>
 
               <div class="form-group">
-                <label for="bid-amount">Your Proposed Amount</label>
+
+                <label for="bid-amount">
+                  Your Proposed Amount (BDT)
+                </label>
+
                 <input
                   id="bid-amount"
                   type="number"
@@ -497,10 +548,15 @@
                   placeholder="Enter your amount"
                   required
                 >
+
               </div>
 
               <div class="form-group">
-                <label for="delivery-days">Delivery Time</label>
+
+                <label for="delivery-days">
+                  Delivery Time
+                </label>
+
                 <input
                   id="delivery-days"
                   type="number"
@@ -508,6 +564,7 @@
                   placeholder="Number of days"
                   required
                 >
+
               </div>
 
               <button
@@ -518,7 +575,10 @@
                 Send Proposal
               </button>
 
-              <div id="job-notice" class="message"></div>
+              <div
+                id="job-notice"
+                class="message"
+              ></div>
 
             </form>
 
@@ -530,8 +590,11 @@
 
           <div class="card sidebar-card">
 
-            <div id="job-budget" class="budget">
-              $0
+            <div
+              id="job-budget"
+              class="budget"
+            >
+              BDT 0
             </div>
 
             <div class="budget-label">
@@ -539,18 +602,48 @@
             </div>
 
             <div class="detail-row">
-              <span class="detail-label">Delivery</span>
-              <span id="job-delivery" class="detail-value">Not specified</span>
+
+              <span class="detail-label">
+                Delivery
+              </span>
+
+              <span
+                id="job-delivery"
+                class="detail-value"
+              >
+                Not specified
+              </span>
+
             </div>
 
             <div class="detail-row">
-              <span class="detail-label">Proposals</span>
-              <span id="sidebar-proposals" class="detail-value">0</span>
+
+              <span class="detail-label">
+                Proposals
+              </span>
+
+              <span
+                id="sidebar-proposals"
+                class="detail-value"
+              >
+                0
+              </span>
+
             </div>
 
             <div class="detail-row">
-              <span class="detail-label">Status</span>
-              <span id="sidebar-status" class="detail-value">Open</span>
+
+              <span class="detail-label">
+                Status
+              </span>
+
+              <span
+                id="sidebar-status"
+                class="detail-value"
+              >
+                Open
+              </span>
+
             </div>
 
             <button
@@ -573,15 +666,21 @@
   </main>
 
   <footer class="site-footer">
+
     <div class="container">
-      <p>© 2026 SocialWorkBD · Global Freelance Marketplace</p>
+
+      <p>
+        © 2026 SocialWorkBD · Global Freelance Marketplace
+      </p>
 
       <div>
         <a href="terms.html">Terms</a>
         <a href="privacy.html">Privacy</a>
         <a href="support.html">Help</a>
       </div>
+
     </div>
+
   </footer>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -594,9 +693,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-      const firebaseApp = window.firebase;
-
-      if (!firebaseApp) {
+      if (typeof firebase === "undefined") {
         console.error("Firebase is not available.");
         return;
       }
@@ -604,20 +701,44 @@
       const db = firebase.firestore();
       const auth = firebase.auth();
 
-      const jobLoading = document.getElementById("job-loading");
-      const jobError = document.getElementById("job-error");
-      const jobContent = document.getElementById("job-content");
+      const jobLoading =
+        document.getElementById("job-loading");
 
-      const jobStatus = document.getElementById("job-status");
-      const jobTitle = document.getElementById("job-title");
-      const jobBudget = document.getElementById("job-budget");
-      const jobDelivery = document.getElementById("job-delivery");
-      const jobProposals = document.getElementById("job-proposals");
-      const sidebarProposals = document.getElementById("sidebar-proposals");
-      const sidebarStatus = document.getElementById("sidebar-status");
-      const jobDesc = document.getElementById("job-desc");
-      const jobSkills = document.getElementById("job-skills");
-      const jobClient = document.getElementById("job-client");
+      const jobError =
+        document.getElementById("job-error");
+
+      const jobContent =
+        document.getElementById("job-content");
+
+      const jobStatus =
+        document.getElementById("job-status");
+
+      const jobTitle =
+        document.getElementById("job-title");
+
+      const jobBudget =
+        document.getElementById("job-budget");
+
+      const jobDelivery =
+        document.getElementById("job-delivery");
+
+      const jobProposals =
+        document.getElementById("job-proposals");
+
+      const sidebarProposals =
+        document.getElementById("sidebar-proposals");
+
+      const sidebarStatus =
+        document.getElementById("sidebar-status");
+
+      const jobDesc =
+        document.getElementById("job-desc");
+
+      const jobSkills =
+        document.getElementById("job-skills");
+
+      const jobClient =
+        document.getElementById("job-client");
 
       const freelancerProposalCard =
         document.getElementById("freelancer-proposal-card");
@@ -643,61 +764,92 @@
       const submitProposalBtn =
         document.getElementById("submit-proposal-btn");
 
-      const params = new URLSearchParams(window.location.search);
-      const jobId = params.get("id");
+      const params =
+        new URLSearchParams(window.location.search);
+
+      const jobId =
+        params.get("id");
 
       let currentJob = null;
       let currentUser = null;
       let currentProfile = null;
 
       function escapeHtml(value) {
-        const div = document.createElement("div");
-        div.textContent = value == null ? "" : String(value);
+
+        const div =
+          document.createElement("div");
+
+        div.textContent =
+          value == null ? "" : String(value);
+
         return div.innerHTML;
       }
 
       function showNotice(message, type) {
-        notice.textContent = message;
-        notice.className = "message " + type;
+
+        notice.textContent =
+          message;
+
+        notice.className =
+          "message " + type;
       }
 
       function formatBudget(value) {
-        const number = Number(value || 0);
+
+        const number =
+          Number(value || 0);
 
         if (!Number.isFinite(number)) {
-          return "$0";
+          return "BDT 0";
         }
 
-        return "$" + number.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
+        return "BDT " +
+          number.toLocaleString("en-BD", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
       }
 
       function formatDate(timestamp) {
-        if (!timestamp) return "";
+
+        if (!timestamp) {
+          return "";
+        }
 
         try {
-          const date = timestamp.toDate
-            ? timestamp.toDate()
-            : new Date(timestamp);
 
-          return date.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric"
-          });
+          const date =
+            timestamp.toDate
+              ? timestamp.toDate()
+              : new Date(timestamp);
+
+          return date.toLocaleDateString(
+            "en-US",
+            {
+              year: "numeric",
+              month: "short",
+              day: "numeric"
+            }
+          );
+
         } catch (error) {
+
           return "";
         }
       }
 
       function getSkills(value) {
+
         if (Array.isArray(value)) {
-          return value.filter(Boolean);
+
+          return value
+            .filter(Boolean)
+            .map(item => String(item).trim())
+            .filter(Boolean);
         }
 
         if (typeof value === "string") {
+
           return value
             .split(",")
             .map(item => item.trim())
@@ -707,50 +859,111 @@
         return [];
       }
 
+      function getClientId(job) {
+
+        return (
+          job.clientId ||
+          job.ownerId ||
+          job.createdBy ||
+          ""
+        );
+      }
+
+      function getClientName(job) {
+
+        return (
+          job.clientName ||
+          job.ownerName ||
+          job.createdByName ||
+          "Client"
+        );
+      }
+
+      function normalizeStatus(status) {
+
+        return String(
+          status || "open"
+        ).toLowerCase().replace(/\s+/g, "_");
+      }
+
       async function loadUser() {
+
         return new Promise((resolve) => {
 
-          auth.onAuthStateChanged(async function (user) {
+          let resolved = false;
 
-            currentUser = user || null;
+          auth.onAuthStateChanged(
+            async function (user) {
 
-            if (!user) {
-              currentProfile = null;
-              resolve(null);
-              return;
-            }
+              currentUser =
+                user || null;
 
-            try {
-              const profileSnap =
-                await db.collection("users").doc(user.uid).get();
+              if (!user) {
 
-              if (profileSnap.exists) {
-                currentProfile = {
-                  ...profileSnap.data(),
-                  uid: user.uid
-                };
-              } else {
+                currentProfile = null;
+
+                if (!resolved) {
+                  resolved = true;
+                  resolve(null);
+                }
+
+                return;
+              }
+
+              try {
+
+                const profileSnap =
+                  await db
+                    .collection("users")
+                    .doc(user.uid)
+                    .get();
+
+                if (profileSnap.exists) {
+
+                  currentProfile = {
+                    ...profileSnap.data(),
+                    uid: user.uid
+                  };
+
+                } else {
+
+                  currentProfile = {
+                    uid: user.uid,
+                    name:
+                      user.displayName ||
+                      "User",
+                    email:
+                      user.email || "",
+                    role: "worker"
+                  };
+
+                }
+
+              } catch (error) {
+
+                console.error(
+                  "Profile load error:",
+                  error
+                );
+
                 currentProfile = {
                   uid: user.uid,
-                  name: user.displayName || "User",
-                  email: user.email || "",
+                  name:
+                    user.displayName ||
+                    "User",
+                  email:
+                    user.email || "",
                   role: "worker"
                 };
               }
 
-            } catch (error) {
-              console.error("Profile load error:", error);
+              if (!resolved) {
+                resolved = true;
+                resolve(currentProfile);
+              }
 
-              currentProfile = {
-                uid: user.uid,
-                name: user.displayName || "User",
-                email: user.email || "",
-                role: "worker"
-              };
             }
-
-            resolve(currentProfile);
-          });
+          );
 
         });
       }
@@ -758,19 +971,31 @@
       async function loadJob() {
 
         if (!jobId) {
-          jobLoading.style.display = "none";
-          jobError.style.display = "block";
-          jobError.textContent = "No job was selected.";
+
+          jobLoading.style.display =
+            "none";
+
+          jobError.style.display =
+            "block";
+
+          jobError.textContent =
+            "No job was selected.";
+
           return;
         }
 
         try {
 
           const snap =
-            await db.collection("jobs").doc(jobId).get();
+            await db
+              .collection("jobs")
+              .doc(jobId)
+              .get();
 
           if (!snap.exists) {
-            throw new Error("Job not found.");
+            throw new Error(
+              "Job not found."
+            );
           }
 
           currentJob = {
@@ -780,112 +1005,192 @@
 
           renderJob();
 
-          await loadProposals();
+          jobLoading.style.display =
+            "none";
 
-          jobLoading.style.display = "none";
-          jobContent.style.display = "block";
+          jobContent.style.display =
+            "block";
+
+          await loadProposals();
 
         } catch (error) {
 
-          console.error("Job loading error:", error);
+          console.error(
+            "Job loading error:",
+            error
+          );
 
-          jobLoading.style.display = "none";
-          jobError.style.display = "block";
+          jobLoading.style.display =
+            "none";
+
+          jobError.style.display =
+            "block";
+
           jobError.textContent =
-            error.message || "Unable to load this job.";
+            error.message ||
+            "Unable to load this job.";
         }
       }
 
       function renderJob() {
 
+        if (!currentJob) {
+          return;
+        }
+
         const status =
-          currentJob.status || "open";
+          normalizeStatus(
+            currentJob.status
+          );
+
+        const clientId =
+          getClientId(currentJob);
+
+        const clientName =
+          getClientName(currentJob);
 
         jobStatus.textContent =
           status.replace(/_/g, " ");
 
         jobTitle.textContent =
-          currentJob.title || "Untitled Job";
+          currentJob.title ||
+          "Untitled Job";
 
         jobBudget.textContent =
-          formatBudget(currentJob.budget);
+          formatBudget(
+            currentJob.budget
+          );
 
         const delivery =
           currentJob.deliveryDays ||
           currentJob.delivery ||
+          currentJob.deadlineDays ||
           "";
 
         jobDelivery.textContent =
           delivery
-            ? delivery + (Number(delivery) === 1 ? " day" : " days")
+            ? delivery +
+              (
+                Number(delivery) === 1
+                  ? " day"
+                  : " days"
+              )
             : "Not specified";
 
         jobDesc.textContent =
           currentJob.description ||
+          currentJob.desc ||
           "No description provided.";
 
         jobClient.textContent =
           "Client: " +
-          (currentJob.clientName || "Client");
+          clientName;
 
         const proposalCount =
-          Number(currentJob.proposalCount || 0);
+          Number(
+            currentJob.proposalCount ||
+            currentJob.proposalsCount ||
+            0
+          );
 
         jobProposals.textContent =
           proposalCount +
-          (proposalCount === 1 ? " proposal" : " proposals");
+          (
+            proposalCount === 1
+              ? " proposal"
+              : " proposals"
+          );
 
         sidebarProposals.textContent =
           String(proposalCount);
 
         sidebarStatus.textContent =
-          status.replace(/_/g, " ");
+          status.replace(
+            /_/g,
+            " "
+          );
 
         const skills =
-          getSkills(currentJob.skills);
+          getSkills(
+            currentJob.skills
+          );
 
         if (!skills.length) {
+
           jobSkills.innerHTML =
             '<span class="skill">General</span>';
+
         } else {
+
           jobSkills.innerHTML =
-            skills.map(skill =>
-              '<span class="skill">' +
-              escapeHtml(skill) +
-              "</span>"
-            ).join("");
+            skills
+              .map(function (skill) {
+
+                return (
+                  '<span class="skill">' +
+                  escapeHtml(skill) +
+                  "</span>"
+                );
+
+              })
+              .join("");
         }
 
         const isClient =
           currentUser &&
-          currentJob.clientId === currentUser.uid;
+          clientId === currentUser.uid;
 
         if (isClient) {
-          freelancerProposalCard.style.display = "none";
-          clientProposalsCard.style.display = "block";
-          sidebarProposalBtn.style.display = "none";
+
+          freelancerProposalCard.style.display =
+            "none";
+
+          clientProposalsCard.style.display =
+            "block";
+
+          sidebarProposalBtn.style.display =
+            "none";
+
         } else {
-          clientProposalsCard.style.display = "none";
+
+          clientProposalsCard.style.display =
+            "none";
 
           if (status === "open") {
-            freelancerProposalCard.style.display = "block";
-            sidebarProposalBtn.style.display = "block";
+
+            freelancerProposalCard.style.display =
+              "block";
+
+            sidebarProposalBtn.style.display =
+              "block";
+
           } else {
-            freelancerProposalCard.style.display = "none";
-            sidebarProposalBtn.style.display = "none";
+
+            freelancerProposalCard.style.display =
+              "none";
+
+            sidebarProposalBtn.style.display =
+              "none";
           }
         }
       }
 
       async function loadProposals() {
 
-        if (!currentJob) return;
+        if (!currentJob) {
+          return;
+        }
+
+        const clientId =
+          getClientId(currentJob);
 
         const isClient =
           currentUser &&
-          currentJob.clientId === currentUser.uid;
+          clientId === currentUser.uid;
 
-        if (!isClient) return;
+        if (!isClient) {
+          return;
+        }
 
         proposalList.innerHTML =
           '<div class="empty">Loading proposals...</div>';
@@ -893,77 +1198,129 @@
         try {
 
           const snapshot =
-            await db.collection("proposals")
-              .where("jobId", "==", jobId)
+            await db
+              .collection("proposals")
+              .where(
+                "jobId",
+                "==",
+                jobId
+              )
               .get();
 
           const proposals = [];
 
-          snapshot.forEach(doc => {
-            proposals.push({
-              id: doc.id,
-              ...doc.data()
-            });
-          });
+          snapshot.forEach(
+            function (doc) {
 
-          proposals.sort((a, b) => {
+              proposals.push({
+                id: doc.id,
+                ...doc.data()
+              });
 
-            const aTime =
-              a.createdAt && a.createdAt.toMillis
-                ? a.createdAt.toMillis()
-                : 0;
+            }
+          );
 
-            const bTime =
-              b.createdAt && b.createdAt.toMillis
-                ? b.createdAt.toMillis()
-                : 0;
+          proposals.sort(
+            function (a, b) {
 
-            return bTime - aTime;
-          });
+              const aTime =
+                a.createdAt &&
+                a.createdAt.toMillis
+                  ? a.createdAt.toMillis()
+                  : 0;
+
+              const bTime =
+                b.createdAt &&
+                b.createdAt.toMillis
+                  ? b.createdAt.toMillis()
+                  : 0;
+
+              return bTime - aTime;
+            }
+          );
 
           if (!proposals.length) {
+
             proposalList.innerHTML =
-              '<div class="empty">No proposals have been submitted yet.</div>';
+              '<div class="empty">' +
+              'No proposals have been submitted yet.' +
+              '</div>';
+
             return;
           }
 
           proposalList.innerHTML =
-            proposals.map(renderProposal).join("");
+            proposals
+              .map(renderProposal)
+              .join("");
 
           document
-            .querySelectorAll("[data-hire-proposal]")
-            .forEach(button => {
+            .querySelectorAll(
+              "[data-hire-proposal]"
+            )
+            .forEach(
+              function (button) {
 
-              button.addEventListener("click", function () {
+                button.addEventListener(
+                  "click",
+                  function () {
 
-                const proposalId =
-                  this.getAttribute("data-hire-proposal");
+                    const proposalId =
+                      this.getAttribute(
+                        "data-hire-proposal"
+                      );
 
-                hireFreelancer(proposalId);
-              });
+                    hireFreelancer(
+                      proposalId
+                    );
+                  }
+                );
 
-            });
+              }
+            );
 
         } catch (error) {
 
-          console.error("Proposal loading error:", error);
+          console.error(
+            "Proposal loading error:",
+            error
+          );
 
           proposalList.innerHTML =
-            '<div class="empty">Unable to load proposals right now.</div>';
+            '<div class="empty">' +
+            'Unable to load proposals right now.' +
+            '</div>';
         }
       }
 
       function renderProposal(proposal) {
 
         const status =
-          proposal.status || "submitted";
+          normalizeStatus(
+            proposal.status ||
+            "submitted"
+          );
 
         const statusClass =
-          status.toLowerCase().replace(/\s+/g, "_");
+          status;
 
         const canHire =
-          currentJob.status === "open" &&
+          normalizeStatus(
+            currentJob.status
+          ) === "open" &&
           status === "submitted";
+
+        const deliveryText =
+          proposal.deliveryDays
+            ? proposal.deliveryDays +
+              (
+                Number(
+                  proposal.deliveryDays
+                ) === 1
+                  ? " day"
+                  : " days"
+              )
+            : "Not specified";
 
         return `
           <div class="proposal-card">
@@ -971,21 +1328,28 @@
             <div class="proposal-top">
 
               <div>
+
                 <div class="freelancer-name">
                   ${escapeHtml(
-                    proposal.freelancerName || "Freelancer"
+                    proposal.freelancerName ||
+                    "Freelancer"
                   )}
                 </div>
 
                 <div class="account-id">
                   ${escapeHtml(
-                    proposal.freelancerAccountId || ""
+                    proposal.freelancerAccountId ||
+                    proposal.accountId ||
+                    ""
                   )}
                 </div>
+
               </div>
 
-              <span class="proposal-status ${statusClass}">
-                ${escapeHtml(status.replace(/_/g, " "))}
+              <span class="proposal-status ${escapeHtml(statusClass)}">
+                ${escapeHtml(
+                  status.replace(/_/g, " ")
+                )}
               </span>
 
             </div>
@@ -993,27 +1357,31 @@
             <div class="proposal-meta">
 
               <span>
-                Proposed: ${formatBudget(proposal.amount)}
+                Proposed:
+                ${formatBudget(
+                  proposal.amount
+                )}
               </span>
 
               <span>
                 Delivery:
                 ${escapeHtml(
-                  proposal.deliveryDays
-                    ? proposal.deliveryDays + " days"
-                    : "Not specified"
+                  deliveryText
                 )}
               </span>
 
               <span>
-                ${formatDate(proposal.createdAt)}
+                ${formatDate(
+                  proposal.createdAt
+                )}
               </span>
 
             </div>
 
             <div class="cover-letter">
               ${escapeHtml(
-                proposal.coverLetter || "No cover letter provided."
+                proposal.coverLetter ||
+                "No cover letter provided."
               )}
             </div>
 
@@ -1021,13 +1389,17 @@
               canHire
                 ? `
                   <div class="proposal-actions">
+
                     <button
                       type="button"
                       class="primary-btn"
-                      data-hire-proposal="${escapeHtml(proposal.id)}"
+                      data-hire-proposal="${escapeHtml(
+                        proposal.id
+                      )}"
                     >
                       Hire Freelancer
                     </button>
+
                   </div>
                 `
                 : ""
@@ -1037,20 +1409,44 @@
         `;
       }
 
-      async function hireFreelancer(proposalId) {
+      async function hireFreelancer(
+        proposalId
+      ) {
 
         if (!currentUser || !currentJob) {
-          alert("Please log in to continue.");
+
+          alert(
+            "Please log in to continue."
+          );
+
           return;
         }
 
-        if (currentJob.clientId !== currentUser.uid) {
-          alert("Only the job owner can hire a freelancer.");
+        const clientId =
+          getClientId(currentJob);
+
+        if (
+          clientId !==
+          currentUser.uid
+        ) {
+
+          alert(
+            "Only the job owner can hire a freelancer."
+          );
+
           return;
         }
 
-        if (currentJob.status !== "open") {
-          alert("This job is no longer open for hiring.");
+        if (
+          normalizeStatus(
+            currentJob.status
+          ) !== "open"
+        ) {
+
+          alert(
+            "This job is no longer open for hiring."
+          );
+
           return;
         }
 
@@ -1059,51 +1455,89 @@
             "Hire this freelancer for this project?"
           );
 
-        if (!confirmed) return;
+        if (!confirmed) {
+          return;
+        }
 
         try {
 
           const proposalRef =
-            db.collection("proposals").doc(proposalId);
+            db
+              .collection("proposals")
+              .doc(proposalId);
 
           const proposalSnap =
             await proposalRef.get();
 
           if (!proposalSnap.exists) {
-            throw new Error("Proposal not found.");
+
+            throw new Error(
+              "Proposal not found."
+            );
           }
 
           const proposal =
             proposalSnap.data();
 
-          if (proposal.jobId !== jobId) {
-            throw new Error("Invalid proposal.");
+          if (
+            proposal.jobId !==
+            jobId
+          ) {
+
+            throw new Error(
+              "Invalid proposal."
+            );
           }
 
-          if (proposal.status !== "submitted") {
+          if (
+            normalizeStatus(
+              proposal.status
+            ) !== "submitted"
+          ) {
+
             throw new Error(
               "This proposal is no longer available."
             );
           }
 
-          const batch = db.batch();
+          const batch =
+            db.batch();
+
+          const jobRef =
+            db
+              .collection("jobs")
+              .doc(jobId);
 
           batch.update(
-            db.collection("jobs").doc(jobId),
+            jobRef,
             {
               status: "in_progress",
+
               hiredFreelancerId:
-                proposal.freelancerId || null,
+                proposal.freelancerId ||
+                "",
+
               hiredFreelancerName:
-                proposal.freelancerName || "",
+                proposal.freelancerName ||
+                "Freelancer",
+
               hiredProposalId:
                 proposalId,
+
               hiredAmount:
-                Number(proposal.amount || 0),
+                Number(
+                  proposal.amount || 0
+                ),
+
               hiredDeliveryDays:
-                Number(proposal.deliveryDays || 0),
+                Number(
+                  proposal.deliveryDays || 0
+                ),
+
               updatedAt:
-                firebase.firestore.FieldValue.serverTimestamp()
+                firebase.firestore
+                  .FieldValue
+                  .serverTimestamp()
             }
           );
 
@@ -1111,50 +1545,78 @@
             proposalRef,
             {
               status: "hired",
+
               hiredAt:
-                firebase.firestore.FieldValue.serverTimestamp(),
+                firebase.firestore
+                  .FieldValue
+                  .serverTimestamp(),
+
               updatedAt:
-                firebase.firestore.FieldValue.serverTimestamp()
+                firebase.firestore
+                  .FieldValue
+                  .serverTimestamp()
             }
           );
 
           const otherProposals =
-            await db.collection("proposals")
-              .where("jobId", "==", jobId)
+            await db
+              .collection("proposals")
+              .where(
+                "jobId",
+                "==",
+                jobId
+              )
               .get();
 
-          otherProposals.forEach(doc => {
+          otherProposals.forEach(
+            function (doc) {
 
-            if (doc.id !== proposalId) {
+              if (
+                doc.id !==
+                proposalId
+              ) {
 
-              const data = doc.data();
+                const data =
+                  doc.data();
 
-              if (data.status === "submitted") {
+                if (
+                  normalizeStatus(
+                    data.status ||
+                    "submitted"
+                  ) === "submitted"
+                ) {
 
-                batch.update(
-                  doc.ref,
-                  {
-                    status: "not_selected",
-                    updatedAt:
-                      firebase.firestore.FieldValue.serverTimestamp()
-                  }
-                );
+                  batch.update(
+                    doc.ref,
+                    {
+                      status:
+                        "not_selected",
 
+                      updatedAt:
+                        firebase.firestore
+                          .FieldValue
+                          .serverTimestamp()
+                    }
+                  );
+                }
               }
-
             }
-
-          });
+          );
 
           await batch.commit();
 
-          alert("Freelancer hired successfully.");
+          alert(
+            "Freelancer hired successfully."
+          );
 
           window.location.reload();
 
         } catch (error) {
 
-          console.error("Hire error:", error);
+          console.error(
+            "Hire error:",
+            error
+          );
 
           alert(
             error.message ||
@@ -1166,36 +1628,53 @@
       function openProposalForm() {
 
         if (!currentUser) {
+
           window.location.href =
             "login.html?redirect=" +
             encodeURIComponent(
               window.location.href
             );
+
           return;
         }
 
+        if (!currentJob) {
+          return;
+        }
+
+        const clientId =
+          getClientId(currentJob);
+
         if (
-          currentJob &&
-          currentJob.clientId === currentUser.uid
+          clientId ===
+          currentUser.uid
         ) {
+
           alert(
             "You cannot submit a proposal to your own job."
           );
+
           return;
         }
 
         if (
-          !currentJob ||
-          currentJob.status !== "open"
+          normalizeStatus(
+            currentJob.status
+          ) !== "open"
         ) {
+
           alert(
             "This job is no longer accepting proposals."
           );
+
           return;
         }
 
-        bidForm.style.display = "block";
-        showProposalBtn.style.display = "none";
+        bidForm.style.display =
+          "block";
+
+        showProposalBtn.style.display =
+          "none";
 
         bidForm.scrollIntoView({
           behavior: "smooth",
@@ -1220,7 +1699,11 @@
           event.preventDefault();
 
           if (!currentUser) {
-            alert("Please log in to submit a proposal.");
+
+            alert(
+              "Please log in to submit a proposal."
+            );
+
             return;
           }
 
@@ -1228,93 +1711,143 @@
             return;
           }
 
+          const clientId =
+            getClientId(currentJob);
+
           if (
-            currentJob.clientId === currentUser.uid
+            clientId ===
+            currentUser.uid
           ) {
+
             showNotice(
               "You cannot submit a proposal to your own job.",
               "error"
             );
-            return;
-          }
 
-          if (currentJob.status !== "open") {
-            showNotice(
-              "This job is no longer accepting proposals.",
-              "error"
-            );
-            return;
-          }
-
-          const cover =
-            document.getElementById("cover").value.trim();
-
-          const amount =
-            Number(
-              document.getElementById("bid-amount").value
-            );
-
-          const deliveryDays =
-            Number(
-              document.getElementById("delivery-days").value
-            );
-
-          if (!cover) {
-            showNotice(
-              "Please write a cover letter.",
-              "error"
-            );
-            return;
-          }
-
-          if (!Number.isFinite(amount) || amount <= 0) {
-            showNotice(
-              "Please enter a valid proposal amount.",
-              "error"
-            );
             return;
           }
 
           if (
-            !Number.isFinite(deliveryDays) ||
+            normalizeStatus(
+              currentJob.status
+            ) !== "open"
+          ) {
+
+            showNotice(
+              "This job is no longer accepting proposals.",
+              "error"
+            );
+
+            return;
+          }
+
+          const cover =
+            document
+              .getElementById("cover")
+              .value
+              .trim();
+
+          const amount =
+            Number(
+              document
+                .getElementById("bid-amount")
+                .value
+            );
+
+          const deliveryDays =
+            Number(
+              document
+                .getElementById("delivery-days")
+                .value
+            );
+
+          if (!cover) {
+
+            showNotice(
+              "Please write a cover letter.",
+              "error"
+            );
+
+            return;
+          }
+
+          if (
+            !Number.isFinite(amount) ||
+            amount <= 0
+          ) {
+
+            showNotice(
+              "Please enter a valid proposal amount.",
+              "error"
+            );
+
+            return;
+          }
+
+          if (
+            !Number.isFinite(
+              deliveryDays
+            ) ||
             deliveryDays <= 0
           ) {
+
             showNotice(
               "Please enter a valid delivery time.",
               "error"
             );
+
             return;
           }
 
-          submitProposalBtn.disabled = true;
+          submitProposalBtn.disabled =
+            true;
+
           submitProposalBtn.textContent =
             "Sending...";
 
           try {
 
             const existing =
-              await db.collection("proposals")
-                .where("jobId", "==", jobId)
+              await db
+                .collection("proposals")
+                .where(
+                  "jobId",
+                  "==",
+                  jobId
+                )
                 .get();
 
-            let alreadySubmitted = false;
+            let alreadySubmitted =
+              false;
 
-            existing.forEach(doc => {
+            existing.forEach(
+              function (doc) {
 
-              const data = doc.data();
+                const data =
+                  doc.data();
 
-              if (
-                data.freelancerId === currentUser.uid &&
-                ["submitted", "hired"].includes(
-                  data.status || "submitted"
-                )
-              ) {
-                alreadySubmitted = true;
+                if (
+                  data.freelancerId ===
+                    currentUser.uid &&
+                  [
+                    "submitted",
+                    "hired"
+                  ].includes(
+                    normalizeStatus(
+                      data.status ||
+                      "submitted"
+                    )
+                  )
+                ) {
+
+                  alreadySubmitted =
+                    true;
+                }
               }
-
-            });
+            );
 
             if (alreadySubmitted) {
+
               throw new Error(
                 "You have already submitted a proposal for this job."
               );
@@ -1323,56 +1856,74 @@
             const profile =
               currentProfile || {};
 
-            await db.collection("proposals").add({
+            await db
+              .collection("proposals")
+              .add({
 
-              jobId: jobId,
+                jobId:
+                  jobId,
 
-              jobTitle:
-                currentJob.title || "",
+                jobTitle:
+                  currentJob.title ||
+                  "",
 
-              clientId:
-                currentJob.clientId || "",
+                clientId:
+                  clientId,
 
-              freelancerId:
-                currentUser.uid,
+                clientName:
+                  getClientName(
+                    currentJob
+                  ),
 
-              freelancerName:
-                profile.name ||
-                currentUser.displayName ||
-                "Freelancer",
+                freelancerId:
+                  currentUser.uid,
 
-              freelancerAccountId:
-                profile.accountId ||
-                "",
+                freelancerName:
+                  profile.name ||
+                  currentUser.displayName ||
+                  "Freelancer",
 
-              coverLetter:
-                cover,
+                freelancerAccountId:
+                  profile.accountId ||
+                  "",
 
-              amount:
-                amount,
+                coverLetter:
+                  cover,
 
-              deliveryDays:
-                deliveryDays,
+                amount:
+                  amount,
 
-              status:
-                "submitted",
+                deliveryDays:
+                  deliveryDays,
 
-              createdAt:
-                firebase.firestore.FieldValue.serverTimestamp(),
+                status:
+                  "submitted",
 
-              updatedAt:
-                firebase.firestore.FieldValue.serverTimestamp()
-            });
+                createdAt:
+                  firebase.firestore
+                    .FieldValue
+                    .serverTimestamp(),
 
-            await db.collection("jobs")
+                updatedAt:
+                  firebase.firestore
+                    .FieldValue
+                    .serverTimestamp()
+              });
+
+            await db
+              .collection("jobs")
               .doc(jobId)
               .update({
 
                 proposalCount:
-                  firebase.firestore.FieldValue.increment(1),
+                  firebase.firestore
+                    .FieldValue
+                    .increment(1),
 
                 updatedAt:
-                  firebase.firestore.FieldValue.serverTimestamp()
+                  firebase.firestore
+                    .FieldValue
+                    .serverTimestamp()
               });
 
             showNotice(
@@ -1382,13 +1933,18 @@
 
             bidForm.reset();
 
-            submitProposalBtn.disabled = false;
+            submitProposalBtn.disabled =
+              false;
+
             submitProposalBtn.textContent =
               "Proposal Submitted";
 
-            setTimeout(() => {
-              window.location.reload();
-            }, 1200);
+            setTimeout(
+              function () {
+                window.location.reload();
+              },
+              1200
+            );
 
           } catch (error) {
 
@@ -1403,7 +1959,9 @@
               "error"
             );
 
-            submitProposalBtn.disabled = false;
+            submitProposalBtn.disabled =
+              false;
+
             submitProposalBtn.textContent =
               "Send Proposal";
           }
@@ -1416,15 +1974,6 @@
         await loadUser();
 
         await loadJob();
-
-        if (
-          currentUser &&
-          currentJob &&
-          currentJob.clientId === currentUser.uid
-        ) {
-          clientProposalsCard.style.display =
-            "block";
-        }
       }
 
       startPage();
