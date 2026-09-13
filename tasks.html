@@ -7,12 +7,12 @@
 
   <meta
     name="description"
-    content="Find freelance jobs and remote work on SocialWorkBD. Search jobs by skills, category and budget."
+    content="Find freelance jobs and remote work worldwide on SocialWorkBD. Search jobs by skills, category and budget."
   >
 
   <meta name="theme-color" content="#14a800">
 
-  <title>Find Work - SocialWorkBD</title>
+  <title>Find Work Worldwide - SocialWorkBD</title>
 
   <style>
     * {
@@ -549,10 +549,36 @@
       font-size: 13px;
     }
 
+    /* Mobile navigation */
     @media (max-width: 900px) {
 
       .nav-links {
         display: none;
+        position: absolute;
+        left: 15px;
+        right: 15px;
+        top: 70px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 14px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+      }
+
+      .nav-links.mobile-open {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 12px 10px;
+        border-bottom: 1px solid #f0f2f4;
+      }
+
+      .nav-links a:last-child {
+        border-bottom: 0;
       }
 
       .mobile-menu {
@@ -694,7 +720,7 @@
 
     <div class="hero-inner">
 
-      <h1>Find work that fits your skills</h1>
+      <h1>Find Work Worldwide</h1>
 
       <p>
         Discover freelance jobs, remote projects and opportunities from clients around the world.
@@ -725,7 +751,7 @@
 
       <div class="toolbar-left">
 
-        <h2>Latest Jobs</h2>
+        <h2>Latest Jobs Worldwide</h2>
 
         <div class="result-count" id="result-count">
           Loading jobs...
@@ -948,7 +974,7 @@
           </h3>
 
           <p>
-            Search and filter jobs that match your skills and interests.
+            Search and filter jobs from clients around the world.
           </p>
         </div>
 
@@ -1043,6 +1069,8 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <script src="firebase-config.js"></script>
+
+  <script src="app.js"></script>
 
   <script>
 
@@ -1278,6 +1306,7 @@
           job.category || "",
           job.clientName || "",
           job.ownerName || "",
+          job.createdByName || "",
           skills
 
         ]
@@ -1651,6 +1680,7 @@
                       ${escapeHtml(
                         job.clientName ||
                         job.ownerName ||
+                        job.createdByName ||
                         "Verified Client"
                       )}
 
@@ -1875,8 +1905,6 @@
     })();
 
   </script>
-
-  <script src="app.js"></script>
 
 </body>
 
