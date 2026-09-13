@@ -12,12 +12,15 @@
 
   <meta
     name="description"
-    content="Manage your SocialWorkBD profile, skills and professional information."
+    content="View and manage your professional SocialWorkBD freelancer profile."
   >
 
-  <meta name="theme-color" content="#14a800">
+  <meta
+    name="theme-color"
+    content="#14a800"
+  >
 
-  <title>My Profile - SocialWorkBD</title>
+  <title>Profile - SocialWorkBD</title>
 
   <link
     rel="icon"
@@ -41,11 +44,14 @@
     :root {
       --profile-green: #14a800;
       --profile-green-dark: #108a00;
-      --profile-navy: #102a43;
       --profile-ink: #17251d;
       --profile-muted: #66736b;
       --profile-line: #e3e9e5;
       --profile-bg: #f7f9f8;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     .profile-page {
@@ -55,11 +61,12 @@
     }
 
     .profile-wrapper {
-      max-width: 900px;
+      max-width: 980px;
       margin: 0 auto;
     }
 
-    .profile-loading {
+    .profile-loading,
+    .profile-error {
       background: #ffffff;
       border: 1px solid var(--profile-line);
       border-radius: 18px;
@@ -67,6 +74,12 @@
       text-align: center;
       color: var(--profile-muted);
       box-shadow: 0 8px 28px rgba(20, 40, 30, 0.05);
+    }
+
+    .profile-error {
+      color: #9f2020;
+      background: #fff7f7;
+      border-color: #efcaca;
     }
 
     .profile-header-card {
@@ -82,8 +95,8 @@
     }
 
     .profile-avatar {
-      width: 88px;
-      height: 88px;
+      width: 96px;
+      height: 96px;
       border-radius: 50%;
       background: #e9f7ee;
       color: var(--profile-green-dark);
@@ -98,20 +111,27 @@
 
     .profile-heading {
       flex: 1;
+      min-width: 0;
     }
 
     .profile-heading h1 {
       margin: 0 0 7px;
       color: var(--profile-ink);
-      font-size: 28px;
+      font-size: 30px;
       line-height: 1.2;
     }
 
-    .profile-heading p {
-      margin: 0 0 9px;
+    .profile-title {
+      margin: 0 0 8px;
+      color: #405148;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .profile-location {
+      margin: 0 0 12px;
       color: var(--profile-muted);
       font-size: 14px;
-      word-break: break-word;
     }
 
     .account-badge {
@@ -123,6 +143,12 @@
       color: #506057;
       font-size: 12px;
       font-weight: 700;
+    }
+
+    .profile-header-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .profile-card {
@@ -182,6 +208,76 @@
       grid-column: 1 / -1;
     }
 
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .skill-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 11px;
+      border-radius: 20px;
+      background: #eef8ef;
+      color: #16730b;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .rate-value {
+      color: var(--profile-green-dark);
+      font-weight: 800;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .logout-btn {
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .primary-btn {
+      border: 0;
+      background: var(--profile-green);
+      color: #ffffff;
+    }
+
+    .primary-btn:hover {
+      background: var(--profile-green-dark);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .secondary-btn {
+      border: 1px solid #d5ded9;
+      background: #ffffff;
+      color: #33423a;
+    }
+
+    .secondary-btn:hover {
+      border-color: var(--profile-green);
+      color: var(--profile-green-dark);
+    }
+
     .form-group {
       margin-bottom: 19px;
     }
@@ -198,7 +294,6 @@
     .form-group select,
     .form-group textarea {
       width: 100%;
-      box-sizing: border-box;
       border: 1px solid #d5ded9;
       border-radius: 10px;
       padding: 13px 14px;
@@ -234,48 +329,56 @@
       line-height: 1.5;
     }
 
-    .profile-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 8px;
+    .account-status-box {
+      display: none;
+      margin-bottom: 22px;
+      padding: 14px 16px;
+      border-radius: 11px;
+      border: 1px solid #e6e6e6;
+      background: #fafafa;
+      color: #555;
+      font-size: 13px;
+      line-height: 1.6;
     }
 
-    .primary-btn,
-    .secondary-btn,
-    .logout-btn {
-      border-radius: 10px;
-      padding: 12px 18px;
+    .account-status-box.show {
+      display: block;
+    }
+
+    .account-status-box.success {
+      background: #effaf0;
+      border-color: #c8e6ca;
+      color: #256b2b;
+    }
+
+    .account-status-box.warning {
+      background: #fff9e8;
+      border-color: #f0df9c;
+      color: #765b00;
+    }
+
+    .account-status-box.error {
+      background: #fff3f3;
+      border-color: #efcaca;
+      color: #9f2020;
+    }
+
+    .profile-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .profile-links a {
+      color: var(--profile-green-dark);
+      text-decoration: none;
       font-size: 14px;
       font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
     }
 
-    .primary-btn {
-      border: 0;
-      background: var(--profile-green);
-      color: #ffffff;
-    }
-
-    .primary-btn:hover {
-      background: var(--profile-green-dark);
-    }
-
-    .primary-btn:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
-
-    .secondary-btn {
-      border: 1px solid #d5ded9;
-      background: #ffffff;
-      color: #33423a;
-    }
-
-    .secondary-btn:hover {
-      border-color: var(--profile-green);
-      color: var(--profile-green-dark);
+    .profile-links a:hover {
+      text-decoration: underline;
     }
 
     .logout-section {
@@ -294,54 +397,11 @@
       background: #f8faf9;
     }
 
-    .profile-links {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 20px;
+    .hidden {
+      display: none !important;
     }
 
-    .profile-links a {
-      color: var(--profile-green-dark);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .profile-links a:hover {
-      text-decoration: underline;
-    }
-
-    .account-status-box {
-      display: none;
-      margin-top: 18px;
-      padding: 14px 16px;
-      border-radius: 11px;
-      border: 1px solid #e6e6e6;
-      background: #fafafa;
-      color: #555;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .account-status-box.show {
-      display: block;
-    }
-
-    .account-status-box.warning {
-      background: #fff9e8;
-      border-color: #f0df9c;
-      color: #765b00;
-    }
-
-    .account-status-box.restricted,
-    .account-status-box.suspended {
-      background: #fff3f3;
-      border-color: #efcaca;
-      color: #9f2020;
-    }
-
-    @media (max-width: 650px) {
+    @media (max-width: 700px) {
 
       .profile-page {
         padding: 28px 14px;
@@ -354,7 +414,12 @@
       }
 
       .profile-heading h1 {
-        font-size: 24px;
+        font-size: 25px;
+      }
+
+      .profile-header-actions {
+        width: 100%;
+        justify-content: center;
       }
 
       .profile-card {
@@ -417,6 +482,10 @@
           Find Work
         </a>
 
+        <a href="find-talent.html">
+          Find Talent
+        </a>
+
         <a href="post-job.html">
           Post a Job
         </a>
@@ -441,7 +510,17 @@
         id="profile-loading"
         class="profile-loading"
       >
-        Loading your profile...
+        Loading profile...
+      </div>
+
+
+      <!-- ERROR -->
+
+      <div
+        id="profile-error"
+        class="profile-error hidden"
+      >
+        Unable to load this profile.
       </div>
 
 
@@ -449,7 +528,7 @@
 
       <div
         id="profile-content"
-        style="display:none;"
+        class="hidden"
       >
 
 
@@ -467,12 +546,22 @@
 
           <div class="profile-heading">
 
-            <h1>
-              <span id="user-name">-</span>
+            <h1 id="user-name">
+              Freelancer
             </h1>
 
-            <p>
-              <span id="user-email">-</span>
+            <p
+              class="profile-title"
+              id="user-title"
+            >
+              Professional Freelancer
+            </p>
+
+            <p
+              class="profile-location"
+              id="user-location"
+            >
+              🌍 Worldwide
             </p>
 
             <span
@@ -481,6 +570,17 @@
             >
               Freelancer
             </span>
+
+          </div>
+
+          <div class="profile-header-actions">
+
+            <a
+              href="tasks.html"
+              class="secondary-btn"
+            >
+              Browse Jobs
+            </a>
 
           </div>
 
@@ -500,11 +600,11 @@
         <section class="profile-card">
 
           <h2>
-            Profile Overview
+            Professional Profile
           </h2>
 
           <p class="profile-card-subtitle">
-            Your professional information on SocialWorkBD.
+            Professional information available to clients and the SocialWorkBD community.
           </p>
 
 
@@ -530,14 +630,14 @@
             <div class="info-item">
 
               <span class="info-label">
-                Account ID
+                Hourly Rate
               </span>
 
               <span
-                class="info-value"
-                id="account-id"
+                class="info-value rate-value"
+                id="profile-hourly-rate"
               >
-                -
+                Not set
               </span>
 
             </div>
@@ -546,14 +646,14 @@
             <div class="info-item">
 
               <span class="info-label">
-                Email
+                Experience
               </span>
 
               <span
                 class="info-value"
-                id="profile-email"
+                id="profile-experience"
               >
-                -
+                Not specified
               </span>
 
             </div>
@@ -562,14 +662,46 @@
             <div class="info-item">
 
               <span class="info-label">
-                Skills
+                Category
               </span>
 
               <span
                 class="info-value"
-                id="user-skills"
+                id="profile-category"
               >
-                -
+                Not specified
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Availability
+              </span>
+
+              <span
+                class="info-value"
+                id="profile-availability"
+              >
+                Available
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Location
+              </span>
+
+              <span
+                class="info-value"
+                id="profile-location-value"
+              >
+                Worldwide
               </span>
 
             </div>
@@ -578,15 +710,32 @@
             <div class="info-item bio-item">
 
               <span class="info-label">
-                About
-              </span>
+                About</span>
 
               <span
                 class="info-value"
                 id="user-bio"
               >
-                -
+                No professional bio added yet.
               </span>
+
+            </div>
+
+
+            <div class="info-item bio-item">
+
+              <span class="info-label">
+                Skills
+              </span>
+
+              <div
+                class="skills-list"
+                id="user-skills"
+              >
+                <span class="skill-tag">
+                  Skills not added
+                </span>
+              </div>
 
             </div>
 
@@ -600,8 +749,8 @@
               Browse Jobs
             </a>
 
-            <a href="post-job.html">
-              Post a Job
+            <a href="find-talent.html">
+              Find Talent
             </a>
 
           </div>
@@ -611,21 +760,22 @@
 
         <!-- EDIT PROFILE -->
 
-        <section class="profile-card">
+        <section
+          class="profile-card hidden"
+          id="edit-profile-card"
+        >
 
           <h2>
             Edit Profile
           </h2>
 
           <p class="profile-card-subtitle">
-            Keep your professional information up to date.
+            Keep your professional information up to date so clients can understand your services.
           </p>
 
 
           <form id="profile-form">
 
-
-            <!-- NAME -->
 
             <div class="form-group">
 
@@ -644,7 +794,25 @@
             </div>
 
 
-            <!-- ROLE -->
+            <div class="form-group">
+
+              <label for="profile-title-input">
+                Professional Title
+              </label>
+
+              <input
+                type="text"
+                id="profile-title-input"
+                placeholder="Example: Full Stack Web Developer"
+                maxlength="100"
+              >
+
+              <p class="form-help">
+                Use a clear title that describes the service you provide.
+              </p>
+
+            </div>
+
 
             <div class="form-group">
 
@@ -664,14 +832,152 @@
 
               </select>
 
-              <p class="form-help">
-                Choose the account type that best matches how you use SocialWorkBD.
-              </p>
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="profile-category">
+                Category
+              </label>
+
+              <select id="profile-category">
+
+                <option value="">
+                  Select a category
+                </option>
+
+                <option value="Web Development">
+                  Web Development
+                </option>
+
+                <option value="Design & Creative">
+                  Design & Creative
+                </option>
+
+                <option value="Writing & Translation">
+                  Writing & Translation
+                </option>
+
+                <option value="Digital Marketing">
+                  Digital Marketing
+                </option>
+
+                <option value="Video & Animation">
+                  Video & Animation
+                </option>
+
+                <option value="Data & AI">
+                  Data & AI
+                </option>
+
+                <option value="Business & Consulting">
+                  Business & Consulting
+                </option>
+
+                <option value="Admin Support">
+                  Admin Support
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+
+              </select>
 
             </div>
 
 
-            <!-- SKILLS -->
+            <div class="form-group">
+
+              <label for="profile-hourly-rate">
+                Hourly Rate (USD)
+              </label>
+
+              <input
+                type="number"
+                id="profile-hourly-rate"
+                min="0"
+                step="0.01"
+                placeholder="Example: 15"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="profile-experience">
+                Experience Level
+              </label>
+
+              <select id="profile-experience">
+
+                <option value="">
+                  Select experience level
+                </option>
+
+                <option value="Entry Level">
+                  Entry Level
+                </option>
+
+                <option value="Intermediate">
+                  Intermediate
+                </option>
+
+                <option value="Expert">
+                  Expert
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="profile-availability">
+                Availability
+              </label>
+
+              <select id="profile-availability">
+
+                <option value="Available">
+                  Available
+                </option>
+
+                <option value="Limited">
+                  Limited Availability
+                </option>
+
+                <option value="Unavailable">
+                  Currently Unavailable
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="profile-location-input">
+                Location
+              </label>
+
+              <input
+                type="text"
+                id="profile-location-input"
+                placeholder="Example: United States / Remote"
+                maxlength="100"
+              >
+
+              <p class="form-help">
+                You can enter your country, city, or simply use "Remote".
+              </p>
+
+            </div>
+
 
             <div class="form-group">
 
@@ -682,35 +988,32 @@
               <input
                 type="text"
                 id="profile-skills"
-                placeholder="Example: Web Development, Design, Writing"
+                placeholder="Example: JavaScript, React, Firebase"
                 autocomplete="off"
               >
 
               <p class="form-help">
-                Add skills that describe your professional services.
+                Separate multiple skills with commas.
               </p>
 
             </div>
 
 
-            <!-- BIO -->
-
             <div class="form-group">
 
               <label for="profile-bio">
-                About You
+                Professional Bio
               </label>
 
               <textarea
                 id="profile-bio"
-                rows="5"
+                rows="6"
+                maxlength="1000"
                 placeholder="Write a short professional introduction."
               ></textarea>
 
             </div>
 
-
-            <!-- ACTIONS -->
 
             <div class="profile-actions">
 
@@ -722,13 +1025,13 @@
                 Save Profile
               </button>
 
-              <a
-                href="index.html"
+              <button
+                type="button"
+                id="cancel-edit"
                 class="secondary-btn"
-                style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"
               >
-                Back to Home
-              </a>
+                Cancel
+              </button>
 
             </div>
 
@@ -738,9 +1041,49 @@
         </section>
 
 
+        <!-- OWNER ACTIONS -->
+
+        <div
+          id="owner-actions"
+          class="profile-card"
+        >
+
+          <h2>
+            Profile Settings
+          </h2>
+
+          <p class="profile-card-subtitle">
+            Only you can edit your own profile.
+          </p>
+
+          <div class="profile-actions">
+
+            <button
+              type="button"
+              id="edit-profile-btn"
+              class="primary-btn"
+            >
+              Edit Profile
+            </button>
+
+            <a
+              href="post-job.html"
+              class="secondary-btn"
+            >
+              Post a Job
+            </a>
+
+          </div>
+
+        </div>
+
+
         <!-- LOGOUT -->
 
-        <div class="logout-section">
+        <div
+          class="logout-section"
+          id="logout-section"
+        >
 
           <button
             type="button"
@@ -788,108 +1131,1034 @@
   <script src="app.js"></script>
 
 
-  <!-- PROFILE UI -->
+  <!-- PROFILE LOGIC -->
 
   <script>
 
-    document.addEventListener("DOMContentLoaded", function () {
+    (function () {
 
-      const observer = new MutationObserver(function () {
-
-        const nameElement =
-          document.getElementById("user-name");
-
-        const emailElement =
-          document.getElementById("user-email");
-
-        const roleElement =
-          document.getElementById("user-role");
-
-        const profileEmail =
-          document.getElementById("profile-email");
-
-        const accountType =
-          document.getElementById("profile-account-type");
-
-        const avatar =
-          document.getElementById("profile-avatar");
-
-        const loading =
-          document.getElementById("profile-loading");
-
-        const content =
-          document.getElementById("profile-content");
-
-        if (
-          nameElement &&
-          nameElement.textContent.trim() !== "-"
-        ) {
-
-          const name =
-            nameElement.textContent.trim();
-
-          const email =
-            emailElement
-              ? emailElement.textContent.trim()
-              : "-";
-
-          const role =
-            roleElement
-              ? roleElement.textContent.trim()
-              : "Freelancer";
+      "use strict";
 
 
-          if (profileEmail) {
-            profileEmail.textContent = email;
+      const $ = function (id) {
+        return document.getElementById(id);
+      };
+
+
+      const loading = $("profile-loading");
+      const errorBox = $("profile-error");
+      const content = $("profile-content");
+      const form = $("profile-form");
+      const editCard = $("edit-profile-card");
+      const ownerActions = $("owner-actions");
+      const logoutSection = $("logout-section");
+
+
+      let currentProfile = null;
+      let currentUser = null;
+      let viewingOwnProfile = false;
+
+
+      function showError(message) {
+
+        if (loading) {
+          loading.classList.add("hidden");
+        }
+
+        if (content) {
+          content.classList.add("hidden");
+        }
+
+        if (errorBox) {
+          errorBox.textContent = message;
+          errorBox.classList.remove("hidden");
+        }
+
+      }
+
+
+      function showContent() {
+
+        if (loading) {
+          loading.classList.add("hidden");
+        }
+
+        if (errorBox) {
+          errorBox.classList.add("hidden");
+        }
+
+        if (content) {
+          content.classList.remove("hidden");
+        }
+
+      }
+
+
+      function getInitials(name) {
+
+        const value =
+          String(name || "SocialWorkBD").trim();
+
+        const parts =
+          value
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2);
+
+        const initials =
+          parts
+            .map(function (part) {
+              return part.charAt(0).toUpperCase();
+            })
+            .join("");
+
+        return initials || "SW";
+
+      }
+
+
+      function normalizeSkills(value) {
+
+        if (Array.isArray(value)) {
+
+          return value
+            .map(function (item) {
+              return String(item || "").trim();
+            })
+            .filter(Boolean);
+
+        }
+
+        if (typeof value === "string") {
+
+          return value
+            .split(",")
+            .map(function (item) {
+              return item.trim();
+            })
+            .filter(Boolean);
+
+        }
+
+        return [];
+
+      }
+
+
+      function getQueryId() {
+
+        const params =
+          new URLSearchParams(window.location.search);
+
+        return params.get("id");
+
+      }
+
+
+      function formatRate(value) {
+
+        const rate = Number(value);
+
+        if (!Number.isFinite(rate) || rate <= 0) {
+          return "Not set";
+        }
+
+        return "$" + rate.toFixed(2) + " / hr";
+
+      }
+
+
+      function getRoleLabel(role) {
+
+        return String(role || "").toLowerCase() === "client"
+          ? "Client"
+          : "Freelancer";
+
+      }
+
+
+      function setText(id, value, fallback) {
+
+        const element = $(id);
+
+        if (!element) {
+          return;
+        }
+
+        const text =
+          value !== undefined &&
+          value !== null &&
+          String(value).trim() !== ""
+            ? String(value).trim()
+            : fallback;
+
+        element.textContent = text;
+
+      }
+
+
+      function renderSkills(skills) {
+
+        const container = $("user-skills");
+
+        if (!container) {
+          return;
+        }
+
+        container.innerHTML = "";
+
+        if (!skills.length) {
+
+          const empty =
+            document.createElement("span");
+
+          empty.className = "skill-tag";
+          empty.textContent = "Skills not added";
+
+          container.appendChild(empty);
+
+          return;
+
+        }
+
+        skills.forEach(function (skill) {
+
+          const tag =
+            document.createElement("span");
+
+          tag.className = "skill-tag";
+          tag.textContent = skill;
+
+          container.appendChild(tag);
+
+        });
+
+      }
+
+
+      function populateProfile(data, userId) {
+
+        currentProfile = data || {};
+
+        const name =
+          currentProfile.name ||
+          currentProfile.displayName ||
+          currentProfile.fullName ||
+          "SocialWorkBD User";
+
+        const title =
+          currentProfile.title ||
+          currentProfile.profession ||
+          currentProfile.headline ||
+          "Professional Freelancer";
+
+        const role =
+          getRoleLabel(currentProfile.role);
+
+        const location =
+          currentProfile.location ||
+          currentProfile.country ||
+          currentProfile.city ||
+          "Worldwide";
+
+        const bio =
+          currentProfile.bio ||
+          currentProfile.about ||
+          "No professional bio added yet.";
+
+        const category =
+          currentProfile.category ||
+          "Not specified";
+
+        const experience =
+          currentProfile.experienceLevel ||
+          currentProfile.experience ||
+          "Not specified";
+
+        const availability =
+          currentProfile.availability ||
+          currentProfile.available ||
+          "Available";
+
+        const hourlyRate =
+          currentProfile.hourlyRate ??
+          currentProfile.hourly_rate ??
+          currentProfile.rate ??
+          currentProfile.hourly ??
+          "";
+
+        const skills =
+          normalizeSkills(currentProfile.skills);
+
+        setText("user-name", name, "SocialWorkBD User");
+        setText("user-title", title, "Professional Freelancer");
+        setText("user-location", "🌍 " + location, "🌍 Worldwide");
+        setText("user-role", role, "Freelancer");
+
+        setText(
+          "profile-account-type",
+          role,
+          "Freelancer"
+        );
+
+        setText(
+          "profile-hourly-rate",
+          formatRate(hourlyRate),
+          "Not set"
+        );
+
+        setText(
+          "profile-experience",
+          experience,
+          "Not specified"
+        );
+
+        setText(
+          "profile-category",
+          category,
+          "Not specified"
+        );
+
+        setText(
+          "profile-availability",
+          availability,
+          "Available"
+        );
+
+        setText(
+          "profile-location-value",
+          location,
+          "Worldwide"
+        );
+
+        setText(
+          "user-bio",
+          bio,
+          "No professional bio added yet."
+        );
+
+        renderSkills(skills);
+
+        const avatar = $("profile-avatar");
+
+        if (avatar) {
+          avatar.textContent = getInitials(name);
+        }
+
+        document.title =
+          name + " - SocialWorkBD";
+
+
+        if (viewingOwnProfile) {
+
+          const nameInput =
+            $("profile-name");
+
+          const titleInput =
+            $("profile-title-input");
+
+          const roleInput =
+            $("profile-role");
+
+          const categoryInput =
+            $("profile-category");
+
+          const rateInput =
+            $("profile-hourly-rate");
+
+          const experienceInput =
+            $("profile-experience");
+
+          const availabilityInput =
+            $("profile-availability");
+
+          const locationInput =
+            $("profile-location-input");
+
+          const skillsInput =
+            $("profile-skills");
+
+          const bioInput =
+            $("profile-bio");
+
+
+          if (nameInput) {
+            nameInput.value = name;
           }
 
-
-          if (accountType) {
-            accountType.textContent = role;
+          if (titleInput) {
+            titleInput.value =
+              currentProfile.title ||
+              currentProfile.profession ||
+              currentProfile.headline ||
+              "";
           }
 
-
-          if (avatar) {
-
-            const initials = name
-              .split(" ")
-              .filter(Boolean)
-              .slice(0, 2)
-              .map(function (word) {
-                return word
-                  .charAt(0)
-                  .toUpperCase();
-              })
-              .join("");
-
-            avatar.textContent =
-              initials || "SW";
-
+          if (roleInput) {
+            roleInput.value =
+              String(currentProfile.role || "worker").toLowerCase() === "client"
+                ? "client"
+                : "worker";
           }
 
-
-          if (loading) {
-            loading.style.display = "none";
+          if (categoryInput) {
+            categoryInput.value =
+              currentProfile.category || "";
           }
 
+          if (rateInput) {
+            rateInput.value =
+              hourlyRate !== ""
+                ? hourlyRate
+                : "";
+          }
 
-          if (content) {
-            content.style.display = "block";
+          if (experienceInput) {
+            experienceInput.value =
+              currentProfile.experienceLevel ||
+              currentProfile.experience ||
+              "";
+          }
+
+          if (availabilityInput) {
+            availabilityInput.value =
+              currentProfile.availability ||
+              currentProfile.available ||
+              "Available";
+          }
+
+          if (locationInput) {
+            locationInput.value =
+              currentProfile.location ||
+              currentProfile.country ||
+              currentProfile.city ||
+              "";
+          }
+
+          if (skillsInput) {
+            skillsInput.value =
+              skills.join(", ");
+          }
+
+          if (bioInput) {
+            bioInput.value =
+              currentProfile.bio ||
+              currentProfile.about ||
+              "";
           }
 
         }
 
-      });
+      }
 
 
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        characterData: true
-      });
+      async function loadProfile(user) {
+
+        if (!window.db) {
+          showError(
+            "Firebase database is not available. Please refresh the page."
+          );
+          return;
+        }
 
 
-    });
+        const queryId = getQueryId();
+
+
+        /*
+          If ?id= is provided, show that profile.
+
+          Otherwise show the currently logged-in user's profile.
+        */
+
+        let profileId =
+          queryId || (user ? user.uid : null);
+
+        if (!profileId) {
+
+          showError(
+            "Please log in or open a valid freelancer profile."
+          );
+
+          return;
+
+        }
+
+
+        try {
+
+          let snapshot = null;
+
+          const directRef =
+            window.db
+              .collection("users")
+              .doc(profileId);
+
+          snapshot =
+            await directRef.get();
+
+
+          /*
+            Some older profiles may use an internal id
+            instead of the Firebase UID as the document id.
+          */
+
+          if (!snapshot.exists) {
+
+            const result =
+              await window.db
+                .collection("users")
+                .where("uid", "==", profileId)
+                .limit(1)
+                .get();
+
+            if (!result.empty) {
+              snapshot = result.docs[0];
+            }
+
+          }
+
+
+          if (!snapshot.exists) {
+
+            showError(
+              "This profile could not be found."
+            );
+
+            return;
+
+          }
+
+
+          const data =
+            snapshot.data() || {};
+
+          const actualProfileId =
+            snapshot.id;
+
+          viewingOwnProfile =
+            !!user &&
+            (
+              actualProfileId === user.uid ||
+              data.uid === user.uid ||
+              data.id === user.uid
+            );
+
+
+          /*
+            Public profile:
+            hide edit/settings/logout controls.
+          */
+
+          if (ownerActions) {
+            ownerActions.classList.toggle(
+              "hidden",
+              !viewingOwnProfile
+            );
+          }
+
+          if (logoutSection) {
+            logoutSection.classList.toggle(
+              "hidden",
+              !viewingOwnProfile
+            );
+          }
+
+          if (editCard) {
+            editCard.classList.add("hidden");
+          }
+
+
+          populateProfile(data, actualProfileId);
+
+          showContent();
+
+        } catch (error) {
+
+          console.error(
+            "Profile loading error:",
+            error
+          );
+
+          showError(
+            "Unable to load this profile right now."
+          );
+
+        }
+
+      }
+
+
+      async function saveProfile(event) {
+
+        event.preventDefault();
+
+        if (!currentUser) {
+
+          showError(
+            "Please log in to update your profile."
+          );
+
+          return;
+
+        }
+
+        if (!window.db) {
+
+          showError(
+            "Firebase database is not available."
+          );
+
+          return;
+
+        }
+
+
+        const button =
+          $("save-profile");
+
+        const name =
+          $("profile-name").value.trim();
+
+        const title =
+          $("profile-title-input").value.trim();
+
+        const role =
+          $("profile-role").value;
+
+        const category =
+          $("profile-category").value;
+
+        const rateValue =
+          $("profile-hourly-rate").value;
+
+        const experience =
+          $("profile-experience").value;
+
+        const availability =
+          $("profile-availability").value;
+
+        const location =
+          $("profile-location-input").value.trim();
+
+        const skills =
+          normalizeSkills(
+            $("profile-skills").value
+          );
+
+        const bio =
+          $("profile-bio").value.trim();
+
+
+        if (!name) {
+
+          alert("Please enter your full name.");
+          return;
+
+        }
+
+
+        let hourlyRate = null;
+
+        if (rateValue !== "") {
+
+          hourlyRate =
+            Number(rateValue);
+
+          if (
+            !Number.isFinite(hourlyRate) ||
+            hourlyRate < 0
+          ) {
+
+            alert(
+              "Please enter a valid hourly rate."
+            );
+
+            return;
+
+          }
+
+        }
+
+
+        if (button) {
+          button.disabled = true;
+          button.textContent = "Saving...";
+        }
+
+
+        try {
+
+          const profileRef =
+            window.db
+              .collection("users")
+              .doc(currentUser.uid);
+
+
+          const updateData = {
+
+            name: name,
+
+            displayName: name,
+
+            title: title,
+
+            role: role,
+
+            category: category,
+
+            hourlyRate: hourlyRate,
+
+            experienceLevel: experience,
+
+            availability: availability,
+
+            location: location,
+
+            skills: skills,
+
+            bio: bio,
+
+            updatedAt:
+              firebase.firestore.FieldValue.serverTimestamp()
+
+          };
+
+
+          await profileRef.set(
+            updateData,
+            {
+              merge: true
+            }
+          );
+
+
+          /*
+            Update local storage for compatibility
+            with older SocialWorkBD pages.
+          */
+
+          try {
+
+            const saved =
+              JSON.parse(
+                localStorage.getItem("currentUser") || "{}"
+              );
+
+            saved.id =
+              saved.id || currentUser.uid;
+
+            saved.uid =
+              currentUser.uid;
+
+            saved.name =
+              name;
+
+            saved.email =
+              currentUser.email || saved.email || "";
+
+            saved.role =
+              role;
+
+            saved.skills =
+              skills;
+
+            localStorage.setItem(
+              "currentUser",
+              JSON.stringify(saved)
+            );
+
+          } catch (storageError) {
+
+            console.warn(
+              "Local storage update failed:",
+              storageError
+            );
+
+          }
+
+
+          currentProfile =
+            Object.assign(
+              {},
+              currentProfile,
+              updateData
+            );
+
+
+          populateProfile(
+            currentProfile,
+            currentUser.uid
+          );
+
+
+          const status =
+            $("account-status-box");
+
+          if (status) {
+
+            status.className =
+              "account-status-box show success";
+
+            status.textContent =
+              "Profile updated successfully.";
+
+          }
+
+
+          if (editCard) {
+            editCard.classList.add("hidden");
+          }
+
+
+        } catch (error) {
+
+          console.error(
+            "Profile save error:",
+            error
+          );
+
+          const status =
+            $("account-status-box");
+
+          if (status) {
+
+            status.className =
+              "account-status-box show error";
+
+            status.textContent =
+              "Unable to save your profile. Please try again.";
+
+          } else {
+
+            alert(
+              "Unable to save your profile."
+            );
+
+          }
+
+        } finally {
+
+          if (button) {
+            button.disabled = false;
+            button.textContent = "Save Profile";
+          }
+
+        }
+
+      }
+
+
+      async function logout() {
+
+        try {
+
+          if (
+            window.auth &&
+            typeof window.auth.signOut === "function"
+          ) {
+
+            await window.auth.signOut();
+
+          } else if (
+            typeof firebase !== "undefined" &&
+            firebase.auth
+          ) {
+
+            await firebase.auth().signOut();
+
+          }
+
+          localStorage.removeItem("currentUser");
+
+          window.location.href =
+            "index.html";
+
+        } catch (error) {
+
+          console.error(
+            "Logout error:",
+            error
+          );
+
+          alert(
+            "Unable to log out. Please try again."
+          );
+
+        }
+
+      }
+
+
+      function setupEvents() {
+
+        const editButton =
+          $("edit-profile-btn");
+
+        const cancelButton =
+          $("cancel-edit");
+
+        const logoutButton =
+          $("logout-btn");
+
+
+        if (editButton) {
+
+          editButton.addEventListener(
+            "click",
+            function () {
+
+              if (!viewingOwnProfile) {
+                return;
+              }
+
+              if (editCard) {
+                editCard.classList.remove("hidden");
+
+                editCard.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start"
+                });
+
+              }
+
+            }
+          );
+
+        }
+
+
+        if (cancelButton) {
+
+          cancelButton.addEventListener(
+            "click",
+            function () {
+
+              if (editCard) {
+                editCard.classList.add("hidden");
+              }
+
+            }
+          );
+
+        }
+
+
+        if (form) {
+
+          form.addEventListener(
+            "submit",
+            saveProfile
+          );
+
+        }
+
+
+        if (logoutButton) {
+
+          logoutButton.addEventListener(
+            "click",
+            logout
+          );
+
+        }
+
+      }
+
+
+      function start() {
+
+        setupEvents();
+
+
+        /*
+          Wait for Firebase Auth state.
+        */
+
+        if (
+          window.auth &&
+          typeof window.auth.onAuthStateChanged === "function"
+        ) {
+
+          window.auth.onAuthStateChanged(
+            function (user) {
+
+              currentUser = user || null;
+
+              loadProfile(currentUser);
+
+            }
+          );
+
+          return;
+
+        }
+
+
+        if (
+          typeof firebase !== "undefined" &&
+          firebase.auth
+        ) {
+
+          firebase
+            .auth()
+            .onAuthStateChanged(
+              function (user) {
+
+                currentUser =
+                  user || null;
+
+                loadProfile(currentUser);
+
+              }
+            );
+
+          return;
+
+        }
+
+
+        /*
+          Fallback for pages using localStorage
+          while Firebase is loading.
+        */
+
+        let storedUser = null;
+
+        try {
+
+          storedUser =
+            JSON.parse(
+              localStorage.getItem("currentUser") || "null"
+            );
+
+        } catch (error) {
+
+          storedUser = null;
+
+        }
+
+        loadProfile(
+          storedUser
+        );
+
+      }
+
+
+      if (document.readyState === "loading") {
+
+        document.addEventListener(
+          "DOMContentLoaded",
+          start
+        );
+
+      } else {
+
+        start();
+
+      }
+
+    })();
 
   </script>
 
