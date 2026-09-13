@@ -34,6 +34,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
+
   <style>
 
     .dashboard-page {
@@ -42,10 +43,12 @@
       padding: 35px 20px 55px;
     }
 
+
     .dashboard-wrapper {
       max-width: 1180px;
       margin: 0 auto;
     }
+
 
     .dashboard-top {
       display: flex;
@@ -55,11 +58,13 @@
       margin-bottom: 25px;
     }
 
+
     .dashboard-top h1 {
       margin: 0 0 6px;
       color: #17251d;
       font-size: 30px;
     }
+
 
     .dashboard-top p {
       margin: 0;
@@ -67,11 +72,13 @@
       font-size: 14px;
     }
 
+
     .dashboard-top-actions {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
+
 
     .dashboard-btn {
       display: inline-flex;
@@ -85,12 +92,15 @@
       border: 1px solid #d5ded9;
       background: #ffffff;
       color: #33423a;
+      cursor: pointer;
     }
+
 
     .dashboard-btn:hover {
       border-color: #16a34a;
       color: #12843d;
     }
+
 
     .dashboard-btn.primary {
       border-color: #16a34a;
@@ -98,10 +108,26 @@
       color: #ffffff;
     }
 
+
     .dashboard-btn.primary:hover {
       background: #12843d;
       color: #ffffff;
     }
+
+
+    .dashboard-btn.logout-btn {
+      border-color: #e3caca;
+      color: #a33a3a;
+      background: #ffffff;
+    }
+
+
+    .dashboard-btn.logout-btn:hover {
+      border-color: #c95b5b;
+      color: #8f2929;
+      background: #fff7f7;
+    }
+
 
     .stats-grid {
       display: grid;
@@ -109,6 +135,7 @@
       gap: 18px;
       margin-bottom: 24px;
     }
+
 
     .stat-card {
       background: #ffffff;
@@ -118,6 +145,7 @@
       box-shadow: 0 7px 25px rgba(20, 40, 30, 0.05);
     }
 
+
     .stat-label {
       display: block;
       color: #758179;
@@ -126,12 +154,14 @@
       margin-bottom: 9px;
     }
 
+
     .stat-value {
       display: block;
       color: #17251d;
       font-size: 25px;
       font-weight: 750;
     }
+
 
     .account-card {
       background: #ffffff;
@@ -142,11 +172,13 @@
       box-shadow: 0 7px 25px rgba(20, 40, 30, 0.05);
     }
 
+
     .account-info {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 14px;
     }
+
 
     .account-item {
       padding: 13px 15px;
@@ -155,9 +187,11 @@
       border: 1px solid #e8edea;
     }
 
+
     .account-item span {
       display: block;
     }
+
 
     .account-label {
       color: #7a857e;
@@ -168,11 +202,13 @@
       margin-bottom: 5px;
     }
 
+
     .account-value {
       color: #26352d;
       font-size: 14px;
       word-break: break-word;
     }
+
 
     .dashboard-section {
       background: #ffffff;
@@ -183,6 +219,7 @@
       box-shadow: 0 7px 25px rgba(20, 40, 30, 0.05);
     }
 
+
     .section-heading {
       display: flex;
       justify-content: space-between;
@@ -191,11 +228,13 @@
       margin-bottom: 20px;
     }
 
+
     .section-heading h2 {
       margin: 0;
       color: #17251d;
       font-size: 21px;
     }
+
 
     .section-heading a {
       color: #15803d;
@@ -204,14 +243,17 @@
       font-weight: 700;
     }
 
+
     .section-heading a:hover {
       text-decoration: underline;
     }
+
 
     .job-list {
       display: grid;
       gap: 13px;
     }
+
 
     .job-card {
       border: 1px solid #e1e8e4;
@@ -221,16 +263,19 @@
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
+
     .job-card:hover {
       border-color: #b8d7c1;
       box-shadow: 0 5px 18px rgba(20, 40, 30, 0.05);
     }
+
 
     .job-card h3 {
       margin: 0 0 8px;
       color: #1d2a23;
       font-size: 17px;
     }
+
 
     .job-description {
       margin: 0 0 13px;
@@ -239,12 +284,14 @@
       line-height: 1.6;
     }
 
+
     .job-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 9px;
       margin-bottom: 15px;
     }
+
 
     .meta-item {
       display: inline-block;
@@ -256,6 +303,7 @@
       font-weight: 600;
     }
 
+
     .job-card-footer {
       display: flex;
       justify-content: space-between;
@@ -263,11 +311,13 @@
       gap: 15px;
     }
 
+
     .job-budget {
       color: #15803d;
       font-size: 15px;
       font-weight: 750;
     }
+
 
     .view-job-btn {
       display: inline-flex;
@@ -282,14 +332,17 @@
       font-weight: 700;
     }
 
+
     .view-job-btn:hover {
       background: #12843d;
     }
+
 
     .proposal-list {
       display: grid;
       gap: 13px;
     }
+
 
     .proposal-card {
       border: 1px solid #e1e8e4;
@@ -298,11 +351,13 @@
       background: #ffffff;
     }
 
+
     .proposal-card h3 {
       margin: 0 0 8px;
       color: #1d2a23;
       font-size: 16px;
     }
+
 
     .proposal-meta {
       display: flex;
@@ -310,6 +365,7 @@
       gap: 8px;
       margin: 10px 0 12px;
     }
+
 
     .proposal-status {
       display: inline-block;
@@ -322,12 +378,16 @@
       text-transform: capitalize;
     }
 
+
     .proposal-cover {
       color: #66736b;
       font-size: 13px;
       line-height: 1.6;
       margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
+
 
     .empty-state {
       padding: 28px 15px;
@@ -339,12 +399,14 @@
       background: #fafcfb;
     }
 
+
     .loading-state {
       padding: 25px;
       text-align: center;
       color: #718078;
       font-size: 14px;
     }
+
 
     .error-state {
       padding: 18px;
@@ -355,6 +417,7 @@
       font-size: 14px;
     }
 
+
     @media (max-width: 850px) {
 
       .stats-grid {
@@ -363,47 +426,57 @@
 
     }
 
+
     @media (max-width: 650px) {
 
       .dashboard-page {
         padding: 25px 14px 45px;
       }
 
+
       .dashboard-top {
         flex-direction: column;
         align-items: flex-start;
       }
 
+
       .dashboard-top h1 {
         font-size: 25px;
       }
+
 
       .dashboard-top-actions {
         width: 100%;
       }
 
+
       .dashboard-btn {
         flex: 1;
       }
 
+
       .account-info {
         grid-template-columns: 1fr;
       }
+
 
       .dashboard-section,
       .account-card {
         padding: 20px;
       }
 
+
       .section-heading {
         align-items: flex-start;
         flex-direction: column;
       }
 
+
       .job-card-footer {
         align-items: flex-start;
         flex-direction: column;
       }
+
 
       .view-job-btn {
         width: 100%;
@@ -487,12 +560,22 @@
             Find Work
           </a>
 
+
           <a
             href="profile.html"
             class="dashboard-btn"
           >
             My Profile
           </a>
+
+
+          <button
+            type="button"
+            id="logout-btn"
+            class="dashboard-btn logout-btn"
+          >
+            Logout
+          </button>
 
         </div>
 
@@ -625,9 +708,7 @@
               Account Type
             </span>
 
-            <span
-              class="account-value"
-            >
+            <span class="account-value">
               Freelancer
             </span>
 
@@ -745,7 +826,10 @@
 
       const div = document.createElement("div");
 
-      div.textContent = value == null ? "" : String(value);
+      div.textContent =
+        value == null
+          ? ""
+          : String(value);
 
       return div.innerHTML;
 
@@ -762,11 +846,14 @@
         return "Recently posted";
       }
 
+
       try {
 
-        const date = timestamp.toDate
-          ? timestamp.toDate()
-          : new Date(timestamp);
+        const date =
+          timestamp.toDate
+            ? timestamp.toDate()
+            : new Date(timestamp);
+
 
         return date.toLocaleDateString(
           "en-US",
@@ -794,7 +881,8 @@
 
       if (!user) {
 
-        window.location.href = "login.html";
+        window.location.href =
+          "login.html";
 
         return;
 
@@ -814,7 +902,8 @@
 
           await auth.signOut();
 
-          window.location.href = "login.html";
+          window.location.href =
+            "login.html";
 
           return;
 
@@ -825,7 +914,9 @@
           profileSnapshot.data();
 
 
-        /* ROLE CHECK */
+        /* ==============================
+           ROLE CHECK
+        =============================== */
 
         if (profile.role === "client") {
 
@@ -837,41 +928,85 @@
         }
 
 
-        /* BASIC ACCOUNT INFO */
+        /* ==============================
+           SUSPENDED ACCOUNT CHECK
+        =============================== */
+
+        if (profile.status === "suspended") {
+
+          alert(
+            "Your account is currently suspended."
+          );
+
+          await auth.signOut();
+
+          window.location.href =
+            "login.html";
+
+          return;
+
+        }
+
+
+        /* ==============================
+           BASIC ACCOUNT INFO
+        =============================== */
 
         const name =
           profile.name ||
           user.displayName ||
           "Freelancer";
 
+
         const email =
           profile.email ||
           user.email ||
           "-";
 
+
         const accountId =
           profile.accountId ||
           "-";
+
 
         const balance =
           Number(profile.balance || 0);
 
 
-        document.getElementById("user-name").textContent =
+        document.getElementById(
+          "user-name"
+        ).textContent =
           name;
 
-        document.getElementById("account-name").textContent =
+
+        document.getElementById(
+          "account-name"
+        ).textContent =
           name;
 
-        document.getElementById("account-email").textContent =
+
+        document.getElementById(
+          "account-email"
+        ).textContent =
           email;
 
-        document.getElementById("account-id").textContent =
+
+        document.getElementById(
+          "account-id"
+        ).textContent =
           accountId;
 
-        document.getElementById("balance").textContent =
-          balance.toLocaleString("en-US") + " BDT";
 
+        document.getElementById(
+          "balance"
+        ).textContent =
+          balance.toLocaleString("en-US") +
+          " BDT";
+
+
+        /* ==============================
+           LOCAL USER CACHE
+        =============================== */
 
         localStorage.setItem(
           "currentUser",
@@ -882,6 +1017,10 @@
         );
 
 
+        /* ==============================
+           LOAD DASHBOARD DATA
+        =============================== */
+
         await Promise.all([
           loadAvailableJobs(user.uid),
           loadMyProposals(user.uid)
@@ -890,12 +1029,21 @@
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "Worker dashboard error:",
+          error
+        );
 
-        document.getElementById("available-jobs").innerHTML =
+
+        document.getElementById(
+          "available-jobs"
+        ).innerHTML =
           '<div class="error-state">Unable to load your dashboard. Please try again.</div>';
 
-        document.getElementById("my-bids").innerHTML =
+
+        document.getElementById(
+          "my-bids"
+        ).innerHTML =
           '<div class="error-state">Unable to load your proposals.</div>';
 
       }
@@ -907,17 +1055,36 @@
        LOAD AVAILABLE JOBS
     =============================== */
 
-    async function loadAvailableJobs(currentUserId) {
+    async function loadAvailableJobs(
+      currentUserId
+    ) {
 
       const container =
-        document.getElementById("available-jobs");
+        document.getElementById(
+          "available-jobs"
+        );
+
 
       try {
+
+        /*
+          IMPORTANT:
+
+          Firestore rules allow workers to read
+          jobs where status == "open".
+
+          Therefore this query uses the same
+          security condition.
+        */
 
         const snapshot =
           await db
             .collection("jobs")
-            .where("status", "==", "open")
+            .where(
+              "status",
+              "==",
+              "open"
+            )
             .limit(30)
             .get();
 
@@ -927,8 +1094,11 @@
 
         if (snapshot.empty) {
 
-          document.getElementById("job-count").textContent =
+          document.getElementById(
+            "job-count"
+          ).textContent =
             "0";
+
 
           container.innerHTML = `
             <div class="empty-state">
@@ -936,6 +1106,7 @@
               Check back soon for new opportunities.
             </div>
           `;
+
 
           return;
 
@@ -950,11 +1121,18 @@
           const job =
             doc.data();
 
-          /* Do not show own projects */
+
+          /*
+            IMPORTANT:
+
+            app.js creates jobs with ownerId.
+
+            Do not use clientId here.
+          */
 
           if (
-            job.clientId &&
-            job.clientId === currentUserId
+            job.ownerId &&
+            job.ownerId === currentUserId
           ) {
 
             return;
@@ -970,19 +1148,25 @@
         });
 
 
-        /* Sort newest first */
+        /* ==============================
+           SORT NEWEST FIRST
+        =============================== */
 
         jobs.sort(function(a, b) {
 
           const aTime =
-            a.createdAt && a.createdAt.toMillis
+            a.createdAt &&
+            a.createdAt.toMillis
               ? a.createdAt.toMillis()
               : 0;
 
+
           const bTime =
-            b.createdAt && b.createdAt.toMillis
+            b.createdAt &&
+            b.createdAt.toMillis
               ? b.createdAt.toMillis()
               : 0;
+
 
           return bTime - aTime;
 
@@ -993,7 +1177,9 @@
           jobs.slice(0, 20);
 
 
-        document.getElementById("job-count").textContent =
+        document.getElementById(
+          "job-count"
+        ).textContent =
           visibleJobs.length;
 
 
@@ -1005,6 +1191,7 @@
             </div>
           `;
 
+
           return;
 
         }
@@ -1013,7 +1200,10 @@
         visibleJobs.forEach(function(job) {
 
           const card =
-            document.createElement("article");
+            document.createElement(
+              "article"
+            );
+
 
           card.className =
             "job-card";
@@ -1021,7 +1211,8 @@
 
           const title =
             escapeHTML(
-              job.title || "Untitled Project"
+              job.title ||
+              "Untitled Project"
             );
 
 
@@ -1034,23 +1225,30 @@
 
 
           const budget =
-            Number(job.budget || 0);
+            Number(
+              job.budget || 0
+            );
 
 
           const delivery =
             job.deliveryDays
-              ? escapeHTML(job.deliveryDays) + " days"
+              ? escapeHTML(
+                  job.deliveryDays
+                ) + " days"
               : "Flexible";
 
 
           const skills =
             escapeHTML(
-              job.skills || "Various skills"
+              job.skills ||
+              "Various skills"
             );
 
 
           const date =
-            formatDate(job.createdAt);
+            formatDate(
+              job.createdAt
+            );
 
 
           card.innerHTML = `
@@ -1082,7 +1280,9 @@
             <div class="job-card-footer">
 
               <span class="job-budget">
-                Budget: ${budget.toLocaleString("en-US")} BDT
+                Budget:
+                ${budget.toLocaleString("en-US")}
+                BDT
               </span>
 
               <a
@@ -1097,21 +1297,31 @@
           `;
 
 
-          container.appendChild(card);
+          container.appendChild(
+            card
+          );
 
         });
 
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "Available jobs error:",
+          error
+        );
 
-        document.getElementById("job-count").textContent =
+
+        document.getElementById(
+          "job-count"
+        ).textContent =
           "0";
+
 
         container.innerHTML = `
           <div class="error-state">
-            Projects could not be loaded. Please try again later.
+            Projects could not be loaded.
+            Please try again later.
           </div>
         `;
 
@@ -1124,19 +1334,34 @@
        LOAD MY PROPOSALS
     =============================== */
 
-    async function loadMyProposals(currentUserId) {
+    async function loadMyProposals(
+      currentUserId
+    ) {
 
       const container =
-        document.getElementById("my-bids");
+        document.getElementById(
+          "my-bids"
+        );
 
 
       try {
+
+        /*
+          IMPORTANT:
+
+          app.js creates proposals using:
+
+          workerId: profile.uid
+
+          Therefore the dashboard must query
+          workerId, NOT freelancerId.
+        */
 
         const snapshot =
           await db
             .collection("proposals")
             .where(
-              "freelancerId",
+              "workerId",
               "==",
               currentUserId
             )
@@ -1149,8 +1374,11 @@
 
         if (snapshot.empty) {
 
-          document.getElementById("proposal-count").textContent =
+          document.getElementById(
+            "proposal-count"
+          ).textContent =
             "0";
+
 
           container.innerHTML = `
             <div class="empty-state">
@@ -1160,6 +1388,7 @@
               Find a project and submit your first proposal.
             </div>
           `;
+
 
           return;
 
@@ -1179,124 +1408,162 @@
         });
 
 
-        /* Newest proposals first */
+        /* ==============================
+           NEWEST PROPOSALS FIRST
+        =============================== */
 
         proposals.sort(function(a, b) {
 
           const aTime =
-            a.createdAt && a.createdAt.toMillis
+            a.createdAt &&
+            a.createdAt.toMillis
               ? a.createdAt.toMillis()
               : 0;
 
+
           const bTime =
-            b.createdAt && b.createdAt.toMillis
+            b.createdAt &&
+            b.createdAt.toMillis
               ? b.createdAt.toMillis()
               : 0;
+
 
           return bTime - aTime;
 
         });
 
 
+        /* ==============================
+           ACTIVE PROPOSALS
+        =============================== */
+
         const activeProposals =
-          proposals.filter(function(proposal) {
+          proposals.filter(
+            function(proposal) {
 
-            return (
-              proposal.status !== "rejected" &&
-              proposal.status !== "cancelled"
-            );
+              return (
+                proposal.status !==
+                  "rejected" &&
+                proposal.status !==
+                  "cancelled"
+              );
 
-          });
+            }
+          );
 
 
-        document.getElementById("proposal-count").textContent =
+        document.getElementById(
+          "proposal-count"
+        ).textContent =
           activeProposals.length;
 
 
-        proposals.slice(0, 20).forEach(function(proposal) {
+        proposals
+          .slice(0, 20)
+          .forEach(
+            function(proposal) {
 
-          const card =
-            document.createElement("article");
-
-          card.className =
-            "proposal-card";
-
-
-          const title =
-            escapeHTML(
-              proposal.jobTitle ||
-              "Project"
-            );
+              const card =
+                document.createElement(
+                  "article"
+                );
 
 
-          const amount =
-            Number(
-              proposal.amount || 0
-            );
+              card.className =
+                "proposal-card";
 
 
-          const delivery =
-            proposal.deliveryDays
-              ? escapeHTML(
-                  proposal.deliveryDays
-                ) + " days"
-              : "Not specified";
+              const title =
+                escapeHTML(
+                  proposal.jobTitle ||
+                  proposal.title ||
+                  "Project"
+                );
 
 
-          const status =
-            escapeHTML(
-              proposal.status ||
-              "submitted"
-            );
+              const amount =
+                Number(
+                  proposal.amount ||
+                  proposal.bidAmount ||
+                  0
+                );
 
 
-          const coverLetter =
-            escapeHTML(
-              proposal.coverLetter ||
-              "No cover letter provided."
-            );
+              const delivery =
+                proposal.deliveryDays
+                  ? escapeHTML(
+                      proposal.deliveryDays
+                    ) + " days"
+                  : "Not specified";
 
 
-          card.innerHTML = `
-
-            <h3>
-              ${title}
-            </h3>
-
-            <div class="proposal-meta">
-
-              <span class="proposal-status">
-                ${status}
-              </span>
-
-              <span class="meta-item">
-                Bid: ${amount.toLocaleString("en-US")} BDT
-              </span>
-
-              <span class="meta-item">
-                Delivery: ${delivery}
-              </span>
-
-            </div>
-
-            <p class="proposal-cover">
-              ${coverLetter}
-            </p>
-
-          `;
+              const status =
+                escapeHTML(
+                  proposal.status ||
+                  "submitted"
+                );
 
 
-          container.appendChild(card);
+              const coverLetter =
+                escapeHTML(
+                  proposal.coverLetter ||
+                  "No cover letter provided."
+                );
 
-        });
+
+              card.innerHTML = `
+
+                <h3>
+                  ${title}
+                </h3>
+
+                <div class="proposal-meta">
+
+                  <span class="proposal-status">
+                    ${status}
+                  </span>
+
+                  <span class="meta-item">
+                    Bid:
+                    ${amount.toLocaleString("en-US")}
+                    BDT
+                  </span>
+
+                  <span class="meta-item">
+                    Delivery:
+                    ${delivery}
+                  </span>
+
+                </div>
+
+                <p class="proposal-cover">
+                  ${coverLetter}
+                </p>
+
+              `;
+
+
+              container.appendChild(
+                card
+              );
+
+            }
+          );
 
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "My proposals error:",
+          error
+        );
 
-        document.getElementById("proposal-count").textContent =
+
+        document.getElementById(
+          "proposal-count"
+        ).textContent =
           "0";
+
 
         container.innerHTML = `
           <div class="error-state">
@@ -1314,36 +1581,34 @@
     =============================== */
 
     document
-      .getElementById("logout-btn");
-
-  </script>
-
-
-  <script>
-
-    document.addEventListener(
-      "click",
-      async function(event) {
-
-        if (
-          event.target &&
-          event.target.id === "logout-btn"
-        ) {
+      .getElementById(
+        "logout-btn"
+      )
+      .addEventListener(
+        "click",
+        async function() {
 
           try {
 
-            await firebase.auth().signOut();
+            await auth.signOut();
+
 
             localStorage.removeItem(
               "currentUser"
             );
 
+
             window.location.href =
               "login.html";
 
+
           } catch (error) {
 
-            console.error(error);
+            console.error(
+              "Logout error:",
+              error
+            );
+
 
             alert(
               "Unable to log out. Please try again."
@@ -1352,9 +1617,7 @@
           }
 
         }
-
-      }
-    );
+      );
 
   </script>
 
