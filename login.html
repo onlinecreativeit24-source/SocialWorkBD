@@ -12,7 +12,7 @@
 
   <meta
     name="description"
-    content="Log in to SocialWorkBD, a professional global freelance marketplace for clients and freelancers."
+    content="Log in to SocialWorkBD, a global freelance marketplace for clients and freelancers."
   >
 
   <meta
@@ -56,10 +56,16 @@
       --line: #dedede;
       --bg: #f7f7f5;
       --white: #ffffff;
+      --danger: #c62828;
+      --success: #147a16;
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -68,6 +74,15 @@
       color: var(--ink);
       font-family: "DM Sans", sans-serif;
       min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button,
+    input {
+      font: inherit;
     }
 
     .login-header {
@@ -92,6 +107,7 @@
       font-family: "Plus Jakarta Sans", sans-serif;
       font-size: 21px;
       font-weight: 800;
+      letter-spacing: -0.4px;
     }
 
     .login-brand span {
@@ -274,6 +290,18 @@
       display: block;
     }
 
+    .reset-message.success {
+      background: #eaf7ea;
+      color: var(--success);
+      border: 1px solid #cde7cd;
+    }
+
+    .reset-message.error {
+      background: #fff0f0;
+      color: var(--danger);
+      border: 1px solid #f0caca;
+    }
+
     .login-divider {
       display: flex;
       align-items: center;
@@ -362,11 +390,16 @@
 
     @media (max-width: 520px) {
 
+      .login-header {
+        height: 64px;
+      }
+
       .login-header-inner {
         padding: 0 17px;
       }
 
       .login-container {
+        min-height: calc(100vh - 64px);
         padding: 25px 14px;
       }
 
@@ -377,6 +410,14 @@
 
       .login-card h1 {
         font-size: 25px;
+      }
+
+      .login-brand {
+        font-size: 19px;
+      }
+
+      .login-header-link {
+        font-size: 13px;
       }
 
     }
@@ -398,6 +439,7 @@
       <a
         href="index.html"
         class="login-brand"
+        aria-label="SocialWorkBD Home"
       >
         SocialWork<span>BD</span>
       </a>
@@ -418,22 +460,28 @@
 
   <main class="login-container">
 
-    <section class="login-card">
+    <section
+      class="login-card"
+      aria-labelledby="login-title"
+    >
 
 
-      <div class="login-icon">
+      <div
+        class="login-icon"
+        aria-hidden="true"
+      >
         🔐
       </div>
 
 
-      <h1>
+      <h1 id="login-title">
         Welcome back
       </h1>
 
 
       <p class="login-description">
-        Log in to your SocialWorkBD account and continue working,
-        hiring, and growing globally.
+        Log in to your SocialWorkBD account and continue
+        working, hiring, and growing globally.
       </p>
 
 
@@ -452,6 +500,7 @@
           name="email"
           placeholder="Enter your email"
           autocomplete="email"
+          inputmode="email"
           required
         >
 
@@ -503,7 +552,8 @@
         </h3>
 
         <p>
-          Enter your account email and we'll send you a password reset link.
+          Enter your account email and we'll send you
+          a password reset link.
         </p>
 
 
@@ -519,6 +569,7 @@
             name="forgot-email"
             placeholder="Enter your account email"
             autocomplete="email"
+            inputmode="email"
             required
           >
 
@@ -537,6 +588,8 @@
         <div
           id="reset-message"
           class="reset-message"
+          role="status"
+          aria-live="polite"
         ></div>
 
       </div>
@@ -558,7 +611,10 @@
         aria-label="Continue with Google"
       >
 
-        <span class="google-icon">
+        <span
+          class="google-icon"
+          aria-hidden="true"
+        >
           <span>G</span>
         </span>
 
@@ -596,7 +652,7 @@
   </main>
 
 
-  <!-- FIREBASE -->
+  <!-- FIREBASE SDK -->
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 
