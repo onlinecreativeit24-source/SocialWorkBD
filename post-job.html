@@ -1,14 +1,56 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Post a Job — SocialWorkBD</title><meta
-name="description"
-content="Post a professional freelance job on SocialWorkBD and connect with skilled freelancers worldwide."
 
-«»
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="styles.css">  <!-- Firebase -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <style>
+  <meta
+    name="description"
+    content="Post a professional freelance job on SocialWorkBD and connect with skilled freelancers worldwide."
+  >
+
+  <meta
+    name="theme-color"
+    content="#14a800"
+  >
+
+  <title>Post a Job — SocialWorkBD</title>
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="favicon.svg"
+  >
+
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
     :root {
       --green: #14a800;
       --green-dark: #108a00;
@@ -28,7 +70,7 @@ content="Post a professional freelance job on SocialWorkBD and connect with skil
       margin: 0;
       background: var(--bg);
       color: var(--ink);
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: "DM Sans", Arial, Helvetica, sans-serif;
     }
 
     .job-page {
@@ -57,6 +99,7 @@ content="Post a professional freelance job on SocialWorkBD and connect with skil
 
     .job-top h1 {
       margin: 0 0 10px;
+      font-family: "Plus Jakarta Sans", sans-serif;
       font-size: 36px;
       line-height: 1.2;
       letter-spacing: -.8px;
@@ -101,6 +144,7 @@ content="Post a professional freelance job on SocialWorkBD and connect with skil
 
     .section-heading h2 {
       margin: 0 0 6px;
+      font-family: "Plus Jakarta Sans", sans-serif;
       font-size: 20px;
     }
 
@@ -186,6 +230,7 @@ content="Post a professional freelance job on SocialWorkBD and connect with skil
       font-size: 15px;
       font-weight: 800;
       pointer-events: none;
+      z-index: 1;
     }
 
     .budget-wrap input {
@@ -240,6 +285,7 @@ content="Post a professional freelance job on SocialWorkBD and connect with skil
 
     .side-card h3 {
       margin: 0 0 15px;
+      font-family: "Plus Jakarta Sans", sans-serif;
       font-size: 16px;
     }
 
@@ -296,6 +342,7 @@ content="Post a professional freelance job on SocialWorkBD and connect with skil
     }
 
     @media (max-width: 820px) {
+
       .job-layout {
         grid-template-columns: 1fr;
       }
@@ -303,9 +350,11 @@ content="Post a professional freelance job on SocialWorkBD and connect with skil
       .side-card {
         position: static;
       }
+
     }
 
     @media (max-width: 600px) {
+
       .job-page {
         padding: 28px 14px 70px;
       }
@@ -322,338 +371,514 @@ content="Post a professional freelance job on SocialWorkBD and connect with skil
         grid-template-columns: 1fr;
         gap: 0;
       }
+
     }
-  </style></head><body>  <!-- Header -->  <header class="site-header">
-    <div class="container">  <div class="logo-area">
 
-    <a href="index.html" class="logo" aria-label="SocialWorkBD Home">
-      SW
-    </a>
+  </style>
 
-    <nav class="main-nav">
-      <a href="tasks.html">Find Work</a>
-      <a href="profile.html">Find Talent</a>
-      <a href="post-job.html" class="active">Post a Job</a>
-      <a href="support.html">Help</a>
-    </nav>
+</head>
 
-    <div class="header-actions">
-      <a href="login.html" class="login-link">
-        Log In
-      </a>
 
-      <a href="signup.html" class="signup-btn">
-        Sign Up
-      </a>
+<body>
 
-      <a
-        href="profile.html"
-        class="profile-link"
-        aria-label="Profile"
-      >
-        👤
-      </a>
+
+  <!-- HEADER -->
+
+  <header class="site-header">
+
+    <div class="container">
+
+      <div class="logo-area">
+
+        <a
+          href="index.html"
+          class="logo"
+          aria-label="SocialWorkBD Home"
+        >
+          SW
+        </a>
+
+        <nav class="main-nav">
+
+          <a href="tasks.html">
+            Find Work
+          </a>
+
+          <a href="find-talent.html">
+            Find Talent
+          </a>
+
+          <a
+            href="post-job.html"
+            class="active"
+          >
+            Post a Job
+          </a>
+
+          <a href="support.html">
+            Help
+          </a>
+
+        </nav>
+
+        <div class="header-actions">
+
+          <a
+            href="login.html"
+            class="login-link"
+          >
+            Log In
+          </a>
+
+          <a
+            href="signup.html"
+            class="signup-btn"
+          >
+            Sign Up
+          </a>
+
+          <a
+            href="profile.html"
+            class="profile-link"
+            aria-label="Profile"
+          >
+            👤
+          </a>
+
+        </div>
+
+      </div>
+
     </div>
 
-  </div>
-
-</div>
-
-  </header>  <!-- Main -->  <main class="job-page"><div class="job-container">
-
-  <div class="job-top">
-
-    <span class="job-eyebrow">
-      For Clients
-    </span>
-
-    <h1>
-      Post a Job
-    </h1>
-
-    <p>
-      Describe your project, set your budget and deadline,
-      and connect with freelancers who have the skills you need.
-    </p>
-
-  </div>
+  </header>
 
 
-  <div class="job-layout">
+  <!-- MAIN -->
 
-    <!-- Form -->
-    <section class="job-card">
+  <main class="job-page">
 
-      <div class="section-heading">
+    <div class="job-container">
 
-        <h2>
-          Tell us about your project
-        </h2>
+
+      <div class="job-top">
+
+        <span class="job-eyebrow">
+          For Clients Worldwide
+        </span>
+
+        <h1>
+          Post a Job
+        </h1>
 
         <p>
-          The more details you provide, the easier it is for
-          qualified freelancers to understand your requirements.
+          Describe your project, set your budget and deadline,
+          and connect with skilled freelancers from around the world.
         </p>
 
       </div>
 
 
-      <form id="job-form">
-
-        <!-- Title -->
-        <div class="form-group">
-
-          <label for="title">
-            Job title <span class="required">*</span>
-          </label>
-
-          <input
-            type="text"
-            id="title"
-            name="title"
-            maxlength="150"
-            placeholder="Example: Build a responsive business website"
-            autocomplete="off"
-            required
-          >
-
-          <p class="form-help">
-            Use a short, specific title that clearly describes the work.
-          </p>
-
-        </div>
+      <div class="job-layout">
 
 
-        <!-- Description -->
-        <div class="form-group">
+        <!-- FORM -->
 
-          <label for="desc">
-            Job description <span class="required">*</span>
-          </label>
+        <section class="job-card">
 
-          <textarea
-            id="desc"
-            name="description"
-            placeholder="Describe the project, requirements, expected deliverables, preferred experience, and any other important details."
-            required
-          ></textarea>
+          <div class="section-heading">
 
-          <p class="form-help">
-            Include the scope of work, expected result and important requirements.
-          </p>
+            <h2>
+              Tell us about your project
+            </h2>
 
-        </div>
+            <p>
+              The more details you provide, the easier it is for
+              qualified freelancers to understand your requirements.
+            </p>
+
+          </div>
 
 
-        <!-- Budget + Delivery -->
-        <div class="form-row">
+          <form id="job-form">
 
-          <div class="form-group">
 
-            <label for="budget">
-              Project budget <span class="required">*</span>
-            </label>
+            <!-- JOB TITLE -->
 
-            <div class="budget-wrap">
+            <div class="form-group">
 
-              <span class="budget-symbol">
-                $
-              </span>
+              <label for="title">
+                Job title <span class="required">*</span>
+              </label>
 
               <input
-                type="number"
-                id="budget"
-                name="budget"
-                min="1"
-                step="0.01"
-                placeholder="100"
+                type="text"
+                id="title"
+                name="title"
+                maxlength="150"
+                placeholder="Example: Build a responsive business website"
+                autocomplete="off"
                 required
               >
 
+              <p class="form-help">
+                Use a short, specific title that clearly describes the work.
+              </p>
+
             </div>
 
-            <p class="form-help">
-              Enter your total project budget in USD.
-            </p>
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group">
+
+              <label for="desc">
+                Job description <span class="required">*</span>
+              </label>
+
+              <textarea
+                id="desc"
+                name="description"
+                placeholder="Describe the project, requirements, expected deliverables, preferred experience, and other important details."
+                required
+              ></textarea>
+
+              <p class="form-help">
+                Include the scope of work, expected result and important requirements.
+              </p>
+
+            </div>
+
+
+            <!-- BUDGET + DELIVERY -->
+
+            <div class="form-row">
+
+
+              <div class="form-group">
+
+                <label for="budget">
+                  Project budget <span class="required">*</span>
+                </label>
+
+                <div class="budget-wrap">
+
+                  <span class="budget-symbol">
+                    $
+                  </span>
+
+                  <input
+                    type="number"
+                    id="budget"
+                    name="budget"
+                    min="1"
+                    step="0.01"
+                    placeholder="100"
+                    required
+                  >
+
+                </div>
+
+                <p class="form-help">
+                  Enter your total project budget in USD.
+                </p>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="delivery-days">
+                  Delivery time <span class="required">*</span>
+                </label>
+
+                <input
+                  type="number"
+                  id="delivery-days"
+                  name="deliveryDays"
+                  min="1"
+                  step="1"
+                  placeholder="7"
+                  required
+                >
+
+                <p class="form-help">
+                  Set the expected number of days for project delivery.
+                </p>
+
+              </div>
+
+
+            </div>
+
+
+            <!-- SKILLS -->
+
+            <div class="form-group">
+
+              <label for="skills">
+                Required skills <span class="required">*</span>
+              </label>
+
+              <input
+                type="text"
+                id="skills"
+                name="skills"
+                maxlength="500"
+                placeholder="Example: Web Development, JavaScript, UI Design"
+                autocomplete="off"
+                required
+              >
+
+              <p class="form-help">
+                Separate multiple skills with commas.
+              </p>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <div class="submit-area">
+
+              <button
+                type="submit"
+                id="post-job-btn"
+                class="post-job-button"
+              >
+                Post Job
+              </button>
+
+              <a
+                href="index.html"
+                class="cancel-link"
+              >
+                Cancel
+              </a>
+
+            </div>
+
+
+          </form>
+
+        </section>
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="side-card">
+
+          <h3>
+            Tips for a great job post
+          </h3>
+
+          <ul class="tip-list">
+
+            <li>
+
+              <span class="tip-icon">
+                ✓
+              </span>
+
+              <span>
+                Write a clear and specific job title.
+              </span>
+
+            </li>
+
+
+            <li>
+
+              <span class="tip-icon">
+                ✓
+              </span>
+
+              <span>
+                Explain exactly what you expect the freelancer to deliver.
+              </span>
+
+            </li>
+
+
+            <li>
+
+              <span class="tip-icon">
+                ✓
+              </span>
+
+              <span>
+                Add the skills and tools required for the project.
+              </span>
+
+            </li>
+
+
+            <li>
+
+              <span class="tip-icon">
+                ✓
+              </span>
+
+              <span>
+                Set a realistic budget and delivery timeline.
+              </span>
+
+            </li>
+
+
+            <li>
+
+              <span class="tip-icon">
+                ✓
+              </span>
+
+              <span>
+                Keep project communication and transactions on SocialWorkBD.
+              </span>
+
+            </li>
+
+          </ul>
+
+
+          <div class="client-note">
+
+            Your job will be published to the SocialWorkBD
+            marketplace after it is successfully submitted.
 
           </div>
 
 
-          <div class="form-group">
-
-            <label for="delivery-days">
-              Delivery time <span class="required">*</span>
-            </label>
-
-            <input
-              type="number"
-              id="delivery-days"
-              name="deliveryDays"
-              min="1"
-              step="1"
-              placeholder="7"
-              required
-            >
-
-            <p class="form-help">
-              Set the expected number of days for project delivery.
-            </p>
-
-          </div>
-
-        </div>
+        </aside>
 
 
-        <!-- Skills -->
-        <div class="form-group">
-
-          <label for="skills">
-            Required skills <span class="required">*</span>
-          </label>
-
-          <input
-            type="text"
-            id="skills"
-            name="skills"
-            placeholder="Example: Web Development, JavaScript, UI Design"
-            autocomplete="off"
-            required
-          >
-
-          <p class="form-help">
-            Separate multiple skills with commas.
-          </p>
-
-        </div>
-
-
-        <!-- Submit -->
-        <div class="submit-area">
-
-          <button
-            type="submit"
-            id="post-job-btn"
-            class="post-job-button"
-          >
-            Post Job
-          </button>
-
-          <a
-            href="index.html"
-            class="cancel-link"
-          >
-            Cancel
-          </a>
-
-        </div>
-
-      </form>
-
-    </section>
-
-
-    <!-- Sidebar -->
-    <aside class="side-card">
-
-      <h3>
-        Tips for a great job post
-      </h3>
-
-      <ul class="tip-list">
-
-        <li>
-          <span class="tip-icon">✓</span>
-          <span>
-            Write a clear and specific job title.
-          </span>
-        </li>
-
-        <li>
-          <span class="tip-icon">✓</span>
-          <span>
-            Explain exactly what you expect the freelancer to deliver.
-          </span>
-        </li>
-
-        <li>
-          <span class="tip-icon">✓</span>
-          <span>
-            Add the skills and tools required for the project.
-          </span>
-        </li>
-
-        <li>
-          <span class="tip-icon">✓</span>
-          <span>
-            Set a realistic budget and delivery timeline.
-          </span>
-        </li>
-
-        <li>
-          <span class="tip-icon">✓</span>
-          <span>
-            Keep project communication and transactions on SocialWorkBD.
-          </span>
-        </li>
-
-      </ul>
-
-
-      <div class="client-note">
-        Your job will be published to the SocialWorkBD marketplace
-        after it is successfully submitted.
       </div>
 
-    </aside>
 
-  </div>
+      <a
+        href="index.html"
+        class="back-link"
+      >
+        ← Back to Home
+      </a>
 
 
-  <a
-    href="index.html"
-    class="back-link"
-  >
-    ← Back to Home
-  </a>
+    </div>
 
-</div>
+  </main>
 
-  </main>  <!-- Footer -->  <footer class="site-footer"><div class="container">
 
-  <p>
-    © 2026 SocialWorkBD. Global Freelance Marketplace.
-  </p>
+  <!-- FOOTER -->
 
-  <div class="footer-links">
-    <a href="terms.html">Terms</a>
-    <a href="privacy.html">Privacy</a>
-    <a href="support.html">Help</a>
-  </div>
+  <footer class="site-footer">
 
-</div>
+    <div class="container">
 
-  </footer>  <!-- Mobile Bottom Navigation -->  <nav class="mobile-bottom-nav"><a href="index.html">
-  <span>⌂</span>
-  <small>Home</small>
-</a>
+      <p>
+        © 2026 SocialWorkBD. Global Freelance Marketplace.
+      </p>
 
-<a href="tasks.html">
-  <span>⌕</span>
-  <small>Find Work</small>
-</a>
+      <div class="footer-links">
 
-<a
-  href="post-job.html"
-  class="active"
->
-  <span>＋</span>
-  <small>Post Job</small>
-</a>
+        <a href="terms.html">
+          Terms
+        </a>
 
-<a href="profile.html">
-  <span>♙</span>
-  <small>Profile</small>
-</a>
+        <a href="privacy.html">
+          Privacy
+        </a>
 
-  </nav>  <!-- Firebase Configuration -->  <script src="firebase-config.js"></script>  <!-- Main Application -->  <script src="app.js"></script></body>
+        <a href="support.html">
+          Help
+        </a>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- MOBILE BOTTOM NAV -->
+
+  <nav class="mobile-bottom-nav">
+
+    <a href="index.html">
+
+      <span>
+        ⌂
+      </span>
+
+      <small>
+        Home
+      </small>
+
+    </a>
+
+
+    <a href="tasks.html">
+
+      <span>
+        ⌕
+      </span>
+
+      <small>
+        Find Work
+      </small>
+
+    </a>
+
+
+    <a
+      href="post-job.html"
+      class="active"
+    >
+
+      <span>
+        ＋
+      </span>
+
+      <small>
+        Post Job
+      </small>
+
+    </a>
+
+
+    <a href="profile.html">
+
+      <span>
+        ♙
+      </span>
+
+      <small>
+        Profile
+      </small>
+
+    </a>
+
+  </nav>
+
+
+  <!-- FIREBASE -->
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+
+  <!-- FIREBASE CONFIG -->
+
+  <script src="firebase-config.js"></script>
+
+
+  <!-- MAIN APPLICATION -->
+
+  <script src="app.js"></script>
+
+
+</body>
+
 </html>
