@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="description"
+    content="Find talented freelancers worldwide on SocialWorkBD. Search professionals by skills, category, experience and hourly rate."
+  >
+
+  <meta name="theme-color" content="#14a800">
+
+  <title>Find Talent Worldwide - SocialWorkBD</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: #f7f7f7;
+      color: #17202a;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      max-width: 1240px;
+      margin: auto;
+      min-height: 70px;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      position: relative;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 800;
+      color: #14a800;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex: 1;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      color: #394150;
+      font-weight: 600;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #14a800;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .login-btn,
+    .signup-btn,
+    .post-job-btn {
+      border-radius: 8px;
+      padding: 10px 17px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .login-btn {
+      border: 1px solid #d1d5db;
+      background: #fff;
+    }
+
+    .login-btn:hover {
+      background: #f3f4f6;
+    }
+
+    .signup-btn {
+      border: 1px solid #14a800;
+      background: #14a800;
+      color: #fff;
+    }
+
+    .signup-btn:hover {
+      background: #108900;
+    }
+
+    .post-job-btn {
+      border: 1px solid #17202a;
+      background: #17202a;
+      color: #fff;
+    }
+
+    .post-job-btn:hover {
+      background: #000;
+    }
+
+    .mobile-menu {
+      display: none;
+      margin-left: auto;
+      border: 0;
+      background: transparent;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .hero {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 50px 20px 45px;
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(32px, 5vw, 48px);
+      line-height: 1.1;
+      letter-spacing: -1.2px;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 0 auto 28px;
+      color: #5b6470;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .search-box {
+      max-width: 900px;
+      margin: auto;
+      display: flex;
+      background: #fff;
+      border: 1px solid #bfc5cc;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, .07);
+    }
+
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      padding: 17px 18px;
+      font-size: 15px;
+    }
+
+    .search-box button {
+      border: 0;
+      background: #14a800;
+      color: #fff;
+      padding: 0 28px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .search-box button:hover {
+      background: #108900;
+    }
+
+    .main {
+      max-width: 1240px;
+      margin: auto;
+      padding: 30px 22px 60px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .toolbar h2 {
+      margin: 0 0 5px;
+      font-size: 25px;
+    }
+
+    .result-count {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .sort-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #4b5563;
+      font-size: 14px;
+    }
+
+    .sort-box select {
+      border: 1px solid #d1d5db;
+      background: #fff;
+      border-radius: 7px;
+      padding: 10px 12px;
+      outline: 0;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .filters {
+      background: #fff;
+      border: 1px solid #e1e4e8;
+      border-radius: 10px;
+      padding: 20px;
+      position: sticky;
+      top: 92px;
+    }
+
+    .filters h3 {
+      margin: 0 0 20px;
+      font-size: 17px;
+    }
+
+    .filter-group {
+      border-top: 1px solid #edf0f2;
+      padding: 18px 0;
+    }
+
+    .filter-group:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .filter-title {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      background: #fff;
+      padding: 10px;
+      outline: 0;
+    }
+
+    .rate-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .apply-filter,
+    .clear-filter {
+      flex: 1;
+      border-radius: 7px;
+      padding: 10px 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .apply-filter {
+      border: 1px solid #14a800;
+      background: #14a800;
+      color: #fff;
+    }
+
+    .clear-filter {
+      border: 1px solid #d1d5db;
+      background: #fff;
+      color: #374151;
+    }
+
+    .talent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .talent-card {
+      background: #fff;
+      border: 1px solid #e1e4e8;
+      border-radius: 10px;
+      padding: 22px;
+      transition: .2s ease;
+    }
+
+    .talent-card:hover {
+      border-color: #b9c1c9;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, .06);
+    }
+
+    .talent-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .avatar {
+      width: 58px;
+      height: 58px;
+      flex: 0 0 58px;
+      border-radius: 50%;
+      background: #14a800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .talent-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .talent-name {
+      margin: 0 0 4px;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .talent-title {
+      margin: 0;
+      color: #59636e;
+      font-size: 14px;
+    }
+
+    .talent-rate {
+      white-space: nowrap;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .talent-bio {
+      margin: 15px 0;
+      color: #5f6873;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 17px;
+    }
+
+    .skill {
+      background: #eef1f3;
+      color: #3f4852;
+      border-radius: 20px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .talent-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 17px;
+      color: #59636e;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    .talent-footer {
+      border-top: 1px solid #edf0f2;
+      padding-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .availability {
+      color: #14a800;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .view-profile {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #14a800;
+      color: #108900;
+      background: #fff;
+      border-radius: 7px;
+      padding: 9px 15px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .view-profile:hover {
+      background: #14a800;
+      color: #fff;
+    }
+
+    .loading,
+    .empty-state,
+    .error-state {
+      background: #fff;
+      border: 1px solid #e1e4e8;
+      border-radius: 10px;
+      padding: 45px 25px;
+      text-align: center;
+      color: #68717b;
+    }
+
+    .empty-state h3,
+    .error-state h3 {
+      margin: 0 0 8px;
+      color: #17202a;
+    }
+
+    .empty-state p,
+    .error-state p {
+      margin: 0 0 18px;
+      line-height: 1.6;
+    }
+
+    .empty-state a {
+      display: inline-block;
+      background: #14a800;
+      color: #fff;
+      padding: 10px 17px;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .how-section {
+      margin-top: 55px;
+      background: #fff;
+      border: 1px solid #e1e4e8;
+      border-radius: 12px;
+      padding: 35px 25px;
+    }
+
+    .how-section h2 {
+      text-align: center;
+      margin: 0 0 28px;
+      font-size: 27px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .step {
+      text-align: center;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #14a800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-weight: 800;
+    }
+
+    .step h3 {
+      margin: 0 0 7px;
+      font-size: 15px;
+    }
+
+    .step p {
+      margin: 0;
+      color: #69727d;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    footer {
+      background: #17202a;
+      color: #d6dbe0;
+      padding: 35px 20px;
+      margin-top: 50px;
+    }
+
+    .footer-inner {
+      max-width: 1240px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-brand {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .footer-text {
+      color: #aeb6bf;
+      font-size: 13px;
+      margin-top: 7px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #d6dbe0;
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        left: 15px;
+        right: 15px;
+        top: 70px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 14px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+      }
+
+      .nav-links.mobile-open {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 12px 10px;
+        border-bottom: 1px solid #f0f2f4;
+      }
+
+      .nav-links a:last-child {
+        border-bottom: 0;
+      }
+
+      .mobile-menu {
+        display: block;
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters {
+        position: static;
+      }
+
+      .steps {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+
+      .nav {
+        padding: 0 15px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .nav-actions .post-job-btn {
+        display: none;
+      }
+
+      .nav-actions {
+        gap: 6px;
+      }
+
+      .login-btn,
+      .signup-btn {
+        padding: 8px 11px;
+        font-size: 12px;
+      }
+
+      .hero {
+        padding: 35px 15px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero p {
+        font-size: 15px;
+      }
+
+      .search-box {
+        flex-direction: column;
+      }
+
+      .search-box input {
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .search-box button {
+        min-height: 48px;
+      }
+
+      .main {
+        padding: 22px 15px 45px;
+      }
+
+      .toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .talent-top {
+        flex-wrap: wrap;
+      }
+
+      .talent-rate {
+        margin-left: 74px;
+        width: 100%;
+      }
+
+      .talent-footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .view-profile {
+        width: 100%;
+      }
+
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .how-section {
+        padding: 28px 18px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+
+    <nav class="nav">
+
+      <a href="index.html" class="logo">
+        SocialWorkBD
+      </a>
+
+      <div class="nav-links" id="nav-links">
+
+        <a href="tasks.html">
+          Find Work
+        </a>
+
+        <a href="find-talent.html" class="active">
+          Find Talent
+        </a>
+
+        <a href="post-job.html">
+          Post a Job
+        </a>
+
+        <a href="profile.html">
+          My Profile
+        </a>
+
+      </div>
+
+      <div class="nav-actions">
+
+        <a href="login.html" class="login-btn">
+          Log In
+        </a>
+
+        <a href="signup.html" class="signup-btn">
+          Sign Up
+        </a>
+
+        <a href="post-job.html" class="post-job-btn">
+          Post a Job
+        </a>
+
+      </div>
+
+      <button
+        class="mobile-menu"
+        id="mobile-menu"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+
+    </nav>
+
+  </header>
+
+  <section class="hero">
+
+    <div class="hero-inner">
+
+      <h1>
+        Find Top Talent Worldwide
+      </h1>
+
+      <p>
+        Discover skilled freelancers, creative professionals and remote experts from around the world.
+      </p>
+
+      <form
+        class="search-box"
+        id="talent-search-form"
+      >
+
+        <input
+          type="search"
+          id="talent-search"
+          placeholder="Search by name, skill, title or keyword..."
+          autocomplete="off"
+        >
+
+        <button type="submit">
+          Search Talent
+        </button>
+
+      </form>
+
+    </div>
+
+  </section>
+
+  <main class="main">
+
+    <div class="toolbar">
+
+      <div>
+
+        <h2>
+          Freelancers Worldwide
+        </h2>
+
+        <div
+          class="result-count"
+          id="result-count"
+        >
+          Loading talent...
+        </div>
+
+      </div>
+
+      <div class="sort-box">
+
+        <label for="sort-talent">
+          Sort:
+        </label>
+
+        <select id="sort-talent">
+
+          <option value="newest">
+            Newest Profiles
+          </option>
+
+          <option value="rate-low">
+            Lowest Hourly Rate
+          </option>
+
+          <option value="rate-high">
+            Highest Hourly Rate
+          </option>
+
+          <option value="name">
+            Name A-Z
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+    <div class="content-grid">
+
+      <aside class="filters">
+
+        <h3>
+          Filter Talent
+        </h3>
+
+        <div class="filter-group">
+
+          <label
+            class="filter-title"
+            for="category-filter"
+          >
+            Category
+          </label>
+
+          <select id="category-filter">
+
+            <option value="">
+              All Categories
+            </option>
+
+            <option value="Development & IT">
+              Development & IT
+            </option>
+
+            <option value="Design & Creative">
+              Design & Creative
+            </option>
+
+            <option value="Writing & Translation">
+              Writing & Translation
+            </option>
+
+            <option value="Sales & Marketing">
+              Sales & Marketing
+            </option>
+
+            <option value="Admin & Customer Support">
+              Admin & Customer Support
+            </option>
+
+            <option value="Finance & Accounting">
+              Finance & Accounting
+            </option>
+
+            <option value="Engineering">
+              Engineering
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label
+            class="filter-title"
+            for="experience-filter"
+          >
+            Experience
+          </label>
+
+          <select id="experience-filter">
+
+            <option value="">
+              Any Experience
+            </option>
+
+            <option value="entry">
+              Entry Level
+            </option>
+
+            <option value="intermediate">
+              Intermediate
+            </option>
+
+            <option value="expert">
+              Expert
+
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label class="filter-title">
+            Hourly Rate
+          </label>
+
+          <div class="rate-row">
+
+            <input
+              type="number"
+              id="min-rate"
+              min="0"
+              step="1"
+              placeholder="Min $"
+            >
+
+            <input
+              type="number"
+              id="max-rate"
+              min="0"
+              step="1"
+              placeholder="Max $"
+            >
+
+          </div>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label
+            class="filter-title"
+            for="availability-filter"
+          >
+            Availability
+          </label>
+
+          <select id="availability-filter">
+
+            <option value="">
+              Any Availability
+            </option>
+
+            <option value="available">
+              Available Now
+            </option>
+
+            <option value="busy">
+              Currently Busy
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="filter-actions">
+
+          <button
+            type="button"
+            class="apply-filter"
+            id="apply-filter"
+          >
+            Apply
+          </button>
+
+          <button
+            type="button"
+            class="clear-filter"
+            id="clear-filter"
+          >
+            Clear
+          </button>
+
+        </div>
+
+      </aside>
+
+      <section>
+
+        <div
+          id="talent-list"
+          class="talent-list"
+        >
+
+          <div class="loading">
+            Loading available talent...
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+    <section class="how-section">
+
+      <h2>
+        How Hiring Works
+      </h2>
+
+      <div class="steps">
+
+        <div class="step">
+
+          <div class="step-number">
+            1
+          </div>
+
+          <h3>
+            Search Talent
+          </h3>
+
+          <p>
+            Find professionals by skill, category and experience.
+          </p>
+
+        </div>
+
+        <div class="step">
+
+          <div class="step-number">
+            2
+          </div>
+
+          <h3>
+            Review Profiles
+          </h3>
+
+          <p>
+            Explore skills, experience, rates and professional information.
+          </p>
+
+        </div>
+
+        <div class="step">
+
+          <div class="step-number">
+            3
+          </div>
+
+          <h3>
+            Post a Job
+          </h3>
+
+          <p>
+            Create a project and invite the right freelancer to apply.
+          </p>
+
+        </div>
+
+        <div class="step">
+
+          <div class="step-number">
+            4
+          </div>
+
+          <h3>
+            Hire & Work
+          </h3>
+
+          <p>
+            Agree on the project and start working together.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+
+    <div class="footer-inner">
+
+      <div>
+
+        <div class="footer-brand">
+          SocialWorkBD
+        </div>
+
+        <div class="footer-text">
+          Global Freelance Marketplace
+        </div>
+
+      </div>
+
+      <div class="footer-links">
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="tasks.html">
+          Find Work
+        </a>
+
+        <a href="find-talent.html">
+          Find Talent
+        </a>
+
+        <a href="post-job.html">
+          Post a Job
+        </a>
+
+        <a href="profile.html">
+          Profile
+        </a>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+
+    (function () {
+
+      "use strict";
+
+      let allTalent = [];
+      let filteredTalent = [];
+
+      const talentList =
+        document.getElementById("talent-list");
+
+      const resultCount =
+        document.getElementById("result-count");
+
+      const searchForm =
+        document.getElementById("talent-search-form");
+
+      const searchInput =
+        document.getElementById("talent-search");
+
+      const categoryFilter =
+        document.getElementById("category-filter");
+
+      const experienceFilter =
+        document.getElementById("experience-filter");
+
+      const minRate =
+        document.getElementById("min-rate");
+
+      const maxRate =
+        document.getElementById("max-rate");
+
+      const availabilityFilter =
+        document.getElementById("availability-filter");
+
+      const applyFilter =
+        document.getElementById("apply-filter");
+
+      const clearFilter =
+        document.getElementById("clear-filter");
+
+      const sortTalent =
+        document.getElementById("sort-talent");
+
+      const mobileMenu =
+        document.getElementById("mobile-menu");
+
+      const navLinks =
+        document.getElementById("nav-links");
+
+
+      function escapeHtml(value) {
+
+        if (
+          value === null ||
+          value === undefined
+        ) {
+          return "";
+        }
+
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+
+      }
+
+
+      function normalizeSkills(skills) {
+
+        if (Array.isArray(skills)) {
+
+          return skills
+            .map(function (item) {
+              return String(item).trim();
+            })
+            .filter(Boolean);
+
+        }
+
+        if (typeof skills === "string") {
+
+          return skills
+            .split(",")
+            .map(function (item) {
+              return item.trim();
+            })
+            .filter(Boolean);
+
+        }
+
+        return [];
+
+      }
+
+
+      function getDateValue(timestamp) {
+
+        if (!timestamp) {
+          return 0;
+        }
+
+        if (
+          typeof timestamp.toMillis === "function"
+        ) {
+          return timestamp.toMillis();
+        }
+
+        if (
+          typeof timestamp.seconds === "number"
+        ) {
+          return timestamp.seconds * 1000;
+        }
+
+        const date =
+          new Date(timestamp);
+
+        const time =
+          date.getTime();
+
+        return Number.isNaN(time)
+          ? 0
+          : time;
+
+      }
+
+
+      function getInitials(name) {
+
+        const value =
+          String(name || "Freelancer").trim();
+
+        const parts =
+          value.split(/\s+/).filter(Boolean);
+
+        if (!parts.length) {
+          return "F";
+        }
+
+        if (parts.length === 1) {
+          return parts[0].substring(0, 1).toUpperCase();
+        }
+
+        return (
+          parts[0].substring(0, 1) +
+          parts[parts.length - 1].substring(0, 1)
+        ).toUpperCase();
+
+      }
+
+
+      function getSearchQuery() {
+
+        const params =
+          new URLSearchParams(
+            window.location.search
+          );
+
+        return (
+          params.get("search") || ""
+        ).trim();
+
+      }
+
+
+      function setSearchQuery(value) {
+
+        const url =
+          new URL(
+            window.location.href
+          );
+
+        if (value) {
+
+          url.searchParams.set(
+            "search",
+            value
+          );
+
+        } else {
+
+          url.searchParams.delete(
+            "search"
+          );
+
+        }
+
+        window.history.replaceState(
+          {},
+          "",
+          url.toString()
+        );
+
+      }
+
+
+      function matchesSearch(user, query) {
+
+        if (!query) {
+          return true;
+        }
+
+        const skills =
+          normalizeSkills(
+            user.skills
+          ).join(" ");
+
+        const searchable = [
+
+          user.name || "",
+          user.displayName || "",
+          user.title || "",
+          user.profession || "",
+          user.bio || "",
+          user.category || "",
+          skills
+
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        const words =
+          query
+            .toLowerCase()
+            .split(/\s+/)
+            .filter(Boolean);
+
+        return words.every(
+          function (word) {
+
+            return searchable.includes(
+              word
+            );
+
+          }
+        );
+
+      }
+
+
+      function getHourlyRate(user) {
+
+        const possibleRates = [
+
+          user.hourlyRate,
+          user.hourly_rate,
+          user.rate,
+          user.hourly
+
+        ];
+
+        for (
+          let i = 0;
+          i < possibleRates.length;
+          i++
+        ) {
+
+          const value =
+            Number(
+              possibleRates[i]
+            );
+
+          if (
+            Number.isFinite(value) &&
+            value >= 0
+          ) {
+            return value;
+          }
+
+        }
+
+        return 0;
+
+      }
+
+
+      function getExperience(user) {
+
+        return String(
+          user.experienceLevel ||
+          user.experience ||
+          ""
+        )
+          .trim()
+          .toLowerCase();
+
+      }
+
+
+      function getAvailability(user) {
+
+        if (
+          user.available === true ||
+          user.availability === "available" ||
+          user.status === "available"
+        ) {
+          return "available";
+        }
+
+        if (
+          user.available === false ||
+          user.availability === "busy" ||
+          user.status === "busy"
+        ) {
+          return "busy";
+        }
+
+        return "available";
+
+      }
+
+
+      function applyCurrentFilters() {
+
+        const query =
+          searchInput.value
+            .trim()
+            .toLowerCase();
+
+        const category =
+          categoryFilter.value;
+
+        const experience =
+          experienceFilter.value;
+
+        const min =
+          Number(minRate.value);
+
+        const max =
+          Number(maxRate.value);
+
+        const availability =
+          availabilityFilter.value;
+
+
+        filteredTalent =
+          allTalent.filter(
+            function (user) {
+
+              if (
+                !matchesSearch(
+                  user,
+                  query
+                )
+              ) {
+                return false;
+              }
+
+
+              if (
+                category &&
+                String(
+                  user.category || ""
+                ) !== category
+              ) {
+                return false;
+              }
+
+
+              if (experience) {
+
+                const userExperience =
+                  getExperience(user);
+
+                if (
+                  userExperience !== experience &&
+                  !userExperience.includes(
+                    experience
+                  )
+                ) {
+                  return false;
+                }
+
+              }
+
+
+              const rate =
+                getHourlyRate(user);
+
+
+              if (
+                minRate.value !== "" &&
+                rate < min
+              ) {
+                return false;
+              }
+
+
+              if (
+                maxRate.value !== "" &&
+                rate > max
+              ) {
+                return false;
+              }
+
+
+              if (
+                availability &&
+                getAvailability(user) !== availability
+              ) {
+                return false;
+              }
+
+
+              return true;
+
+            }
+          );
+
+
+        sortCurrentTalent();
+        renderTalent();
+
+      }
+
+
+      function sortCurrentTalent() {
+
+        const sortValue =
+          sortTalent.value;
+
+        filteredTalent.sort(
+          function (a, b) {
+
+            if (
+              sortValue === "rate-low"
+            ) {
+
+              return (
+                getHourlyRate(a) -
+                getHourlyRate(b)
+              );
+
+            }
+
+
+            if (
+              sortValue === "rate-high"
+            ) {
+
+              return (
+                getHourlyRate(b) -
+                getHourlyRate(a)
+              );
+
+            }
+
+
+            if (
+              sortValue === "name"
+            ) {
+
+              return String(
+                a.name ||
+                a.displayName ||
+                ""
+              ).localeCompare(
+                String(
+                  b.name ||
+                  b.displayName ||
+                  ""
+                )
+              );
+
+            }
+
+
+            return (
+              getDateValue(
+                b.createdAt
+              ) -
+              getDateValue(
+                a.createdAt
+              )
+            );
+
+          }
+        );
+
+      }
+
+
+      function renderTalent() {
+
+        if (!filteredTalent.length) {
+
+          resultCount.textContent =
+            "0 freelancers found";
+
+          talentList.innerHTML = `
+
+            <div class="empty-state">
+
+              <h3>
+                No freelancers found
+              </h3>
+
+              <p>
+                Try changing your search or filters to discover more talent.
+              </p>
+
+              <a href="signup.html">
+                Create a Freelancer Profile
+              </a>
+
+            </div>
+
+          `;
+
+          return;
+        }
+
+
+        resultCount.textContent =
+          filteredTalent.length +
+          (
+            filteredTalent.length === 1
+              ? " freelancer found"
+              : " freelancers found"
+          );
+
+
+        talentList.innerHTML =
+          filteredTalent
+            .map(function (user) {
+
+              const name =
+                String(
+                  user.name ||
+                  user.displayName ||
+                  "Freelancer"
+                ).trim();
+
+
+              const title =
+                String(
+                  user.title ||
+                  user.profession ||
+                  "Freelance Professional"
+                ).trim();
+
+
+              const bio =
+                String(
+                  user.bio ||
+                  "Skilled professional ready to work on freelance projects."
+                ).trim();
+
+
+              const shortBio =
+                bio.length > 220
+                  ? bio.substring(0, 220) + "..."
+                  : bio;
+
+
+              const skills =
+                normalizeSkills(
+                  user.skills
+                );
+
+
+              const skillHtml =
+                skills
+                  .slice(0, 8)
+                  .map(
+                    function (skill) {
+
+                      return `
+                        <span class="skill">
+                          ${escapeHtml(skill)}
+                        </span>
+                      `;
+
+                    }
+                  )
+                  .join("");
+
+
+              const rate =
+                getHourlyRate(user);
+
+
+              const availability =
+                getAvailability(user);
+
+
+              const availabilityText =
+                availability === "available"
+                  ? "Available Now"
+                  : "Currently Busy";
+
+
+              const profileId =
+                encodeURIComponent(
+                  user.uid ||
+                  user.id ||
+                  ""
+                );
+
+
+              return `
+
+                <article class="talent-card">
+
+                  <div class="talent-top">
+
+                    <div class="avatar">
+                      ${escapeHtml(
+                        getInitials(name)
+                      )}
+                    </div>
+
+                    <div class="talent-main">
+
+                      <h3 class="talent-name">
+                        ${escapeHtml(name)}
+                      </h3>
+
+                      <p class="talent-title">
+                        ${escapeHtml(title)}
+                      </p>
+
+                    </div>
+
+                    <div class="talent-rate">
+                      ${rate > 0
+                        ? "$" + rate + "/hr"
+                        : "Rate not set"
+                      }
+                    </div>
+
+                  </div>
+
+
+                  <p class="talent-bio">
+                    ${escapeHtml(shortBio)}
+                  </p>
+
+
+                  <div class="talent-meta">
+
+                    <span>
+                      Category:
+                      ${escapeHtml(
+                        user.category ||
+                        "General"
+                      )}
+                    </span>
+
+                    <span>
+                      Experience:
+                      ${escapeHtml(
+                        user.experienceLevel ||
+                        user.experience ||
+                        "Not specified"
+                      )}
+                    </span>
+
+                    <span>
+                      Location:
+                      ${escapeHtml(
+                        user.country ||
+                        user.location ||
+                        "Worldwide"
+                      )}
+                    </span>
+
+                  </div>
+
+
+                  <div class="skills">
+
+                    ${
+                      skillHtml ||
+                      '<span class="skill">General Skills</span>'
+                    }
+
+                  </div>
+
+
+                  <div class="talent-footer">
+
+                    <div class="availability">
+                      ${availabilityText}
+                    </div>
+
+                    <a
+                      class="view-profile"
+                      href="profile.html?id=${profileId}"
+                    >
+                      View Profile
+                    </a>
+
+                  </div>
+
+                </article>
+
+              `;
+
+            })
+            .join("");
+
+      }
+
+
+      async function loadTalent() {
+
+        try {
+
+          if (
+            !window.db ||
+            typeof window.db.collection !==
+              "function"
+          ) {
+            throw new Error(
+              "Firestore is not available."
+            );
+          }
+
+
+          const snapshot =
+            await window.db
+              .collection("users")
+              .where(
+                "role",
+                "==",
+                "worker"
+              )
+              .limit(100)
+              .get();
+
+
+          allTalent = [];
+
+
+          snapshot.forEach(
+            function (doc) {
+
+              allTalent.push({
+
+                id: doc.id,
+
+                ...doc.data()
+
+              });
+
+            }
+          );
+
+
+          const initialSearch =
+            getSearchQuery();
+
+          searchInput.value =
+            initialSearch;
+
+
+          applyCurrentFilters();
+
+        } catch (error) {
+
+          console.error(
+            "Failed to load talent:",
+            error
+          );
+
+
+          resultCount.textContent =
+            "Unable to load talent";
+
+
+          talentList.innerHTML = `
+
+            <div class="error-state">
+
+              <h3>
+                Unable to load talent
+              </h3>
+
+              <p>
+                Please refresh the page and try again.
+              </p>
+
+            </div>
+
+          `;
+
+        }
+
+      }
+
+
+      searchForm.addEventListener(
+        "submit",
+        function (event) {
+
+          event.preventDefault();
+
+          setSearchQuery(
+            searchInput.value.trim()
+          );
+
+          applyCurrentFilters();
+
+        }
+      );
+
+
+      applyFilter.addEventListener(
+        "click",
+        function () {
+
+          setSearchQuery(
+            searchInput.value.trim()
+          );
+
+          applyCurrentFilters();
+
+        }
+      );
+
+
+      clearFilter.addEventListener(
+        "click",
+        function () {
+
+          searchInput.value = "";
+
+          categoryFilter.value = "";
+
+          experienceFilter.value = "";
+
+          minRate.value = "";
+
+          maxRate.value = "";
+
+          availabilityFilter.value = "";
+
+          sortTalent.value = "newest";
+
+          setSearchQuery("");
+
+          applyCurrentFilters();
+
+        }
+      );
+
+
+      sortTalent.addEventListener(
+        "change",
+        function () {
+
+          sortCurrentTalent();
+          renderTalent();
+
+        }
+      );
+
+
+      mobileMenu.addEventListener(
+        "click",
+        function () {
+
+          const isOpen =
+            navLinks.classList.toggle(
+              "mobile-open"
+            );
+
+          mobileMenu.setAttribute(
+            "aria-expanded",
+            String(isOpen)
+          );
+
+        }
+      );
+
+
+      navLinks.addEventListener(
+        "click",
+        function (event) {
+
+          if (
+            event.target.tagName === "A"
+          ) {
+
+            navLinks.classList.remove(
+              "mobile-open"
+            );
+
+            mobileMenu.setAttribute(
+              "aria-expanded",
+              "false"
+            );
+
+          }
+
+        }
+      );
+
+
+      loadTalent();
+
+    })();
+
+  </script>
+
+</body>
+
+</html>
