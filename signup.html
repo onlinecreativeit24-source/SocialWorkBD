@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -11,7 +12,12 @@
 
   <meta
     name="description"
-    content="Create your SocialWorkBD account and start finding freelance work or hiring skilled talent."
+    content="Create your SocialWorkBD account and join a global freelance marketplace."
+  >
+
+  <meta
+    name="theme-color"
+    content="#14a800"
   >
 
   <title>Create Account - SocialWorkBD</title>
@@ -33,6 +39,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <style>
+
     .auth-page {
       min-height: calc(100vh - 160px);
       display: flex;
@@ -40,7 +47,11 @@
       justify-content: center;
       padding: 45px 16px;
       background:
-        radial-gradient(circle at top right, rgba(15, 23, 42, 0.06), transparent 35%),
+        radial-gradient(
+          circle at top right,
+          rgba(20, 168, 0, 0.07),
+          transparent 35%
+        ),
         #f7f9f8;
     }
 
@@ -59,7 +70,7 @@
 
     .signup-header {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 27px;
     }
 
     .signup-logo {
@@ -70,11 +81,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #0f172a;
+      background: #14a800;
       color: #ffffff;
       font-size: 24px;
       font-weight: 800;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.20);
+      box-shadow: 0 8px 20px rgba(20, 168, 0, 0.20);
     }
 
     .signup-header h1 {
@@ -114,13 +125,20 @@
       color: #17251d;
       font-size: 15px;
       outline: none;
-      transition: border-color .2s, box-shadow .2s;
+      transition:
+        border-color .2s,
+        box-shadow .2s;
+    }
+
+    .form-group input {
+      height: 48px;
     }
 
     .form-group input:focus,
     .form-group select:focus {
-      border-color: #16a34a;
-      box-shadow: 0 0 0 3px rgba(22, 163, 74, .10);
+      border-color: #14a800;
+      box-shadow:
+        0 0 0 3px rgba(20, 168, 0, .10);
     }
 
     .role-section {
@@ -153,6 +171,7 @@
 
     .role-card {
       display: block;
+      min-height: 116px;
       padding: 16px;
       border: 1px solid #d6ded9;
       border-radius: 12px;
@@ -162,13 +181,13 @@
     }
 
     .role-card:hover {
-      border-color: #16a34a;
+      border-color: #14a800;
       transform: translateY(-1px);
     }
 
     .role-card strong {
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       color: #17251d;
       font-size: 15px;
     }
@@ -181,9 +200,21 @@
     }
 
     .role-option input:checked + .role-card {
-      border-color: #16a34a;
+      border-color: #14a800;
       background: #f1faf4;
-      box-shadow: 0 0 0 2px rgba(22, 163, 74, .10);
+      box-shadow:
+        0 0 0 2px rgba(20, 168, 0, .10);
+    }
+
+    .role-badge {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 4px 8px;
+      border-radius: 20px;
+      background: #eaf7ec;
+      color: #14780b;
+      font-size: 11px;
+      font-weight: 700;
     }
 
     .form-help {
@@ -193,25 +224,27 @@
       line-height: 1.5;
     }
 
-    /* MAIN SIGNUP BUTTON */
-
     .signup-submit {
       width: 100%;
       border: 0;
       border-radius: 11px;
       padding: 14px 18px;
       margin-top: 5px;
-      background: #16a34a;
+      background: #14a800;
       color: #ffffff;
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      transition: background .2s, transform .2s, box-shadow .2s;
+      transition:
+        background .2s,
+        transform .2s,
+        box-shadow .2s;
     }
 
     .signup-submit:hover {
-      background: #12843d;
-      box-shadow: 0 7px 18px rgba(22, 163, 74, .20);
+      background: #108a00;
+      box-shadow:
+        0 7px 18px rgba(20, 168, 0, .20);
     }
 
     .signup-submit:active {
@@ -225,8 +258,6 @@
       transform: none;
       box-shadow: none;
     }
-
-    /* DIVIDER */
 
     .auth-divider {
       display: flex;
@@ -246,15 +277,13 @@
       background: #e2e7e4;
     }
 
-    /* GOOGLE BUTTON */
-
     .google-btn {
       width: 100%;
       min-height: 52px;
       border: 0;
       border-radius: 11px;
       padding: 13px 18px;
-      background: #0f172a;
+      background: #17251d;
       color: #ffffff;
       display: flex;
       align-items: center;
@@ -263,13 +292,18 @@
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 7px 18px rgba(15, 23, 42, .16);
-      transition: background .2s, transform .2s, box-shadow .2s;
+      box-shadow:
+        0 7px 18px rgba(20, 40, 30, .16);
+      transition:
+        background .2s,
+        transform .2s,
+        box-shadow .2s;
     }
 
     .google-btn:hover {
-      background: #172554;
-      box-shadow: 0 9px 23px rgba(15, 23, 42, .22);
+      background: #26352d;
+      box-shadow:
+        0 9px 23px rgba(20, 40, 30, .22);
     }
 
     .google-btn:active {
@@ -305,7 +339,7 @@
     }
 
     .login-prompt a {
-      color: #12843d;
+      color: #108a00;
       font-weight: 700;
       text-decoration: none;
     }
@@ -322,7 +356,19 @@
       line-height: 1.6;
     }
 
+    .global-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 15px;
+      color: #66736b;
+      font-size: 12px;
+      text-align: center;
+    }
+
     @media (max-width: 600px) {
+
       .auth-page {
         padding: 28px 13px;
       }
@@ -339,11 +385,20 @@
       .role-options {
         grid-template-columns: 1fr;
       }
+
+      .role-card {
+        min-height: auto;
+      }
+
     }
+
   </style>
+
 </head>
 
+
 <body>
+
 
   <!-- HEADER -->
 
@@ -351,7 +406,9 @@
 
     <div class="container">
 
-      <h1>SocialWorkBD</h1>
+      <h1>
+        SocialWorkBD
+      </h1>
 
       <p>
         Find Work. Hire Talent. Build Your Future.
@@ -382,6 +439,9 @@
 
       <section class="signup-card">
 
+
+        <!-- HEADER -->
+
         <div class="signup-header">
 
           <div class="signup-logo">
@@ -393,8 +453,16 @@
           </h1>
 
           <p>
-            Join SocialWorkBD to find freelance work or hire skilled talent.
+            Join a global freelance marketplace to find work,
+            hire talent and grow your professional network.
           </p>
+
+          <div class="global-note">
+            🌍
+            <span>
+              Open to freelancers and clients worldwide
+            </span>
+          </div>
 
         </div>
 
@@ -402,6 +470,7 @@
         <!-- SIGNUP FORM -->
 
         <form id="signup-form">
+
 
           <!-- NAME -->
 
@@ -416,6 +485,7 @@
               id="name"
               placeholder="Enter your full name"
               autocomplete="name"
+              maxlength="100"
               required
             >
 
@@ -458,6 +528,10 @@
               required
             >
 
+            <p class="form-help">
+              Use at least 6 characters for your password.
+            </p>
+
           </div>
 
 
@@ -486,10 +560,11 @@
           <div class="role-section">
 
             <label>
-              What would you like to do?
+              Choose your account type
             </label>
 
             <div class="role-options">
+
 
               <!-- FREELANCER -->
 
@@ -508,12 +583,17 @@
                   class="role-card"
                 >
 
+                  <span class="role-badge">
+                    FOR FREELANCERS
+                  </span>
+
                   <strong>
                     Freelancer
                   </strong>
 
                   <span>
-                    Find projects, submit proposals and earn by completing work.
+                    Find projects, submit proposals,
+                    build your profile and earn by completing work.
                   </span>
 
                 </label>
@@ -537,12 +617,17 @@
                   class="role-card"
                 >
 
+                  <span class="role-badge">
+                    FOR CLIENTS
+                  </span>
+
                   <strong>
                     Client
                   </strong>
 
                   <span>
-                    Post projects, review proposals and hire skilled talent.
+                    Post projects, review proposals
+                    and hire skilled freelancers worldwide.
                   </span>
 
                 </label>
@@ -552,7 +637,7 @@
             </div>
 
 
-            <!-- Hidden role field -->
+            <!-- HIDDEN ROLE FIELD -->
 
             <select
               id="role"
@@ -586,12 +671,14 @@
             <input
               type="text"
               id="skills"
-              placeholder="Example: Data Entry, Web Development, Graphic Design"
+              placeholder="Example: Web Development, Design, Writing"
               autocomplete="off"
+              maxlength="500"
             >
 
             <p class="form-help">
               Add a few skills that describe what you can offer.
+              Separate multiple skills with commas.
             </p>
 
           </div>
@@ -653,12 +740,15 @@
         </p>
 
 
+        <!-- FOOTER NOTE -->
+
         <p class="auth-footer-note">
 
-          By creating an account, you agree to use SocialWorkBD responsibly
-          and follow our platform policies.
+          Create a professional profile, discover opportunities,
+          or connect with skilled freelancers from around the world.
 
         </p>
+
 
       </section>
 
@@ -699,40 +789,69 @@
 
   <script>
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
 
-      const workerRole =
-        document.getElementById("role-worker");
+        const workerRole =
+          document.getElementById("role-worker");
 
-      const clientRole =
-        document.getElementById("role-client");
+        const clientRole =
+          document.getElementById("role-client");
 
-      const roleField =
-        document.getElementById("role");
+        const roleField =
+          document.getElementById("role");
 
-      function syncRole() {
 
-        if (clientRole && clientRole.checked) {
-          roleField.value = "client";
-        } else {
-          roleField.value = "worker";
+        function syncRole() {
+
+          if (!roleField) {
+            return;
+          }
+
+          if (
+            clientRole &&
+            clientRole.checked
+          ) {
+
+            roleField.value = "client";
+
+          } else {
+
+            roleField.value = "worker";
+
+          }
+
         }
 
+
+        if (workerRole) {
+
+          workerRole.addEventListener(
+            "change",
+            syncRole
+          );
+
+        }
+
+
+        if (clientRole) {
+
+          clientRole.addEventListener(
+            "change",
+            syncRole
+          );
+
+        }
+
+
+        syncRole();
+
       }
-
-      if (workerRole) {
-        workerRole.addEventListener("change", syncRole);
-      }
-
-      if (clientRole) {
-        clientRole.addEventListener("change", syncRole);
-      }
-
-      syncRole();
-
-    });
+    );
 
   </script>
+
 
 </body>
 
