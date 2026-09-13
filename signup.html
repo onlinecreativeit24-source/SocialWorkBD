@@ -1,858 +1,559 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <meta
-    name="description"
-    content="Create your SocialWorkBD account and join a global freelance marketplace."
-  >
-
-  <meta
-    name="theme-color"
-    content="#14a800"
-  >
-
-  <title>Create Account - SocialWorkBD</title>
-
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="favicon.svg"
-  >
-
-  <link
-    rel="stylesheet"
-    href="styles.css"
-  >
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sign up for SocialWorkBD and start your freelance journey as a client or freelancer.">
+  <title>Sign Up - SocialWorkBD</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
   <style>
-
-    .auth-page {
-      min-height: calc(100vh - 160px);
+    .signup-page {
+      min-height: 100vh;
+      background: #f7f9f8;
+      padding: 40px 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 45px 16px;
-      background:
-        radial-gradient(
-          circle at top right,
-          rgba(20, 168, 0, 0.07),
-          transparent 35%
-        ),
-        #f7f9f8;
     }
-
-    .signup-wrapper {
+    
+    .signup-container {
+      max-width: 500px;
       width: 100%;
-      max-width: 560px;
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 7px 25px rgba(20, 40, 30, 0.05);
     }
-
-    .signup-card {
-      background: #ffffff;
-      border: 1px solid #e4e9e6;
-      border-radius: 20px;
-      padding: 34px;
-      box-shadow: 0 15px 40px rgba(20, 40, 30, 0.09);
-    }
-
-    .signup-header {
-      text-align: center;
-      margin-bottom: 27px;
-    }
-
-    .signup-logo {
-      width: 58px;
-      height: 58px;
-      margin: 0 auto 15px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #14a800;
-      color: #ffffff;
-      font-size: 24px;
-      font-weight: 800;
-      box-shadow: 0 8px 20px rgba(20, 168, 0, 0.20);
-    }
-
-    .signup-header h1 {
-      margin: 0 0 9px;
-      font-size: 29px;
-      line-height: 1.2;
+    
+    .signup-container h1 {
       color: #17251d;
+      margin-bottom: 10px;
+      font-size: 28px;
+      font-weight: 750;
     }
-
-    .signup-header p {
-      margin: 0;
-      color: #66736b;
+    
+    .signup-container p {
+      color: #68756e;
+      margin-bottom: 30px;
       font-size: 14px;
-      line-height: 1.6;
     }
-
+    
     .form-group {
-      margin-bottom: 17px;
+      margin-bottom: 18px;
     }
-
+    
     .form-group label {
       display: block;
       margin-bottom: 8px;
-      font-weight: 600;
       color: #26352d;
       font-size: 14px;
+      font-weight: 600;
     }
-
+    
     .form-group input,
     .form-group select {
       width: 100%;
-      box-sizing: border-box;
-      padding: 13px 14px;
-      border: 1px solid #d6ded9;
+      padding: 12px 14px;
+      border: 1px solid #d5ded9;
       border-radius: 10px;
-      background: #ffffff;
+      font-size: 14px;
+      font-family: inherit;
+      box-sizing: border-box;
       color: #17251d;
-      font-size: 15px;
       outline: none;
-      transition:
-        border-color .2s,
-        box-shadow .2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-
-    .form-group input {
-      height: 48px;
-    }
-
+    
     .form-group input:focus,
     .form-group select:focus {
-      border-color: #14a800;
-      box-shadow:
-        0 0 0 3px rgba(20, 168, 0, .10);
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.10);
     }
-
-    .role-section {
-      margin-bottom: 19px;
+    
+    .form-group input::placeholder {
+      color: #9ca39f;
     }
-
-    .role-section > label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: 600;
-      color: #26352d;
-      font-size: 14px;
+    
+    .terms-section {
+      background: #f7f9f8;
+      border: 1px solid #e1e8e4;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
     }
-
-    .role-options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .role-option {
-      position: relative;
-    }
-
-    .role-option input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .role-card {
-      display: block;
-      min-height: 116px;
-      padding: 16px;
-      border: 1px solid #d6ded9;
-      border-radius: 12px;
-      background: #ffffff;
-      cursor: pointer;
-      transition: all .2s ease;
-    }
-
-    .role-card:hover {
-      border-color: #14a800;
-      transform: translateY(-1px);
-    }
-
-    .role-card strong {
-      display: block;
-      margin-bottom: 6px;
+    
+    .terms-section h3 {
       color: #17251d;
-      font-size: 15px;
-    }
-
-    .role-card span {
-      display: block;
-      color: #6a766f;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .role-option input:checked + .role-card {
-      border-color: #14a800;
-      background: #f1faf4;
-      box-shadow:
-        0 0 0 2px rgba(20, 168, 0, .10);
-    }
-
-    .role-badge {
-      display: inline-block;
-      margin-bottom: 8px;
-      padding: 4px 8px;
-      border-radius: 20px;
-      background: #eaf7ec;
-      color: #14780b;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .form-help {
-      margin: 7px 0 0;
-      color: #7a857e;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .signup-submit {
-      width: 100%;
-      border: 0;
-      border-radius: 11px;
-      padding: 14px 18px;
-      margin-top: 5px;
-      background: #14a800;
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition:
-        background .2s,
-        transform .2s,
-        box-shadow .2s;
-    }
-
-    .signup-submit:hover {
-      background: #108a00;
-      box-shadow:
-        0 7px 18px rgba(20, 168, 0, .20);
-    }
-
-    .signup-submit:active {
-      transform: translateY(1px);
-    }
-
-    .signup-submit:disabled,
-    .google-btn:disabled {
-      opacity: .65;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    .auth-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 22px 0;
-      color: #89928c;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .auth-divider::before,
-    .auth-divider::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: #e2e7e4;
-    }
-
-    .google-btn {
-      width: 100%;
-      min-height: 52px;
-      border: 0;
-      border-radius: 11px;
-      padding: 13px 18px;
-      background: #17251d;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 11px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow:
-        0 7px 18px rgba(20, 40, 30, .16);
-      transition:
-        background .2s,
-        transform .2s,
-        box-shadow .2s;
-    }
-
-    .google-btn:hover {
-      background: #26352d;
-      box-shadow:
-        0 9px 23px rgba(20, 40, 30, .22);
-    }
-
-    .google-btn:active {
-      transform: translateY(1px);
-    }
-
-    .google-icon {
-      width: 21px;
-      height: 21px;
-      background: #ffffff;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
       font-size: 14px;
-      font-weight: 800;
-      color: #4285f4;
+      font-weight: 700;
+      margin: 0 0 12px;
     }
-
-    .google-note {
-      text-align: center;
-      margin: 9px 0 0;
-      color: #89928c;
-      font-size: 11px;
-    }
-
-    .login-prompt {
-      text-align: center;
-      margin: 22px 0 0;
+    
+    .terms-box {
+      background: white;
+      border: 1px solid #d5ded9;
+      border-radius: 8px;
+      padding: 12px;
+      max-height: 150px;
+      overflow-y: auto;
+      margin-bottom: 12px;
+      font-size: 12px;
       color: #66736b;
-      font-size: 14px;
-    }
-
-    .login-prompt a {
-      color: #108a00;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .login-prompt a:hover {
-      text-decoration: underline;
-    }
-
-    .auth-footer-note {
-      text-align: center;
-      margin-top: 19px;
-      color: #7a857e;
-      font-size: 12px;
       line-height: 1.6;
     }
-
-    .global-note {
+    
+    .terms-box strong {
+      color: #17251d;
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+    
+    .terms-box strong:first-child {
+      margin-top: 0;
+    }
+    
+    .checkbox-group {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      margin-top: 15px;
-      color: #66736b;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    
+    .checkbox-group label {
+      margin: 0;
+      font-size: 13px;
+      color: #33423a;
+      cursor: pointer;
+      line-height: 1.5;
+    }
+    
+    .checkbox-group a {
+      color: #15803d;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .checkbox-group a:hover {
+      text-decoration: underline;
+    }
+    
+    .error-message {
+      color: #d32f2f;
       font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+    
+    .signup-btn {
+      width: 100%;
+      padding: 13px;
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-bottom: 15px;
+    }
+    
+    .signup-btn:hover:not(:disabled) {
+      background: #12843d;
+    }
+    
+    .signup-btn:disabled {
+      background: #b0b8b5;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    
+    .login-link {
       text-align: center;
+      font-size: 14px;
+      color: #68756e;
     }
-
-    @media (max-width: 600px) {
-
-      .auth-page {
-        padding: 28px 13px;
-      }
-
-      .signup-card {
-        padding: 25px 18px;
-        border-radius: 15px;
-      }
-
-      .signup-header h1 {
-        font-size: 25px;
-      }
-
-      .role-options {
-        grid-template-columns: 1fr;
-      }
-
-      .role-card {
-        min-height: auto;
-      }
-
+    
+    .login-link a {
+      color: #15803d;
+      text-decoration: none;
+      font-weight: 600;
     }
-
+    
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 650px) {
+      .signup-container {
+        padding: 25px;
+      }
+      
+      .signup-container h1 {
+        font-size: 24px;
+      }
+    }
   </style>
-
 </head>
-
-
 <body>
-
-
-  <!-- HEADER -->
-
-  <header class="site-header">
-
-    <div class="container">
-
-      <h1>
-        SocialWorkBD
-      </h1>
-
-      <p>
-        Find Work. Hire Talent. Build Your Future.
-      </p>
-
-      <nav>
-
-        <a href="index.html">
-          Home
-        </a>
-
-        <a href="login.html">
-          Log In
-        </a>
-
-      </nav>
-
-    </div>
-
-  </header>
-
-
-  <!-- SIGNUP -->
-
-  <main class="auth-page">
-
-    <div class="signup-wrapper">
-
-      <section class="signup-card">
-
-
-        <!-- HEADER -->
-
-        <div class="signup-header">
-
-          <div class="signup-logo">
-            SW
-          </div>
-
-          <h1>
-            Create Your Account
-          </h1>
-
-          <p>
-            Join a global freelance marketplace to find work,
-            hire talent and grow your professional network.
-          </p>
-
-          <div class="global-note">
-            🌍
-            <span>
-              Open to freelancers and clients worldwide
-            </span>
-          </div>
-
-        </div>
-
-
-        <!-- SIGNUP FORM -->
-
-        <form id="signup-form">
-
-
-          <!-- NAME -->
-
-          <div class="form-group">
-
-            <label for="name">
-              Full Name
-            </label>
-
-            <input
-              type="text"
-              id="name"
-              placeholder="Enter your full name"
-              autocomplete="name"
-              maxlength="100"
-              required
-            >
-
-          </div>
-
-
-          <!-- EMAIL -->
-
-          <div class="form-group">
-
-            <label for="email">
-              Email Address
-            </label>
-
-            <input
-              type="email"
-              id="email"
-              placeholder="you@example.com"
-              autocomplete="email"
-              required
-            >
-
-          </div>
-
-
-          <!-- PASSWORD -->
-
-          <div class="form-group">
-
-            <label for="password">
-              Password
-            </label>
-
-            <input
-              type="password"
-              id="password"
-              placeholder="At least 6 characters"
-              autocomplete="new-password"
-              minlength="6"
-              required
-            >
-
-            <p class="form-help">
-              Use at least 6 characters for your password.
-            </p>
-
-          </div>
-
-
-          <!-- CONFIRM PASSWORD -->
-
-          <div class="form-group">
-
-            <label for="confirm-password">
-              Confirm Password
-            </label>
-
-            <input
-              type="password"
-              id="confirm-password"
-              placeholder="Enter your password again"
-              autocomplete="new-password"
-              minlength="6"
-              required
-            >
-
-          </div>
-
-
-          <!-- ROLE -->
-
-          <div class="role-section">
-
-            <label>
-              Choose your account type
-            </label>
-
-            <div class="role-options">
-
-
-              <!-- FREELANCER -->
-
-              <div class="role-option">
-
-                <input
-                  type="radio"
-                  id="role-worker"
-                  name="role-choice"
-                  value="worker"
-                  checked
-                >
-
-                <label
-                  for="role-worker"
-                  class="role-card"
-                >
-
-                  <span class="role-badge">
-                    FOR FREELANCERS
-                  </span>
-
-                  <strong>
-                    Freelancer
-                  </strong>
-
-                  <span>
-                    Find projects, submit proposals,
-                    build your profile and earn by completing work.
-                  </span>
-
-                </label>
-
-              </div>
-
-
-              <!-- CLIENT -->
-
-              <div class="role-option">
-
-                <input
-                  type="radio"
-                  id="role-client"
-                  name="role-choice"
-                  value="client"
-                >
-
-                <label
-                  for="role-client"
-                  class="role-card"
-                >
-
-                  <span class="role-badge">
-                    FOR CLIENTS
-                  </span>
-
-                  <strong>
-                    Client
-                  </strong>
-
-                  <span>
-                    Post projects, review proposals
-                    and hire skilled freelancers worldwide.
-                  </span>
-
-                </label>
-
-              </div>
-
-            </div>
-
-
-            <!-- HIDDEN ROLE FIELD -->
-
-            <select
-              id="role"
-              required
-              style="display:none;"
-              aria-hidden="true"
-              tabindex="-1"
-            >
-
-              <option value="worker">
-                Freelancer
-              </option>
-
-              <option value="client">
-                Client
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <!-- SKILLS -->
-
-          <div class="form-group">
-
-            <label for="skills">
-              Skills
-            </label>
-
-            <input
-              type="text"
-              id="skills"
-              placeholder="Example: Web Development, Design, Writing"
-              autocomplete="off"
-              maxlength="500"
-            >
-
-            <p class="form-help">
-              Add a few skills that describe what you can offer.
-              Separate multiple skills with commas.
-            </p>
-
-          </div>
-
-
-          <!-- CREATE ACCOUNT -->
-
-          <button
-            type="submit"
-            id="signup-btn"
-            class="signup-submit"
+  <main class="signup-page">
+    <div class="signup-container">
+      
+      <h1>Create Account</h1>
+      <p>Join SocialWorkBD and start your freelance journey</p>
+      
+      <form id="signup-form">
+        
+        <!-- Full Name -->
+        <div class="form-group">
+          <label for="full-name">Full Name *</label>
+          <input 
+            type="text" 
+            id="full-name" 
+            placeholder="Enter your full name" 
+            required
+            minlength="3"
+            maxlength="100"
           >
-            Create Account
-          </button>
-
-        </form>
-
-
-        <!-- DIVIDER -->
-
-        <div class="auth-divider">
-          OR
         </div>
-
-
-        <!-- GOOGLE -->
-
-        <button
-          type="button"
-          id="google-login"
-          class="google-btn"
-        >
-
-          <span class="google-icon">
-            G
-          </span>
-
-          <span>
-            Continue with Google
-          </span>
-
+        
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input 
+            type="email" 
+            id="email" 
+            placeholder="your@email.com" 
+            required
+          >
+        </div>
+        
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <input 
+            type="password" 
+            id="password" 
+            placeholder="Minimum 8 characters" 
+            required
+            minlength="8"
+          >
+        </div>
+        
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirm-password">Confirm Password *</label>
+          <input 
+            type="password" 
+            id="confirm-password" 
+            placeholder="Re-enter your password" 
+            required
+          >
+        </div>
+        
+        <!-- Account Type -->
+        <div class="form-group">
+          <label for="account-type">Account Type *</label>
+          <select id="account-type" required>
+            <option value="">Select your account type</option>
+            <option value="client">Client (Hire freelancers)</option>
+            <option value="freelancer">Freelancer (Offer services)</option>
+          </select>
+        </div>
+        
+        <!-- TERMS & CONDITIONS SECTION -->
+        <div class="terms-section">
+          <h3>Platform Rules & Terms</h3>
+          
+          <div class="terms-box">
+            <strong>1. Account Responsibility</strong>
+            You are fully responsible for your account and all activities. Provide accurate and truthful information during registration. Creating fake or duplicate accounts is strictly prohibited.
+            
+            <strong>2. Platform Rules</strong>
+            Users must not engage in illegal activities, harassment, or abuse. Hacking, phishing, or compromising other accounts is forbidden. Scams, fraud, and deceptive practices will result in immediate suspension.
+            
+            <strong>3. Payment & Transactions</strong>
+            All transactions must be conducted through the platform. External payments or arrangements outside SocialWorkBD are prohibited. Violating this rule will result in account suspension. Refunds are processed according to our refund policy.
+            
+            <strong>4. Communication Standards</strong>
+            Maintain professional and respectful communication with other users. Harassment, bullying, or abusive language is strictly prohibited. Use proper language and conduct yourself professionally.
+            
+            <strong>5. Content & Intellectual Property</strong>
+            Do not upload copyrighted or stolen content. Respect intellectual property rights. Violating copyright laws can result in legal action.
+            
+            <strong>6. Suspension & Termination</strong>
+            Repeated rule violations will result in account suspension or permanent ban. The platform reserves the right to terminate accounts without refund.
+          </div>
+          
+          <!-- Checkbox 1 -->
+          <div class="checkbox-group">
+            <input type="checkbox" id="terms-agree" required>
+            <label for="terms-agree">
+              I agree to the <a href="javascript:void(0)" onclick="showTerms()">Terms & Conditions</a> and <a href="javascript:void(0)" onclick="showPolicy()">Privacy Policy</a> *
+            </label>
+          </div>
+          
+          <!-- Checkbox 2 -->
+          <div class="checkbox-group">
+            <input type="checkbox" id="rules-agree" required>
+            <label for="rules-agree">
+              I will follow all platform rules and regulations *
+            </label>
+          </div>
+          
+          <div id="terms-error" class="error-message">
+            ⚠️ You must agree to Terms & Conditions and Platform Rules to continue
+          </div>
+        </div>
+        
+        <!-- Submit Button -->
+        <button type="submit" class="signup-btn" id="signup-btn">
+          Create Account
         </button>
-
-        <p class="google-note">
-          Fast and secure account creation with Google
-        </p>
-
-
-        <!-- LOGIN -->
-
-        <p class="login-prompt">
-
-          Already have an account?
-
-          <a href="login.html">
-            Log In
-          </a>
-
-        </p>
-
-
-        <!-- FOOTER NOTE -->
-
-        <p class="auth-footer-note">
-
-          Create a professional profile, discover opportunities,
-          or connect with skilled freelancers from around the world.
-
-        </p>
-
-
-      </section>
-
+        
+      </form>
+      
+      <div class="login-link">
+        Already have an account? <a href="login.html">Log in here</a>
+      </div>
+      
     </div>
-
   </main>
-
-
-  <!-- FOOTER -->
-
-  <footer>
-
-    <div class="container">
-
-      <p>
-        © 2026 SocialWorkBD
-      </p>
-
-      <p>
-        Global Freelance Marketplace
-      </p>
-
-    </div>
-
-  </footer>
-
-
-  <!-- FIREBASE CONFIG -->
-
+  
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  
   <script src="firebase-config.js"></script>
-
-  <!-- MAIN APP -->
-
-  <script src="app.js"></script>
-
-
-  <!-- ROLE SYNC -->
-
+  
   <script>
+    const signupForm = document.getElementById("signup-form");
+    const signupBtn = document.getElementById("signup-btn");
+    const termsError = document.getElementById("terms-error");
+    
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    
+    /* ==============================
+       SHOW TERMS MODAL
+    =============================== */
+    function showTerms() {
+      const termsText = `TERMS AND CONDITIONS FOR SocialWorkBD
 
-    document.addEventListener(
-      "DOMContentLoaded",
-      function () {
+1. ACCEPTANCE OF TERMS
+By creating an account and using SocialWorkBD, you agree to comply with all terms and conditions outlined in this document.
 
-        const workerRole =
-          document.getElementById("role-worker");
+2. ACCOUNT OWNERSHIP
+You are fully responsible for maintaining the confidentiality of your login credentials and for all activities conducted under your account. You agree to notify us immediately of any unauthorized access.
 
-        const clientRole =
-          document.getElementById("role-client");
+3. USER CONDUCT
+- Do not engage in illegal activities
+- Do not harass, threaten, or abuse other users
+- Do not attempt to hack, phish, or compromise accounts
+- Do not spam or send unsolicited messages
+- Do not post explicit, hateful, or discriminatory content
 
-        const roleField =
-          document.getElementById("role");
+4. INTELLECTUAL PROPERTY
+- Do not upload copyrighted or stolen content
+- Respect the intellectual property rights of others
+- All work created on the platform must be original or properly licensed
+- Violations may result in legal action
 
+5. PAYMENTS AND TRANSACTIONS
+- All payments must be made through the platform
+- External payment arrangements are strictly prohibited
+- Accounts using external payments will be suspended
+- Refunds are processed according to our refund policy
 
-        function syncRole() {
+6. CONTENT STANDARDS
+- Keep all communication professional and respectful
+- Use proper language and conduct
+- Provide accurate project descriptions
+- Deliver work on time as agreed
 
-          if (!roleField) {
-            return;
-          }
+7. ACCOUNT SUSPENSION
+- The platform reserves the right to suspend accounts for rule violations
+- Repeated violations will result in permanent ban
+- Suspended accounts may lose access to funds
 
-          if (
-            clientRole &&
-            clientRole.checked
-          ) {
+8. DISPUTE RESOLUTION
+- Users must attempt to resolve disputes directly
+- If unresolved, contact platform support
+- Platform decision on disputes is final`;
+      
+      alert(termsText);
+    }
+    
+    /* ==============================
+       SHOW PRIVACY POLICY MODAL
+    =============================== */
+    function showPolicy() {
+      const policyText = `PRIVACY POLICY FOR SocialWorkBD
 
-            roleField.value = "client";
+1. INFORMATION WE COLLECT
+- Personal information: name, email, phone number
+- Payment information: securely encrypted and never stored
+- Profile information: skills, experience, portfolio
+- Activity data: transactions, communications, project history
+- Technical data: IP address, device information, cookies
 
-          } else {
+2. HOW WE USE YOUR INFORMATION
+- To provide and improve our services
+- To process payments and transactions
+- To communicate with you about your account
+- To send updates and service announcements
+- To prevent fraud and maintain security
 
-            roleField.value = "worker";
+3. DATA SECURITY
+- All personal data is encrypted and securely stored
+- Payment information is never stored on our servers
+- We use SSL/TLS encryption for data transmission
+- We comply with international data protection standards
 
-          }
+4. THIRD-PARTY SHARING
+- We do NOT share your personal information with third parties
+- We may share aggregated, anonymized data for analytics
+- Legal authorities may access data if required by law
 
-        }
+5. COOKIES AND TRACKING
+- We use cookies to improve user experience
+- You can control cookie settings in your browser
+- We do not track personal browsing history
 
+6. USER RIGHTS
+- You can access, modify, or delete your personal data
+- You can request a copy of all data we hold
+- You can opt-out of marketing communications
+- You can delete your account at any time
 
-        if (workerRole) {
+7. CONTACT US
+For privacy concerns, contact support@socialworkbd.com
 
-          workerRole.addEventListener(
-            "change",
-            syncRole
-          );
-
-        }
-
-
-        if (clientRole) {
-
-          clientRole.addEventListener(
-            "change",
-            syncRole
-          );
-
-        }
-
-
-        syncRole();
-
+Last updated: 2026`;
+      
+      alert(policyText);
+    }
+    
+    /* ==============================
+       SIGNUP FORM SUBMISSION
+    =============================== */
+    signupForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const fullName = document.getElementById("full-name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+      const accountType = document.getElementById("account-type").value;
+      const termsAgree = document.getElementById("terms-agree").checked;
+      const rulesAgree = document.getElementById("rules-agree").checked;
+      
+      /* VALIDATION */
+      if (!fullName || fullName.length < 3) {
+        alert("Full name must be at least 3 characters long");
+        return;
       }
-    );
-
+      
+      if (!/^[a-zA-Z\s]+$/.test(fullName)) {
+        alert("Full name should only contain letters and spaces");
+        return;
+      }
+      
+      if (password.length < 8) {
+        alert("Password must be at least 8 characters long");
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        alert("Passwords do not match");
+        return;
+      }
+      
+      if (!accountType) {
+        alert("Please select an account type");
+        return;
+      }
+      
+      /* TERMS CHECK */
+      if (!termsAgree || !rulesAgree) {
+        termsError.classList.add("show");
+        return;
+      }
+      
+      termsError.classList.remove("show");
+      
+      try {
+        signupBtn.disabled = true;
+        signupBtn.textContent = "Creating account...";
+        
+        /* CREATE USER IN FIREBASE AUTH */
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        /* SAVE USER DATA IN FIRESTORE */
+        await db.collection("users").doc(user.uid).set({
+          name: fullName,
+          email: email,
+          role: accountType,
+          status: "active",
+          termsAgreedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          rulesAgreedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          balance: 0,
+          accountId: user.uid.substring(0, 8).toUpperCase(),
+          emailVerified: false,
+          phone: "",
+          profileImage: "",
+          bio: ""
+        });
+        
+        /* SEND EMAIL VERIFICATION */
+        await user.sendEmailVerification();
+        
+        alert("Account created successfully! Please check your email to verify your account.");
+        
+        /* REDIRECT */
+        setTimeout(() => {
+          if (accountType === "client") {
+            window.location.href = "client-dashboard.html";
+          } else {
+            window.location.href = "worker-dashboard.html";
+          }
+        }, 1500);
+        
+      } catch (error) {
+        console.error("Signup error:", error);
+        
+        if (error.code === "auth/email-already-in-use") {
+          alert("This email address is already registered. Please login or use a different email.");
+        } else if (error.code === "auth/weak-password") {
+          alert("Password is too weak. Please use a stronger password with letters, numbers, and symbols.");
+        } else if (error.code === "auth/invalid-email") {
+          alert("Please enter a valid email address.");
+        } else {
+          alert("Error: " + error.message);
+        }
+        
+        signupBtn.disabled = false;
+        signupBtn.textContent = "Create Account";
+      }
+    });
   </script>
-
-
 </body>
-
 </html>
