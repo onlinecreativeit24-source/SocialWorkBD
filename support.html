@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Help & Support — SocialWorkBD</title>
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <meta
     name="description"
-    content="Get help, report account issues, and request an account review on SocialWorkBD."
+    content="Get help, report account issues, and request an account review on SocialWorkBD, a global freelance marketplace."
   >
+
+  <title>Help & Support - SocialWorkBD</title>
 
   <link rel="icon" href="favicon.svg">
   <link rel="stylesheet" href="styles.css">
 
   <style>
+
     .support-page {
       max-width: 1100px;
       margin: 0 auto;
@@ -33,7 +41,7 @@
 
     .support-hero p {
       margin: 0;
-      max-width: 720px;
+      max-width: 760px;
       color: #667085;
       font-size: 16px;
       line-height: 1.7;
@@ -277,6 +285,31 @@
       grid-column: 1 / -1;
     }
 
+    .support-highlight {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 16px;
+      background: linear-gradient(
+        135deg,
+        #ecfdf3,
+        #f8fafc
+      );
+      border: 1px solid #d1fadf;
+    }
+
+    .support-highlight strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #111827;
+      font-size: 15px;
+    }
+
+    .support-highlight span {
+      color: #667085;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
     .footer-simple {
       border-top: 1px solid #eaecf0;
       padding: 24px 20px;
@@ -291,7 +324,12 @@
       margin: 0 8px;
     }
 
+    .footer-simple a:hover {
+      color: #12b76a;
+    }
+
     @media (max-width: 800px) {
+
       .support-grid {
         grid-template-columns: 1fr;
       }
@@ -303,9 +341,11 @@
       .support-hero h1 {
         font-size: 30px;
       }
+
     }
 
     @media (max-width: 520px) {
+
       .support-page {
         padding: 32px 14px 60px;
       }
@@ -324,128 +364,303 @@
       .account-value {
         text-align: left;
       }
+
     }
+
   </style>
+
 </head>
+
 
 <body>
 
+
+  <!-- HEADER -->
+
   <header class="site-header">
+
     <div class="container">
+
       <a href="index.html" class="brand">
+
         <span class="brand-mark">SW</span>
+
         <span>SocialWorkBD</span>
+
       </a>
 
+
       <nav class="main-nav">
-        <a href="tasks.html">Find Work</a>
-        <a href="post-job.html">Post a Job</a>
-        <a href="messages.html">Messages</a>
-        <a href="support.html" class="active">Help</a>
+
+        <a href="tasks.html">
+          Find Work
+        </a>
+
+        <a href="find-talent.html">
+          Find Talent
+        </a>
+
+        <a href="post-job.html">
+          Post a Job
+        </a>
+
+        <a href="support.html" class="active">
+          Help
+        </a>
+
       </nav>
 
+
       <div class="header-actions">
-        <a href="login.html" class="login-link">Log In</a>
-        <a href="signup.html" class="signup-link">Sign Up</a>
+
+        <a
+          href="login.html"
+          class="login-link"
+        >
+          Log In
+        </a>
+
+        <a
+          href="signup.html"
+          class="signup-link"
+        >
+          Sign Up
+        </a>
+
       </div>
+
     </div>
+
   </header>
 
 
+
+  <!-- MAIN -->
+
   <main class="support-page">
 
+
     <section class="support-hero">
-      <h1>Help & Support</h1>
+
+      <h1>
+        Help & Support
+      </h1>
+
       <p>
-        Need help with your account, a project, a message, or an account restriction?
-        Find answers below or contact SocialWorkBD support.
+        Need help with your account, a project, a message,
+        or an account restriction? Find answers below or
+        contact SocialWorkBD support.
       </p>
+
     </section>
+
 
 
     <div class="support-grid">
 
+
       <!-- ACCOUNT STATUS -->
+
       <section class="support-card">
-        <h2>Account Status</h2>
+
+        <h2>
+          Account Status
+        </h2>
 
         <p>
-          Review your current account information and status.
+          Review your current SocialWorkBD account information
+          and account status.
         </p>
 
-        <div id="login-required" class="login-required">
+
+        <div
+          id="login-required"
+          class="login-required"
+        >
+
           Please
-          <a href="login.html">Log in</a>
-          to view your account status and submit an account review request.
+
+          <a href="login.html">
+            Log in
+          </a>
+
+          to view your account status and submit
+          an account review request.
+
         </div>
 
-        <div id="account-section" style="display:none;">
+
+
+        <div
+          id="account-section"
+          style="display:none;"
+        >
 
           <div class="account-status-box">
 
-            <div class="account-row">
-              <span class="account-label">Account ID</span>
-              <span class="account-value" id="account-id">—</span>
-            </div>
 
             <div class="account-row">
-              <span class="account-label">Name</span>
-              <span class="account-value" id="account-name">—</span>
-            </div>
 
-            <div class="account-row">
-              <span class="account-label">Email</span>
-              <span class="account-value" id="account-email">—</span>
-            </div>
-
-            <div class="account-row">
-              <span class="account-label">Status</span>
-              <span class="account-value">
-                <span id="account-status" class="status-badge">Active</span>
+              <span class="account-label">
+                Account ID
               </span>
+
+              <span
+                class="account-value"
+                id="account-id"
+              >
+                —
+              </span>
+
             </div>
+
+
+            <div class="account-row">
+
+              <span class="account-label">
+                Name
+              </span>
+
+              <span
+                class="account-value"
+                id="account-name"
+              >
+                —
+              </span>
+
+            </div>
+
+
+            <div class="account-row">
+
+              <span class="account-label">
+                Email
+              </span>
+
+              <span
+                class="account-value"
+                id="account-email"
+              >
+                —
+              </span>
+
+            </div>
+
+
+            <div class="account-row">
+
+              <span class="account-label">
+                Status
+              </span>
+
+              <span class="account-value">
+
+                <span
+                  id="account-status"
+                  class="status-badge"
+                >
+                  Active
+                </span>
+
+              </span>
+
+            </div>
+
 
           </div>
 
-          <div id="status-message" class="review-info">
+
+          <div
+            id="status-message"
+            class="review-info"
+          >
             Your account is currently in good standing.
           </div>
 
+
         </div>
+
       </section>
 
 
+
       <!-- ACCOUNT REVIEW -->
+
       <section class="support-card">
-        <h2>Request a Review</h2>
+
+        <h2>
+          Request a Review
+        </h2>
 
         <p>
-          If you believe your account was restricted or suspended incorrectly,
-          you can submit a review request.
+          If you believe your account was restricted or
+          suspended incorrectly, you can submit a review request.
         </p>
 
-        <div id="review-login-required" class="login-required">
+
+        <div
+          id="review-login-required"
+          class="login-required"
+        >
+
           Please
-          <a href="login.html">Log in</a>
+
+          <a href="login.html">
+            Log in
+          </a>
+
           to submit an account review request.
+
         </div>
 
-        <form id="appeal-form" class="support-form" style="display:none;">
+
+        <form
+          id="appeal-form"
+          class="support-form"
+          style="display:none;"
+        >
 
           <div class="field-group">
-            <label for="appeal-reason">Reason</label>
 
-            <select id="appeal-reason" required>
-              <option value="">Select a reason</option>
-              <option value="account_restriction">Account restriction</option>
-              <option value="account_suspension">Account suspension</option>
-              <option value="moderation_action">Moderation action</option>
-              <option value="other">Other account issue</option>
+            <label for="appeal-reason">
+              Reason
+            </label>
+
+            <select
+              id="appeal-reason"
+              required
+            >
+
+              <option value="">
+                Select a reason
+              </option>
+
+              <option value="account_restriction">
+                Account restriction
+              </option>
+
+              <option value="account_suspension">
+                Account suspension
+              </option>
+
+              <option value="moderation_action">
+                Moderation action
+              </option>
+
+              <option value="other">
+                Other account issue
+              </option>
+
             </select>
+
           </div>
 
+
           <div class="field-group">
-            <label for="appeal-message">Explain your situation</label>
+
+            <label for="appeal-message">
+              Explain your situation
+            </label>
 
             <textarea
               id="appeal-message"
@@ -453,7 +668,9 @@
               placeholder="Explain why you believe your account should be reviewed."
               required
             ></textarea>
+
           </div>
+
 
           <button
             type="submit"
@@ -463,434 +680,742 @@
             Submit Review Request
           </button>
 
-          <div id="appeal-notice" class="notice"></div>
+
+          <div
+            id="appeal-notice"
+            class="notice"
+          ></div>
 
         </form>
 
+
         <div class="review-info">
-          Review requests are checked by the SocialWorkBD team.
-          Submitting a request does not automatically remove an account restriction.
+
+          Review requests are checked by the SocialWorkBD
+          support team.
+
+          Submitting a request does not automatically remove
+          an account restriction.
+
         </div>
+
       </section>
+
 
 
       <!-- FAQ -->
+
       <section class="support-card full-width">
-        <h2>Common Questions</h2>
+
+        <h2>
+          Common Questions
+        </h2>
 
         <p>
-          Quick answers to common SocialWorkBD account and marketplace questions.
+          Quick answers to common SocialWorkBD account
+          and marketplace questions.
         </p>
+
 
         <div class="faq-list">
 
-          <details class="faq-item">
-            <summary>Why can my account be restricted?</summary>
-
-            <div class="faq-answer">
-              Accounts may be restricted when activity violates marketplace
-              rules, communication policies, payment rules, or other platform
-              requirements.
-            </div>
-          </details>
 
           <details class="faq-item">
-            <summary>Can I request a review after suspension?</summary>
+
+            <summary>
+              Why can my account be restricted?
+            </summary>
 
             <div class="faq-answer">
-              Yes. If you believe a moderation decision was incorrect,
-              submit a review request with a clear explanation of your situation.
+
+              Accounts may be restricted when activity violates
+              marketplace rules, communication policies,
+              payment rules, or other platform requirements.
+
             </div>
+
           </details>
+
+
 
           <details class="faq-item">
-            <summary>Can I share external contact information in messages?</summary>
+
+            <summary>
+              Can I request a review after suspension?
+            </summary>
 
             <div class="faq-answer">
-              SocialWorkBD messaging is intended for marketplace communication.
-              Keep project discussions and transactions on the platform and
-              avoid moving business communication to external platforms.
+
+              Yes. If you believe a moderation decision was
+              incorrect, submit a review request with a clear
+              explanation of your situation.
+
             </div>
+
           </details>
+
+
 
           <details class="faq-item">
-            <summary>Will my Account ID change after a restriction?</summary>
+
+            <summary>
+              Can I share external contact information in messages?
+            </summary>
 
             <div class="faq-answer">
-              Your Account ID is intended to remain associated with your account.
-              A moderation action does not automatically create a new identity.
+
+              SocialWorkBD messaging is intended for marketplace
+              communication. Keep project discussions and
+              transactions on the platform and follow the
+              marketplace communication rules.
+
             </div>
+
           </details>
+
+
 
           <details class="faq-item">
-            <summary>How should I report another user?</summary>
+
+            <summary>
+              Will my Account ID change after a restriction?
+            </summary>
 
             <div class="faq-answer">
-              Use the report option available in the relevant conversation or
-              marketplace flow. Provide accurate information so the support team
-              can review the situation.
+
+              Your Account ID is intended to remain associated
+              with your account. A moderation action does not
+              automatically create a new identity.
+
             </div>
+
           </details>
+
+
+
+          <details class="faq-item">
+
+            <summary>
+              How should I report another user?
+            </summary>
+
+            <div class="faq-answer">
+
+              Use the report option available in the relevant
+              conversation or marketplace flow. Provide accurate
+              information so the support team can review the situation.
+
+            </div>
+
+          </details>
+
 
         </div>
+
+
+        <div class="support-highlight">
+
+          <strong>
+            Need help with a marketplace issue?
+          </strong>
+
+          <span>
+            Provide clear and accurate information when submitting
+            a support or review request. This helps the SocialWorkBD
+            team understand the issue and respond appropriately.
+          </span>
+
+        </div>
+
       </section>
+
 
     </div>
 
   </main>
 
 
+
+  <!-- FOOTER -->
+
   <footer class="footer-simple">
+
     <div>
-      <a href="index.html">Home</a>
-      <a href="tasks.html">Find Work</a>
-      <a href="support.html">Help</a>
-      <a href="terms.html">Terms</a>
-      <a href="privacy.html">Privacy</a>
+
+      <a href="index.html">
+        Home
+      </a>
+
+      <a href="tasks.html">
+        Find Work
+      </a>
+
+      <a href="find-talent.html">
+        Find Talent
+      </a>
+
+      <a href="post-job.html">
+        Post a Job
+      </a>
+
+      <a href="support.html">
+        Help
+      </a>
+
+      <a href="terms.html">
+        Terms
+      </a>
+
+      <a href="privacy.html">
+        Privacy
+      </a>
+
     </div>
 
+
     <div style="margin-top:10px;">
-      © 2026 SocialWorkBD. All rights reserved.
+
+      © 2026 SocialWorkBD.
+      Global Freelance Marketplace.
+
     </div>
+
   </footer>
 
 
-  <!-- Firebase -->
+
+  <!-- FIREBASE -->
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <script src="firebase-config.js"></script>
+
   <script src="app.js"></script>
 
 
+
+  <!-- SUPPORT LOGIC -->
+
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
 
-      const loginRequired =
-        document.getElementById("login-required");
-
-      const reviewLoginRequired =
-        document.getElementById("review-login-required");
-
-      const accountSection =
-        document.getElementById("account-section");
-
-      const appealForm =
-        document.getElementById("appeal-form");
-
-      const accountId =
-        document.getElementById("account-id");
-
-      const accountName =
-        document.getElementById("account-name");
-
-      const accountEmail =
-        document.getElementById("account-email");
-
-      const accountStatus =
-        document.getElementById("account-status");
-
-      const statusMessage =
-        document.getElementById("status-message");
-
-      const appealNotice =
-        document.getElementById("appeal-notice");
-
-      const submitAppealBtn =
-        document.getElementById("submit-appeal-btn");
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
 
 
-      function showNotice(message, type) {
-        appealNotice.textContent = message;
-        appealNotice.className = "notice " + type;
-      }
+        const loginRequired =
+          document.getElementById("login-required");
 
 
-      function statusText(status) {
-
-        const map = {
-          active: "Active",
-          warning: "Warning",
-          restricted: "Restricted",
-          suspended: "Suspended",
-          under_review: "Under Review"
-        };
-
-        return map[status] || "Active";
-      }
+        const reviewLoginRequired =
+          document.getElementById("review-login-required");
 
 
-      function statusClass(status) {
-
-        const map = {
-          warning: "status-warning",
-          restricted: "status-restricted",
-          suspended: "status-suspended",
-          under_review: "status-under-review"
-        };
-
-        return map[status] || "";
-      }
+        const accountSection =
+          document.getElementById("account-section");
 
 
-      function statusDescription(status) {
-
-        const map = {
-          active:
-            "Your account is currently active and available for normal marketplace activity.",
-
-          warning:
-            "Your account has received a policy warning. Please follow SocialWorkBD rules carefully.",
-
-          restricted:
-            "Some account features may be temporarily unavailable because your account is restricted.",
-
-          suspended:
-            "Your account is currently suspended. You can submit a review request if you believe this action was incorrect.",
-
-          under_review:
-            "Your account is currently under review. Some marketplace features may be temporarily unavailable."
-        };
-
-        return map[status] || map.active;
-      }
+        const appealForm =
+          document.getElementById("appeal-form");
 
 
-      if (typeof firebase === "undefined") {
-        loginRequired.style.display = "block";
-        return;
-      }
+        const accountId =
+          document.getElementById("account-id");
 
 
-      firebase.auth().onAuthStateChanged(async function (user) {
+        const accountName =
+          document.getElementById("account-name");
 
-        if (!user) {
 
-          loginRequired.style.display = "block";
-          reviewLoginRequired.style.display = "block";
+        const accountEmail =
+          document.getElementById("account-email");
 
-          accountSection.style.display = "none";
-          appealForm.style.display = "none";
+
+        const accountStatus =
+          document.getElementById("account-status");
+
+
+        const statusMessage =
+          document.getElementById("status-message");
+
+
+        const appealNotice =
+          document.getElementById("appeal-notice");
+
+
+        const submitAppealBtn =
+          document.getElementById("submit-appeal-btn");
+
+
+
+        function showNotice(
+          message,
+          type
+        ) {
+
+          appealNotice.textContent =
+            message;
+
+          appealNotice.className =
+            "notice " + type;
+
+        }
+
+
+
+        function statusText(status) {
+
+          const map = {
+
+            active: "Active",
+
+            warning: "Warning",
+
+            restricted: "Restricted",
+
+            suspended: "Suspended",
+
+            under_review: "Under Review"
+
+          };
+
+          return map[status] || "Active";
+
+        }
+
+
+
+        function statusClass(status) {
+
+          const map = {
+
+            warning: "status-warning",
+
+            restricted: "status-restricted",
+
+            suspended: "status-suspended",
+
+            under_review: "status-under-review"
+
+          };
+
+          return map[status] || "";
+
+        }
+
+
+
+        function statusDescription(status) {
+
+          const map = {
+
+            active:
+              "Your account is currently active and available for normal marketplace activity.",
+
+            warning:
+              "Your account has received a policy warning. Please follow SocialWorkBD marketplace rules carefully.",
+
+            restricted:
+              "Some account features may be temporarily unavailable because your account is restricted.",
+
+            suspended:
+              "Your account is currently suspended. You can submit a review request if you believe this action was incorrect.",
+
+            under_review:
+              "Your account is currently under review. Some marketplace features may be temporarily unavailable."
+
+          };
+
+          return map[status] || map.active;
+
+        }
+
+
+
+        if (
+          typeof firebase === "undefined"
+        ) {
+
+          loginRequired.style.display =
+            "block";
+
+          reviewLoginRequired.style.display =
+            "block";
 
           return;
+
         }
 
 
-        loginRequired.style.display = "none";
-        reviewLoginRequired.style.display = "none";
 
-        accountSection.style.display = "block";
-        appealForm.style.display = "flex";
+        firebase.auth().onAuthStateChanged(
+          async function (user) {
 
 
-        try {
+            if (!user) {
 
-          const snap =
-            await firebase.firestore()
-              .collection("users")
-              .doc(user.uid)
-              .get();
+              loginRequired.style.display =
+                "block";
 
+              reviewLoginRequired.style.display =
+                "block";
 
-          if (!snap.exists) {
+              accountSection.style.display =
+                "none";
 
-            accountId.textContent = "—";
-            accountName.textContent = user.displayName || "—";
-            accountEmail.textContent = user.email || "—";
+              appealForm.style.display =
+                "none";
 
-            accountStatus.textContent = "Active";
+              return;
 
-            return;
-          }
-
-
-          const data = snap.data() || {};
-
-          const status =
-            data.accountStatus || "active";
-
-
-          accountId.textContent =
-            data.accountId || user.uid;
-
-          accountName.textContent =
-            data.name || user.displayName || "—";
-
-          accountEmail.textContent =
-            data.email || user.email || "—";
-
-
-          accountStatus.textContent =
-            statusText(status);
-
-          accountStatus.className =
-            "status-badge " + statusClass(status);
-
-
-          statusMessage.textContent =
-            statusDescription(status);
-
-
-        } catch (error) {
-
-          console.error(
-            "Support profile error:",
-            error
-          );
-
-          statusMessage.textContent =
-            "Unable to load your account status right now.";
-        }
-
-      });
-
-
-      appealForm.addEventListener(
-        "submit",
-        async function (event) {
-
-          event.preventDefault();
-
-          const user =
-            firebase.auth().currentUser;
-
-          if (!user) {
-
-            window.location.href = "login.html";
-            return;
-          }
-
-
-          const reason =
-            document.getElementById("appeal-reason").value;
-
-          const message =
-            document.getElementById("appeal-message").value.trim();
-
-
-          if (!reason || !message) {
-
-            showNotice(
-              "Please complete all required fields.",
-              "error"
-            );
-
-            return;
-          }
-
-
-          if (message.length < 20) {
-
-            showNotice(
-              "Please provide a little more detail about your situation.",
-              "error"
-            );
-
-            return;
-          }
-
-
-          submitAppealBtn.disabled = true;
-          submitAppealBtn.textContent = "Submitting...";
-
-
-          try {
-
-            const db =
-              firebase.firestore();
-
-
-            const profileSnap =
-              await db.collection("users")
-                .doc(user.uid)
-                .get();
-
-
-            const profile =
-              profileSnap.exists
-                ? profileSnap.data()
-                : {};
-
-
-            const currentStatus =
-              profile.accountStatus || "active";
-
-
-            await db.collection("appeals").add({
-
-              userId: user.uid,
-
-              accountId:
-                profile.accountId || user.uid,
-
-              email:
-                profile.email || user.email || "",
-
-              name:
-                profile.name || user.displayName || "",
-
-              reason: reason,
-
-              message: message,
-
-              currentStatus: currentStatus,
-
-              status: "pending",
-
-              createdAt:
-                firebase.firestore.FieldValue.serverTimestamp()
-
-            });
-
-
-            showNotice(
-              "Your review request has been submitted successfully. The SocialWorkBD team will review it.",
-              "success"
-            );
-
-
-            document.getElementById("appeal-form").reset();
-
-
-          } catch (error) {
-
-            console.error(
-              "Appeal submission error:",
-              error
-            );
-
-
-            let messageText =
-              "Unable to submit your review request. Please try again.";
-
-
-            if (
-              error &&
-              error.code === "permission-denied"
-            ) {
-              messageText =
-                "Your review request could not be submitted because of the current account permissions.";
             }
 
 
-            showNotice(
-              messageText,
-              "error"
-            );
 
-          } finally {
+            loginRequired.style.display =
+              "none";
 
-            submitAppealBtn.disabled = false;
-            submitAppealBtn.textContent =
-              "Submit Review Request";
+            reviewLoginRequired.style.display =
+              "none";
+
+            accountSection.style.display =
+              "block";
+
+            appealForm.style.display =
+              "flex";
+
+
+
+            try {
+
+              const db =
+                firebase.firestore();
+
+
+              const snap =
+                await db
+                  .collection("users")
+                  .doc(user.uid)
+                  .get();
+
+
+
+              if (!snap.exists) {
+
+                accountId.textContent =
+                  user.uid;
+
+                accountName.textContent =
+                  user.displayName ||
+                  "—";
+
+                accountEmail.textContent =
+                  user.email ||
+                  "—";
+
+                accountStatus.textContent =
+                  "Active";
+
+                accountStatus.className =
+                  "status-badge";
+
+                statusMessage.textContent =
+                  "Your account is active. Your profile information has not been created in Firestore yet.";
+
+                return;
+
+              }
+
+
+
+              const data =
+                snap.data() || {};
+
+
+              const status =
+                String(
+                  data.accountStatus ||
+                  "active"
+                ).toLowerCase();
+
+
+
+              accountId.textContent =
+                data.accountId ||
+                data.uid ||
+                user.uid;
+
+
+              accountName.textContent =
+                data.name ||
+                data.displayName ||
+                user.displayName ||
+                "—";
+
+
+              accountEmail.textContent =
+                data.email ||
+                user.email ||
+                "—";
+
+
+
+              accountStatus.textContent =
+                statusText(status);
+
+
+              accountStatus.className =
+                "status-badge " +
+                statusClass(status);
+
+
+
+              statusMessage.textContent =
+                statusDescription(status);
+
+            } catch (error) {
+
+              console.error(
+                "Support profile error:",
+                error
+              );
+
+
+              statusMessage.textContent =
+                "Unable to load your account status right now. Please try again later.";
+
+            }
+
           }
+        );
 
-        }
-      );
 
-    });
+
+        appealForm.addEventListener(
+          "submit",
+          async function (event) {
+
+            event.preventDefault();
+
+
+
+            const user =
+              firebase.auth().currentUser;
+
+
+
+            if (!user) {
+
+              window.location.href =
+                "login.html";
+
+              return;
+
+            }
+
+
+
+            const reason =
+              document
+                .getElementById(
+                  "appeal-reason"
+                )
+                .value;
+
+
+
+            const message =
+              document
+                .getElementById(
+                  "appeal-message"
+                )
+                .value
+                .trim();
+
+
+
+            if (
+              !reason ||
+              !message
+            ) {
+
+              showNotice(
+                "Please complete all required fields.",
+                "error"
+              );
+
+              return;
+
+            }
+
+
+
+            if (
+              message.length < 20
+            ) {
+
+              showNotice(
+                "Please provide a little more detail about your situation.",
+                "error"
+              );
+
+              return;
+
+            }
+
+
+
+            submitAppealBtn.disabled =
+              true;
+
+            submitAppealBtn.textContent =
+              "Submitting...";
+
+
+
+            try {
+
+              const db =
+                firebase.firestore();
+
+
+
+              const profileSnap =
+                await db
+                  .collection("users")
+                  .doc(user.uid)
+                  .get();
+
+
+
+              const profile =
+                profileSnap.exists
+                  ? profileSnap.data()
+                  : {};
+
+
+
+              const currentStatus =
+                String(
+                  profile.accountStatus ||
+                  "active"
+                ).toLowerCase();
+
+
+
+              await db
+                .collection("appeals")
+                .add({
+
+                  userId:
+                    user.uid,
+
+                  accountId:
+                    profile.accountId ||
+                    profile.uid ||
+                    user.uid,
+
+                  email:
+                    profile.email ||
+                    user.email ||
+                    "",
+
+                  name:
+                    profile.name ||
+                    profile.displayName ||
+                    user.displayName ||
+                    "",
+
+                  reason:
+                    reason,
+
+                  message:
+                    message,
+
+                  currentStatus:
+                    currentStatus,
+
+                  status:
+                    "pending",
+
+                  createdAt:
+                    firebase.firestore
+                      .FieldValue
+                      .serverTimestamp()
+
+                });
+
+
+
+              showNotice(
+                "Your review request has been submitted successfully. The SocialWorkBD support team will review it.",
+                "success"
+              );
+
+
+
+              document
+                .getElementById(
+                  "appeal-form"
+                )
+                .reset();
+
+
+
+            } catch (error) {
+
+              console.error(
+                "Appeal submission error:",
+                error
+              );
+
+
+
+              let messageText =
+                "Unable to submit your review request. Please try again.";
+
+
+
+              if (
+                error &&
+                error.code ===
+                  "permission-denied"
+              ) {
+
+                messageText =
+                  "Your review request could not be submitted because the current Firestore permissions do not allow this request.";
+
+              }
+
+
+
+              showNotice(
+                messageText,
+                "error"
+              );
+
+            } finally {
+
+              submitAppealBtn.disabled =
+                false;
+
+              submitAppealBtn.textContent =
+                "Submit Review Request";
+
+            }
+
+          }
+        );
+
+      }
+    );
+
   </script>
 
 </body>
+
 </html>
