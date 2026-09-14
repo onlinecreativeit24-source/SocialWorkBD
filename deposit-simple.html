@@ -1,0 +1,31 @@
+  body { font-family: Arial, sans-serif; max-width: 480px; margin: 40px auto; padding: 20px; }
+  input { padding: 10px; width: 100%; box-sizing: border-box; margin-bottom: 15px; font-size: 16px; }
+  button { padding: 12px; width: 100%; font-size: 16px; margin-bottom: 15px; cursor: pointer; }
+  #formBox, #step2 { display: none; }
+  #resultMsg { margin-top: 15px; font-weight: bold; }
+  .note { font-size: 13px; color: #555; }
+</style>
+</head>
+<body>
+
+  <h2>Add Money to Wallet (Deposit)</h2>
+  <p id="authStatus">Checking login status...</p>
+
+  <div id="formBox">
+    <label>Amount (USD)</label>
+    <input type="number" id="amountInput" min="1" step="0.01" placeholder="e.g. 10.00">
+
+    <button onclick="openPaypalLink()">Pay with PayPal</button>
+    <p class="note">This will open PayPal in a new tab. After completing payment, come back here and enter the Transaction ID below.</p>
+
+    <div id="step2">
+      <label>PayPal Transaction ID / Reference</label>
+      <input type="text" id="txnInput" placeholder="e.g. 5XJ123456789012A">
+      <button onclick="submitDepositRequest()">Submit Request</button>
+    </div>
+  </div>
+
+  <p id="resultMsg"></p>
+
+</body>
+</html>
