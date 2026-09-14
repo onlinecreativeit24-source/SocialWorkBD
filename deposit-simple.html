@@ -1,3 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deposit - SocialWorkBD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDsqRgRZTKZFvfu0r4UJc8Q5xlS7lBL41c",
+    authDomain: "socialworkbd-b1c00.firebaseapp.com",
+    projectId: "socialworkbd-b1c00",
+    storageBucket: "socialworkbd-b1c00.firebasestorage.app",
+    messagingSenderId: "999070456562",
+    appId: "1:999070456562:web:67101bb3148b157e67ce6b",
+    measurementId: "G-XVBRYV71BZ"
+  };
+
+  // PayPal QR payment link (Muhin uddin shikder's PayPal account)
+  const PAYPAL_LINK = "https://www.paypal.com/qrcodes/p2pqrc/AY3DPRB57ZPRE";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUser = user;
+      document.getElementById("authStatus").innerText = "Logged in as: " + user.email;
+      document.getElementById("formBox").style.display = "block";
+    } else {
+      document.getElementById("authStatus").innerText = "Please log in first";
+      document.getElementById("formBox").style.display = "none";
+    }
+  });
+
+  // Step 1: Open PayPal link (amount cannot be pre-filled in this link type,
+  // user enters amount manually on the PayPal page)
+  window.openPaypalLink = function () {
+    const amount = document.getElementById("amountInput").value;
+    if (!amount || Number(amount) <= 0) {
+      alert("Please enter a valid amount");
+      return;
+    }
+    window.open(PAYPAL_LINK, "_blank");
+    document.getElementById("step2").style.display = "block";
+  };
+
+  // Step 2: After payment, user submits Transaction ID for admin verification
+  window.submitDepositRequest = async function () {
+    if (!currentUser) {
+      alert("You are not logged in!");
+      return;
+    }
+    const amount = document.getElementById("amountInput").value;
+    const txnRef = document.getElementById("txnInput").value.trim();
+
+    if (!amount || Number(amount) <= 0) {
+      alert("Please enter a valid amount");
+      return;
+    }
+    if (!txnRef) {
+      alert("Please enter the PayPal Transaction ID / Reference (received after payment)");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "depositRequests"), {
+        uid: currentUser.uid,
+        amount: Number(amount),
+        status: "pending",
+        method: "paypal_manual",
+        txnRef: txnRef,
+        createdAt: serverTimestamp()
+      });
+      document.getElementById("resultMsg").innerText =
+        "Success! Your deposit request has been submitted. Admin will verify the payment on PayPal and add it to your balance.";
+      document.getElementById("txnInput").value = "";
+    } catch (err) {
+      console.error(err);
+      document.getElementById("resultMsg").innerText = "Error: could not submit request - " + err.message;
+    }
+  };
+</script>
+
+<style>
   body { font-family: Arial, sans-serif; max-width: 480px; margin: 40px auto; padding: 20px; }
   input { padding: 10px; width: 100%; box-sizing: border-box; margin-bottom: 15px; font-size: 16px; }
   button { padding: 12px; width: 100%; font-size: 16px; margin-bottom: 15px; cursor: pointer; }
