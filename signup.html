@@ -72,10 +72,6 @@
       box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.10);
     }
 
-    .form-group input::placeholder {
-      color: #9ca39f;
-    }
-
     .terms-section {
       background: #f7f9f8;
       border: 1px solid #e1e8e4;
@@ -183,6 +179,48 @@
       opacity: 0.7;
     }
 
+    .social-divider {
+      text-align: center;
+      margin: 15px 0;
+      position: relative;
+    }
+
+    .social-divider::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: #d5ded9;
+      z-index: 1;
+    }
+
+    .social-divider span {
+      background: white;
+      padding: 0 10px;
+      position: relative;
+      z-index: 2;
+      font-size: 12px;
+      color: #68756e;
+    }
+
+    .google-btn {
+      width: 100%;
+      padding: 12px;
+      background: #14213d;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
     .login-link {
       text-align: center;
       font-size: 14px;
@@ -195,15 +233,10 @@
       font-weight: 600;
     }
 
-    .login-link a:hover {
-      text-decoration: underline;
-    }
-
     @media (max-width: 650px) {
       .signup-container {
         padding: 25px;
       }
-
       .signup-container h1 {
         font-size: 24px;
       }
@@ -223,11 +256,10 @@
 
         <!-- Full Name -->
         <div class="form-group">
-          <label for="full-name">Full Name *</label>
-
+          <label for="name">Full Name *</label>
           <input
             type="text"
-            id="full-name"
+            id="name"
             placeholder="Enter your full name"
             required
             minlength="3"
@@ -238,7 +270,6 @@
         <!-- Email -->
         <div class="form-group">
           <label for="email">Email Address *</label>
-
           <input
             type="email"
             id="email"
@@ -250,20 +281,18 @@
         <!-- Password -->
         <div class="form-group">
           <label for="password">Password *</label>
-
           <input
             type="password"
             id="password"
-            placeholder="Minimum 8 characters"
+            placeholder="Minimum 6 characters"
             required
-            minlength="8"
+            minlength="6"
           >
         </div>
 
         <!-- Confirm Password -->
         <div class="form-group">
           <label for="confirm-password">Confirm Password *</label>
-
           <input
             type="password"
             id="confirm-password"
@@ -274,9 +303,8 @@
 
         <!-- Account Type -->
         <div class="form-group">
-          <label for="account-type">Account Type *</label>
-
-          <select id="account-type" required>
+          <label for="role">Account Type *</label>
+          <select id="role" required>
             <option value="">Select your account type</option>
             <option value="client">Client (Hire freelancers)</option>
             <option value="freelancer">Freelancer (Offer services)</option>
@@ -285,89 +313,58 @@
 
         <!-- TERMS & CONDITIONS SECTION -->
         <div class="terms-section">
-
           <h3>Platform Rules & Terms</h3>
-
           <div class="terms-box">
-
             <strong>1. Account Responsibility</strong>
-            You are fully responsible for your account and all activities.
-            Provide accurate and truthful information during registration.
-            Creating fake or duplicate accounts is strictly prohibited.
+            You are fully responsible for your account and all activities. Provide accurate and truthful information.
 
             <strong>2. Platform Rules</strong>
-            Users must not engage in illegal activities, harassment, or abuse.
-            Hacking, phishing, or compromising other accounts is forbidden.
-            Scams, fraud, and deceptive practices will result in immediate suspension.
+            Harassment, abuse, hacking, phishing, and scamming are strictly forbidden.
 
             <strong>3. Payment & Transactions</strong>
-            All transactions must be conducted through the platform.
-            External payments or arrangements outside SocialWorkBD are prohibited.
-            Violating this rule will result in account suspension.
-            Refunds are processed according to our refund policy.
+            All transactions must be conducted through the platform. External payments are prohibited.
 
             <strong>4. Communication Standards</strong>
-            Maintain professional and respectful communication with other users.
-            Harassment, bullying, or abusive language is strictly prohibited.
-            Use proper language and conduct yourself professionally.
-
-            <strong>5. Content & Intellectual Property</strong>
-            Do not upload copyrighted or stolen content.
-            Respect intellectual property rights.
-            Violating copyright laws can result in legal action.
-
-            <strong>6. Suspension & Termination</strong>
-            Repeated rule violations will result in account suspension or permanent ban.
-            The platform reserves the right to terminate accounts without refund.
-
+            Maintain professional communication at all times.
           </div>
 
-          <!-- Checkbox 1 -->
           <div class="checkbox-group">
-
             <input type="checkbox" id="terms-agree" required>
-
             <label for="terms-agree">
-              I agree to
-              <a href="javascript:void(0)" onclick="showTerms()">Terms & Conditions</a>
-              and
-              <a href="javascript:void(0)" onclick="showPolicy()">Privacy Policy</a>
-              *
+              I agree to <a href="javascript:void(0)" onclick="showTerms()">Terms & Conditions</a> and <a href="javascript:void(0)" onclick="showPolicy()">Privacy Policy</a> *
             </label>
-
           </div>
 
-          <!-- Checkbox 2 -->
           <div class="checkbox-group">
-
             <input type="checkbox" id="rules-agree" required>
-
             <label for="rules-agree">
               I will follow all platform rules and regulations *
             </label>
-
           </div>
 
           <div id="terms-error" class="error-message">
             ⚠️ You must agree to Terms & Conditions and Platform Rules to continue
           </div>
-
         </div>
 
         <!-- Submit Button -->
-        <button
-          type="submit"
-          class="signup-btn"
-          id="signup-btn"
-        >
+        <button type="submit" class="signup-btn" id="signup-btn">
           Create Account
         </button>
 
       </form>
 
+      <div class="social-divider">
+        <span>OR</span>
+      </div>
+
+      <!-- Google Sign-In Button -->
+      <button type="button" class="google-btn" id="google-login">
+        Continue with Google
+      </button>
+
       <div class="login-link">
-        Already have an account?
-        <a href="login.html">Log in here</a>
+        Already have an account? <a href="login.html">Log in here</a>
       </div>
 
     </div>
@@ -379,361 +376,32 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
 
   <script>
-
-    const signupForm = document.getElementById("signup-form");
-    const signupBtn = document.getElementById("signup-btn");
-    const termsError = document.getElementById("terms-error");
-
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-
-
-    /* ==============================
-       SHOW TERMS
-    =============================== */
-
     function showTerms() {
-
-      const termsText = `TERMS AND CONDITIONS FOR SocialWorkBD
-
-1. ACCEPTANCE OF TERMS
-By creating an account and using SocialWorkBD, you agree to comply with all terms and conditions outlined in this document.
-
-2. ACCOUNT OWNERSHIP
-You are fully responsible for maintaining the confidentiality of your login credentials and for all activities conducted under your account. You agree to notify us immediately of any unauthorized access.
-
-3. USER CONDUCT
-- Do not engage in illegal activities
-- Do not harass, threaten, or abuse other users
-- Do not attempt to hack, phish, or compromise accounts
-- Do not spam or send unsolicited messages
-- Do not post explicit, hateful, or discriminatory content
-
-4. INTELLECTUAL PROPERTY
-- Do not upload copyrighted or stolen content
-- Respect the intellectual property rights of others
-- All work created on the platform must be original or properly licensed
-- Violations may result in legal action
-
-5. PAYMENTS AND TRANSACTIONS
-- All payments must be made through the platform
-- External payment arrangements are strictly prohibited
-- Accounts using external payments will be suspended
-- Refunds are processed according to our refund policy
-
-6. CONTENT STANDARDS
-- Keep all communication professional and respectful
-- Use proper language and conduct
-- Provide accurate project descriptions
-- Deliver work on time as agreed
-
-7. ACCOUNT SUSPENSION
-- The platform reserves the right to suspend accounts for rule violations
-- Repeated violations will result in permanent ban
-- Suspended accounts may lose access to funds
-
-8. DISPUTE RESOLUTION
-- Users must attempt to resolve disputes directly
-- If unresolved, contact platform support
-- Platform decision on disputes is final`;
-
-      alert(termsText);
+      alert("TERMS AND CONDITIONS:\n1. Accept all platform rules.\n2. Payments must be inside platform.\n3. Account integrity must be maintained.");
     }
-
-
-    /* ==============================
-       SHOW PRIVACY POLICY
-    =============================== */
 
     function showPolicy() {
-
-      const policyText = `PRIVACY POLICY FOR SocialWorkBD
-
-1. INFORMATION WE COLLECT
-- Personal information: name, email, phone number
-- Payment information: securely encrypted and never stored
-- Profile information: skills, experience, portfolio
-- Activity data: transactions, communications, project history
-- Technical data: IP address, device information, cookies
-
-2. HOW WE USE YOUR INFORMATION
-- To provide and improve our services
-- To process payments and transactions
-- To communicate with you about your account
-- To send updates and service announcements
-- To prevent fraud and maintain security
-
-3. DATA SECURITY
-- All personal data is encrypted and securely stored
-- Payment information is never stored on our servers
-- We use SSL/TLS encryption for data transmission
-- We comply with international data protection standards
-
-4. THIRD-PARTY SHARING
-- We do NOT share your personal information with third parties
-- We may share aggregated, anonymized data for analytics
-- Legal authorities may access data if required by law
-
-5. COOKIES AND TRACKING
-- We use cookies to improve user experience
-- You can control cookie settings in your browser
-- We do not track personal browsing history
-
-6. USER RIGHTS
-- You can access, modify, or delete your personal data
-- You can request a copy of all data we hold
-- You can opt-out of marketing communications
-- You can delete your account at any time
-
-7. CONTACT US
-For privacy concerns, contact support@socialworkbd.com
-
-Last updated: 2026`;
-
-      alert(policyText);
+      alert("PRIVACY POLICY:\nYour personal data is encrypted and protected under international standard laws.");
     }
 
+    // Direct Form Validation Handling to back up app.js
+    const signupForm = document.getElementById("signup-form");
+    const termsAgree = document.getElementById("terms-agree");
+    const rulesAgree = document.getElementById("rules-agree");
+    const termsError = document.getElementById("terms-error");
 
-    /* ==============================
-       SIGNUP FORM SUBMISSION
-    =============================== */
-
-    signupForm.addEventListener("submit", async (e) => {
-
-      e.preventDefault();
-
-      const fullName =
-        document.getElementById("full-name").value.trim();
-
-      const email =
-        document.getElementById("email").value.trim();
-
-      const password =
-        document.getElementById("password").value;
-
-      const confirmPassword =
-        document.getElementById("confirm-password").value;
-
-      const accountType =
-        document.getElementById("account-type").value;
-
-      const termsAgree =
-        document.getElementById("terms-agree").checked;
-
-      const rulesAgree =
-        document.getElementById("rules-agree").checked;
-
-
-      /* ==============================
-         VALIDATION
-      =============================== */
-
-      if (!fullName || fullName.length < 3) {
-        alert("Full name must be at least 3 characters long");
-        return;
-      }
-
-      if (!/^[a-zA-Z\s]+$/.test(fullName)) {
-        alert("Full name should only contain letters and spaces");
-        return;
-      }
-
-      if (password.length < 8) {
-        alert("Password must be at least 8 characters long");
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        alert("Passwords do not match");
-        return;
-      }
-
-      if (!accountType) {
-        alert("Please select an account type");
-        return;
-      }
-
-
-      /* ==============================
-         TERMS CHECK
-      =============================== */
-
-      if (!termsAgree || !rulesAgree) {
-
+    signupForm.addEventListener("submit", function(e) {
+      if (!termsAgree.checked || !rulesAgree.checked) {
+        e.preventDefault();
+        e.stopPropagation();
         termsError.classList.add("show");
-
-        return;
+      } else {
+        termsError.classList.remove("show");
       }
-
-      termsError.classList.remove("show");
-
-
-      try {
-
-        signupBtn.disabled = true;
-        signupBtn.textContent = "Creating account...";
-
-
-        /* ==============================
-           CREATE USER IN FIREBASE AUTH
-        =============================== */
-
-        const userCredential =
-          await auth.createUserWithEmailAndPassword(
-            email,
-            password
-          );
-
-        const user = userCredential.user;
-
-
-        /* ==============================
-           SAVE USER DATA IN FIRESTORE
-           
-           IMPORTANT:
-           uid MUST match the Firestore
-           document ID and security rules.
-        =============================== */
-
-        await db.collection("users").doc(user.uid).set({
-
-          /* FIX: Required by Firestore Rules */
-          uid: user.uid,
-
-          name: fullName,
-
-          email: email,
-
-          role: accountType,
-
-          status: "active",
-
-          termsAgreedAt:
-            firebase.firestore.FieldValue.serverTimestamp(),
-
-          rulesAgreedAt:
-            firebase.firestore.FieldValue.serverTimestamp(),
-
-          createdAt:
-            firebase.firestore.FieldValue.serverTimestamp(),
-
-          updatedAt:
-            firebase.firestore.FieldValue.serverTimestamp(),
-
-          balance: 0,
-
-          accountId:
-            user.uid.substring(0, 8).toUpperCase(),
-
-          emailVerified: false,
-
-          phone: "",
-
-          profileImage: "",
-
-          bio: ""
-
-        });
-
-
-        /* ==============================
-           SEND EMAIL VERIFICATION
-        =============================== */
-
-        await user.sendEmailVerification();
-
-
-        alert(
-          "Account created successfully! Please check your email to verify your account."
-        );
-
-
-        /* ==============================
-           REDIRECT
-        =============================== */
-
-        setTimeout(() => {
-
-          if (accountType === "client") {
-
-            window.location.href =
-              "client-dashboard.html";
-
-          } else {
-
-            window.location.href =
-              "worker-dashboard.html";
-
-          }
-
-        }, 1500);
-
-
-      } catch (error) {
-
-        console.error("Signup error:", error);
-
-
-        /* ==============================
-           FIREBASE AUTH ERRORS
-        =============================== */
-
-        if (
-          error.code ===
-          "auth/email-already-in-use"
-        ) {
-
-          alert(
-            "This email address is already registered. Please login or use a different email."
-          );
-
-        } else if (
-          error.code ===
-          "auth/weak-password"
-        ) {
-
-          alert(
-            "Password is too weak. Please use a stronger password with letters, numbers, and symbols."
-          );
-
-        } else if (
-          error.code ===
-          "auth/invalid-email"
-        ) {
-
-          alert(
-            "Please enter a valid email address."
-          );
-
-        } else if (
-          error.code ===
-          "permission-denied" ||
-          error.code ===
-          "PERMISSION_DENIED"
-        ) {
-
-          alert(
-            "Account authentication succeeded, but your profile could not be saved. Please check Firebase Firestore Rules."
-          );
-
-        } else {
-
-          alert(
-            "Error: " + error.message
-          );
-
-        }
-
-
-        signupBtn.disabled = false;
-        signupBtn.textContent = "Create Account";
-
-      }
-
     });
-
   </script>
 
 </body>
