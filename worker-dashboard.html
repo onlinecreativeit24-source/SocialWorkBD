@@ -597,7 +597,7 @@
             class="stat-value"
             id="balance"
           >
-            0 BDT
+            $0.00
           </span>
 
         </div>
@@ -837,6 +837,23 @@
 
 
     /* ==============================
+       FORMAT CURRENCY (USD)
+    =============================== */
+
+    function formatUSD(value) {
+
+      const amount = Number(value || 0);
+
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 2
+      }).format(amount);
+
+    }
+
+
+    /* ==============================
        FORMAT DATE
     =============================== */
 
@@ -1000,8 +1017,7 @@
         document.getElementById(
           "balance"
         ).textContent =
-          balance.toLocaleString("en-US") +
-          " BDT";
+          formatUSD(balance);
 
 
         /* ==============================
@@ -1280,9 +1296,7 @@
             <div class="job-card-footer">
 
               <span class="job-budget">
-                Budget:
-                ${budget.toLocaleString("en-US")}
-                BDT
+                Budget: ${formatUSD(budget)}
               </span>
 
               <a
@@ -1524,9 +1538,7 @@
                   </span>
 
                   <span class="meta-item">
-                    Bid:
-                    ${amount.toLocaleString("en-US")}
-                    BDT
+                    Bid: ${formatUSD(amount)}
                   </span>
 
                   <span class="meta-item">
