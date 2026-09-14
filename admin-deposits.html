@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin - Deposit Requests - SocialWorkBD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, collection, query, where,
+    getDocs, writeBatch, increment, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDsqRgRZTKZFvfu0r4UJc8Q5xlS7lBL41c",
+    authDomain: "socialworkbd-b1c00.firebaseapp.com",
+    projectId: "socialworkbd-b1c00",
+    storageBucket: "socialworkbd-b1c00.firebasestorage.app",
+    messagingSenderId: "999070456562",
+    appId: "1:999070456562:web:67101bb3148b157e67ce6b",
+    measurementId: "G-XVBRYV71BZ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      document.getElementById("statusMsg").innerText = "Please log in first.";
+      return;
+    }
+    currentUser = user;
+
+    // Check this user's own profile for role == "admin"
+    const profileSnap = await getDoc(doc(db, "users", user.uid));
+    const role = profileSnap.exists() ? profileSnap.data().role : null;
+
+    if (role !== "admin") {
+      document.getElementById("statusMsg").innerText =
+        "Access denied. This page is for admin accounts only.";
+      return;
+    }
+
+    document.getElementById("statusMsg").innerText = "Logged in as admin: " + user.email;
+    document.getElementById("panel").style.display = "block";
+    loadPendingRequests();
+  });
+
+  async function loadPendingRequests() {
+    const listEl = document.getElementById("requestList");
+    listEl.innerHTML = "Loading...";
+
+    const q = query(collection(db, "depositRequests"), where("status", "==", "pending"));
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      listEl.innerHTML = "<p>No pending deposit requests.</p>";
+      return;
+    }
+
+    listEl.innerHTML = "";
+    snap.forEach((docSnap) => {
+      const data = docSnap.data();
+      const id = docSnap.id;
+
+      const row = document.createElement("div");
+      row.className = "request-row";
+      row.innerHTML = `
+        <p><strong>User UID:</strong> ${data.uid}</p>
+        <p><strong>Amount:</strong> $${Number(data.amount).toFixed(2)}</p>
+        <p><strong>Transaction Ref:</strong> ${data.txnRef || "(none)"}</p>
+        <button class="approveBtn">Approve</button>
+        <button class="rejectBtn">Reject</button>
+        <hr>
+      `;
+
+      row.querySelector(".approveBtn").addEventListener("click", () => approveRequest(id, data));
+      row.querySelector(".rejectBtn").addEventListener("click", () => rejectRequest(id));
+
+      listEl.appendChild(row);
+    });
+  }
+
+  // Approve: mark request approved, add amount to user's balance,
+  // and record a wallet transaction — all in one atomic batch.
+  window.approveRequestGlobal = null; // placeholder (not used, kept for clarity)
+
+  async function approveRequest(requestId, data) {
+    if (!confirm(`Approve deposit of $${data.amount} for user ${data.uid}?`)) return;
+
+    try {
+      const batch = writeBatch(db);
+
+      const requestRef = doc(db, "depositRequests", requestId);
+      batch.update(requestRef, {
+        status: "approved",
+        approvedBy: currentUser.uid,
+        approvedAt: serverTimestamp()
+      });
+
+      const userRef = doc(db, "users", data.uid);
+      batch.update(userRef, {
+        balance: increment(Number(data.amount))
+      });
+
+      const txnRef = doc(collection(db, "walletTransactions"));
+      batch.set(txnRef, {
+        uid: data.uid,
+        type: "deposit",
+        amount: Number(data.amount),
+        source: "paypal",
+        relatedRequestId: requestId,
+        createdAt: serverTimestamp()
+      });
+
+      await batch.commit();
+      alert("Approved and balance updated.");
+      loadPendingRequests();
+    } catch (err) {
+      console.error(err);
+      alert("Error: " + err.message);
+    }
+  }
+
+  async function rejectRequest(requestId) {
+    if (!confirm("Reject this deposit request?")) return;
+    try {
+      const batch = writeBatch(db);
+      batch.update(doc(db, "depositRequests", requestId), {
+        status: "rejected",
+        rejectedBy: currentUser.uid,
+        rejectedAt: serverTimestamp()
+      });
+      await batch.commit();
+      loadPendingRequests();
+    } catch (err) {
+      console.error(err);
+      alert("Error: " + err.message);
+    }
+  }
+
+  window.loadPendingRequests = loadPendingRequests;
+</script>
+
+<style>
+  body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+  #panel { display: none; }
+  .request-row { border: 1px solid #ddd; padding: 12px; border-radius: 6px; margin-bottom: 12px; }
+  button { padding: 8px 16px; margin-right: 8px; cursor: pointer; }
+  .approveBtn { background: #2e7d32; color: white; border: none; border-radius: 4px; }
+  .rejectBtn { background: #c62828; color: white; border: none; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+  <h2>Admin - Pending Deposit Requests</h2>
+  <p id="statusMsg">Checking access...</p>
+
+  <div id="panel">
+    <button onclick="loadPendingRequests()">Refresh List</button>
+    <div id="requestList"></div>
+  </div>
+
+</body>
+</html>
