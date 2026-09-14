@@ -139,7 +139,7 @@
   function getSelectedSignupRole() {
     const roleInput = document.getElementById("role");
     if (roleInput && roleInput.value) {
-      return roleInput.value;
+      return roleInput.value.toLowerCase().trim();
     }
 
     const selectedRadio = document.querySelector(
@@ -147,7 +147,7 @@
     );
 
     if (selectedRadio && selectedRadio.value) {
-      return selectedRadio.value;
+      return selectedRadio.value.toLowerCase().trim();
     }
 
     return "worker";
@@ -210,10 +210,8 @@
       return profile;
     }
 
-    const role =
-      extraData.role ||
-      (isSignupPage() ? getSelectedSignupRole() : "worker") ||
-      "worker";
+    const rawRole = extraData.role || (isSignupPage() ? getSelectedSignupRole() : "worker");
+    const role = String(rawRole).toLowerCase().trim();
 
     const profile = {
       uid: user.uid,
@@ -267,14 +265,6 @@
   /* ---------------------------------------------------------
      Account Moderation
   --------------------------------------------------------- */
-
-  const MODERATION_STATUSES = [
-    "active",
-    "warning",
-    "restricted",
-    "suspended",
-    "under_review"
-  ];
 
   function detectOffPlatformMessage(text) {
     if (!text) return false;
@@ -363,14 +353,14 @@
 
     if (role && profile.role !== role) {
       showError(
-        "এই কাজটি করার জন্য আপনার সঠিক account type প্রয়োজন।"
+        "You need the appropriate account type to perform this action."
       );
       return null;
     }
 
     if (profile.status === "suspended") {
       showError(
-        "আপনার account বর্তমানে suspended অবস্থায় আছে।"
+        "Your account is currently suspended."
       );
 
       await auth.signOut();
@@ -392,52 +382,52 @@
 
     const messages = {
       "auth/email-already-in-use":
-        "এই email দিয়ে ইতিমধ্যে account আছে। Login করুন।",
+        "An account with this email already exists. Please log in.",
 
       "auth/invalid-email":
-        "সঠিক email address দিন।",
+        "Please enter a valid email address.",
 
       "auth/weak-password":
-        "Password কমপক্ষে 6 characters হতে হবে।",
+        "Password should be at least 6 characters long.",
 
       "auth/user-not-found":
-        "এই email দিয়ে কোনো account পাওয়া যায়নি।",
+        "No account found with this email address.",
 
       "auth/wrong-password":
-        "Password সঠিক নয়।",
+        "Incorrect password.",
 
       "auth/invalid-credential":
-        "Email অথবা password সঠিক নয়।",
+        "Invalid email or password.",
 
       "auth/user-disabled":
-        "এই account বর্তমানে disabled।",
+        "This account has been disabled.",
 
       "auth/network-request-failed":
-        "Internet connection সমস্যা হয়েছে।",
+        "Network error. Please check your internet connection.",
 
       "auth/popup-closed-by-user":
-        "Google login window বন্ধ করা হয়েছে।",
+        "The authentication popup was closed before completion.",
 
       "auth/popup-blocked":
-        "Browser popup block করেছে। আবার চেষ্টা করুন।",
+        "Browser blocked the popup. Please try again.",
 
       "auth/cancelled-popup-request":
-        "Google login request বাতিল হয়েছে।",
+        "Authentication request was cancelled.",
 
       "auth/account-exists-with-different-credential":
-        "এই email অন্য একটি login method দিয়ে registered।",
+        "An account already exists with the same email but different sign-in credentials.",
 
       "auth/operation-not-allowed":
-        "এই login method Firebase Console-এ enable করা নেই।",
+        "This sign-in method is not enabled in Firebase Console.",
 
       "auth/too-many-requests":
-        "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।"
+        "Too many unsuccessful attempts. Please try again later."
     };
 
     return (
       messages[code] ||
       error.message ||
-      "একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।"
+      "An unexpected error occurred. Please try again."
     );
   }
 
@@ -474,36 +464,36 @@
       const role = getSelectedSignupRole();
 
       if (!name) {
-        showError("আপনার নাম লিখুন।");
+        showError("Please enter your name.");
         return;
       }
 
       if (!email) {
-        showError("আপনার email লিখুন।");
+        showError("Please enter your email.");
         return;
       }
 
       if (!password) {
-        showError("Password লিখুন।");
+        showError("Please enter your password.");
         return;
       }
 
       if (password.length < 6) {
         showError(
-          "Password কমপক্ষে 6 characters হতে হবে।"
+          "Password must be at least 6 characters long."
         );
         return;
       }
 
       if (password !== confirmPassword) {
         showError(
-          "Password এবং Confirm Password একই নয়।"
+          "Password and Confirm Password do not match."
         );
         return;
       }
 
       if (!["worker", "freelancer", "client"].includes(role)) {
-        showError("Account type সঠিকভাবে নির্বাচন করুন।");
+        showError("Please select a valid account type.");
         return;
       }
 
@@ -532,7 +522,7 @@
         });
 
         alert(
-          "Account সফলভাবে তৈরি হয়েছে। এখন Login করুন।"
+          "Account successfully created! Please log in."
         );
 
         await auth.signOut();
@@ -573,7 +563,7 @@
 
   async function finishGoogleLogin(result) {
     if (!result || !result.user) {
-      throw new Error("Google account পাওয়া যায়নি।");
+      throw new Error("Google user data not found.");
     }
 
     const user = result.user;
@@ -603,7 +593,7 @@
       localStorage.removeItem("currentUser");
 
       showError(
-        "আপনার account বর্তমানে suspended অবস্থায় আছে।"
+        "Your account is currently suspended."
       );
 
       return;
@@ -627,21 +617,32 @@
     window.location.href = "profile.html";
   }
 
+  const GOOGLE_BTN_HTML = `
+    <span class="google-icon" style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:#fff; border-radius:50%; margin-right:8px;">
+      <svg width="14" height="14" viewBox="0 0 18 18">
+        <path fill="#4285F4" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.41-1.57-5.13-3.72L.97 13.04C2.45 15.98 5.48 18 9 18z"/>
+        <path fill="#FBBC05" d="M3.87 10.8c-.19-.58-.3-1.19-.3-1.8s.11-1.22.3-1.8L.97 4.96C.35 6.18 0 7.55 0 9s.35 2.82.97 4.04l2.9-2.24z"/>
+        <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.45 2.02.97 4.96l2.9 2.24C4.59 5.05 6.62 3.58 9 3.58z"/>
+      </svg>
+    </span>
+    <span class="google-text" style="font-weight:700;">Continue with Google</span>
+  `;
+
   function setupGoogleLogin() {
     const button =
       document.getElementById("google-login");
 
     if (!button) return;
 
+    button.style.backgroundColor = "#14213d";
+    button.style.color = "#ffffff";
+    button.innerHTML = GOOGLE_BTN_HTML;
+
     button.addEventListener("click", async function () {
       try {
         button.disabled = true;
-
-        const originalText =
-          button.innerHTML;
-
-        button.innerHTML =
-          "Connecting to Google...";
+        button.innerHTML = "Connecting to Google...";
 
         const auth = getAuth();
         const provider = createGoogleProvider();
@@ -656,11 +657,6 @@
             "Google popup error:",
             popupError
           );
-
-          /*
-             Mobile browser fallback.
-             Popup blocked হলে redirect login ব্যবহার হবে।
-          */
 
           if (
             popupError.code ===
@@ -680,9 +676,7 @@
         showError(firebaseErrorMessage(error));
       } finally {
         button.disabled = false;
-
-        button.innerHTML =
-          '<span style="font-weight:700;">G</span> Continue with Google';
+        button.innerHTML = GOOGLE_BTN_HTML;
       }
     });
   }
@@ -740,12 +734,12 @@
         document.getElementById("password")?.value || "";
 
       if (!email) {
-        showError("Email লিখুন।");
+        showError("Please enter your email.");
         return;
       }
 
       if (!password) {
-        showError("Password লিখুন।");
+        showError("Please enter your password.");
         return;
       }
 
@@ -777,7 +771,7 @@
           );
 
           showError(
-            "আপনার account বর্তমানে suspended অবস্থায় আছে।"
+            "Your account is currently suspended."
           );
 
           return;
@@ -808,7 +802,7 @@
       } finally {
         if (button) {
           button.disabled = false;
-          button.textContent = "Login";
+          button.textContent = "Log In";
         }
       }
     });
@@ -835,7 +829,7 @@
         )?.value.trim() || "";
 
       if (!email) {
-        showError("Email লিখুন।");
+        showError("Please enter your email.");
         return;
       }
 
@@ -845,7 +839,7 @@
         );
 
         alert(
-          "Password reset email পাঠানো হয়েছে। আপনার inbox check করুন।"
+          "Password reset email sent! Please check your inbox."
         );
 
         form.reset();
@@ -1014,7 +1008,7 @@
       );
 
       container.innerHTML =
-        '<p class="empty-state">Jobs load করা যাচ্ছে না।</p>';
+        '<p class="empty-state">Unable to load jobs.</p>';
     }
   }
 
@@ -1112,17 +1106,17 @@
           )?.value || "";
 
         if (!title) {
-          showError("Job title লিখুন।");
+          showError("Please enter a job title.");
           return;
         }
 
         if (!description) {
-          showError("Job description লিখুন।");
+          showError("Please enter a job description.");
           return;
         }
 
         if (!budget || budget <= 0) {
-          showError("Valid budget দিন।");
+          showError("Please enter a valid budget.");
           return;
         }
 
@@ -1137,7 +1131,7 @@
           );
 
           showError(
-            "Job description-এ external contact information দেওয়া যাবে না।"
+            "External contact details are not allowed in the job description."
           );
 
           return;
@@ -1175,7 +1169,7 @@
           });
 
           alert(
-            "Job সফলভাবে পোস্ট হয়েছে।"
+            "Job posted successfully."
           );
 
           form.reset();
@@ -1189,7 +1183,7 @@
           );
 
           showError(
-            "Job post করা যায়নি। " +
+            "Could not post job. " +
               firebaseErrorMessage(error)
           );
         } finally {
@@ -1331,7 +1325,7 @@
       );
 
       container.innerHTML =
-        "<p>Job details load করা যায়নি।</p>";
+        "<p>Unable to load job details.</p>";
     }
   }
 
@@ -1363,7 +1357,7 @@
           job.status !== "open"
         ) {
           showError(
-            "এই job এখন আর open নেই।"
+            "This job is no longer open."
           );
 
           return;
@@ -1385,7 +1379,7 @@
 
         if (!coverLetter) {
           showError(
-            "Cover letter লিখুন।"
+            "Please write a cover letter."
           );
 
           return;
@@ -1402,7 +1396,7 @@
           );
 
           showError(
-            "Proposal-এ external contact information দেওয়া যাবে না।"
+            "External contact details are not allowed in proposals."
           );
 
           return;
@@ -1429,7 +1423,7 @@
 
           if (!existing.empty) {
             showError(
-              "আপনি এই job-এ ইতিমধ্যে proposal দিয়েছেন।"
+              "You have already submitted a proposal for this job."
             );
 
             return;
@@ -1481,7 +1475,7 @@
             });
 
           alert(
-            "Proposal সফলভাবে পাঠানো হয়েছে।"
+            "Proposal submitted successfully."
           );
 
           form.reset();
@@ -1492,7 +1486,7 @@
           );
 
           showError(
-            "Proposal পাঠানো যায়নি। " +
+            "Could not submit proposal. " +
               firebaseErrorMessage(error)
           );
         }
@@ -1646,7 +1640,7 @@
       );
 
       showError(
-        "Profile load করা যায়নি।"
+        "Unable to load profile."
       );
     }
   }
@@ -1704,7 +1698,7 @@
 
         if (!name) {
           showError(
-            "Name খালি রাখা যাবে না।"
+            "Name cannot be left empty."
           );
 
           return;
@@ -1716,7 +1710,7 @@
           )
         ) {
           showError(
-            "Bio-তে external contact information দেওয়া যাবে না।"
+            "External contact details are not allowed in your bio."
           );
 
           return;
@@ -1759,7 +1753,7 @@
           );
 
           showError(
-            "Profile update করা যায়নি।"
+            "Unable to update profile."
           );
         }
       }
@@ -1799,7 +1793,7 @@
               );
 
               showError(
-                "Logout করা যায়নি।"
+                "Unable to log out."
               );
             }
           }
@@ -1832,7 +1826,7 @@
           function () {
             if (roleInput) {
               roleInput.value =
-                radio.value;
+                radio.value.toLowerCase().trim();
             }
           }
         );
@@ -1849,7 +1843,7 @@
       roleInput
     ) {
       roleInput.value =
-        checked.value;
+        checked.value.toLowerCase().trim();
     }
   }
 
