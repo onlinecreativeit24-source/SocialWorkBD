@@ -1,46 +1,503 @@
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
 
-const auth = getAuth();
-const db = getFirestore();
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-async function handleSignUp(email, password, fullName, accountType) {
-  try {
-    // 1. Create User Authentication
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+  <title>Create Account - SocialWorkBD</title>
 
-    // 2. Select Target Collection Based on User Role
-    let collectionName = "workers";
-    if (accountType === "Client") {
-      collectionName = "clients";
+  <meta
+    name="description"
+    content="Create your SocialWorkBD account and join a professional global freelance marketplace for clients and freelancers."
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
     }
 
-    // 3. Save User Profile Data in Firestore
-    await setDoc(doc(db, collectionName, user.uid), {
-      uid: user.uid,
-      fullName: fullName,
-      email: email,
-      accountType: accountType,
-      createdAt: new Date()
-    });
-
-    // Save in general users collection for common authentication rules
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      email: email,
-      accountType: accountType
-    });
-
-    // 4. Direct Redirect Based on Selected Role
-    if (accountType === "Client") {
-      window.location.href = "client-dashboard.html";
-    } else {
-      window.location.href = "worker-dashboard.html";
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
     }
 
-  } catch (error) {
-    console.error("Sign Up Error:", error.message);
-    alert("Error signing up: " + error.message);
-  }
-}
+    a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e8ebf2;
+      padding: 18px 24px;
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 800;
+      color: #111827;
+      letter-spacing: -0.5px;
+    }
+
+    .brand span {
+      color: #2563eb;
+    }
+
+    .login-link {
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 42px 20px;
+    }
+
+    .signup-card {
+      width: 100%;
+      max-width: 560px;
+      background: #ffffff;
+      border: 1px solid #e6eaf0;
+      border-radius: 18px;
+      padding: 34px;
+      box-shadow: 0 15px 45px rgba(15, 23, 42, 0.07);
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .intro h1 {
+      margin: 0 0 9px;
+      font-size: 30px;
+      line-height: 1.2;
+      letter-spacing: -0.7px;
+      color: #111827;
+    }
+
+    .intro p {
+      margin: 0;
+      color: #667085;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #344054;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+      width: 100%;
+      border: 1px solid #d9dee8;
+      border-radius: 10px;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      background: #fff;
+      color: #111827;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .role-option {
+      position: relative;
+    }
+
+    .role-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .role-label {
+      display: block;
+      border: 1px solid #d9dee8;
+      border-radius: 12px;
+      padding: 15px;
+      cursor: pointer;
+      background: #fff;
+      transition: all .2s;
+    }
+
+    .role-label strong {
+      display: block;
+      color: #111827;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .role-label small {
+      display: block;
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .role-option input:checked + .role-label {
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, .08);
+    }
+
+    .help-text {
+      margin-top: 7px;
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .terms {
+      margin: 4px 0 20px;
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    #signup-message {
+      display: none;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border-radius: 9px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .signup-submit {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 14px 18px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+
+    .signup-submit:hover {
+      background: #1d4ed8;
+    }
+
+    .signup-submit:active {
+      transform: translateY(1px);
+    }
+
+    .signup-submit:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      color: #667085;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px;
+      }
+
+      .header-inner {
+        align-items: flex-start;
+      }
+
+      .brand {
+        font-size: 21px;
+      }
+
+      .login-link {
+        font-size: 13px;
+        text-align: right;
+      }
+
+      main {
+        padding: 24px 14px;
+      }
+
+      .signup-card {
+        padding: 24px 18px;
+        border-radius: 14px;
+      }
+
+      .intro h1 {
+        font-size: 26px;
+      }
+
+      .role-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <header>
+      <div class="header-inner">
+        <a class="brand" href="index.html">
+          SocialWork<span>BD</span>
+        </a>
+
+        <div class="login-link">
+          Already have an account?
+          <a href="login.html">Log in</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="signup-card">
+
+        <div class="intro">
+          <h1>Create your account</h1>
+          <p>
+            Join SocialWorkBD and connect with clients and skilled freelancers
+            from around the world.
+          </p>
+        </div>
+
+        <div id="signup-message" role="alert"></div>
+
+        <form id="signup-form">
+
+          <div class="field">
+            <label for="name">Full name</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              autocomplete="name"
+              placeholder="Enter your full name"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="email">Email address</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label>Account type</label>
+
+            <div class="role-grid">
+
+              <div class="role-option">
+                <input
+                  id="role-worker"
+                  type="radio"
+                  name="role"
+                  value="worker"
+                  checked
+                >
+
+                <label class="role-label" for="role-worker">
+                  <strong>Freelancer</strong>
+                  <small>
+                    Find projects, submit proposals and build your freelance profile.
+                  </small>
+                </label>
+              </div>
+
+              <div class="role-option">
+                <input
+                  id="role-client"
+                  type="radio"
+                  name="role"
+                  value="client"
+                >
+
+                <label class="role-label" for="role-client">
+                  <strong>Client</strong>
+                  <small>
+                    Post projects and find skilled freelancers for your work.
+                  </small>
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="skills">Skills</label>
+
+            <textarea
+              id="skills"
+              name="skills"
+              placeholder="Example: Web Development, Graphic Design, Data Entry"
+            ></textarea>
+
+            <div class="help-text">
+              Add the skills you want to showcase. You can update your profile later.
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="new-password"
+              placeholder="At least 6 characters"
+              minlength="6"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="confirm-password">Confirm password</label>
+
+            <input
+              id="confirm-password"
+              name="confirm-password"
+              type="password"
+              autocomplete="new-password"
+              placeholder="Enter your password again"
+              minlength="6"
+              required
+            >
+          </div>
+
+          <div class="terms">
+            By creating an account, you agree to our
+            <a href="terms.html">Terms of Service</a>
+            and
+            <a href="privacy.html">Privacy Policy</a>.
+          </div>
+
+          <button
+            id="signup-btn"
+            class="signup-submit"
+            type="submit"
+          >
+            Create Account
+          </button>
+
+        </form>
+
+      </section>
+    </main>
+
+    <footer>
+      © 2026 SocialWorkBD · Global Freelance Marketplace
+    </footer>
+
+  </div>
+
+  <!-- Firebase 8.10.1 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+  <!-- SocialWorkBD Firebase -->
+  <script src="firebase-config.js"></script>
+
+  <!-- Main application logic -->
+  <script src="app.js"></script>
+
+  <script>
+    /*
+      Keep the message area synchronized with app.js errors/status messages.
+      app.js remains the source of truth for signup behavior.
+    */
+    (function () {
+      const messageBox = document.getElementById("signup-message");
+
+      if (!messageBox) return;
+
+      const observer = new MutationObserver(function () {
+        const alerts = document.querySelectorAll('[role="alert"]');
+
+        alerts.forEach(function (alert) {
+          if (alert === messageBox) return;
+
+          const text = (alert.textContent || "").trim();
+
+          if (text) {
+            messageBox.textContent = text;
+            messageBox.style.display = "block";
+          }
+        });
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+    })();
+  </script>
+
+</body>
+</html>
