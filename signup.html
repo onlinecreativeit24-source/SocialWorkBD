@@ -2,502 +2,208 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Create Account - SocialWorkBD</title>
-
-  <meta
-    name="description"
-    content="Create your SocialWorkBD account and join a professional global freelance marketplace for clients and freelancers."
-  >
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Inter, Arial, Helvetica, sans-serif;
-      background: #f5f7fb;
-      color: #172033;
-    }
-
-    a {
-      color: #2563eb;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .page {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      background: #ffffff;
-      border-bottom: 1px solid #e8ebf2;
-      padding: 18px 24px;
-    }
-
-    .header-inner {
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .brand {
-      font-size: 24px;
-      font-weight: 800;
-      color: #111827;
-      letter-spacing: -0.5px;
-    }
-
-    .brand span {
-      color: #2563eb;
-    }
-
-    .login-link {
-      font-size: 14px;
-      color: #4b5563;
-    }
-
-    main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 42px 20px;
-    }
-
-    .signup-card {
-      width: 100%;
-      max-width: 560px;
-      background: #ffffff;
-      border: 1px solid #e6eaf0;
-      border-radius: 18px;
-      padding: 34px;
-      box-shadow: 0 15px 45px rgba(15, 23, 42, 0.07);
-    }
-
-    .intro {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-
-    .intro h1 {
-      margin: 0 0 9px;
-      font-size: 30px;
-      line-height: 1.2;
-      letter-spacing: -0.7px;
-      color: #111827;
-    }
-
-    .intro p {
-      margin: 0;
-      color: #667085;
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    .field {
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      color: #344054;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    textarea {
-      width: 100%;
-      border: 1px solid #d9dee8;
-      border-radius: 10px;
-      padding: 13px 14px;
-      font-size: 15px;
-      font-family: inherit;
-      outline: none;
-      background: #fff;
-      color: #111827;
-      transition: border-color .2s, box-shadow .2s;
-    }
-
-    textarea {
-      min-height: 95px;
-      resize: vertical;
-    }
-
-    input:focus,
-    textarea:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
-    }
-
-    .role-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .role-option {
-      position: relative;
-    }
-
-    .role-option input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .role-label {
-      display: block;
-      border: 1px solid #d9dee8;
-      border-radius: 12px;
-      padding: 15px;
-      cursor: pointer;
-      background: #fff;
-      transition: all .2s;
-    }
-
-    .role-label strong {
-      display: block;
-      color: #111827;
-      font-size: 15px;
-      margin-bottom: 4px;
-    }
-
-    .role-label small {
-      display: block;
-      color: #667085;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .role-option input:checked + .role-label {
-      border-color: #2563eb;
-      background: #eff6ff;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, .08);
-    }
-
-    .help-text {
-      margin-top: 7px;
-      color: #667085;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .terms {
-      margin: 4px 0 20px;
-      color: #667085;
-      font-size: 12px;
-      line-height: 1.6;
-      text-align: center;
-    }
-
-    #signup-message {
-      display: none;
-      margin-bottom: 18px;
-      padding: 12px 14px;
-      border-radius: 9px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .signup-submit {
-      width: 100%;
-      border: 0;
-      border-radius: 10px;
-      padding: 14px 18px;
-      background: #2563eb;
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .2s, transform .1s;
-    }
-
-    .signup-submit:hover {
-      background: #1d4ed8;
-    }
-
-    .signup-submit:active {
-      transform: translateY(1px);
-    }
-
-    .signup-submit:disabled {
-      opacity: .65;
-      cursor: not-allowed;
-    }
-
-    footer {
-      padding: 20px;
-      text-align: center;
-      color: #667085;
-      font-size: 13px;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        padding: 16px;
-      }
-
-      .header-inner {
-        align-items: flex-start;
-      }
-
-      .brand {
-        font-size: 21px;
-      }
-
-      .login-link {
-        font-size: 13px;
-        text-align: right;
-      }
-
-      main {
-        padding: 24px 14px;
-      }
-
-      .signup-card {
-        padding: 24px 18px;
-        border-radius: 14px;
-      }
-
-      .intro h1 {
-        font-size: 26px;
-      }
-
-      .role-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    *{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:Arial,sans-serif}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{width:100%;max-width:560px;background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:30px;box-shadow:0 15px 45px rgba(15,23,42,.08)}
+    h1{text-align:center;margin:0 0 8px;font-size:29px}.sub{text-align:center;color:#667085;line-height:1.5;margin:0 0 25px}
+    label{display:block;font-weight:700;font-size:14px;margin:0 0 7px}.field{margin-bottom:17px}
+    input,textarea{width:100%;padding:13px 14px;border:1px solid #d5d9e2;border-radius:10px;font:inherit;outline:none}
+    input:focus,textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+    textarea{min-height:90px;resize:vertical}.roles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .role{border:1px solid #d5d9e2;border-radius:12px;padding:14px;cursor:pointer}.role input{width:auto;margin-right:7px}
+    .role strong{display:block;margin-top:5px}.role small{color:#667085;line-height:1.4}
+    button{width:100%;border:0;border-radius:10px;padding:14px;background:#2563eb;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+    button:disabled{opacity:.6;cursor:not-allowed}.msg{display:none;padding:12px;border-radius:9px;margin-bottom:17px;font-size:14px;line-height:1.5}
+    .error{display:block;background:#fff0f0;color:#a61b1b;border:1px solid #f0caca}.success{display:block;background:#effbea;color:#176b1d;border:1px solid #cfe9cf}
+    .bottom{text-align:center;margin-top:18px;font-size:14px;color:#667085}.bottom a{color:#2563eb;font-weight:700;text-decoration:none}
+    @media(max-width:600px){.wrap{padding:14px}.card{padding:23px 18px}.roles{grid-template-columns:1fr}}
   </style>
 </head>
-
 <body>
-  <div class="page">
+<div class="wrap">
+  <section class="card">
+    <h1>Create your account</h1>
+    <p class="sub">Join SocialWorkBD as a Freelancer or Client.</p>
+    <div id="message" class="msg"></div>
 
-    <header>
-      <div class="header-inner">
-        <a class="brand" href="index.html">
-          SocialWork<span>BD</span>
-        </a>
+    <form id="signup-form">
+      <div class="field">
+        <label for="name">Full name</label>
+        <input id="name" type="text" autocomplete="name" required>
+      </div>
 
-        <div class="login-link">
-          Already have an account?
-          <a href="login.html">Log in</a>
+      <div class="field">
+        <label for="email">Email address</label>
+        <input id="email" type="email" autocomplete="email" required>
+      </div>
+
+      <div class="field">
+        <label>Account type</label>
+        <div class="roles">
+          <label class="role">
+            <input type="radio" name="role" value="worker" checked>
+            <strong>Freelancer</strong>
+            <small>Find projects and submit proposals.</small>
+          </label>
+          <label class="role">
+            <input type="radio" name="role" value="client">
+            <strong>Client</strong>
+            <small>Post projects and hire freelancers.</small>
+          </label>
         </div>
       </div>
-    </header>
 
-    <main>
-      <section class="signup-card">
+      <div class="field">
+        <label for="skills">Skills</label>
+        <textarea id="skills" placeholder="Example: Web Development, Design, Data Entry"></textarea>
+      </div>
 
-        <div class="intro">
-          <h1>Create your account</h1>
-          <p>
-            Join SocialWorkBD and connect with clients and skilled freelancers
-            from around the world.
-          </p>
-        </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" minlength="6" autocomplete="new-password" required>
+      </div>
 
-        <div id="signup-message" role="alert"></div>
+      <div class="field">
+        <label for="confirm-password">Confirm password</label>
+        <input id="confirm-password" type="password" minlength="6" autocomplete="new-password" required>
+      </div>
 
-        <form id="signup-form">
+      <button id="signup-btn" type="submit">Create Account</button>
+    </form>
 
-          <div class="field">
-            <label for="name">Full name</label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autocomplete="name"
-              placeholder="Enter your full name"
-              required
-            >
-          </div>
+    <div class="bottom">Already have an account? <a href="login.html">Log in</a></div>
+  </section>
+</div>
 
-          <div class="field">
-            <label for="email">Email address</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              placeholder="you@example.com"
-              required
-            >
-          </div>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase-config.js"></script>
 
-          <div class="field">
-            <label>Account type</label>
+<script>
+(function () {
+  const form = document.getElementById("signup-form");
+  const btn = document.getElementById("signup-btn");
+  const msg = document.getElementById("message");
 
-            <div class="role-grid">
+  function showMessage(text, type) {
+    msg.textContent = text;
+    msg.className = "msg " + type;
+  }
 
-              <div class="role-option">
-                <input
-                  id="role-worker"
-                  type="radio"
-                  name="role"
-                  value="worker"
-                  checked
-                >
+  function errorText(error) {
+    const code = error && error.code ? error.code : "";
+    const map = {
+      "auth/email-already-in-use": "This email is already registered. Please log in instead.",
+      "auth/invalid-email": "Please enter a valid email address.",
+      "auth/weak-password": "Password must be at least 6 characters.",
+      "auth/operation-not-allowed": "Email/password sign-up is disabled in Firebase. Enable Email/Password in Firebase Authentication > Sign-in method.",
+      "auth/network-request-failed": "Network error. Check your internet connection and try again.",
+      "permission-denied": "Firebase Firestore denied profile creation. Check the Firestore rules."
+    };
+    return map[code] || (error && error.message) || "Account creation failed. Please try again.";
+  }
 
-                <label class="role-label" for="role-worker">
-                  <strong>Freelancer</strong>
-                  <small>
-                    Find projects, submit proposals and build your freelance profile.
-                  </small>
-                </label>
-              </div>
+  function accountId(role) {
+    const prefix = role === "client" ? "SWB-C-" : "SWB-F-";
+    return prefix + Date.now().toString().slice(-7) + Math.floor(100 + Math.random() * 900);
+  }
 
-              <div class="role-option">
-                <input
-                  id="role-client"
-                  type="radio"
-                  name="role"
-                  value="client"
-                >
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    msg.className = "msg";
+    msg.textContent = "";
 
-                <label class="role-label" for="role-client">
-                  <strong>Client</strong>
-                  <small>
-                    Post projects and find skilled freelancers for your work.
-                  </small>
-                </label>
-              </div>
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const skills = document.getElementById("skills").value.trim();
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm-password").value;
+    const role = document.querySelector('input[name="role"]:checked')?.value || "worker";
 
-            </div>
-          </div>
+    if (!name) return showMessage("Please enter your full name.", "error");
+    if (!email) return showMessage("Please enter your email.", "error");
+    if (password.length < 6) return showMessage("Password must be at least 6 characters.", "error");
+    if (password !== confirm) return showMessage("Passwords do not match.", "error");
 
-          <div class="field">
-            <label for="skills">Skills</label>
+    if (typeof firebase === "undefined" || !firebase.apps.length) {
+      return showMessage("Firebase could not be initialized. Check firebase-config.js.", "error");
+    }
 
-            <textarea
-              id="skills"
-              name="skills"
-              placeholder="Example: Web Development, Graphic Design, Data Entry"
-            ></textarea>
+    btn.disabled = true;
+    btn.textContent = "Creating account...";
 
-            <div class="help-text">
-              Add the skills you want to showcase. You can update your profile later.
-            </div>
-          </div>
+    let createdUser = null;
 
-          <div class="field">
-            <label for="password">Password</label>
+    try {
+      const result = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      createdUser = result.user;
 
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autocomplete="new-password"
-              placeholder="At least 6 characters"
-              minlength="6"
-              required
-            >
-          </div>
+      try {
+        await createdUser.updateProfile({displayName: name});
+      } catch (_) {}
 
-          <div class="field">
-            <label for="confirm-password">Confirm password</label>
+      const profile = {
+        uid: createdUser.uid,
+        accountId: accountId(role),
+        name: name,
+        email: email,
+        role: role,
+        skills: skills,
+        title: "",
+        bio: "",
+        location: "",
+        photoURL: createdUser.photoURL || "",
+        balance: 0,
+        pendingBalance: 0,
+        status: "active",
+        warnings: 0,
+        violations: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
 
-            <input
-              id="confirm-password"
-              name="confirm-password"
-              type="password"
-              autocomplete="new-password"
-              placeholder="Enter your password again"
-              minlength="6"
-              required
-            >
-          </div>
+      await firebase.firestore().collection("users").doc(createdUser.uid).set(profile);
 
-          <div class="terms">
-            By creating an account, you agree to our
-            <a href="terms.html">Terms of Service</a>
-            and
-            <a href="privacy.html">Privacy Policy</a>.
-          </div>
+      localStorage.setItem("currentUser", JSON.stringify({
+        uid: createdUser.uid,
+        id: createdUser.uid,
+        name: name,
+        email: email,
+        role: role,
+        accountId: profile.accountId,
+        balance: 0,
+        pendingBalance: 0,
+        status: "active"
+      }));
 
-          <button
-            id="signup-btn"
-            class="signup-submit"
-            type="submit"
-          >
-            Create Account
-          </button>
+      await firebase.auth().signOut();
+      showMessage("Account created successfully. Redirecting to login...", "success");
 
-        </form>
+      setTimeout(function () {
+        window.location.href = "login.html";
+      }, 700);
 
-      </section>
-    </main>
+    } catch (error) {
+      console.error("SocialWorkBD signup error:", error);
 
-    <footer>
-      © 2026 SocialWorkBD · Global Freelance Marketplace
-    </footer>
+      // If Auth succeeded but Firestore profile creation failed,
+      // remove the newly-created Auth user so signup does not leave a broken account.
+      if (createdUser) {
+        try { await createdUser.delete(); } catch (_) {}
+        localStorage.removeItem("currentUser");
+      }
 
-  </div>
-
-  <!-- Firebase 8.10.1 -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-
-  <!-- SocialWorkBD Firebase -->
-  <script src="firebase-config.js"></script>
-
-  <!-- Main application logic -->
-  <script src="app.js"></script>
-
-  <script>
-    /*
-      Keep the message area synchronized with app.js errors/status messages.
-      app.js remains the source of truth for signup behavior.
-    */
-    (function () {
-      const messageBox = document.getElementById("signup-message");
-
-      if (!messageBox) return;
-
-      const observer = new MutationObserver(function () {
-        const alerts = document.querySelectorAll('[role="alert"]');
-
-        alerts.forEach(function (alert) {
-          if (alert === messageBox) return;
-
-          const text = (alert.textContent || "").trim();
-
-          if (text) {
-            messageBox.textContent = text;
-            messageBox.style.display = "block";
-          }
-        });
-      });
-
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        characterData: true
-      });
-    })();
-  </script>
-
+      showMessage(errorText(error), "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Create Account";
+    }
+  });
+})();
+</script>
 </body>
 </html>
