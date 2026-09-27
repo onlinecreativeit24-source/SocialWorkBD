@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Admin Dashboard - SocialWorkBD</title>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script src="firebase-config.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+    }
+
+    .topbar {
+      background: #111827;
+      color: white;
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .brand {
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .brand span {
+      color: #60a5fa;
+    }
+
+    .admin-label {
+      font-size: 13px;
+      color: #d1d5db;
+    }
+
+    .logout-btn {
+      border: 0;
+      background: #ef4444;
+      color: white;
+      padding: 9px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 25px 18px 50px;
+    }
+
+    .loading,
+    .error {
+      background: white;
+      border-radius: 14px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 5px 25px rgba(0,0,0,.05);
+    }
+
+    .error {
+      color: #b91c1c;
+    }
+
+    #dashboard {
+      display: none;
+    }
+
+    .welcome {
+      margin-bottom: 22px;
+    }
+
+    .welcome h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+    }
+
+    .welcome p {
+      margin: 0;
+      color: #667085;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e6eaf0;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.04);
+    }
+
+    .stat-title {
+      color: #667085;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid #e6eaf0;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.04);
+    }
+
+    .panel h2 {
+      margin: 0 0 16px;
+      font-size: 18px;
+    }
+
+    .admin-menu {
+      display: grid;
+      gap: 10px;
+    }
+
+    .admin-menu a {
+      display: block;
+      padding: 13px 15px;
+      border: 1px solid #e5e7eb;
+      border-radius: 9px;
+      text-decoration: none;
+      color: #172033;
+      font-weight: 700;
+      background: #fafafa;
+    }
+
+    .admin-menu a:hover {
+      background: #eff6ff;
+      border-color: #93c5fd;
+    }
+
+    .user-row {
+      padding: 11px 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .user-row:last-child {
+      border-bottom: 0;
+    }
+
+    .user-name {
+      font-weight: 700;
+    }
+
+    .user-meta {
+      color: #667085;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .role {
+      display: inline-block;
+      padding: 3px 7px;
+      border-radius: 5px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 850px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .sections {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .topbar {
+        flex-wrap: wrap;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .welcome h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      SocialWork<span>BD</span> Admin
+    </div>
+
+    <div>
+      <span id="adminEmail" class="admin-label"></span>
+      <button id="logoutBtn" class="logout-btn">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div id="loading" class="loading">
+      Checking admin access...
+    </div>
+
+    <div id="error" class="error" style="display:none;"></div>
+
+    <section id="dashboard">
+
+      <div class="welcome">
+        <h1>Admin Dashboard</h1>
+        <p>
+          Manage SocialWorkBD users, jobs, payments and moderation.
+        </p>
+      </div>
+
+      <div class="stats">
+
+        <div class="stat-card">
+          <div class="stat-title">Total Users</div>
+          <div id="totalUsers" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-title">Freelancers</div>
+          <div id="totalWorkers" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-title">Clients</div>
+          <div id="totalClients" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-title">Open Jobs</div>
+          <div id="openJobs" class="stat-value">0</div>
+        </div>
+
+      </div>
+
+      <div class="sections">
+
+        <div class="panel">
+          <h2>Admin Controls</h2>
+
+          <div class="admin-menu">
+
+            <a href="admin-deposits.html">
+              💰 Deposit Requests
+            </a>
+
+            <a href="wallet.html">
+              💳 Wallet
+            </a>
+
+            <a href="tasks.html">
+              💼 Jobs / Tasks
+            </a>
+
+            <a href="find-talent.html">
+              👥 Find Talent
+            </a>
+
+            <a href="profile.html">
+              👤 Profiles
+            </a>
+
+          </div>
+        </div>
+
+        <div class="panel">
+
+          <h2>Recent Users</h2>
+
+          <div id="recentUsers">
+            Loading users...
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+<script>
+
+(function () {
+
+  "use strict";
+
+  const ADMIN_ROLES = [
+    "admin",
+    "superadmin"
+  ];
+
+  const loading = document.getElementById("loading");
+  const errorBox = document.getElementById("error");
+  const dashboard = document.getElementById("dashboard");
+
+  const adminEmail =
+    document.getElementById("adminEmail");
+
+  const logoutBtn =
+    document.getElementById("logoutBtn");
+
+  const totalUsers =
+    document.getElementById("totalUsers");
+
+  const totalWorkers =
+    document.getElementById("totalWorkers");
+
+  const totalClients =
+    document.getElementById("totalClients");
+
+  const openJobs =
+    document.getElementById("openJobs");
+
+  const recentUsers =
+    document.getElementById("recentUsers");
+
+
+  function showError(message) {
+
+    loading.style.display = "none";
+
+    dashboard.style.display = "none";
+
+    errorBox.style.display = "block";
+
+    errorBox.textContent = message;
+
+  }
+
+
+  function showDashboard() {
+
+    loading.style.display = "none";
+
+    errorBox.style.display = "none";
+
+    dashboard.style.display = "block";
+
+  }
+
+
+  function getDateValue(value) {
+
+    if (!value) {
+      return 0;
+    }
+
+    if (
+      value &&
+      typeof value.toMillis === "function"
+    ) {
+      return value.toMillis();
+    }
+
+    const date =
+      new Date(value).getTime();
+
+    return Number.isFinite(date)
+      ? date
+      : 0;
+
+  }
+
+
+  async function loadDashboard() {
+
+    try {
+
+      const db = firebase.firestore();
+
+      const user =
+        firebase.auth().currentUser;
+
+      if (!user) {
+        showError(
+          "Please log in before opening the admin dashboard."
+        );
+        return;
+      }
+
+      adminEmail.textContent =
+        user.email || "";
+
+
+      /*
+       * Read the authenticated user's profile.
+       */
+
+      const adminSnap =
+        await db
+          .collection("users")
+          .doc(user.uid)
+          .get();
+
+
+      if (!adminSnap.exists) {
+
+        showError(
+          "Admin profile was not found."
+        );
+
+        return;
+      }
+
+
+      const adminData =
+        adminSnap.data() || {};
+
+      const role =
+        String(
+          adminData.role || ""
+        ).toLowerCase();
+
+
+      /*
+       * Only admin/superadmin can enter.
+       */
+
+      if (!ADMIN_ROLES.includes(role)) {
+
+        showError(
+          "Access denied. Admin account required."
+        );
+
+        await firebase.auth().signOut();
+
+        return;
+      }
+
+
+      showDashboard();
+
+
+      /*
+       * USERS
+       */
+
+      const usersSnap =
+        await db
+          .collection("users")
+          .get();
+
+
+      let workers = 0;
+      let clients = 0;
+
+      const users = [];
+
+
+      usersSnap.forEach(function (doc) {
+
+        const data =
+          doc.data() || {};
+
+        const item = {
+          id: doc.id,
+          ...data
+        };
+
+        users.push(item);
+
+
+        const userRole =
+          String(
+            data.role || ""
+          ).toLowerCase();
+
+
+        if (
+          userRole === "worker" ||
+          userRole === "freelancer"
+        ) {
+          workers++;
+        }
+
+        if (userRole === "client") {
+          clients++;
+        }
+
+      });
+
+
+      totalUsers.textContent =
+        users.length;
+
+      totalWorkers.textContent =
+        workers;
+
+      totalClients.textContent =
+        clients;
+
+
+      /*
+       * OPEN JOBS
+       */
+
+      try {
+
+        const jobsSnap =
+          await db
+            .collection("jobs")
+            .where("status", "==", "open")
+            .get();
+
+        openJobs.textContent =
+          jobsSnap.size;
+
+      } catch (jobError) {
+
+        console.warn(
+          "Could not load jobs:",
+          jobError
+        );
+
+        openJobs.textContent =
+          "—";
+
+      }
+
+
+      /*
+       * RECENT USERS
+       */
+
+      users.sort(function (a, b) {
+
+        return (
+          getDateValue(b.createdAt) -
+          getDateValue(a.createdAt)
+        );
+
+      });
+
+
+      const recent =
+        users.slice(0, 8);
+
+
+      if (!recent.length) {
+
+        recentUsers.innerHTML =
+          "<p>No users found.</p>";
+
+        return;
+
+      }
+
+
+      recentUsers.innerHTML =
+        recent.map(function (item) {
+
+          const name =
+            item.name ||
+            item.displayName ||
+            "Unnamed User";
+
+          const email =
+            item.email ||
+            "No email";
+
+          const role =
+            item.role ||
+            "user";
+
+          return `
+            <div class="user-row">
+
+              <div class="user-name">
+                ${escapeHtml(name)}
+              </div>
+
+              <div class="user-meta">
+                ${escapeHtml(email)}
+              </div>
+
+              <div class="user-meta">
+                <span class="role">
+                  ${escapeHtml(role)}
+                </span>
+              </div>
+
+            </div>
+          `;
+
+        }).join("");
+
+
+    } catch (error) {
+
+      console.error(
+        "Admin dashboard error:",
+        error
+      );
+
+      showError(
+        error && error.message
+          ? error.message
+          : "Could not load admin dashboard."
+      );
+
+    }
+
+  }
+
+
+  function escapeHtml(value) {
+
+    return String(
+      value == null ? "" : value
+    )
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  firebase.auth()
+    .onAuthStateChanged(function (user) {
+
+      if (!user) {
+
+        showError(
+          "Please log in first."
+        );
+
+        return;
+
+      }
+
+      loadDashboard();
+
+    });
+
+
+  logoutBtn.addEventListener(
+    "click",
+    async function () {
+
+      try {
+
+        await firebase
+          .auth()
+          .signOut();
+
+        window.location.href =
+          "login.html";
+
+      } catch (error) {
+
+        alert(
+          error.message ||
+          "Logout failed."
+        );
+
+      }
+
+    }
+  );
+
+
+})();
+
+</script>
+
+</body>
+  </html>
