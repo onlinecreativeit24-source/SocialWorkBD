@@ -1,75 +1,103 @@
 /* =========================================================
    SocialWorkBD - Firebase Configuration
-   Firebase Authentication + Firestore + Storage
+   SECURITY: Using environment variables for sensitive keys
    ========================================================= */
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDsqRgRZTKZFvfu0r4UJc8Q5xlS7lBL41c",
-  authDomain: "socialworkbd-b1c00.firebaseapp.com",
-  projectId: "socialworkbd-b1c00",
-  storageBucket: "socialworkbd-b1c00.firebasestorage.app",
-  messagingSenderId: "999070456562",
-  appId: "1:999070456562:web:67101bb3148b157e67ce6b",
-  measurementId: "G-XVBRYV71BZ"
-};
-
-
-/* ---------------------------------------------------------
-   Initialize Firebase
---------------------------------------------------------- */
-
-if (typeof firebase === "undefined") {
-  console.error(
-    "Firebase SDK is not loaded. Please check your Firebase script tags."
-  );
-} else {
-
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+// Function to safely get environment variable
+function getEnv(key, defaultValue = '') {
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env[key] || defaultValue;
   }
 
-  /* -------------------------------------------------------
-     Firebase Services
-  ------------------------------------------------------- */
-
-  window.auth = firebase.auth();
-
-  window.db = firebase.firestore();
-
-  /*
-   * Firebase Storage
-   *
-   * Requires firebase-storage-compat SDK to be loaded
-   * before this file.
-   */
-
-  if (typeof firebase.storage === "function") {
-    window.storage = firebase.storage();
-  } else {
-    window.storage = null;
-
-    console.warn(
-      "Firebase Storage SDK is not loaded. Storage features are disabled."
-    );
-  }
-
+  console.warn(`Environment variable ${key} not found`);
+  return defaultValue;
 }
 
+// Firebase configuration - load from environment variables
+const firebaseConfig = {
+  apiKey: getEnv('REACT_APP_FIREBASE_API_KEY'),
+  authDomain: getEnv('REACT_APP_FIREBASE_AUTH_DOMAIN'),
+  projectId: getEnv('REACT_APP_FIREBASE_PROJECT_ID'),
+  storageBucket: getEnv('REACT_APP_FIREBASE_STORAGE_BUCKET'),
+  messagingSenderId: getEnv('REACT_APP_FIREBASE_MESSAGING_SENDER_ID'),
+  appId: getEnv('REACT_APP_FIREBASE_APP_ID'),
+  measurementId: getEnv('REACT_APP_FIREBASE_MEASUREMENT_ID')
+};
 
-/* ---------------------------------------------------------
-   Global Firebase Status
---------------------------------------------------------- */
+function validateFirebaseConfig() {
+  const requiredKeys = [
+    'apiKey',
+    'authDomain',
+    'projectId',
+    'storageBucket',
+    'messagingSenderId',
+    'appId'
+  ];
+
+  for (const key of requiredKeys) {
+    if (!firebaseConfig[key]) {
+      console.error(
+        `Firebase configuration error: ${key} is missing. ` +
+        'Check your .env file and ensure all required variables are set.'
+      );
+      return false;
+    }
+  }
+
+  return true;
+}
+
+if (typeof firebase === 'undefined') {
+  console.error(
+    'Firebase SDK is not loaded. Please check your Firebase script tags.'
+  );
+} else {
+  if (!validateFirebaseConfig()) {
+    console.error(
+      'Cannot initialize Firebase due to missing configuration. ' +
+      'Application will not function properly.'
+    );
+  } else {
+    if (!firebase.apps.length) {
+      try {
+        firebase.initializeApp(firebaseConfig);
+        console.log('Firebase initialized successfully');
+      } catch (error) {
+        console.error('Firebase initialization error:', error);
+      }
+    }
+
+    window.auth = firebase.auth();
+    window.db = firebase.firestore();
+
+    if (typeof firebase.storage === 'function') {
+      window.storage = firebase.storage();
+    } else {
+      window.storage = null;
+      console.warn(
+        'Firebase Storage SDK is not loaded. Storage features are disabled.'
+      );
+    }
+  }
+}
 
 window.SocialWorkBDFirebase = {
   initialized:
-    typeof firebase !== "undefined" &&
-    firebase.apps.length > 0,
+    typeof firebase !== 'undefined' &&
+    firebase.apps.length > 0 &&
+    validateFirebaseConfig(),
 
   projectId: firebaseConfig.projectId,
-
   auth: window.auth || null,
-
   db: window.db || null,
+  storage: window.storage || null,
 
-  storage: window.storage || null
+  isReady: function () {
+    return this.initialized && this.auth && this.db;
+  }
 };
+
+console.warn(
+  '⚠️ SocialWorkBD: Ensure your Firebase configuration is loaded from ' +
+  'environment variables (.env file), not hardcoded in the source.'
+);
