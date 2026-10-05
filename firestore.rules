@@ -3,221 +3,181 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /* =========================
+    /* =========================================================
        HELPER FUNCTIONS
-       ========================= */
+       ========================================================= */
 
     function isSignedIn() {
       return request.auth != null;
     }
 
     function isOwner(uid) {
-      return isSignedIn()
-             && request.auth.uid == uid;
+      return isSignedIn() && request.auth.uid == uid;
     }
 
+    function isAdmin() {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'superadmin'];
+    }
 
-    /* =========================
+    function isValidAmount(amount) {
+      return amount is number && amount > 0 && amount <= 999999.99;
+    }
+
+    /* =========================================================
        USERS / PROFILES
-       ========================= */
+       ========================================================= */
 
     match /users/{userId} {
-
-      // Users can read their own profile and other public profiles
-      allow read: if isOwner(userId)
-                  || isSignedIn();
+      // Users can read own profile, admins can read all
+      allow read: if isOwner(userId) || isAdmin();
 
       // Users can create only their own profile
-      allow create: if isOwner(userId)
-                    && request.resource.data.uid == userId;
+      allow create: if isOwner(userId) &&
+                       request.resource.data.uid == userId;
 
       // Users can update only safe profile fields
-      // Financial and security fields such as:
-      // balance, pendingBalance, accountId, status, uid, createdAt
-      // cannot be changed by the client
-      allow update: if isOwner(userId)
-                    && request.resource.data.uid == resource.data.uid
-                    && request.resource.data.accountId == resource.data.accountId
-                    && request.resource.data.balance == resource.data.balance
-                    && request.resource.data.pendingBalance == resource.data.pendingBalance
-                    && request.resource.data.status == resource.data.status
-                    && request.resource.data.createdAt == resource.data.createdAt
-                    && request.resource.data.diff(resource.data)
-                       .affectedKeys()
-                       .hasOnly([
-                         "name",
-                         "email",
-                         "role",
-                         "skills",
-                         "bio",
-                         "photoURL",
-                         "location",
-                         "title",
-                         "updatedAt"
+      // Financial fields are immutable by client
+      allow update: if isOwner(userId) &&
+                       request.resource.data.uid == resource.data.uid &&
+                       request.resource.data.accountId == resource.data.accountId &&
+                       request.resource.data.balance == resource.data.balance &&
+                       request.resource.data.pendingBalance == resource.data.pendingBalance &&
+                       request.resource.data.status == resource.data.status &&
+                       request.resource.data.violations == resource.data.violations &&
+                       request.resource.data.createdAt == resource.data.createdAt &&
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                         'name', 'email', 'role', 'skills', 'bio', 'photoURL', 'location', 'title', 'updatedAt'
                        ]);
 
       // Users cannot delete their profile
       allow delete: if false;
     }
 
-
-    /* =========================
+    /* =========================================================
        WALLET TRANSACTIONS
-       ========================= */
+       ========================================================= */
 
     match /walletTransactions/{transactionId} {
-
       // Users can read only their own transactions
-      allow read: if isSignedIn()
-                  && resource.data.uid == request.auth.uid;
+      allow read: if isOwner(resource.data.uid) || isAdmin();
 
-      // Client-side users cannot create wallet transactions
-      // Successful deposits, withdrawals and balance changes
-      // must be handled by trusted backend/admin code
-      allow create: if false;
+      // Only admin/backend can create transactions
+      allow create: if isAdmin();
 
-      // Client-side users cannot modify transactions
-      allow update: if false;
+      // Only admin can update (status changes)
+      allow update: if isAdmin();
 
-      // Client-side users cannot delete transactions
+      // Transactions cannot be deleted (audit trail)
       allow delete: if false;
     }
 
+    /* =========================================================
+       PAYMENT REQUESTS
+       ========================================================= */
 
-    /* =========================
+    match /paymentRequests/{paymentId} {
+      // Users can read only their own requests, admins read all
+      allow read: if isOwner(resource.data.uid) || isAdmin();
+
+      // Users can create pending payment requests for themselves
+      allow create: if isSignedIn() &&
+                       request.resource.data.uid == request.auth.uid &&
+                       isValidAmount(request.resource.data.amount) &&
+                       request.resource.data.amount >= 1 &&
+                       request.resource.data.amount <= 10000 &&
+                       request.resource.data.status == 'pending' &&
+                       request.resource.data.currency == 'USD';
+
+      // Only admins can approve/update payments
+      allow update: if isAdmin() &&
+                       resource.data.uid == request.resource.data.uid &&
+                       resource.data.amount == request.resource.data.amount;
+
+      // Payment requests cannot be deleted
+      allow delete: if false;
+    }
+
+    /* =========================================================
        JOBS
-       ========================= */
+       ========================================================= */
 
     match /jobs/{jobId} {
+      // Public: anyone can read open jobs
+      // Private: owners and admins can read their own
+      allow read: if resource.data.status == 'open' ||
+                     isOwner(resource.data.ownerId) ||
+                     isAdmin();
 
-      // Anyone can read open jobs
-      // Owners can read their own jobs
-      allow read: if resource.data.status == "open"
-                  || (
-                    isSignedIn()
-                    && resource.data.ownerId == request.auth.uid
-                  );
+      // Authenticated users can create jobs
+      allow create: if isSignedIn() &&
+                       request.resource.data.ownerId == request.auth.uid;
 
-      // Authenticated users can create jobs for themselves
-      allow create: if isSignedIn()
-                    && request.resource.data.ownerId == request.auth.uid;
+      // Owners can update their jobs (ownership cannot transfer)
+      allow update: if isOwner(resource.data.ownerId) &&
+                       request.resource.data.ownerId == resource.data.ownerId;
 
-      // Owners can update their own jobs
-      // Ownership cannot be transferred
-      allow update: if isSignedIn()
-                    && resource.data.ownerId == request.auth.uid
-                    && request.resource.data.ownerId == resource.data.ownerId;
-
-      // Owners can delete their own jobs
-      allow delete: if isSignedIn()
-                    && resource.data.ownerId == request.auth.uid;
+      // Owners can delete their jobs
+      allow delete: if isOwner(resource.data.ownerId);
     }
 
-
-    /* =========================
+    /* =========================================================
        PROPOSALS
-       ========================= */
+       ========================================================= */
 
     match /proposals/{proposalId} {
+      // Workers can read their proposals, clients can read proposals on their jobs
+      allow read: if isSignedIn() &&
+                     (isOwner(resource.data.workerId) ||
+                      isOwner(resource.data.clientId) ||
+                      isAdmin());
 
-      // Workers can read their own proposals
-      // Clients can read proposals for their jobs
-      allow read: if isSignedIn()
-                  && (
-                    resource.data.workerId == request.auth.uid
-                    || resource.data.clientId == request.auth.uid
-                  );
+      // Workers can create proposals with their UID
+      allow create: if isSignedIn() &&
+                       request.resource.data.workerId == request.auth.uid;
 
-      // Workers can create proposals using their own UID
-      allow create: if isSignedIn()
-                    && request.resource.data.workerId == request.auth.uid;
+      // Workers/clients can update their proposals
+      allow update: if isSignedIn() &&
+                       ((isOwner(resource.data.workerId) &&
+                         request.resource.data.workerId == resource.data.workerId) ||
+                        (isOwner(resource.data.clientId) &&
+                         request.resource.data.clientId == resource.data.clientId));
 
-      // Workers/clients can update their related proposals
-      // Worker/client ownership cannot be changed
-      allow update: if isSignedIn()
-                    && (
-                      (
-                        resource.data.workerId == request.auth.uid
-                        && request.resource.data.workerId == resource.data.workerId
-                        && request.resource.data.clientId == resource.data.clientId
-                      )
-                      ||
-                      (
-                        resource.data.clientId == request.auth.uid
-                        && request.resource.data.clientId == resource.data.clientId
-                        && request.resource.data.workerId == resource.data.workerId
-                      )
-                    );
-
-      // Proposals cannot be deleted by users
+      // Proposals cannot be deleted
       allow delete: if false;
     }
 
-
-    /* =========================
+    /* =========================================================
        MODERATION EVENTS
-       ========================= */
+       ========================================================= */
 
     match /moderationEvents/{eventId} {
-
-      // Authenticated users can create moderation events
-      // only for their own UID
-      allow create: if isSignedIn()
-                    && request.resource.data.uid == request.auth.uid;
+      // Users can create events for themselves
+      allow create: if isSignedIn() &&
+                       request.resource.data.uid == request.auth.uid;
 
       // Users cannot read or modify moderation records
       allow read, update, delete: if false;
     }
 
+    /* =========================================================
+       ADMIN LOGS
+       ========================================================= */
 
-    /* =========================
-       DEPOSIT REQUESTS
-       ========================= */
+    match /adminLogs/{logId} {
+      // Only admins can read logs
+      allow read: if isAdmin();
 
-    match /depositRequests/{requestId} {
+      // Only admins can create logs
+      allow create: if isAdmin();
 
-      // Users can read only their own deposit requests
-      allow read: if isSignedIn()
-                  && resource.data.uid == request.auth.uid;
-
-      // Users may create a pending deposit request for themselves
-      // This does NOT give them wallet balance
-      allow create: if isSignedIn()
-                    && request.resource.data.uid == request.auth.uid
-                    && request.resource.data.status == "pending"
-                    && request.resource.data.amount > 0;
-
-      // Users cannot approve or complete deposits
+      // Logs cannot be modified or deleted (audit trail)
       allow update, delete: if false;
     }
 
-
-    /* =========================
-       WITHDRAWAL REQUESTS
-       ========================= */
-
-    match /withdrawalRequests/{requestId} {
-
-      // Users can read only their own withdrawal requests
-      allow read: if isSignedIn()
-                  && resource.data.uid == request.auth.uid;
-
-      // Users may create a pending withdrawal request
-      // The actual balance deduction must happen through
-      // trusted backend/admin processing
-      allow create: if isSignedIn()
-                    && request.resource.data.uid == request.auth.uid
-                    && request.resource.data.status == "pending"
-                    && request.resource.data.amount > 0;
-
-      // Users cannot approve or complete withdrawals
-      allow update, delete: if false;
-    }
-
-
-    /* =========================
+    /* =========================================================
        DEFAULT DENY
-       ========================= */
+       ========================================================= */
 
     match /{document=**} {
       allow read, write: if false;
