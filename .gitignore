@@ -2,6 +2,8 @@
 .env
 .env.local
 .env.*.local
+.env.production
+.env.development
 
 # Dependencies
 node_modules/
@@ -33,12 +35,18 @@ yarn-error.log*
 Thumbs.db
 
 # Config files
-firebase-config.js (if using plaintext)
-openai-config.js (if using plaintext)
+# Do not commit plaintext Firebase config or secrets
+firebase-config.js
+openai-config.js
 
 # API Keys and Secrets
 .firebase/
 .firebaserc
+.envrc
+*.pem
+*.key
+*.crt
+*.p12
 
 # Temporary files
 *.tmp
@@ -48,3 +56,6 @@ temp/
 # Cache
 .cache/
 dist/
+
+# Misc
+coverage/
