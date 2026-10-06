@@ -1,10 +1,9 @@
 name: Build SocialWorkBD APK
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   build-apk:
@@ -17,73 +16,36 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
 
-      - name: Create package.json
-        run: |
-          cat > package.json <<'EOF'
-          {
-            "name": "socialworkbd-app",
-            "version": "1.0.0",
-            "private": true,
-            "dependencies": {
-              "@capacitor/core": "^7.4.3",
-              "@capacitor/android": "^7.4.3"
-            },
-            "devDependencies": {
-              "@capacitor/cli": "^7.4.3"
-            }
-          }
-          EOF
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Prepare web assets
-        run: |
-          mkdir -p www
-          cp index.html styles.css app.js signup.html login.html dashboard.html profile.html job-details.html post-job.html www/
-
-      - name: Create Capacitor config
-        run: |
-          cat > capacitor.config.json <<'EOF'
-          {
-            "appId": "com.socialworkbd.app",
-            "appName": "SocialWorkBD",
-            "webDir": "www"
-          }
-          EOF
-
-      - name: Add Android platform
-        run: npx cap add android
-
-      - name: Sync Android project
-        run: npx cap sync android
-
-      - name: Setup Java
+      - name: Setup Java JDK
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: 21
+          distribution: 'zulu'
+          java-version: '17'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+        uses: android-actions/setup-android@v3
 
-      - name: Verify Android SDK
+      - name: Install Dependencies & Capacitor
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          which sdkmanager
-          sdkmanager --version
+          npm install
+          npm install @capacitor/core @capacitor/cli @capacitor/android
 
-      - name: Build APK
-        working-directory: android
-        run: ./gradlew assembleDebug
+      - name: Prepare Web Assets & Capacitor Sync
+        run: |
+          npx cap init SocialWorkBD com.socialworkbd.app --web-dir .
+          npx cap add android || true
+          npx cap sync android
 
-      - name: Upload APK
+      - name: Build Android APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SocialWorkBD-APK
+          name: SocialWorkBD-Debug-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
