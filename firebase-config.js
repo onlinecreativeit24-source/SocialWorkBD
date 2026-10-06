@@ -1,29 +1,19 @@
 /* =========================================================
    SocialWorkBD - Firebase Configuration
-   SECURITY: Using environment variables for sensitive keys
    ========================================================= */
 
-// Function to safely get environment variable
-function getEnv(key, defaultValue = '') {
-  if (typeof process !== 'undefined' && process.env) {
-    return process.env[key] || defaultValue;
-  }
-
-  console.warn(`Environment variable ${key} not found`);
-  return defaultValue;
-}
-
-// Firebase configuration - load from environment variables
+// Direct Config Object (Aapnar Firebase Console theke pawa key gulo ekhane boshan)
 const firebaseConfig = {
-  apiKey: getEnv('REACT_APP_FIREBASE_API_KEY'),
-  authDomain: getEnv('REACT_APP_FIREBASE_AUTH_DOMAIN'),
-  projectId: getEnv('REACT_APP_FIREBASE_PROJECT_ID'),
-  storageBucket: getEnv('REACT_APP_FIREBASE_STORAGE_BUCKET'),
-  messagingSenderId: getEnv('REACT_APP_FIREBASE_MESSAGING_SENDER_ID'),
-  appId: getEnv('REACT_APP_FIREBASE_APP_ID'),
-  measurementId: getEnv('REACT_APP_FIREBASE_MEASUREMENT_ID')
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID"
 };
 
+// Configuration Validate Korar Function
 function validateFirebaseConfig() {
   const requiredKeys = [
     'apiKey',
@@ -35,10 +25,10 @@ function validateFirebaseConfig() {
   ];
 
   for (const key of requiredKeys) {
-    if (!firebaseConfig[key]) {
+    if (!firebaseConfig[key] || firebaseConfig[key].includes('YOUR_')) {
       console.error(
-        `Firebase configuration error: ${key} is missing. ` +
-        'Check your .env file and ensure all required variables are set.'
+        `Firebase configuration error: ${key} is missing or has placeholder value. ` +
+        'Please update firebase-config.js with your actual Firebase credentials.'
       );
       return false;
     }
@@ -47,9 +37,10 @@ function validateFirebaseConfig() {
   return true;
 }
 
+// Firebase Check & Initialization
 if (typeof firebase === 'undefined') {
   console.error(
-    'Firebase SDK is not loaded. Please check your Firebase script tags.'
+    'Firebase SDK is not loaded. Please check your Firebase script tags in HTML.'
   );
 } else {
   if (!validateFirebaseConfig()) {
@@ -58,6 +49,7 @@ if (typeof firebase === 'undefined') {
       'Application will not function properly.'
     );
   } else {
+    // App Initialize Kora
     if (!firebase.apps.length) {
       try {
         firebase.initializeApp(firebaseConfig);
@@ -67,6 +59,7 @@ if (typeof firebase === 'undefined') {
       }
     }
 
+    // Global Instances Setup
     window.auth = firebase.auth();
     window.db = firebase.firestore();
 
@@ -81,6 +74,7 @@ if (typeof firebase === 'undefined') {
   }
 }
 
+// Global Export Object
 window.SocialWorkBDFirebase = {
   initialized:
     typeof firebase !== 'undefined' &&
@@ -96,8 +90,3 @@ window.SocialWorkBDFirebase = {
     return this.initialized && this.auth && this.db;
   }
 };
-
-console.warn(
-  '⚠️ SocialWorkBD: Ensure your Firebase configuration is loaded from ' +
-  'environment variables (.env file), not hardcoded in the source.'
-);
