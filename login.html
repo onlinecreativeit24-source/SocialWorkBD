@@ -48,6 +48,7 @@
   </section>
 </div>
 
+<!-- Firebase SDK (v8 Compat mode for stable operation) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -63,6 +64,14 @@
   function show(text, type) {
     msg.textContent = text;
     msg.className = "msg " + type;
+  }
+
+  function getAuth() {
+    return window.auth || (typeof firebase !== 'undefined' && firebase.auth ? firebase.auth() : null);
+  }
+
+  function getDb() {
+    return window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
   }
 
   function errorText(error) {
@@ -86,7 +95,10 @@
   }
 
   async function loadOrCreateProfile(user) {
-    const ref = firebase.firestore().collection("users").doc(user.uid);
+    const db = getDb();
+    if (!db) throw new Error("Database initialization failed.");
+
+    const ref = db.collection("users").doc(user.uid);
     const snap = await ref.get();
 
     if (snap.exists) {
@@ -152,6 +164,9 @@
     e.preventDefault();
     msg.className = "msg";
 
+    const auth = getAuth();
+    if (!auth) return show("Firebase Auth loading error.", "error");
+
     const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
 
@@ -161,11 +176,11 @@
     btn.textContent = "Signing in...";
 
     try {
-      const result = await firebase.auth().signInWithEmailAndPassword(email, password);
+      const result = await auth.signInWithEmailAndPassword(email, password);
       const profile = await loadOrCreateProfile(result.user);
 
       if (profile.status === "suspended") {
-        await firebase.auth().signOut();
+        await auth.signOut();
         localStorage.removeItem("currentUser");
         throw new Error("Your account is currently suspended.");
       }
@@ -183,12 +198,15 @@
   });
 
   googleBtn.addEventListener("click", async function () {
+    const auth = getAuth();
+    if (!auth) return show("Firebase Auth loading error.", "error");
+
     googleBtn.disabled = true;
     googleBtn.textContent = "Connecting...";
     try {
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({prompt: "select_account"});
-      const result = await firebase.auth().signInWithPopup(provider);
+      const result = await auth.signInWithPopup(provider);
       const profile = await loadOrCreateProfile(result.user);
       saveProfile(profile);
       redirect(profile);
@@ -203,11 +221,14 @@
 
   document.getElementById("forgot").addEventListener("click", async function (e) {
     e.preventDefault();
+    const auth = getAuth();
+    if (!auth) return show("Firebase Auth loading error.", "error");
+
     const email = document.getElementById("email").value.trim().toLowerCase();
     if (!email) return show("Enter your email first, then tap Forgot password again.", "error");
 
     try {
-      await firebase.auth().sendPasswordResetEmail(email);
+      await auth.sendPasswordResetEmail(email);
       show("Password reset email sent. Check your inbox.", "success");
     } catch (error) {
       show(errorText(error), "error");
