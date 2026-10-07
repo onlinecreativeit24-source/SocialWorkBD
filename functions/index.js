@@ -1,4 +1,5 @@
 const { onRequest } = require("firebase-functions/v2/https");
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
 
@@ -724,5 +725,35 @@ exports.paymentIPN = onRequest(
         .status(500)
         .send("IPN processing failed");
     }
+  }
+);
+
+
+/* =========================================================
+   MODERATION (server-side)
+   The client can only CREATE a moderationEvents doc. This trigger
+   increments violations and sets restricted/suspended status, because
+   firestore.rules forbid clients from changing violations/status.
+   ========================================================= */
+exports.onModerationEvent = onDocumentCreated(
+  { document: "moderationEvents/{eventId}", region: REGION },
+  async (event) => {
+    const data = event.data && event.data.data();
+    if (!data || !data.uid) return;
+
+    const ref = db.collection("users").doc(data.uid);
+    await db.runTransaction(async (tx) => {
+      const snap = await tx.get(ref);
+      if (!snap.exists) return;
+      const violations = Number(snap.data().violations || 0) + 1;
+      let status = snap.data().status || "active";
+      if (violations >= 3 && status === "active") status = "restricted";
+      if (violations >= 5) status = "suspended";
+      tx.update(ref, {
+        violations,
+        status,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+    });
   }
 );
