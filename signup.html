@@ -3,73 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up - SocialWorkBD</title>
+  <title>Create Account - SocialWorkBD</title>
   <style>
-    *{box-sizing:border-box}body{margin:0;background:#f7f7f5;color:#181818;font-family:Arial,sans-serif}
-    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
-    .card{width:100%;max-width:460px;background:#fff;border:1px solid #ddd;border-radius:16px;padding:30px;box-shadow:0 15px 45px rgba(0,0,0,.07)}
-    .brand{text-align:center;font-size:23px;font-weight:800;margin-bottom:25px}.brand span{color:#14a800}
-    h1{margin:0 0 8px;font-size:27px}.sub{color:#666;font-size:14px;line-height:1.5;margin:0 0 24px}
-    label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}.field{margin-bottom:16px}
-    input,select{width:100%;height:48px;border:1px solid #ccc;border-radius:8px;padding:0 13px;font:inherit;outline:none;background:#fff}
-    input:focus,select:focus{border-color:#14a800;box-shadow:0 0 0 3px #e9f7e6}
-    button{width:100%;min-height:48px;border:0;border-radius:8px;background:#14a800;color:#fff;font-weight:800;cursor:pointer}
-    button:disabled{opacity:.6;cursor:not-allowed}
-    a{color:#14a800;font-weight:700;text-decoration:none}.msg{display:none;padding:12px;border-radius:8px;margin-bottom:16px;font-size:13px;line-height:1.5}
+    *{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:Arial,sans-serif}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{width:100%;max-width:560px;background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:30px;box-shadow:0 15px 45px rgba(15,23,42,.08)}
+    h1{text-align:center;margin:0 0 8px;font-size:29px}.sub{text-align:center;color:#667085;line-height:1.5;margin:0 0 25px}
+    label{display:block;font-weight:700;font-size:14px;margin:0 0 7px}.field{margin-bottom:17px}
+    input,textarea{width:100%;padding:13px 14px;border:1px solid #d5d9e2;border-radius:10px;font:inherit;outline:none}
+    input:focus,textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+    textarea{min-height:90px;resize:vertical}.roles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .role{border:1px solid #d5d9e2;border-radius:12px;padding:14px;cursor:pointer}.role input{width:auto;margin-right:7px}
+    .role strong{display:block;margin-top:5px}.role small{color:#667085;line-height:1.4}
+    button{width:100%;border:0;border-radius:10px;padding:14px;background:#2563eb;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+    button:disabled{opacity:.6;cursor:not-allowed}.msg{display:none;padding:12px;border-radius:9px;margin-bottom:17px;font-size:14px;line-height:1.5}
     .error{display:block;background:#fff0f0;color:#a61b1b;border:1px solid #f0caca}.success{display:block;background:#effbea;color:#176b1d;border:1px solid #cfe9cf}
-    .divider{display:flex;align-items:center;gap:10px;margin:22px 0;color:#999;font-size:11px}.divider:before,.divider:after{content:"";height:1px;background:#ddd;flex:1}
-    .google{background:#ffffff;color:#3c4043;border:1px solid #dadce0;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;transition:background-color .2s}
-    .google:hover{background:#f8f9fa;border-color:#d2e3fc}
-    .google svg{width:18px;height:18px;flex-shrink:0}
-    .bottom{text-align:center;color:#666;font-size:13px}
+    .bottom{text-align:center;margin-top:18px;font-size:14px;color:#667085}.bottom a{color:#2563eb;font-weight:700;text-decoration:none}
+    @media(max-width:600px){.wrap{padding:14px}.card{padding:23px 18px}.roles{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
 <div class="wrap">
   <section class="card">
-    <div class="brand">SocialWork<span>BD</span></div>
-    <h1>Create an account</h1>
-    <p class="sub">Join SocialWorkBD to start working, hiring, and growing.</p>
+    <h1>Create your account</h1>
+    <p class="sub">Join SocialWorkBD as a Freelancer or Client.</p>
     <div id="message" class="msg"></div>
 
     <form id="signup-form">
       <div class="field">
-        <label for="name">Full Name</label>
-        <input id="name" type="text" autocomplete="name" placeholder="Enter your name" required>
+        <label for="name">Full name</label>
+        <input id="name" type="text" autocomplete="name" required>
       </div>
+
       <div class="field">
         <label for="email">Email address</label>
-        <input id="email" type="email" autocomplete="email" placeholder="Enter your email" required>
+        <input id="email" type="email" autocomplete="email" required>
       </div>
+
+      <div class="field">
+        <label>Account type</label>
+        <div class="roles">
+          <label class="role">
+            <input type="radio" name="role" value="worker" checked>
+            <strong>Freelancer</strong>
+            <small>Find projects and submit proposals.</small>
+          </label>
+          <label class="role">
+            <input type="radio" name="role" value="client">
+            <strong>Client</strong>
+            <small>Post projects and hire freelancers.</small>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="skills">Skills</label>
+        <textarea id="skills" placeholder="Example: Web Development, Design, Data Entry"></textarea>
+      </div>
+
       <div class="field">
         <label for="password">Password</label>
-        <input id="password" type="password" autocomplete="new-password" placeholder="Minimum 6 characters" required>
+        <input id="password" type="password" minlength="6" autocomplete="new-password" required>
       </div>
+
       <div class="field">
-        <label for="role">Account Type</label>
-        <select id="role" required>
-          <option value="worker">Worker / Freelancer</option>
-          <option value="client">Client / Employer</option>
-        </select>
+        <label for="confirm-password">Confirm password</label>
+        <input id="confirm-password" type="password" minlength="6" autocomplete="new-password" required>
       </div>
+
       <button id="signup-btn" type="submit">Create Account</button>
     </form>
 
-    <div class="divider">OR</div>
-    <button class="google" id="google-btn" type="button">
-      <svg viewBox="0 0 24 24">
-        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.27v3.15C3.25 21.3 7.31 24 12 24z"/>
-        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.27C.46 8.2 0 10.04 0 12s.46 3.8 1.27 5.42l4.01-3.15z"/>
-        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.7 1.27 6.58l4.01 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-      </svg>
-      Continue with Google
-    </button>
-    <div class="bottom">Already have an account? <a href="login.html">Log In</a></div>
+    <div style="text-align:center;color:#999;font-size:12px;margin:18px 0 12px">OR</div>
+    <button id="google-signup" type="button" style="background:#14213d">Sign up with Google</button>
+
+    <div class="bottom">Already have an account? <a href="login.html">Log in</a></div>
   </section>
 </div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -79,30 +90,24 @@
 (function () {
   const form = document.getElementById("signup-form");
   const btn = document.getElementById("signup-btn");
-  const googleBtn = document.getElementById("google-btn");
   const msg = document.getElementById("message");
 
-  function show(text, type) {
+  function showMessage(text, type) {
     msg.textContent = text;
     msg.className = "msg " + type;
-  }
-
-  function getAuth() {
-    return window.auth || (typeof firebase !== 'undefined' && firebase.auth ? firebase.auth() : null);
-  }
-
-  function getDb() {
-    return window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
   }
 
   function errorText(error) {
     const code = error && error.code ? error.code : "";
     const map = {
-      "auth/email-already-in-use": "An account with this email already exists.",
+      "auth/email-already-in-use": "This email is already registered. Please log in instead.",
       "auth/invalid-email": "Please enter a valid email address.",
-      "auth/weak-password": "Password should be at least 6 characters.",
-      "auth/operation-not-allowed": "This sign-up method is currently disabled.",
-      "auth/network-request-failed": "Network error. Check your internet connection."
+      "auth/weak-password": "Password must be at least 6 characters.",
+      "auth/operation-not-allowed": "Email/password sign-up is disabled in Firebase. Enable Email/Password in Firebase Authentication > Sign-in method.",
+      "auth/network-request-failed": "Network error. Check your internet connection and try again.",
+      "permission-denied": "Firestore denied profile creation. Deploy the updated firestore.rules.",
+      "auth/unauthorized-domain": "This domain is not authorized in Firebase Console > Authentication > Settings > Authorized domains.",
+      "auth/popup-closed-by-user": "Google sign-in was closed before finishing."
     };
     return map[code] || (error && error.message) || "Account creation failed. Please try again.";
   }
@@ -112,134 +117,173 @@
     return prefix + Date.now().toString().slice(-7) + Math.floor(100 + Math.random() * 900);
   }
 
-  async function createProfile(user, name, role) {
-    const db = getDb();
-    if (!db) throw new Error("Database initialization failed.");
+  const REDIRECT_CODES = ["auth/popup-blocked","auth/operation-not-supported-in-this-environment","auth/web-storage-unsupported","auth/cancelled-popup-request"];
+  const googleBtn = document.getElementById("google-signup");
 
-    const ref = db.collection("users").doc(user.uid);
+  function goHome(role) {
+    window.location.href = role === "client" ? "client-dashboard.html"
+      : (role === "admin" || role === "superadmin") ? "admin.html" : "worker-dashboard.html";
+  }
+
+  async function finishGoogle(user, role) {
+    const ref = firebase.firestore().collection("users").doc(user.uid);
     const snap = await ref.get();
-
+    let data;
     if (snap.exists) {
-      return {id: snap.id, ...snap.data()};
-    }
-
-    const selectedRole = role || "worker";
-    const profile = {
-      uid: user.uid,
-      accountId: accountId(selectedRole),
-      name: name || user.displayName || (user.email || "").split("@")[0] || "SocialWorkBD User",
-      email: user.email || "",
-      role: selectedRole,
-      skills: "",
-      title: "",
-      bio: "",
-      location: "",
-      photoURL: user.photoURL || "",
-      balance: 0,
-      pendingBalance: 0,
-      status: "active",
-      warnings: 0,
-      violations: 0,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-
-    await ref.set(profile);
-    return {id: user.uid, ...profile};
-  }
-
-  function saveProfile(profile) {
-    localStorage.setItem("currentUser", JSON.stringify({
-      id: profile.uid,
-      uid: profile.uid,
-      name: profile.name || "",
-      email: profile.email || "",
-      role: profile.role || "worker",
-      skills: profile.skills || "",
-      bio: profile.bio || "",
-      title: profile.title || "",
-      location: profile.location || "",
-      photoURL: profile.photoURL || "",
-      accountId: profile.accountId || "",
-      balance: Number(profile.balance || 0),
-      pendingBalance: Number(profile.pendingBalance || 0),
-      status: profile.status || "active"
-    }));
-  }
-
-  function redirect(profile) {
-    if (profile.role === "client") {
-      window.location.href = "client-dashboard.html";
-    } else if (profile.role === "worker" || profile.role === "freelancer") {
-      window.location.href = "worker-dashboard.html";
-    } else if (profile.role === "admin" || profile.role === "superadmin") {
-      window.location.href = "admin.html";
+      data = snap.data();
     } else {
-      window.location.href = "profile.html";
+      data = {
+        uid: user.uid, accountId: accountId(role),
+        name: user.displayName || (user.email || "").split("@")[0] || "SocialWorkBD User",
+        email: user.email || "", role: role,
+        skills: document.getElementById("skills").value.trim(),
+        title: "", bio: "", location: "", photoURL: user.photoURL || "",
+        balance: 0, pendingBalance: 0, status: "active", warnings: 0, violations: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      await ref.set(data);
     }
+    if (data.status === "suspended") {
+      await firebase.auth().signOut();
+      throw new Error("Your account is currently suspended.");
+    }
+    localStorage.setItem("currentUser", JSON.stringify({
+      uid: user.uid, id: user.uid, name: data.name || "", email: data.email || "",
+      role: data.role || "worker", accountId: data.accountId || "",
+      balance: Number(data.balance || 0), pendingBalance: Number(data.pendingBalance || 0), status: data.status || "active"
+    }));
+    goHome(data.role);
+  }
+
+  googleBtn.addEventListener("click", async function () {
+    const role = document.querySelector('input[name="role"]:checked')?.value || "worker";
+    sessionStorage.setItem("swbdSignupRole", role);
+    googleBtn.disabled = true;
+    googleBtn.textContent = "Connecting...";
+    msg.className = "msg";
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({prompt: "select_account"});
+    try {
+      try {
+        const result = await firebase.auth().signInWithPopup(provider);
+        await finishGoogle(result.user, role);
+      } catch (popupError) {
+        if (REDIRECT_CODES.indexOf(popupError.code) !== -1) {
+          await firebase.auth().signInWithRedirect(provider);
+          return;
+        }
+        throw popupError;
+      }
+    } catch (error) {
+      console.error("Google signup error:", error);
+      if (error.code !== "auth/popup-closed-by-user") showMessage(errorText(error), "error");
+    } finally {
+      googleBtn.disabled = false;
+      googleBtn.textContent = "Sign up with Google";
+    }
+  });
+
+  if (typeof firebase !== "undefined" && firebase.apps.length) {
+    firebase.auth().getRedirectResult().then(function (result) {
+      if (result && result.user) {
+        const role = sessionStorage.getItem("swbdSignupRole") || "worker";
+        return finishGoogle(result.user, role);
+      }
+    }).catch(function (error) {
+      if (error && error.code !== "auth/no-auth-event") showMessage(errorText(error), "error");
+    });
   }
 
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
     msg.className = "msg";
-
-    const auth = getAuth();
-    if (!auth) return show("Firebase Auth loading error.", "error");
+    msg.textContent = "";
 
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim().toLowerCase();
+    const skills = document.getElementById("skills").value.trim();
     const password = document.getElementById("password").value;
-    const role = document.getElementById("role").value;
+    const confirm = document.getElementById("confirm-password").value;
+    const role = document.querySelector('input[name="role"]:checked')?.value || "worker";
 
-    if (!name || !email || !password) return show("Please fill in all fields.", "error");
+    if (!name) return showMessage("Please enter your full name.", "error");
+    if (!email) return showMessage("Please enter your email.", "error");
+    if (password.length < 6) return showMessage("Password must be at least 6 characters.", "error");
+    if (password !== confirm) return showMessage("Passwords do not match.", "error");
+
+    if (typeof firebase === "undefined" || !firebase.apps.length) {
+      return showMessage("Firebase could not be initialized. Check firebase-config.js.", "error");
+    }
 
     btn.disabled = true;
     btn.textContent = "Creating account...";
 
-    try {
-      const result = await auth.createUserWithEmailAndPassword(email, password);
-      await result.user.updateProfile({ displayName: name });
-      const profile = await createProfile(result.user, name, role);
+    let createdUser = null;
 
-      saveProfile(profile);
-      show("Account created successfully. Redirecting...", "success");
-      setTimeout(() => redirect(profile), 400);
+    try {
+      const result = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      createdUser = result.user;
+
+      try {
+        await createdUser.updateProfile({displayName: name});
+      } catch (_) {}
+
+      const profile = {
+        uid: createdUser.uid,
+        accountId: accountId(role),
+        name: name,
+        email: email,
+        role: role,
+        skills: skills,
+        title: "",
+        bio: "",
+        location: "",
+        photoURL: createdUser.photoURL || "",
+        balance: 0,
+        pendingBalance: 0,
+        status: "active",
+        warnings: 0,
+        violations: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      await firebase.firestore().collection("users").doc(createdUser.uid).set(profile);
+
+      localStorage.setItem("currentUser", JSON.stringify({
+        uid: createdUser.uid,
+        id: createdUser.uid,
+        name: name,
+        email: email,
+        role: role,
+        accountId: profile.accountId,
+        balance: 0,
+        pendingBalance: 0,
+        status: "active"
+      }));
+
+      await firebase.auth().signOut();
+      showMessage("Account created successfully. Redirecting to login...", "success");
+
+      setTimeout(function () {
+        window.location.href = "login.html";
+      }, 700);
+
     } catch (error) {
       console.error("SocialWorkBD signup error:", error);
-      show(errorText(error), "error");
+
+      // If Auth succeeded but Firestore profile creation failed,
+      // remove the newly-created Auth user so signup does not leave a broken account.
+      if (createdUser) {
+        try { await createdUser.delete(); } catch (_) {}
+        localStorage.removeItem("currentUser");
+      }
+
+      showMessage(errorText(error), "error");
     } finally {
       btn.disabled = false;
       btn.textContent = "Create Account";
-    }
-  });
-
-  googleBtn.addEventListener("click", async function () {
-    const auth = getAuth();
-    if (!auth) return show("Firebase Auth loading error.", "error");
-
-    googleBtn.disabled = true;
-    googleBtn.textContent = "Connecting...";
-    try {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({prompt: "select_account"});
-      const result = await auth.signInWithPopup(provider);
-      const profile = await createProfile(result.user, result.user.displayName, "worker");
-      saveProfile(profile);
-      redirect(profile);
-    } catch (error) {
-      console.error("Google signup error:", error);
-      show(errorText(error), "error");
-    } finally {
-      googleBtn.disabled = false;
-      googleBtn.innerHTML = `
-        <svg viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.27v3.15C3.25 21.3 7.31 24 12 24z"/>
-          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.27C.46 8.2 0 10.04 0 12s.46 3.8 1.27 5.42l4.01-3.15z"/>
-          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.7 1.27 6.58l4.01 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-        </svg>
-        Continue with Google
-      `;
     }
   });
 })();
