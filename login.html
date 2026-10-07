@@ -48,7 +48,6 @@
   </section>
 </div>
 
-<!-- Firebase SDK (v8 Compat mode for stable operation) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -57,6 +56,11 @@
 <script>
 (function () {
   const form = document.getElementById("login-form");
+  if (typeof firebase === "undefined" || !firebase.apps.length) {
+    document.getElementById("message").textContent = "Firebase failed to initialize. Check firebase-config.js and your internet connection.";
+    document.getElementById("message").className = "msg error";
+    return;
+  }
   const btn = document.getElementById("login-btn");
   const googleBtn = document.getElementById("google-btn");
   const msg = document.getElementById("message");
@@ -64,14 +68,6 @@
   function show(text, type) {
     msg.textContent = text;
     msg.className = "msg " + type;
-  }
-
-  function getAuth() {
-    return window.auth || (typeof firebase !== 'undefined' && firebase.auth ? firebase.auth() : null);
-  }
-
-  function getDb() {
-    return window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
   }
 
   function errorText(error) {
@@ -84,7 +80,10 @@
       "auth/user-disabled": "This account has been disabled.",
       "auth/operation-not-allowed": "This sign-in method is disabled in Firebase.",
       "auth/network-request-failed": "Network error. Check your internet connection.",
-      "auth/too-many-requests": "Too many attempts. Please try again later."
+      "auth/too-many-requests": "Too many attempts. Please try again later.",
+      "auth/unauthorized-domain": "This domain is not authorized in Firebase Console > Authentication > Settings > Authorized domains.",
+      "auth/popup-closed-by-user": "Google sign-in was closed before finishing.",
+      "permission-denied": "Firestore denied access. Deploy the updated firestore.rules."
     };
     return map[code] || (error && error.message) || "Login failed. Please try again.";
   }
@@ -95,10 +94,7 @@
   }
 
   async function loadOrCreateProfile(user) {
-    const db = getDb();
-    if (!db) throw new Error("Database initialization failed.");
-
-    const ref = db.collection("users").doc(user.uid);
+    const ref = firebase.firestore().collection("users").doc(user.uid);
     const snap = await ref.get();
 
     if (snap.exists) {
@@ -164,9 +160,6 @@
     e.preventDefault();
     msg.className = "msg";
 
-    const auth = getAuth();
-    if (!auth) return show("Firebase Auth loading error.", "error");
-
     const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
 
@@ -176,11 +169,11 @@
     btn.textContent = "Signing in...";
 
     try {
-      const result = await auth.signInWithEmailAndPassword(email, password);
+      const result = await firebase.auth().signInWithEmailAndPassword(email, password);
       const profile = await loadOrCreateProfile(result.user);
 
       if (profile.status === "suspended") {
-        await auth.signOut();
+        await firebase.auth().signOut();
         localStorage.removeItem("currentUser");
         throw new Error("Your account is currently suspended.");
       }
@@ -197,38 +190,65 @@
     }
   });
 
-  googleBtn.addEventListener("click", async function () {
-    const auth = getAuth();
-    if (!auth) return show("Firebase Auth loading error.", "error");
+  const REDIRECT_CODES = [
+    "auth/popup-blocked",
+    "auth/operation-not-supported-in-this-environment",
+    "auth/web-storage-unsupported",
+    "auth/cancelled-popup-request"
+  ];
 
+  async function finishGoogle(user) {
+    const profile = await loadOrCreateProfile(user);
+    if (profile.status === "suspended") {
+      await firebase.auth().signOut();
+      localStorage.removeItem("currentUser");
+      throw new Error("Your account is currently suspended.");
+    }
+    saveProfile(profile);
+    show("Login successful. Redirecting...", "success");
+    redirect(profile);
+  }
+
+  googleBtn.addEventListener("click", async function () {
     googleBtn.disabled = true;
     googleBtn.textContent = "Connecting...";
+    msg.className = "msg";
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({prompt: "select_account"});
     try {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({prompt: "select_account"});
-      const result = await auth.signInWithPopup(provider);
-      const profile = await loadOrCreateProfile(result.user);
-      saveProfile(profile);
-      redirect(profile);
+      try {
+        const result = await firebase.auth().signInWithPopup(provider);
+        await finishGoogle(result.user);
+      } catch (popupError) {
+        if (REDIRECT_CODES.indexOf(popupError.code) !== -1) {
+          await firebase.auth().signInWithRedirect(provider);
+          return; // page navigates away
+        }
+        throw popupError;
+      }
     } catch (error) {
       console.error("Google login error:", error);
-      show(errorText(error), "error");
+      if (error.code !== "auth/popup-closed-by-user") show(errorText(error), "error");
     } finally {
       googleBtn.disabled = false;
       googleBtn.textContent = "Continue with Google";
     }
   });
 
+  // Returning from signInWithRedirect (mobile browsers)
+  firebase.auth().getRedirectResult().then(function (result) {
+    if (result && result.user) return finishGoogle(result.user);
+  }).catch(function (error) {
+    if (error && error.code !== "auth/no-auth-event") show(errorText(error), "error");
+  });
+
   document.getElementById("forgot").addEventListener("click", async function (e) {
     e.preventDefault();
-    const auth = getAuth();
-    if (!auth) return show("Firebase Auth loading error.", "error");
-
     const email = document.getElementById("email").value.trim().toLowerCase();
     if (!email) return show("Enter your email first, then tap Forgot password again.", "error");
 
     try {
-      await auth.sendPasswordResetEmail(email);
+      await firebase.auth().sendPasswordResetEmail(email);
       show("Password reset email sent. Check your inbox.", "success");
     } catch (error) {
       show(errorText(error), "error");
