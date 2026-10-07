@@ -1,92 +1,47 @@
 /* =========================================================
-   SocialWorkBD - Firebase Configuration
+   SocialWorkBD - Firebase Configuration (browser / plain HTML)
+
+   NOTE: Firebase *web* config values are public identifiers, not secrets.
+   They are meant to be in client code. Real protection comes from
+   firestore.rules + Authentication "Authorized domains".
+   (The old version read process.env, which does not exist in a plain
+   browser page, so Firebase never initialized -> app/no-app error.)
    ========================================================= */
+(function () {
+  "use strict";
 
-// Direct Config Object (Aapnar Firebase Console theke pawa key gulo ekhane boshan)
-const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
-};
+  var firebaseConfig = {
+    apiKey: "AIzaSyDsqRgRZTKZFvfu0r4UJc8Q5xlS7lBL41c",
+    authDomain: "socialworkbd-b1c00.firebaseapp.com",
+    projectId: "socialworkbd-b1c00",
+    storageBucket: "socialworkbd-b1c00.firebasestorage.app",
+    messagingSenderId: "999070456562",
+    appId: "1:999070456562:web:67101bb3148b157e67ce6b",
+    measurementId: "G-XVBRYV71BZ"
+  };
 
-// Configuration Validate Korar Function
-function validateFirebaseConfig() {
-  const requiredKeys = [
-    'apiKey',
-    'authDomain',
-    'projectId',
-    'storageBucket',
-    'messagingSenderId',
-    'appId'
-  ];
-
-  for (const key of requiredKeys) {
-    if (!firebaseConfig[key] || firebaseConfig[key].includes('YOUR_')) {
-      console.error(
-        `Firebase configuration error: ${key} is missing or has placeholder value. ` +
-        'Please update firebase-config.js with your actual Firebase credentials.'
-      );
-      return false;
-    }
+  if (typeof firebase === "undefined") {
+    console.error("Firebase SDK is not loaded. Add the firebase-app/auth/firestore script tags BEFORE firebase-config.js");
+    window.SocialWorkBDFirebase = { initialized: false, isReady: function () { return false; } };
+    return;
   }
 
-  return true;
-}
-
-// Firebase Check & Initialization
-if (typeof firebase === 'undefined') {
-  console.error(
-    'Firebase SDK is not loaded. Please check your Firebase script tags in HTML.'
-  );
-} else {
-  if (!validateFirebaseConfig()) {
-    console.error(
-      'Cannot initialize Firebase due to missing configuration. ' +
-      'Application will not function properly.'
-    );
-  } else {
-    // App Initialize Kora
-    if (!firebase.apps.length) {
-      try {
-        firebase.initializeApp(firebaseConfig);
-        console.log('Firebase initialized successfully');
-      } catch (error) {
-        console.error('Firebase initialization error:', error);
-      }
-    }
-
-    // Global Instances Setup
-    window.auth = firebase.auth();
-    window.db = firebase.firestore();
-
-    if (typeof firebase.storage === 'function') {
-      window.storage = firebase.storage();
-    } else {
-      window.storage = null;
-      console.warn(
-        'Firebase Storage SDK is not loaded. Storage features are disabled.'
-      );
-    }
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  } catch (e) {
+    console.error("Firebase initialization error:", e);
   }
-}
 
-// Global Export Object
-window.SocialWorkBDFirebase = {
-  initialized:
-    typeof firebase !== 'undefined' &&
-    firebase.apps.length > 0 &&
-    validateFirebaseConfig(),
+  window.auth = typeof firebase.auth === "function" ? firebase.auth() : null;
+  window.db = typeof firebase.firestore === "function" ? firebase.firestore() : null;
+  window.storage = typeof firebase.storage === "function" ? firebase.storage() : null;
 
-  projectId: firebaseConfig.projectId,
-  auth: window.auth || null,
-  db: window.db || null,
-  storage: window.storage || null,
-
-  isReady: function () {
-    return this.initialized && this.auth && this.db;
-  }
-};
+  window.SocialWorkBDFirebase = {
+    initialized: firebase.apps.length > 0,
+    projectId: firebaseConfig.projectId,
+    auth: window.auth,
+    db: window.db,
+    storage: window.storage,
+    isReady: function () { return this.initialized && !!this.auth && !!this.db; }
+  };
+})();
